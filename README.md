@@ -21,7 +21,16 @@ and the process for submitting pull requests to us.
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see 
-the [releases on this repository](https://github.com/d-velop/dvelop-sdk-node/releases). 
+the [releases on this repository](https://github.com/d-velop/dvelop-sdk-node/releases).
+
+## Projectstructure
+We didn't want to put everything in one big package because not everybody needs all functions of the SDK.
+On the other hand multiple git repositories are unnecessary overhead. So we decided to use a single git project
+for all SDK packages. Furthermore we decided to use independent versioning because a breaking change
+in one package, requiring a new major version for this package, would also result in a new major version for all packages
+although there might be no breaking changes in these packages.   
+The corresponding tool for this so called multi-package repository is [lerna.js](https://lerna.js.org/).
+Please read through its documentation to get a basic understanding of how this tool works. 
 
 ## License
 

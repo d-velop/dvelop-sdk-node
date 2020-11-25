@@ -1,0 +1,8 @@
+{
+  "name": "dvelop-sdk-node",
+  "private": true,
+  "description": "Official SDK to build d.velop cloud Apps with Node.js",
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
+}
