@@ -2,7 +2,17 @@
   "name": "dvelop-sdk-node",
   "private": true,
   "description": "Official SDK to build d.velop cloud Apps with Node.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "build": "tsc -b tsconfig.json",
+    "watch": "tsc -b --watch tsconfig.json",
+    "clean": "tsc -b --clean tsconfig.json",
+    "cleanbuild": "npm run clean && tsc -b --force tsconfig.json",
+    "prepublish": "npm run tsc"
+  },
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^3.22.1",
+    "typescript": "^4.1.2"
   }
 }

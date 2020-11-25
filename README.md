@@ -9,6 +9,26 @@ The project has beta status. **So for now expect things to change.**
 
 TBD
 
+## Build
+This is a multi-package repository which uses 
+[TypeScript Project References](https://www.typescriptlang.org/docs/handbook/project-references.html#composite).
+
+The build process works either on the whole repository (when invoked in the [main directory](.)) or
+on an individual package (when invoked in the corresponding [package folder](./packages)).
+It supports the following commands
+
+- `build` incremental build, that is build all files which were changed since the last invocation
+- `watch` watch for changes and automatically build the corresponding files
+- `cleanbuild` force a clean build
+
+and can be invoked with
+
+```
+npm run <command>
+```
+
+
+
 ## Running the tests
 
 TBD

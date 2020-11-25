@@ -1,0 +1,31 @@
+{
+  "name": "@dvelop/requestid",
+  "version": "0.0.1",
+  "description": "Package requestid contains functions to determine the request id.",
+  "author": "Martin Testrot",
+  "homepage": "https://github.com/d-velop/dvelop-sdk-node#readme",
+  "license": "Apache-2.0",
+  "main": "./lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d-velop/dvelop-sdk-node.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "build": "tsc -b tsconfig.json",
+    "watch": "tsc -b --watch tsconfig.json",
+    "clean": "tsc -b --clean tsconfig.json",
+    "cleanbuild": "npm run clean && tsc -b --force tsconfig.json",
+    "prepublish": "npm run tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/d-velop/dvelop-sdk-node/issues"
+  }
+}
