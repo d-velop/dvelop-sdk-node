@@ -1,5 +1,5 @@
 {
-  "name": "@dvelop/tenant",
+  "name": "@dvelop-sdk/tenant",
   "version": "0.0.1",
   "description": "Package tenant contains functions to determine for which tenant a request should be served.",
   "author": "Martin Testrot",

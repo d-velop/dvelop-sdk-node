@@ -1,5 +1,5 @@
 {
-  "name": "dvelop-sdk-node",
+  "name": "dvelop-sdk",
   "private": true,
   "description": "Official SDK to build d.velop cloud Apps with Node.js",
   "license": "Apache-2.0",

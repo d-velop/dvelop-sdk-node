@@ -1,5 +1,5 @@
 {
-  "name": "@dvelop/requestid",
+  "name": "@dvelop-sdk/requestid",
   "version": "0.0.1",
   "description": "Package requestid contains functions to determine the request id.",
   "author": "Martin Testrot",
