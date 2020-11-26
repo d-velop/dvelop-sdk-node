@@ -9,29 +9,34 @@ The project has beta status. **So for now expect things to change.**
 
 TBD
 
+## Coding
+This project uses [TypeScript](https://www.typescriptlang.org/) a kind of next gen typed superset of JavaScript.
+If you are new to TypeScript pleas have a look at the *Get Started* section of the 
+[TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html).
+
 ## Build
 This is a multi-package repository which uses 
 [TypeScript Project References](https://www.typescriptlang.org/docs/handbook/project-references.html#composite).
 
-The build process works either on the whole repository (when invoked in the [main directory](.)) or
-on an individual package (when invoked in the corresponding [package folder](./packages)).
-It supports the following commands
+The build process can be invoked with `npm run <command>` and supports the following commands:
 
+- `test` run the tests
+- `watch-test` watch for changes and automatically rerun tests
 - `build` incremental build, that is build all files which were changed since the last invocation
 - `watch` watch for changes and automatically build the corresponding files
 - `cleanbuild` force a clean build
 
-and can be invoked with
+It can be invoked for the whole repository or an individual [package](./packages) be switching to the corresponding
+package directory.
 
 ```
-npm run <command>
+# build all packages
+npm run build
+
+# build the tenant package only
+cd packages\tenant
+npm run build
 ```
-
-
-
-## Running the tests
-
-TBD
 
 ## Contributing
 
