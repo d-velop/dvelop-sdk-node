@@ -1,8 +1,8 @@
 # `requestid`
 
 Package contains functions to handle a unique id for the current request.
-For example it contains a middleware which reads the current request id from
-the incoming HTTP request an passes a corresponding property down the request chain. 
+For example it contains a middleware, which reads the current request id from
+the incoming HTTP request and passes a corresponding property down the request chain. 
 
 ## Usage
 
