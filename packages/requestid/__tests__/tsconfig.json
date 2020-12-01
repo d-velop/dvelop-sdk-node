@@ -1,0 +1,9 @@
+{
+  "extends": "../../../tsconfig-base.json",
+  "compilerOptions": {
+    "outDir": "lib"                    /* Redirect output structure to the directory. */
+  },
+  "references": [
+    { "path": "../tsconfig.json"}
+  ]
+}

@@ -14,6 +14,10 @@ This project uses [TypeScript](https://www.typescriptlang.org/) a kind of next g
 If you are new to TypeScript pleas have a look at the *Get Started* section of the 
 [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html).
 
+### References
+
+- [Writing middleware for use in Express apps](https://expressjs.com/en/guide/writing-middleware.html)
+
 ## Build
 This is a multi-package repository which uses 
 [TypeScript Project References](https://www.typescriptlang.org/docs/handbook/project-references.html#composite).

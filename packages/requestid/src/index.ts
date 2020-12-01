@@ -1,6 +1,5 @@
-import { add } from './add'
-import { subtract } from './subtract'
+import {requestIdMiddleware} from "./requestIdMiddleware";
+
 export {
-    add,
-    subtract
+    requestIdMiddleware
 }

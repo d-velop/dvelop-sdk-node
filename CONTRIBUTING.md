@@ -77,9 +77,13 @@ Please be aware of the following notes prior to opening a pull request:
 
 # Code Conventions
 
+## Style Guide
+
+Please use [this unoffical style guide](https://github.com/basarat/typescript-book/blob/master/docs/styleguide/styleguide.md) when naming things.
+
 ## Documentation
 
-TBD
+Please use [TSDoc](https://tsdoc.org/) to document the code.
 
 ## Naming of Tests
 
