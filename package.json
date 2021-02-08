@@ -7,10 +7,7 @@
     "test": "jest --config jest.json ----coverage",
     "test:watch": "jest --config jest.json --watch",
     "build": "tsc -b",
-    "watch": "tsc -b --watch",
-    "clean": "tsc -b --clean",
-    "cleanbuild": "npm run clean && tsc -b --force",
-    "prepublish": "npm run cleanbuild"
+    "build:force": "tsc -b --clean && tsc -b"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
