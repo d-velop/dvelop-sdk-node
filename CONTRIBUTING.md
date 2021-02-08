@@ -14,15 +14,15 @@ So please be patient with us.
 
 ## Security vulnerability
 
-Please do **NOT** open an issue if you find a security vulnerability. 
-Instead send an e-mail to ``securityissue@d-velop.de`` . 
+Please do **NOT** open an issue if you find a security vulnerability.
+Instead send an e-mail to ``securityissue@d-velop.de`` .
 
 In order to determine whether you are dealing with a security issue, ask yourself these two questions:
 * Can I access something that's not mine, or something I shouldn't have access to?
 * Can I disable something for other people?
 
-If the answer to either of those two questions are "yes", then you're probably dealing with a security issue. 
-Note that even if you answer "no" to both questions, you may still be dealing with a security issue, 
+If the answer to either of those two questions are "yes", then you're probably dealing with a security issue.
+Note that even if you answer "no" to both questions, you may still be dealing with a security issue,
 so if you're unsure, just email us.
 
 ## File a bug report.
@@ -31,12 +31,12 @@ You can file bug reports on the [issues page](https://github.com/d-velop/dvelop-
 
 Please follow the following steps prior to filing a bug report.
 
-1.  Search through existing [issues](https://github.com/d-velop/dvelop-sdk-node/issues) to ensure that 
+1.  Search through existing [issues](https://github.com/d-velop/dvelop-sdk-node/issues) to ensure that
     your specific issue has not yet been reported.
 
-2.  Ensure that you have tested the latest version of the SDK. 
+2.  Ensure that you have tested the latest version of the SDK.
     Although you may have an issue against an older version of the SDK, we cannot provide bug fixes for old versions.
-    It's also possible that the bug may have been fixed in the latest version.  
+    It's also possible that the bug may have been fixed in the latest version.
 
 When filing an issue, make sure to answer the following questions:
 
@@ -65,15 +65,18 @@ Please be aware of the following notes prior to opening a pull request:
 
 3.  Wherever possible, pull requests should contain tests as appropriate.
     Bugfixes should contain tests that exercise the corrected behavior (i.e., the
-    test should fail without the bugfix and pass with it), and new features 
+    test should fail without the bugfix and pass with it), and new features
     should be accompanied by tests exercising the feature.
-   
+
 4.  Follow the [Code Conventions](#code-conventions).
 
 5.  Pull requests that contain failing tests will not be merged until the test
     failures are addressed. Pull requests that cause a significant drop in the
     test coverage percentage are unlikely to be merged until tests have
     been added.
+
+## Get started
+Run ```npm i```
 
 # Code Conventions
 
@@ -91,7 +94,7 @@ TBD
 
 ## Commit message
 
-Please use the following template for commit messages which is derived from 
+Please use the following template for commit messages which is derived from
 [template of the git project](https://git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project):
 
 ```
