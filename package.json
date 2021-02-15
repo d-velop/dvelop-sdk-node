@@ -4,7 +4,7 @@
   "description": "Official SDK to build d.velop cloud Apps with Node.js",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "jest --config jest.json ----coverage",
+    "test": "jest --config jest.json --coverage",
     "test:watch": "jest --config jest.json --watch",
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b"

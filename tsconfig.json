@@ -5,7 +5,10 @@
   "include": [],
   "references": [
     {
-      "path": "./packages/app-router"
+      "path": "./packages/app-router",
+    },
+    {
+      "path": "./packages/identityprovider"
     }
   ]
 }
