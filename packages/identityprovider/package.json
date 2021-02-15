@@ -1,5 +1,5 @@
 {
-  "name": "@dvelop-sdk/app-router",
+  "name": "@dvelop-sdk/identityprovider",
   "version": "0.0.1",
   "license": "Apache-2.0",
   "main": "lib/index.js",
@@ -11,5 +11,8 @@
   },
   "bugs": {
     "url": "https://github.com/LenKlose/dvelop-sdk-node/issues"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
   }
 }
