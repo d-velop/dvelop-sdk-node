@@ -4,13 +4,13 @@
   "description": "Official SDK to build d.velop cloud Apps with Node.js",
   "license": "Apache-2.0",
   "scripts": {
+    "bootstrap": "lerna bootstrap",
     "test": "jest --config jest.json --coverage",
     "test:watch": "jest --config jest.json --watch",
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.20",
     "jest": "^26.6.3",
     "lerna": "^3.22.1",
     "ts-jest": "^26.5.0",
