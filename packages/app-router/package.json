@@ -5,6 +5,9 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "author": "Lennart <lennart.klose@d-velop.de>",
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LenKlose/dvelop-sdk-node.git"
