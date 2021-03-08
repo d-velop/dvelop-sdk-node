@@ -7,8 +7,8 @@
     "bootstrap": "lerna bootstrap",
     "test": "jest --config jest.json --coverage",
     "test:watch": "jest --config jest.json --watch",
-    "lint": "eslint packages/**/*.ts",
-    "lint:fix": "eslint packages/**/*.ts --fix",
+    "lint": "eslint packages/**/src/**/*.ts",
+    "lint:fix": "eslint packages/**/src/**/*.ts --fix",
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b"
   },

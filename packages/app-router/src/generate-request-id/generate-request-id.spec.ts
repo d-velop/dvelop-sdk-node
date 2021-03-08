@@ -1,9 +1,9 @@
-import * as uuid from 'uuid';
-import { generateRequestId } from './generate-request-id';
+import * as uuid from "uuid";
+import { generateRequestId } from "./generate-request-id";
 
-jest.mock('uuid');
+jest.mock("uuid");
 
-describe('generateRequestId', () => {
+describe("generateRequestId", () => {
 
     const mockedUuid = uuid as jest.Mocked<typeof uuid>;
 
@@ -11,8 +11,8 @@ describe('generateRequestId', () => {
       mockedUuid.v4.mockReset();
     });
 
-    it('should return UUID from v4', () => {
-      const uuid = 'HiItsMeUuid';
+    it("should return UUID from v4", () => {
+      const uuid = "HiItsMeUuid";
 
       mockedUuid.v4.mockImplementation(() => uuid);
 
