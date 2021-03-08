@@ -7,10 +7,16 @@
     "bootstrap": "lerna bootstrap",
     "test": "jest --config jest.json --coverage",
     "test:watch": "jest --config jest.json --watch",
+    "lint": "eslint packages/**/*.ts",
+    "lint:fix": "eslint packages/**/*.ts --fix",
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.16.1",
+    "@typescript-eslint/parser": "^4.16.1",
+    "eslint": "^7.21.0",
+    "eslint-plugin-jest": "^24.1.9",
     "jest": "^26.6.3",
     "lerna": "^3.22.1",
     "ts-jest": "^26.5.0",
