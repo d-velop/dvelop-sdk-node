@@ -24,4 +24,4 @@ export function validateRequestSignature(appSecret: string, systemBaseUri: strin
 }
 
 const valid: boolean = validateRequestSignature("ptuQ0b0BskmLLxXsjjhH9Su8ozTvZl6Z/5/HlaORoRg=", "https://header.example.com", "a12be5", "Zjcf28p5aQ6amtbs6s9b9cPyBPdziwUslR2DZqaGUTQ=");
-console.log(valid) // true
+console.log(valid); // true
