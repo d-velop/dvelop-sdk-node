@@ -6,9 +6,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 2
       matrix:
         # os: [ubuntu-latest, macos-latest, windows-latest]
-        max-parallel: 3
         node-version: [10.x, 12.x, 14.x, 15.x]
     name: Test for Node.js ${{ matrix.node-version }} # on ${{ matrix.os }}
     steps:
