@@ -46,3 +46,8 @@ jobs:
       run: npm ci
     - name: Generate docs
       run: npm run docs
+    - name: Upload docs
+      uses: actions/upload-artifact@v2
+      with:
+        name: dvelop-sdk-docs-${{github.run_id}}
+        path: docs
