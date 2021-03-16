@@ -1,5 +1,4 @@
-.idea/
 node_modules
-/todos.txt
 /packages/*/lib/
+docs
 *.tsbuildinfo

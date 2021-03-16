@@ -1,11 +1,14 @@
 {
-/*  References to all modules so that the whole repo can be compiled with tsc -b
+  /*  References to all modules so that the whole repo can be compiled with tsc -b
     cf. https://www.typescriptlang.org/docs/handbook/project-references.html#overall-structure */
-
   "files": [],
   "include": [],
   "references": [
-    { "path": "./packages/requestid" },
-    { "path": "./packages/tenant"}
+    {
+      "path": "./packages/app-router",
+    },
+    {
+      "path": "./packages/identityprovider"
+    }
   ]
 }

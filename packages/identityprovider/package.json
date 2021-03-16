@@ -1,0 +1,21 @@
+{
+  "name": "@dvelop-sdk/identityprovider",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "Lennart <lennart.klose@d-velop.de>",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LenKlose/dvelop-sdk-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LenKlose/dvelop-sdk-node/issues"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "roots": [
+    "packages"
+  ],
+  "testMatch": [
+    "**/*.spec.ts"
+  ],
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
+  },
+  "coverageReporters": ["text"]
+}
