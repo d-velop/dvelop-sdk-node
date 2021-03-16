@@ -23,7 +23,3 @@ jobs:
       with:
         branch: gh-pages
         folder: docs
-
-  publish-modules:
-    - name: dummy
-      run: echo "Dummy Task"
