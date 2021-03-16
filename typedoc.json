@@ -3,5 +3,6 @@
     "packages/app-router/src/index.ts",
     "packages/identityprovider/src/index.ts"
   ],
-  "out": "docs"
+  "out": "docs",
+  "name": "@dvelop-sdk"
 }
