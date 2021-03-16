@@ -1,9 +1,9 @@
 name: deploy
 
-on:
-  push:
-    branches:
-      - master
+on: push
+#  push:
+#    branches:
+#      - master
 
 jobs:
   generate-docs:
@@ -21,9 +21,21 @@ jobs:
     - name: Upload docs
       uses: actions/upload-artifact@v2
       with:
-        name: dvelop-sdk-docs-${{github.run_id}}
+        name: dvelop-sdk-node-docs-${{github.run_id}}
         path: docs
 
   publish-docs:
+    - name: Download docs
+      uses: actions/download-artifact@v2
+        with:
+          name: dvelop-sdk-node-docs-${{github.run_id}}
+          path: docs
+    - name: Commit to gh-pages
+      uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: gh-pages
+          folder: docs
 
   publish-modules:
+    - name: dummy
+      run: echo "Dummy Task"
