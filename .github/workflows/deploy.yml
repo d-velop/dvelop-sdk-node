@@ -6,7 +6,7 @@ on: push
 #      - master
 
 jobs:
-  generate-docs:
+  publish-docs:
     name: Generate documentation
     runs-on: ubuntu-latest
     steps:
@@ -18,18 +18,6 @@ jobs:
       run: npm ci
     - name: Generate docs
       run: npm run docs
-    - name: Upload docs
-      uses: actions/upload-artifact@v2
-      with:
-        name: dvelop-sdk-node-docs-${{github.run_id}}
-        path: docs
-
-  publish-docs:
-    - name: Download docs
-      uses: actions/download-artifact@v2
-        with:
-          name: dvelop-sdk-node-docs-${{github.run_id}}
-          path: docs
     - name: Commit to gh-pages
       uses: JamesIves/github-pages-deploy-action@4.1.0
         with:
