@@ -1,6 +1,6 @@
 {
   "opts": {
-    "template": "node_modules/better-docs",
+    "template": "node_modules/docdash",
     "encoding": "utf8",
     "destination": "./docs/",
     "recurse": true
@@ -11,8 +11,6 @@
     ]
   },
   "plugins": [
-    "node_modules/better-docs/typescript",
-    "node_modules/better-docs/category"
   ],
   "source": {
     "include": [

@@ -11,7 +11,7 @@
     "lint:fix": "eslint packages/**/src/**/*.ts --fix",
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b",
-    "docs": "jsdoc -c jsdoc.json"
+    "docs": "echo \"Docs temporarily disabled\""
   },
   "pre-commit": [
     "test",
@@ -21,7 +21,6 @@
     "@types/jest": "^26.0.20",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
-    "better-docs": "^2.3.2",
     "eslint": "^7.21.0",
     "eslint-plugin-jest": "^24.1.9",
     "jest": "^26.6.3",
