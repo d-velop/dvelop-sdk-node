@@ -7,6 +7,9 @@ The project has alpha status so there are currently some limitations:
 * **Currently there is no public deployment to npm**
 
 
+## Documentation
+For a detailed documentation please refer to the [modules section](https://d-velop.github.io/dvelop-sdk-node/modules.html).
+
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct,
 and the process for submitting pull requests to us.
