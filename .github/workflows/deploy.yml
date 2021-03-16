@@ -1,0 +1,29 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  generate-docs:
+    name: Generate documentation
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+    - name: Install dependencies
+      run: npm ci
+    - name: Generate docs
+      run: npm run docs
+    - name: Upload docs
+      uses: actions/upload-artifact@v2
+      with:
+        name: dvelop-sdk-docs-${{github.run_id}}
+        path: docs
+
+  publish-docs:
+
+  publish-modules:
