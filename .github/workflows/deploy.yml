@@ -1,9 +1,9 @@
 name: deploy
 
 on:
- push:
-   branches:
-     - master
+  push:
+    branches:
+      - master
 
 jobs:
   publish-docs:
