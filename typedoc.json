@@ -1,0 +1,7 @@
+{
+  "entryPoints": [
+    "packages/app-router/src/index.ts",
+    "packages/identityprovider/src/index.ts"
+  ],
+  "out": "docs"
+}
