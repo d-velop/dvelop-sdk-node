@@ -1,4 +1,4 @@
-name: dvelop-sdk-ci
+name: dvelop-sdk-node-full-ci
 
 on: [push]
 
