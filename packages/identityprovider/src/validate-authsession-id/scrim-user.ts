@@ -1,6 +1,5 @@
 /**
  * User representation according to the [System for Cross-domain Identity Management (SCIM)]{@link https://tools.ietf.org/html/rfc7644}.
- * @category @dvelop-sdk/identityprovider
  * @property {string} id Unique Id
  * @property {string} userName Technical user name
  * @property {object} name Name object containing familyName (string) and givenName (string)
