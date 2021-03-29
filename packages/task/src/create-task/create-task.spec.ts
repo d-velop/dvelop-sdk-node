@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createTask } from "./create-task";
+import { getIdFromLocation } from "./create-task";
 import { Task } from "../task";
 
 jest.mock("axios");
@@ -49,4 +50,23 @@ describe("createTask", () => {
   
       expect(mockedAxios.post).toBeCalledWith(expect.any(String), task ,expect.any(Object));
     });
+
+    [
+      {
+        location: "/task/tasks/1234567890",
+        id: "1234567890"
+      },
+      {
+        location: "/firstPart/secondPart/0987654321",
+        id: "0987654321"
+      }
+    ].forEach(testCase=>
+      {
+        it(`should cut out the task id from location correctly for ${testCase.location}`, async () => {
+
+          const id = getIdFromLocation(testCase.location);
+      
+          expect(id).toBe(testCase.id);
+        });
+      });
   });

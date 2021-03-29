@@ -5,7 +5,8 @@ import { Task } from "../task";
  * Creates a [Task] with {@link Task} and returns a task id[string]
  * @param {string} systemBaseUri SystemBaseUri for the tenant.
  * @param {string} authsessionId AuthsessionId the call is executed with.
- * @returns {string} id of the created task
+ * @param {Task} task Task to be created.
+ * @returns {string} Id of the created task.
  *
  * @example ```typescript
  * const myTask: Task = {
@@ -32,12 +33,15 @@ export async function createTask(
     });
 
     const location:string = response.headers.location;
-    let id:string;
-    if(location && (location.match(/\//g) || []).length == 3){
-      id = location.split("/")[3];
-    } else {
-      id = "";
-    }
+    const id: string = getIdFromLocation(location);
 
     return id;
   }
+
+export function getIdFromLocation(location: string): string{
+  let id:string = "";
+  if(location && (location.match(/\//g) || []).length == 3){
+    id = location.split("/")[3];
+  }
+  return id;
+}
