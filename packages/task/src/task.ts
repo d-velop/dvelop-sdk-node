@@ -14,9 +14,9 @@
  */
 
 export interface Task {
-    subject: string;
+    subject?: string;
     description?: string;
-    assignees: string[];
+    assignees?: string[];
     correlationKey?: string;
     priority?: number;
     reminderDate?: string;
