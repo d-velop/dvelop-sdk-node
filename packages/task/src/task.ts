@@ -3,7 +3,7 @@
  * @property {string} subject Subject of task
  * @property {string} description A textual description of the task
  * @property {string[]} assignees The recipients (Id of users or groups from Identityprovider) of the task
- * @property {string} correlationKey Unique key for the task
+ * @property {string} correlationKey Unique key for the task. Required for creating a task.
  * @property {string} priority Priority between 0 (low) and 100 (high)
  * @property {string} reminderDate Reminder date (format RFC3339)
  * @property {string} dueDate Due date (format RFC3339)
@@ -17,7 +17,7 @@ export interface Task {
     subject: string;
     description?: string;
     assignees: string[];
-    correlationKey: string;
+    correlationKey?: string;
     priority?: number;
     reminderDate?: string;
     dueDate?: string;

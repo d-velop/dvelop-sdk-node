@@ -1,6 +1,6 @@
 import axios from "axios";
-import { createTask } from "./create-task"
-import { Task } from "../task"
+import { createTask } from "./create-task";
+import { Task } from "../task";
 
 jest.mock("axios");
 
@@ -19,7 +19,7 @@ describe("createTask", () => {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
-    }
+    };
   
     it("should make POST with correct URI", async () => {
   
