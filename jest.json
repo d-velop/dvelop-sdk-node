@@ -8,6 +8,6 @@
     "transform": {
         "^.+\\.ts$": "ts-jest"
     },
-    "coverageReporters": ["text"],
-    "testURL": "https://bpm-consulting.d-velop.cloud"
+    "coverageReporters": ["text"]
+
 }
