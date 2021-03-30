@@ -13,10 +13,12 @@ import { ScimUser } from "./scrim-user";
  * ```
  */
 export async function validateAuthSessionId(systemBaseUri: string, authSessionId: string): Promise<ScimUser> {
-  const response: AxiosResponse = await axios.get(`${systemBaseUri}/identityprovider/validate`, {
+  const response: AxiosResponse<ScimUser> = await axios.get<ScimUser>(`${systemBaseUri}/identityprovider/validate`, {
     headers: {
       "Authorization": `Bearer ${authSessionId}`
     }
+  }).catch(e => {
+    throw new Error(`Failed to validate AuthSessionId.\n${e}`);
   });
-  return response.data as ScimUser;
+  return response.data;
 }

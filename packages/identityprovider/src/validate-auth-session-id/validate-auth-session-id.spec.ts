@@ -40,4 +40,12 @@ describe("validateAuthsessionId", () => {
 
     expect(user).toEqual(data);
   });
+
+  it("should throw error on http-error", async () => {
+
+    const error: Error = new Error("HiItsMeError");
+    mockedAxios.get.mockRejectedValue(error);
+
+    await expect(validateAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId")).rejects.toThrowError(`Failed to validate AuthSessionId.\n${error}`);
+  });
 });
