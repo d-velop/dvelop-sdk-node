@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Authsession } from "./authsession";
 import { getAuthsession, AuthsessionDto } from "./get-authsession";
 
 jest.mock("axios");
@@ -43,5 +42,13 @@ describe("validateAuthsessionId", () => {
 
     expect(authsession.id).toEqual(data.AuthSessionId);
     expect(authsession.expire).toEqual(new Date(data.Expire));
+  });
+
+  it("should throw error on http-error", async () => {
+
+    const error: Error = new Error("HiItsMeError");
+    mockedAxios.get.mockRejectedValue(error);
+
+    await expect(getAuthsession("HiItsMeSystemBaseUri", "HiItsMeApiKey")).rejects.toThrowError(`Failed to get Authsession for given API-Key.\n${error}`);
   });
 });
