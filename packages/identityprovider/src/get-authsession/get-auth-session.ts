@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
-import { Authsession } from "./authsession";
+import { AuthSession } from "./auth-session";
 
-export interface AuthsessionDto {
+export interface AuthSessionDto {
   AuthSessionId: string;
   Expire: string;
 }
@@ -14,13 +14,13 @@ export interface AuthsessionDto {
  * @returns {string}
  *
  * @example ```typescript
- * const authsession: Authsession = getAuthsession("https://monster-ag.d-velop.cloud", "<API_KEY>");
- * console.log(authsession.id); //return a valid authsessionId
- * console.log('still valid:', authsession.expire.getTime() > new Date().getTime()); //still valid: true
+ * const authSession: AuthSession = await getAuthSession("https://dharma-initiative.d-velop.cloud", "<API_KEY>");
+ * console.log(authSession.id); //a valid authSessionId
+ * console.log('still valid:', authSession.expire.getTime() > new Date().getTime()); //still valid: true
  * ```
  */
-export async function getAuthsession(systemBaseUri: string, apiKey: string): Promise<Authsession> {
-  const response: AxiosResponse<AuthsessionDto> = await axios.get<AuthsessionDto>(`${systemBaseUri}/identityprovider/login`, {
+export async function getAuthSession(systemBaseUri: string, apiKey: string): Promise<AuthSession> {
+  const response: AxiosResponse<AuthSessionDto> = await axios.get<AuthSessionDto>(`${systemBaseUri}/identityprovider/login`, {
     headers: {
       "Authorization": `Bearer ${apiKey}`
     }
