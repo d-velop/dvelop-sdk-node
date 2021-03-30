@@ -25,7 +25,7 @@ export async function getAuthSession(systemBaseUri: string, apiKey: string): Pro
       "Authorization": `Bearer ${apiKey}`
     }
   }).catch(e => {
-    throw new Error(`Failed to get Authsession for given API-Key.\n${e}`);
+    throw new Error(`Failed to get AuthSession for given API-Key.\n${e}`);
   });
 
   return {

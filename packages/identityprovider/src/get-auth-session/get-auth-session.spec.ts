@@ -49,6 +49,6 @@ describe("validateAuthsessionId", () => {
     const error: Error = new Error("HiItsMeError");
     mockedAxios.get.mockRejectedValue(error);
 
-    await expect(getAuthSession("HiItsMeSystemBaseUri", "HiItsMeApiKey")).rejects.toThrowError(`Failed to get Authsession for given API-Key.\n${error}`);
+    await expect(getAuthSession("HiItsMeSystemBaseUri", "HiItsMeApiKey")).rejects.toThrowError(`Failed to get AuthSession for given API-Key.\n${error}`);
   });
 });

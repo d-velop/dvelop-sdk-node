@@ -1,5 +1,5 @@
 import axios from "axios";
-import { validateAuthsessionId } from "./validate-authsession-id";
+import { validateAuthSessionId } from "./validate-auth-session-id";
 
 jest.mock("axios");
 
@@ -16,19 +16,19 @@ describe("validateAuthsessionId", () => {
     const systemBaseUri = "HiItsMeSystemBaseUri";
     mockedAxios.get.mockResolvedValue({});
 
-    await validateAuthsessionId(systemBaseUri, "HiItsMeAuthSessionId");
+    await validateAuthSessionId(systemBaseUri, "HiItsMeAuthSessionId");
 
     expect(mockedAxios.get).toBeCalledWith(`${systemBaseUri}/identityprovider/validate`, expect.any(Object));
   });
 
   it("should make GET with correct headers", async () => {
 
-    const authessionId = "HiItsMeAuthsessionId";
+    const authSessionId = "HiItsMeAuthSessionId";
     mockedAxios.get.mockResolvedValue({});
 
-    await validateAuthsessionId("HiItsMeSystemBaseUri", authessionId);
+    await validateAuthSessionId("HiItsMeSystemBaseUri", authSessionId);
 
-    expect(mockedAxios.get).toBeCalledWith(expect.any(String), { headers: { "Authorization": `Bearer ${authessionId}` } });
+    expect(mockedAxios.get).toBeCalledWith(expect.any(String), { headers: { "Authorization": `Bearer ${authSessionId}` } });
   });
 
   it("should return response.data object", async () => {
@@ -36,7 +36,7 @@ describe("validateAuthsessionId", () => {
     const data = { hi: "ItsMeDataObject" };
     mockedAxios.get.mockResolvedValue({ data });
 
-    const user = await validateAuthsessionId("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId");
+    const user = await validateAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId");
 
     expect(user).toEqual(data);
   });
