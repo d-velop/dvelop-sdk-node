@@ -17,6 +17,17 @@
     "quotes": [
       "error",
       "double"
+    ],
+    "indent": [
+      "error",
+      2
+    ],
+    "function-call-argument-newline" : [
+      "error",
+      "never"
+    ],
+    "no-console" : [
+      "error"
     ]
   }
 }
