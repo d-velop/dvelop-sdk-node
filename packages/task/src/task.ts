@@ -1,5 +1,6 @@
 /**
  * Task representation
+ * @property {string} location Location of the task.
  * @property {string} subject Subject of task
  * @property {string} description A textual description of the task
  * @property {string[]} assignees The recipients (Id of users or groups from Identityprovider) of the task
@@ -14,6 +15,7 @@
  */
 
 export interface Task {
+    location?: string;
     subject?: string;
     description?: string;
     assignees?: string[];

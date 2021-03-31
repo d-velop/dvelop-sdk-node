@@ -1,12 +1,13 @@
 import axios, { AxiosResponse } from "axios";
 import { Task } from "../task";
+import { v4 } from "uuid";
 
 /**
  * Creates a [Task] with {@link Task} and returns a task id[string]
  * @param {string} systemBaseUri SystemBaseUri for the tenant.
  * @param {string} authsessionId AuthsessionId the call is executed with.
  * @param {Task} task Task to be created.
- * @returns {string} Id of the created task.
+ * @returns {Task} Created Task with location property.
  *
  * @example ```typescript
  * const myTask: Task = {
@@ -19,29 +20,19 @@ import { Task } from "../task";
  * ```
  */
 
-export async function createTask(
-    systemBaseUri: string,
-    authsessionId: string, 
-    task: Task,
-    ): Promise<string> {
-    const response: AxiosResponse = await axios.post(`${systemBaseUri}/task/tasks`,
-    task, {
-      headers: {
-        "Authorization": `Bearer ${authsessionId}`,
-        "Origin" : systemBaseUri
-      },
-    });
-
-    const location:string = response.headers.location;
-    const id: string = getIdFromLocation(location);
-
-    return id;
+export async function createTask(systemBaseUri: string, authsessionId: string, task: Task): Promise<Task> {
+  if(!task.correlationKey){
+    task.correlationKey = v4();
   }
+  const response: AxiosResponse = await axios.post(`${systemBaseUri}/task/tasks`, task, {
+    headers: {
+      "Authorization": `Bearer ${authsessionId}`,
+      "Origin": systemBaseUri
+    },
+  });
 
-export function getIdFromLocation(location: string): string{
-  let id:string = "";
-  if(location && (location.match(/\//g) || []).length == 3){
-    id = location.split("/")[3];
-  }
-  return id;
+  const location: string = response.headers.location;
+  task.location = location;
+
+  return task;
 }
