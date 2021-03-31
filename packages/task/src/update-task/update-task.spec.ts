@@ -12,28 +12,31 @@ describe("updateTask", () => {
     mockedAxios.patch.mockReset();
   });
 
-  let task:Task = {
-    subject: "Let us change the subject",
-    description: "My nice updated description"
-  };
-  
   it("should make PATCH with correct URI", async () => {
   
     const systemBaseUri = "HiItsMeSystemBaseUri";
-    const id = "1234567890";
+    let task:Task = {
+      location: "/it/is/a/location/1234567890",
+      subject: "Let us change the subject",
+      description: "My nice updated description"
+    };
   
-    await updateTask(systemBaseUri, "HiItsMeAuthSessionId", id ,task);
+    await updateTask(systemBaseUri, "HiItsMeAuthSessionId", task);
   
-    expect(mockedAxios.patch).toBeCalledWith(`${systemBaseUri}/task/tasks/${id}`, expect.any(Object), expect.any(Object));
+    expect(mockedAxios.patch).toBeCalledWith(`${systemBaseUri}${task.location}`, expect.any(Object), expect.any(Object));
   });
 
   it("should make PATCH with correct headers", async () => {
 
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
-    const id = "1234567890";
+    let task:Task = {
+      location: "/it/is/a/location/1234567890",
+      subject: "Let us change the subject",
+      description: "My nice updated description"
+    };
   
-    await updateTask(systemBaseUri, authessionId, id, task);
+    await updateTask(systemBaseUri, authessionId, task);
   
     expect(mockedAxios.patch).toBeCalledWith(expect.any(String), expect.any(Object), { headers: { "Authorization": `Bearer ${authessionId}` , "Origin" : systemBaseUri} });
   });
@@ -42,9 +45,13 @@ describe("updateTask", () => {
 
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
-    const id = "1234567890";
+    let task:Task = {
+      location: "/it/is/a/location/1234567890",
+      subject: "Let us change the subject",
+      description: "My nice updated description"
+    };
   
-    await updateTask(systemBaseUri, authessionId, id, task);
+    await updateTask(systemBaseUri, authessionId, task);
   
     expect(mockedAxios.patch).toBeCalledWith(expect.any(String), task ,expect.any(Object));
   });
