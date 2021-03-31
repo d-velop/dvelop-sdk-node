@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from "axios";
-import { Task } from "../task";
+import { Task, TaskDto } from "../task";
 import { v4 } from "uuid";
 
 /**
  * Creates a [Task] with {@link Task} and returns a task id[string]
  * @param {string} systemBaseUri SystemBaseUri for the tenant.
  * @param {string} authsessionId AuthsessionId the call is executed with.
- * @param {Task} task Task to be created.
+ * @param {TaskDto} task Task to be created.
  * @returns {Task} Created Task with location property.
  *
  * @example ```typescript
@@ -20,7 +20,7 @@ import { v4 } from "uuid";
  * ```
  */
 
-export async function createTask(systemBaseUri: string, authsessionId: string, task: Task): Promise<Task> {
+export async function createTask(systemBaseUri: string, authsessionId: string, task: TaskDto): Promise<Task> {
   if(!task.correlationKey){
     task.correlationKey = v4();
   }
@@ -32,7 +32,7 @@ export async function createTask(systemBaseUri: string, authsessionId: string, t
   });
 
   const location: string = response.headers.location;
-  task.location = location;
+  let createdTask: Task = {...task, location: location};
 
-  return task;
+  return createdTask;
 }
