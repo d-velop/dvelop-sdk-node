@@ -18,16 +18,15 @@ import { Task } from "../task";
  */
 
 export async function updateTask(
-    systemBaseUri: string,
-    authsessionId: string, 
-    id: string,
-    task: Task,
-    ): Promise<void> {
-    await axios.patch(`${systemBaseUri}/task/tasks/${id}`,
-    task, {
-      headers: {
-        "Authorization": `Bearer ${authsessionId}`,
-        "Origin" : systemBaseUri
-      },
-    });
-  }
+  systemBaseUri: string,
+  authsessionId: string, 
+  id: string,
+  task: Task,
+): Promise<void> {
+  await axios.patch(`${systemBaseUri}/task/tasks/${id}`, task, {
+    headers: {
+      "Authorization": `Bearer ${authsessionId}`,
+      "Origin" : systemBaseUri
+    },
+  });
+}

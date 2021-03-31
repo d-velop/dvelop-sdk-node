@@ -13,15 +13,14 @@ import axios from "axios";
  */
 
 export async function completeTask(
-    systemBaseUri: string,
-    authsessionId: string, 
-    id: string,
-    ): Promise<void> {
-    await axios.post(`${systemBaseUri}/task/tasks/${id}/completionState`,
-    {"complete" : true}, {
-      headers: {
-        "Authorization": `Bearer ${authsessionId}`,
-        "Origin" : systemBaseUri
-      },
-    });
-  }
+  systemBaseUri: string,
+  authsessionId: string,
+  id: string,
+): Promise<void> {
+  await axios.post(`${systemBaseUri}/task/tasks/${id}/completionState`, { "complete": true }, {
+    headers: {
+      "Authorization": `Bearer ${authsessionId}`,
+      "Origin": systemBaseUri
+    },
+  });
+}

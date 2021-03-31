@@ -12,16 +12,15 @@ import axios from "axios";
  * ```
  */
 
- export async function deleteTask(
-    systemBaseUri: string,
-    authsessionId: string, 
-    id: string,
-    ): Promise<void> {
-    await axios.delete(`${systemBaseUri}/task/tasks/${id}`,
-     {
-      headers: {
-        "Authorization": `Bearer ${authsessionId}`,
-        "Origin" : systemBaseUri
-      },
-    });
-  }
+export async function deleteTask(
+  systemBaseUri: string,
+  authsessionId: string, 
+  id: string,
+): Promise<void> {
+  await axios.delete(`${systemBaseUri}/task/tasks/${id}`, {
+    headers: {
+      "Authorization": `Bearer ${authsessionId}`,
+      "Origin" : systemBaseUri
+    },
+  });
+}
