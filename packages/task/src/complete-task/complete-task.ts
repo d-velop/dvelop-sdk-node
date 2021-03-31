@@ -1,10 +1,11 @@
 import axios from "axios";
+import { Task, instanceOfTask } from "../task";
 
 /**
  * Completes Task for given Task id
  * @param {string} systemBaseUri SystemBaseUri for the tenant.
  * @param {string} authsessionId AuthsessionId the call is executed with.
- * @param {string} id Id of the task to be completed.
+ * @param {string|Task} task Location of a task or task or task object.
  *
  * @example ```typescript
  * const taskId = "1234567890"
@@ -15,9 +16,17 @@ import axios from "axios";
 export async function completeTask(
   systemBaseUri: string,
   authsessionId: string,
-  id: string,
+  task: string | Task,
 ): Promise<void> {
-  await axios.post(`${systemBaseUri}/task/tasks/${id}/completionState`, { "complete": true }, {
+
+  var location:string;
+  if(instanceOfTask(task)){
+    location = task.location;
+  } else {
+    location = task;
+  }
+
+  await axios.post(`${systemBaseUri}${location}/completionState`, { "complete": true }, {
     headers: {
       "Authorization": `Bearer ${authsessionId}`,
       "Origin": systemBaseUri
