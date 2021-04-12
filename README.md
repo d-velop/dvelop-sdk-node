@@ -1,22 +1,33 @@
-# d.velop cloud SDK for Node.js
+
+
+<div style="text-align: center">
+  <div>
+    <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=flat-square">
+    <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/d-velop/dvelop-sdk-node">
+    <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/1?style=flat-square">
+  </div>
+  <div>
+    <img src="https://img.shields.io/badge/%40dvelop%2Fapp--router-merged-blueviolet">
+    <img src="https://img.shields.io/badge/%40dvelop%2Fidentityprovider-merged-blueviolet">
+    <img src="https://img.shields.io/badge/%40dvelop%2Ftask-in%20progress-%230052cc">
+  </div>
+  </br>
+  <h2>dvelop-sdk-node</h2>
+  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+</div>
+
+## About
+
+**This project has alpha status. There are currently no npm-releases. Expect things to change.**
+
 This is the official SDK to build Apps for [d.velop cloud](https://www.d-velop.de/cloud/) using
-the [Node.js](https://nodejs.org/en/).
+[Node.js](https://nodejs.org/en/). We support typescript.
+Our packages are developed framework agnostic but with express.js in mind. For further information refer to the [documentation](https://d-velop.github.io/dvelop-sdk-node/modules.html).
 
-The project has alpha status so there are currently some limitations:
-* **Expect things to change**
-* **Currently there is no public deployment to npm**
-
-
-## Documentation
-For a detailed documentation please refer to the [modules section](https://d-velop.github.io/dvelop-sdk-node/modules.html).
 
 ## Contributing
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct,
 and the process for submitting pull requests to us.
-
-## Versioning
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see
-the [releases on this repository](https://github.com/d-velop/dvelop-sdk-node/releases).
 
 ## License
 Please read [LICENSE](LICENSE) for licensing information.
