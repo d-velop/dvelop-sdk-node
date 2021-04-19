@@ -1,15 +1,17 @@
 
 
 <div style="text-align: center">
+
   <div>
-    <img src="https://img.shields.io/badge/%40dvelop%2Fapp--router-merged-blueviolet">
-    <img src="https://img.shields.io/badge/%40dvelop%2Fidentityprovider-merged-blueviolet">
-    <img src="https://img.shields.io/badge/%40dvelop%2Ftask-in%20progress-%230052cc">
+    <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
+    <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/d-velop/dvelop-sdk-node?style=for-the-badge">
+    <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/1?style=for-the-badge">
   </div>
+  </br>
   <div>
-    <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=flat-square">
-    <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/d-velop/dvelop-sdk-node">
-    <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/1?style=flat-square">
+    <img src="https://img.shields.io/badge/%40dvelop%2Fapp--router-merged-blueviolet?style=for-the-badge">
+    <img src="https://img.shields.io/badge/%40dvelop%2Fidentityprovider-merged-blueviolet?style=for-the-badge">
+    <img src="https://img.shields.io/badge/%40dvelop%2Ftask-in%20progress-%230052cc?style=for-the-badge">
   </div>
   </br>
   <h2>dvelop-sdk-node</h2>
