@@ -23,18 +23,16 @@
 **This project has alpha status. There are currently no npm-releases. Expect things to change.**
 
 This is the official SDK to build Apps for [d.velop cloud](https://www.d-velop.de/cloud/) using
-[Node.js](https://nodejs.org/en/) and written in typescirpt.
+[node.js](https://nodejs.org/en/) and [typescirpt](https://www.typescriptlang.org/).
+
 
 ## Getting started
 
-This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop App you want to use. For example if you want to work with the task-App, type:
+This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop App you want to use. For example if you want to work with the task-app, type:
 
-</br>
-
-> npm i @dvelop/identityprovider @dvelop/task
-
-</br>
-
+```
+npm i @dvelop/identityprovider @dvelop/task
+```
 ``` typescript
 import { getAuthSessionByApiKey } from '@dvelop/identityprovider';
 import * as taskApp from '@dvelop/task';
@@ -51,14 +49,14 @@ import * as taskApp from '@dvelop/task';
 
 </br>
 
+## Build an app
+
 This SDK was designed framework agnostic but with express in mind.
 
-</br>
-
-> npm i @dvelop/app-router @dvelop/identityprovider
-
-</br>
-
+### Check the request-signature
+```
+npm i @dvelop/app-router
+```
 ``` typescript
 import * as appRouter from '@dvelop/app-router';
 
@@ -88,6 +86,12 @@ app.use((req, res, next) => {
 
 </br>
 
+
+### Authenticate the user
+
+```
+npm i @dvelop/identityprovider
+```
 ```typescript
 import * as idp from '@dvelop/identityprovider';
 
@@ -112,7 +116,7 @@ app.use((req, res, next) => {
   req.redirect(redirectionUri);
 });
 
-// send a personal greeting if a userName is defined
+// send a personal greeting if userName is defined
 app.get((req, res) => {
   const userName: string = req.user.name || "world";
   res.status(200).send(`Hello ${req.user.name}!`)
