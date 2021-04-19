@@ -11,7 +11,8 @@
     "lint:fix": "eslint packages/**/src/**/*.ts --fix",
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "release": "lerna version --no-push"
   },
   "pre-commit": [
     "test",
