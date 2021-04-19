@@ -78,7 +78,7 @@ jobs:
     - name: Upload compiled code
       uses: actions/upload-artifact@v2
       with:
-        name: @dvelop-sdk-${{github.run_id}}
+        name: "@dvelop-sdk-${{github.run_id}}"
         path: |
           packages/**/lib/*
           packages/**/package.json
