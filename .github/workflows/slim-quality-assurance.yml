@@ -7,23 +7,6 @@ on:
 
 jobs:
 
-  dependencies:
-    runs-on: ubuntu-latest
-    name: Install dependencies
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-    - name: Run npm ci
-      run: npm ci
-    - name: Upload dependencies
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-{github.sha}
-        path: node_modules/*
-
-
   test:
     runs-on: ubuntu-latest
     name: Test code
@@ -33,10 +16,8 @@ jobs:
       uses: actions/checkout@v2
     - name: Set up Node.js
       uses: actions/setup-node@v2
-    - name: Download dependencies
-      uses: actions/download-artifact@v2
-      with:
-        name: build-{github.sha}
+    - name: Install dependencies
+      run: npm ci
     - name: Run tests
       run: npm test
 
