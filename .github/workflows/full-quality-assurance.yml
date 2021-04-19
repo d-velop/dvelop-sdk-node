@@ -73,11 +73,13 @@ jobs:
       uses: actions/setup-node@v2
     - name: Install dependencies
       run: npm ci
-    - name: Upload build
+    - name: Build code
+      run: npm run build
+    - name: Upload compiled code
       uses: actions/upload-artifact@v2
       with:
-        name: dvelop-sdk-${{github.run_id}}
+        name: @dvelop-sdk-${{github.run_id}}
         path: |
-          packages/*/lib/*
-          packages/*/package.json
-          packages/*/package-lock.json
+          packages/**/lib/*
+          packages/**/package.json
+          packages/**/package-lock.json
