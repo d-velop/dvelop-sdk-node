@@ -37,5 +37,8 @@ export const DVELOP_REQUEST_ID_HEADER = "x-dv-request-id";
  */
 export const DVELOP_REQUEST_SIGNATURE_HEADER = "x-dv-sig-1";
 
+
+export const tmpTest = "This is a test";
+
 export { generateRequestId } from "./generate-request-id/generate-request-id";
 export { validateRequestSignature } from "./validate-request-signature/validate-request-signature";
