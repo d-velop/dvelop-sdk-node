@@ -83,3 +83,4 @@ jobs:
           packages/*/lib/*
           packages/*/package.json
           packages/*/package-lock.json
+          packages/*/README.md
