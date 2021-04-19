@@ -80,6 +80,6 @@ jobs:
       with:
         name: "@dvelop-sdk-${{github.run_id}}"
         path: |
-          packages/**/lib/*
-          packages/**/package.json
-          packages/**/package-lock.json
+          packages/*/lib/*
+          packages/*/package.json
+          packages/*/package-lock.json
