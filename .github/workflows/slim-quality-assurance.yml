@@ -35,9 +35,8 @@ jobs:
       uses: actions/setup-node@v2
     - name: Download dependencies
       uses: actions/download-artifact@v2
-        with:
-          name: build-{github.sha}
-          path: node_modules/*
+      with:
+        name: build-{github.sha}
     - name: Run tests
       run: npm test
 
