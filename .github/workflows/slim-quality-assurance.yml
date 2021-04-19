@@ -10,7 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Test code
-    needs: dependencies
     steps:
     - name: Checkout
       uses: actions/checkout@v2
