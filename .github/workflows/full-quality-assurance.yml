@@ -58,3 +58,22 @@ jobs:
       with:
         name: dvelop-sdk-docs-${{github.run_id}}
         path: docs
+
+  build:
+    name: Build and upload code
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+    - name: Install dependencies
+      run: npm ci
+    - name: Upload build
+      uses: actions/upload-artifact@v2
+      with:
+        name: dvelop-sdk-${{github.run_id}}
+        path: |
+          packages/*/lib/*
+          packages/*/package.json
+          packages/*/package-lock.json
