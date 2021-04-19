@@ -60,11 +60,11 @@ jobs:
     - name: Upload docs
       uses: actions/upload-artifact@v2
       with:
-        name: dvelop-sdk-docs-${{github.run_id}}
+        name: dvelop-sdk-${{github.run_id}}-docs
         path: docs
 
   build:
-    name: Build and upload code
+    name: Build code
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -73,9 +73,9 @@ jobs:
       uses: actions/setup-node@v2
     - name: Install dependencies
       run: npm ci
-    - name: Build code
+    - name: Build
       run: npm run build
-    - name: Upload compiled code
+    - name: Upload
       uses: actions/upload-artifact@v2
       with:
         name: "@dvelop-sdk-${{github.run_id}}"
