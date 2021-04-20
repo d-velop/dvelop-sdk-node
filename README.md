@@ -1,6 +1,6 @@
 
 
-<div style="text-align: center">
+<div align="center">
 
   <div>
     <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
