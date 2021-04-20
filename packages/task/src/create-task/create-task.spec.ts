@@ -1,6 +1,6 @@
 import axios from "axios";
 import { createTask } from "./create-task";
-import { Task } from "../task";
+import { Task, TaskDto } from "../task";
 
 jest.mock("axios");
 
@@ -20,7 +20,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:Task = {
+    let task:TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
@@ -36,7 +36,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:Task = {
+    let task:TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
@@ -52,7 +52,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:Task = {
+    let task:TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
@@ -68,7 +68,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:Task = {
+    let task:TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"]
     };
@@ -85,7 +85,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:Task = {
+    let task:TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
@@ -101,7 +101,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:Task = {
+    let task:TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
