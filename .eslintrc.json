@@ -1,5 +1,8 @@
 {
-  "extends": ["eslint:recommended", "plugin:jest/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:jest/recommended"
+  ],
   "env": {
     "node": true,
     "jest/globals": true
@@ -22,11 +25,15 @@
       "error",
       2
     ],
-    "function-call-argument-newline" : [
+    "function-call-argument-newline": [
       "error",
       "never"
     ],
-    "no-console" : [
+    "function-paren-newline": [
+      "error",
+      "never"
+    ],
+    "no-console": [
       "error"
     ]
   }
