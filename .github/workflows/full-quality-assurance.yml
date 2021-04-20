@@ -52,7 +52,7 @@ jobs:
     - name: Install npm dependencies
       run: npm ci
     - name: Run tests
-      run: npm run licens
+      run: npm run license
 
   generate-docs:
     name: Generate documentation
