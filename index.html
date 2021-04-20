@@ -58,30 +58,123 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<a href="#dvelop-cloud-sdk-for-nodejs" id="dvelop-cloud-sdk-for-nodejs" style="color: inherit; text-decoration: none;">
-					<h1>d.velop cloud SDK for Node.js</h1>
+				<div align="center">
+					<div>
+						<img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
+						<img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/1?style=for-the-badge">
+					</div>
+					<div>
+						<img src="https://img.shields.io/badge/%40dvelop%2Fapp--router-merged-blueviolet?style=for-the-badge">
+						<img src="https://img.shields.io/badge/%40dvelop%2Fidentityprovider-merged-blueviolet?style=for-the-badge">
+						<img src="https://img.shields.io/badge/%40dvelop%2Ftask-in%20progress-%230052cc?style=for-the-badge">
+					</div>
+				</div>
+				</br>
+				<div align="center">
+					<h1>dvelop-sdk-node</h1>
+					<a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+				</div>
+				</br>
+				<a href="#about" id="about" style="color: inherit; text-decoration: none;">
+					<h2>About</h2>
 				</a>
+				<p><strong>This project has alpha status. There are currently no npm-releases. Expect things to change.</strong></p>
 				<p>This is the official SDK to build Apps for <a href="https://www.d-velop.de/cloud/">d.velop cloud</a> using
-				the <a href="https://nodejs.org/en/">Node.js</a>.</p>
-				<p>The project has alpha status so there are currently some limitations:</p>
-				<ul>
-					<li><strong>Expect things to change</strong></li>
-					<li><strong>Currently there is no public deployment to npm</strong></li>
-				</ul>
-				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
-					<h2>Documentation</h2>
+				<a href="https://nodejs.org/en/">node.js</a> and <a href="https://www.typescriptlang.org/">typescirpt</a>.</p>
+				<a href="#getting-started" id="getting-started" style="color: inherit; text-decoration: none;">
+					<h2>Getting started</h2>
 				</a>
-				<p>For a detailed documentation please refer to the <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html">modules section</a>.</p>
+				<p>This SDK is diveded into <a href="https://developer.d-velop.de/dev/de/explore-the-apps">apps</a>. Install individual packages per d-velop App you want to use.</p>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">i</span><span style="color: #000000"> @</span><span style="color: #001080">dvelop</span><span style="color: #000000">/</span><span style="color: #001080">identityprovider</span><span style="color: #000000"> @</span><span style="color: #001080">dvelop</span><span style="color: #000000">/</span><span style="color: #001080">task</span>
+</code></pre>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">getAuthSessionByApiKey</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@dvelop/identityprovider&#039;</span><span style="color: #000000">;</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #0000FF">*</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #001080">taskApp</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@dvelop/task&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #000000">(</span><span style="color: #0000FF">async</span><span style="color: #000000"> </span><span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">main</span><span style="color: #000000">() {</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">authSessionId</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getAuthSessionByApiKey</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;&lt;SYSTEM_BASE_URI&gt;&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;&lt;API_KEY&gt;&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">taskApp</span><span style="color: #000000">.</span><span style="color: #795E26">completeTask</span><span style="color: #000000">(</span><span style="color: #001080">systemBaseUri</span><span style="color: #000000">, </span><span style="color: #001080">authSessionId</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;123456&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">})();</span>
+</code></pre>
+				<div align="center">
+					<a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+				</div>
+				</br>
+				<a href="#build-an-app" id="build-an-app" style="color: inherit; text-decoration: none;">
+					<h2>Build an app</h2>
+				</a>
+				<p>This SDK was designed framework agnostic but with express in mind.</p>
+				<a href="#check-the-request-signature" id="check-the-request-signature" style="color: inherit; text-decoration: none;">
+					<h3>Check the request-signature</h3>
+				</a>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">i</span><span style="color: #000000"> @</span><span style="color: #001080">dvelop</span><span style="color: #000000">/</span><span style="color: #001080">app</span><span style="color: #000000">-</span><span style="color: #001080">router</span>
+</code></pre>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #0000FF">*</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #001080">appRouter</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@dvelop/app-router&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #008000">// check request signature and set d-velop stuff for further usage</span>
+<span style="color: #001080">app</span><span style="color: #000000">.</span><span style="color: #795E26">use</span><span style="color: #000000">((</span><span style="color: #001080">req</span><span style="color: #000000">, </span><span style="color: #001080">res</span><span style="color: #000000">, </span><span style="color: #001080">next</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">systemBaseUri</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> = </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #795E26">header</span><span style="color: #000000">(</span><span style="color: #001080">appRouter</span><span style="color: #000000">.</span><span style="color: #0070C1">DVELOP_SYSTEM_BASE_URI_HEADER</span><span style="color: #000000">);</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">tenantId</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> = </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #795E26">header</span><span style="color: #000000">(</span><span style="color: #001080">appRouter</span><span style="color: #000000">.</span><span style="color: #0070C1">DVELOP_TENANT_ID_HEADER</span><span style="color: #000000">);</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">requestSignature</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> = </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #795E26">header</span><span style="color: #000000">(</span><span style="color: #001080">appRouter</span><span style="color: #000000">.</span><span style="color: #0070C1">DVELOP_REQUEST_SIGNATURE_HEADER</span><span style="color: #000000">);</span>
+
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">validRequest</span><span style="color: #000000">: </span><span style="color: #267F99">boolean</span><span style="color: #000000"> = </span><span style="color: #795E26">validateRequestSignature</span><span style="color: #000000">(</span><span style="color: #001080">process</span><span style="color: #000000">.</span><span style="color: #001080">env</span><span style="color: #000000">.</span><span style="color: #0070C1">APP_SECRET</span><span style="color: #000000">, </span><span style="color: #001080">systemBaseUri</span><span style="color: #000000">, </span><span style="color: #001080">tenantId</span><span style="color: #000000">, </span><span style="color: #001080">requestSignature</span><span style="color: #000000">)</span>
+
+<span style="color: #000000">  </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">validRequest</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">systemBaseUri</span><span style="color: #000000"> = </span><span style="color: #001080">systemBaseUri</span><span style="color: #000000">;</span>
+<span style="color: #000000">    </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">tenantId</span><span style="color: #000000"> = </span><span style="color: #001080">tenantId</span>
+<span style="color: #000000">    </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">requestId</span><span style="color: #000000"> = </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #795E26">header</span><span style="color: #000000">(</span><span style="color: #001080">appRouter</span><span style="color: #000000">.</span><span style="color: #0070C1">DVELOP_REQUEST_ID_HEADER</span><span style="color: #000000">);</span>
+<span style="color: #000000">    </span><span style="color: #795E26">next</span><span style="color: #000000">();</span>
+<span style="color: #000000">  } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">res</span><span style="color: #000000">.</span><span style="color: #795E26">status</span><span style="color: #000000">(</span><span style="color: #098658">403</span><span style="color: #000000">).</span><span style="color: #795E26">send</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Forbidden&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">});</span>
+</code></pre>
+				<div align="center">
+					<a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+				</div>
+				</br>
+				<a href="#authenticate-the-user" id="authenticate-the-user" style="color: inherit; text-decoration: none;">
+					<h3>Authenticate the user</h3>
+				</a>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">i</span><span style="color: #000000"> @</span><span style="color: #001080">dvelop</span><span style="color: #000000">/</span><span style="color: #001080">identityprovider</span>
+</code></pre>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #0000FF">*</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #001080">idp</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@dvelop/identityprovider&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #008000">// validate authSessionId and set user OR redirect request to login</span>
+<span style="color: #001080">app</span><span style="color: #000000">.</span><span style="color: #795E26">use</span><span style="color: #000000">((</span><span style="color: #001080">req</span><span style="color: #000000">, </span><span style="color: #001080">res</span><span style="color: #000000">, </span><span style="color: #001080">next</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+
+<span style="color: #000000">  </span><span style="color: #008000">// TODO: const authSessionId: string =</span>
+
+<span style="color: #000000">  </span><span style="color: #AF00DB">if</span><span style="color: #000000">(</span><span style="color: #001080">authSessionId</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">try</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">user</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">validateAuthSessionId</span><span style="color: #000000">(</span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">systemBaseUri</span><span style="color: #000000">, </span><span style="color: #001080">authSessionId</span><span style="color: #000000">)</span>
+<span style="color: #000000">      </span><span style="color: #795E26">next</span><span style="color: #000000">();</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">catch</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000">) {</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">status</span><span style="color: #000000"> !== </span><span style="color: #098658">401</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #008000">// log error</span>
+<span style="color: #000000">        </span><span style="color: #001080">res</span><span style="color: #000000">.</span><span style="color: #795E26">status</span><span style="color: #000000">(</span><span style="color: #098658">500</span><span style="color: #000000">).</span><span style="color: #795E26">send</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Internal server error&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  }</span>
+
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">redirectUri</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> = </span><span style="color: #001080">idp</span><span style="color: #000000">.</span><span style="color: #795E26">getLoginRedirectionUri</span><span style="color: #000000">(</span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">originalUrl</span><span style="color: #000000">);</span>
+<span style="color: #000000">  </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #795E26">redirect</span><span style="color: #000000">(</span><span style="color: #001080">redirectionUri</span><span style="color: #000000">);</span>
+<span style="color: #000000">});</span>
+
+<span style="color: #008000">// send a personal greeting if userName is defined</span>
+<span style="color: #001080">app</span><span style="color: #000000">.</span><span style="color: #795E26">get</span><span style="color: #000000">((</span><span style="color: #001080">req</span><span style="color: #000000">, </span><span style="color: #001080">res</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">userName</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000"> = </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">user</span><span style="color: #000000">.</span><span style="color: #001080">name</span><span style="color: #000000"> || </span><span style="color: #A31515">&quot;world&quot;</span><span style="color: #000000">;</span>
+<span style="color: #000000">  </span><span style="color: #001080">res</span><span style="color: #000000">.</span><span style="color: #795E26">status</span><span style="color: #000000">(</span><span style="color: #098658">200</span><span style="color: #000000">).</span><span style="color: #795E26">send</span><span style="color: #000000">(</span><span style="color: #A31515">`Hello </span><span style="color: #0000FF">${</span><span style="color: #001080">req</span><span style="color: #000000FF">.</span><span style="color: #001080">user</span><span style="color: #000000FF">.</span><span style="color: #001080">name</span><span style="color: #0000FF">}</span><span style="color: #A31515">!`</span><span style="color: #000000">)</span>
+<span style="color: #000000">});</span>
+</code></pre>
+				<div align="center">
+					<a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+				</div>
+				</br>
 				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
 					<h2>Contributing</h2>
 				</a>
-				<p>Please read <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> for details on our code of conduct,
-				and the process for submitting pull requests to us.</p>
-				<a href="#versioning" id="versioning" style="color: inherit; text-decoration: none;">
-					<h2>Versioning</h2>
-				</a>
-				<p>We use <a href="http://semver.org/">SemVer</a> for versioning. For the versions available, see
-				the <a href="https://github.com/d-velop/dvelop-sdk-node/releases">releases on this repository</a>.</p>
+				<p>This project is maintained by d-velop but is looking for contributers. If you consider contributing to this project please read <a href="CONTRIBUTING.md">CONTRIBUTING</a> for details on how to get started.</p>
 				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
 					<h2>License</h2>
 				</a>

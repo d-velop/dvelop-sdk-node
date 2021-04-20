@@ -79,13 +79,15 @@
 						<section class="tsd-index-section ">
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.authsession.html" class="tsd-kind-icon">Auth<wbr>Session</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.scimuser.html" class="tsd-kind-icon">Scim<wbr>User</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="identityprovider.html#validateauthsessionid" class="tsd-kind-icon">validate<wbr>Authsession<wbr>Id</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="identityprovider.html#getauthsession" class="tsd-kind-icon">get<wbr>Auth<wbr>Session</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="identityprovider.html#validateauthsessionid" class="tsd-kind-icon">validate<wbr>Auth<wbr>Session<wbr>Id</a></li>
 							</ul>
 						</section>
 					</div>
@@ -94,25 +96,71 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="validateauthsessionid" class="tsd-anchor"></a>
-					<h3>validate<wbr>Authsession<wbr>Id</h3>
+					<a name="getauthsession" class="tsd-anchor"></a>
+					<h3>get<wbr>Auth<wbr>Session</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">validate<wbr>Authsession<wbr>Id<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, authsessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.scimuser.html" class="tsd-signature-type" data-tsd-kind="Interface">ScimUser</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Auth<wbr>Session<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, apiKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.authsession.html" class="tsd-signature-type" data-tsd-kind="Interface">AuthSession</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/74e846f/packages/identityprovider/src/validate-authsession-id/validate-authsession-id.ts#L15">identityprovider/src/validate-authsession-id/validate-authsession-id.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/1927b2d/packages/identityprovider/src/get-auth-session/get-auth-session.ts#L22">identityprovider/src/get-auth-session/get-auth-session.ts:22</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Validates an authSessionId and returns a <a href="../interfaces/identityprovider.scimuser.html">ScimUser</a></p>
+									<p>Returns an <a href="../interfaces/identityprovider.authsession.html">AuthSession</a> based on an API-Key.
+									<strong>The AuthSessionId should be kept secret and never be publicly available</strong></p>
 								</div>
 								<dl class="tsd-comment-tags">
 									<dt>example</dt>
-									<dd><pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">user</span><span style="color: #000000">: </span><span style="color: #267F99">ScimUser</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">validateAuthsessionId</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;vXo4FMlnYYiGArNfjfJHEJDNWfjfejglgnewjgrjokgajifahfhdahfuewfhlR/4FxJxmNsjlq2XgWQm/GYVBq/hEvsJy1BK4WLoCXek=&amp;ga8gds7gafkajgkj24ut8ugudash34jGlDG&amp;dr6j0zusHVN8PcyerI0YXqRu30f8AGoUaZ6vInCDtZInS6aK2PplAelsv9t8&quot;</span><span style="color: #000000">);</span>
+									<dd><pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">authSession</span><span style="color: #000000">: </span><span style="color: #267F99">AuthSession</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getAuthSession</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://dharma-initiative.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;&lt;API_KEY&gt;&quot;</span><span style="color: #000000">);</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">authSession</span><span style="color: #000000">.</span><span style="color: #001080">id</span><span style="color: #000000">); </span><span style="color: #008000">//a valid authSessionId</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;still valid:&#039;</span><span style="color: #000000">, </span><span style="color: #001080">authSession</span><span style="color: #000000">.</span><span style="color: #001080">expire</span><span style="color: #000000">.</span><span style="color: #795E26">getTime</span><span style="color: #000000">() &gt; </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Date</span><span style="color: #000000">().</span><span style="color: #795E26">getTime</span><span style="color: #000000">()); </span><span style="color: #008000">//still valid: true</span>
+</code></pre>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>SystemBaseUri for the tenant.</p>
+									</div>
+								</li>
+								<li>
+									<h5>apiKey: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>API-Key provided by the d.velop cloud.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.authsession.html" class="tsd-signature-type" data-tsd-kind="Interface">AuthSession</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="validateauthsessionid" class="tsd-anchor"></a>
+					<h3>validate<wbr>Auth<wbr>Session<wbr>Id</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">validate<wbr>Auth<wbr>Session<wbr>Id<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, authSessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.scimuser.html" class="tsd-signature-type" data-tsd-kind="Interface">ScimUser</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/1927b2d/packages/identityprovider/src/validate-auth-session-id/validate-auth-session-id.ts#L15">identityprovider/src/validate-auth-session-id/validate-auth-session-id.ts:15</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Validates an AuthSessionId and returns a <a href="../interfaces/identityprovider.scimuser.html">ScimUser</a></p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd><pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">user</span><span style="color: #000000">: </span><span style="color: #267F99">ScimUser</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">validateAuthSessionId</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;vXo4FMlnYYiGArNfjfJHEJDNWfjfejglgnewjgrjokgajifahfhdahfuewfhlR/4FxJxmNsjlq2XgWQm/GYVBq/hEvsJy1BK4WLoCXek=&amp;ga8gds7gafkajgkj24ut8ugudash34jGlDG&amp;dr6j0zusHVN8PcyerI0YXqRu30f8AGoUaZ6vInCDtZInS6aK2PplAelsv9t8&quot;</span><span style="color: #000000">);</span>
 <span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">user</span><span style="color: #000000">.</span><span style="color: #001080">displayName</span><span style="color: #000000">) </span><span style="color: #008000">//Mike Glotzkowski</span>
 </code></pre>
 									</dd>
@@ -127,9 +175,9 @@
 									</div>
 								</li>
 								<li>
-									<h5>authsessionId: <span class="tsd-signature-type">string</span></h5>
+									<h5>authSessionId: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>AuthsessionId which needs validation.</p>
+										<p>AuthSessionId which should be validated.</p>
 									</div>
 								</li>
 							</ul>
@@ -156,10 +204,16 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/identityprovider.authsession.html" class="tsd-kind-icon">Auth<wbr>Session</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/identityprovider.scimuser.html" class="tsd-kind-icon">Scim<wbr>User</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="identityprovider.html#validateauthsessionid" class="tsd-kind-icon">validate<wbr>Authsession<wbr>Id</a>
+						<a href="identityprovider.html#getauthsession" class="tsd-kind-icon">get<wbr>Auth<wbr>Session</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="identityprovider.html#validateauthsessionid" class="tsd-kind-icon">validate<wbr>Auth<wbr>Session<wbr>Id</a>
 					</li>
 				</ul>
 			</nav>
