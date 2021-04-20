@@ -5,7 +5,7 @@
   "version": "independent",
   "command": {
     "version": {
-      "message": "Automated lerna versioning"
+      "message": "Automated task: lerna versioning"
     }
   }
 }
