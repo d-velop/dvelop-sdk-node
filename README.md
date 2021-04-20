@@ -12,10 +12,12 @@
     <img src="https://img.shields.io/badge/%40dvelop%2Fidentityprovider-merged-blueviolet?style=for-the-badge">
     <img src="https://img.shields.io/badge/%40dvelop%2Ftask-in%20progress-%230052cc?style=for-the-badge">
   </div>
-  </br>
-  <h1>dvelop-sdk-node</h1>
-  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
 </div>
+
+# dvelop-sdk-node
+
+<a align="center" href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+</br>
 
 ## About
 
@@ -42,10 +44,7 @@ import * as taskApp from '@dvelop/task';
 })();
 ```
 
-<div style="text-align: center">
-  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
-</div>
-
+<a align="center" href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
 </br>
 
 ## Build an app
@@ -79,12 +78,8 @@ app.use((req, res, next) => {
 });
 ```
 
-<div style="text-align: center">
-  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
-</div>
-
+<a align="center" href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
 </br>
-
 
 ### Authenticate the user
 
@@ -122,10 +117,7 @@ app.get((req, res) => {
 });
 ```
 
-<div style="text-align: center">
-  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
-</div>
-
+<a align="center" href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
 </br>
 
 ## Contributing
