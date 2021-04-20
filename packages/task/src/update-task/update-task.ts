@@ -17,11 +17,7 @@ import { Task, TaskDto } from "../task";
  * ```
  */
 
-export async function updateTask(
-  systemBaseUri: string,
-  authsessionId: string, 
-  task: Task,
-): Promise<void> {
+export async function updateTask(systemBaseUri: string, authsessionId: string, task: Task,): Promise<void> {
   let updateTask = task as TaskDto;
   await axios.patch(`${systemBaseUri}${task.location}`, updateTask, {
     headers: {

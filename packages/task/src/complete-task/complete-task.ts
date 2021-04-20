@@ -13,11 +13,7 @@ import { Task, instanceOfTask } from "../task";
  * ```
  */
 
-export async function completeTask(
-  systemBaseUri: string,
-  authsessionId: string,
-  task: string | Task,
-): Promise<void> {
+export async function completeTask(systemBaseUri: string, authsessionId: string, task: string | Task,): Promise<void> {
 
   var location:string;
   if(instanceOfTask(task)){
