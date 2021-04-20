@@ -4,7 +4,6 @@
     <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
     <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/1?style=for-the-badge">
   </div>
-  </br>
   <div>
     <img src="https://img.shields.io/badge/%40dvelop%2Fapp--router-merged-blueviolet?style=for-the-badge">
     <img src="https://img.shields.io/badge/%40dvelop%2Fidentityprovider-merged-blueviolet?style=for-the-badge">
@@ -14,10 +13,10 @@
 
 </br>
 
-<center>
+<div align="center">
   <h1>dvelop-sdk-node</h1>
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
-</center>
+</div>
 
 </br>
 
