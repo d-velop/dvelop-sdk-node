@@ -1,5 +1,3 @@
-
-
 <div align="center">
 
   <div>
@@ -16,10 +14,10 @@
 
 </br>
 
-<div align="center">
+<center>
   <h1>dvelop-sdk-node</h1>
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
-</div>
+</center>
 
 </br>
 
