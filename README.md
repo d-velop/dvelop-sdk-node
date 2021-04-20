@@ -14,9 +14,13 @@
   </div>
 </div>
 
-# dvelop-sdk-node
+</br>
 
-<a align="center" href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+<div align="center">
+  <h1>dvelop-sdk-node</h1>
+  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+</div>
+
 </br>
 
 ## About
@@ -44,7 +48,9 @@ import * as taskApp from '@dvelop/task';
 })();
 ```
 
-<a align="center" href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+<div align="center">
+  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+</div>
 </br>
 
 ## Build an app
@@ -78,7 +84,10 @@ app.use((req, res, next) => {
 });
 ```
 
-<a align="center" href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+<div align="center">
+  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+</div>
+
 </br>
 
 ### Authenticate the user
@@ -117,7 +126,10 @@ app.get((req, res) => {
 });
 ```
 
-<a align="center" href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+<div align="center">
+  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+</div>
+
 </br>
 
 ## Contributing
