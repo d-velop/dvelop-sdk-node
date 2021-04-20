@@ -51,6 +51,6 @@ export interface Task extends TaskDto{
     location: string;
 }
 
-export function instanceOfTask(task: Task | string):task is Task{
+export function instanceOfTask(task: Task | string): task is Task{
   return (task as Task).location !== undefined;
 }

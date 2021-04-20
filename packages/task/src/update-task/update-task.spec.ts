@@ -15,7 +15,7 @@ describe("updateTask", () => {
   it("should make PATCH with correct URI", async () => {
   
     const systemBaseUri = "HiItsMeSystemBaseUri";
-    let task:Task = {
+    let task: Task = {
       location: "/it/is/a/location/1234567890",
       subject: "Let us change the subject",
       description: "My nice updated description"
@@ -30,7 +30,7 @@ describe("updateTask", () => {
 
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
-    let task:Task = {
+    let task: Task = {
       location: "/it/is/a/location/1234567890",
       subject: "Let us change the subject",
       description: "My nice updated description"
@@ -45,7 +45,7 @@ describe("updateTask", () => {
 
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
-    let task:Task = {
+    let task: Task = {
       location: "/it/is/a/location/1234567890",
       subject: "Let us change the subject",
       description: "My nice updated description"

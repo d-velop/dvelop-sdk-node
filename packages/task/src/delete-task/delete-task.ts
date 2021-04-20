@@ -15,7 +15,7 @@ import { Task, instanceOfTask } from "../task";
 
 export async function deleteTask(systemBaseUri: string, authsessionId: string, task: string | Task): Promise<void> {
 
-  var location:string;
+  let location: string;
   if(instanceOfTask(task)){
     location = task.location;
   } else {

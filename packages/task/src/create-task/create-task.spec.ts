@@ -20,7 +20,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:TaskDto = {
+    let task: TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
@@ -36,7 +36,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:TaskDto = {
+    let task: TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
@@ -52,7 +52,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:TaskDto = {
+    let task: TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
@@ -68,12 +68,12 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:TaskDto = {
+    let task: TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"]
     };
   
-    const createdTask:Task = await createTask(systemBaseUri, authessionId, task);
+    const createdTask: Task = await createTask(systemBaseUri, authessionId, task);
   
     expect(createdTask.correlationKey).not.toBeUndefined();
     expect(createdTask.correlationKey).not.toBeNull();
@@ -85,13 +85,13 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:TaskDto = {
+    let task: TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
     };
   
-    const createdTask:Task = await createTask(systemBaseUri, authessionId, task);
+    const createdTask: Task = await createTask(systemBaseUri, authessionId, task);
 
     expect(createdTask.correlationKey).toEqual("IAmSoUnique");
   });
@@ -101,7 +101,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task:TaskDto = {
+    let task: TaskDto = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
@@ -111,7 +111,7 @@ describe("createTask", () => {
       location: "some/location/uri/abcdefg"
     }});
   
-    const createdTask:Task = await createTask(systemBaseUri, authessionId, task);
+    const createdTask: Task = await createTask(systemBaseUri, authessionId, task);
   
     expect(createdTask.location).toEqual("some/location/uri/abcdefg");
   });

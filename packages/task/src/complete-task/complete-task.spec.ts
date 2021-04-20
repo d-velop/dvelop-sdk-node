@@ -27,7 +27,7 @@ describe("completeTask", () => {
   
     const systemBaseUri = "HiItsMeSystemBaseUri";
     const authessionId = "HiItsMeAuthsessionId";
-    const myTask:Task = {
+    const myTask: Task = {
       location: "/it/is/a/location/1234567890",
       subject: "Nice Subject",
       description: "a description",
