@@ -30,8 +30,7 @@ This is the official SDK to build Apps for [d.velop cloud](https://www.d-velop.d
 
 ## Getting started
 
-This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop App you want to use. For example if you want to work with the task-app, type:
-
+This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop App you want to use.
 ```
 npm i @dvelop/identityprovider @dvelop/task
 ```
