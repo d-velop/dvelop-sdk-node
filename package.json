@@ -9,7 +9,7 @@
     "test:watch": "jest --config jest.json --watch",
     "lint": "eslint packages/**/src/**/*.ts",
     "lint:fix": "eslint packages/**/src/**/*.ts --fix",
-    "license": "license-checker --start packages/app-router --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause && license-checker --start packages/identityprovider --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause",
+    "license": "lerna run license",
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b",
     "docs": "typedoc",
