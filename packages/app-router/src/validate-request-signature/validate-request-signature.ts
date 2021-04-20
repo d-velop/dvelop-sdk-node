@@ -1,7 +1,7 @@
 import * as crypto from "crypto";
 
 /**
- * Validates the requestId against your appSecret.
+ * Validates a request-signature against your appSecret.
  * **The requestSignature should be validated for every request when recieving calls from the d.velop cloud.
  * Refer to the [d.velop basics tenant header section](https://developer.d-velop.de/dev/en/basics#tenant-header) for more information.**
  * @param {string} appSecret The secret generated for your app in the cloud-center
