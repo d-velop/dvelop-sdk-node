@@ -9,9 +9,11 @@
     "test:watch": "jest --config jest.json --watch",
     "lint": "eslint packages/**/src/**/*.ts",
     "lint:fix": "eslint packages/**/src/**/*.ts --fix",
+    "license": "ts-node scripts/check-licenses.ts",
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "release": "lerna version --no-push"
   },
   "pre-commit": [
     "test",
@@ -19,14 +21,17 @@
   ],
   "devDependencies": {
     "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.41",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
     "eslint": "^7.21.0",
     "eslint-plugin-jest": "^24.1.9",
     "jest": "^26.6.3",
     "lerna": "^4.0.0",
+    "license-checker": "^25.0.1",
     "pre-commit": "^1.2.2",
     "ts-jest": "^26.5.0",
+    "ts-node": "^9.1.1",
     "typedoc": "^0.20.32",
     "typescript": "^4.1.2"
   }

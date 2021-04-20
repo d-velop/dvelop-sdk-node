@@ -1,40 +1,39 @@
-
-
-<div style="text-align: center">
+<div align="center">
 
   <div>
     <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
-    <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/d-velop/dvelop-sdk-node?style=for-the-badge">
     <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/1?style=for-the-badge">
   </div>
-  </br>
   <div>
     <img src="https://img.shields.io/badge/%40dvelop%2Fapp--router-merged-blueviolet?style=for-the-badge">
     <img src="https://img.shields.io/badge/%40dvelop%2Fidentityprovider-merged-blueviolet?style=for-the-badge">
     <img src="https://img.shields.io/badge/%40dvelop%2Ftask-in%20progress-%230052cc?style=for-the-badge">
   </div>
-  </br>
-  <h2>dvelop-sdk-node</h2>
+</div>
+
+</br>
+
+<div align="center">
+  <h1>dvelop-sdk-node</h1>
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
 </div>
+
+</br>
 
 ## About
 
 **This project has alpha status. There are currently no npm-releases. Expect things to change.**
 
 This is the official SDK to build Apps for [d.velop cloud](https://www.d-velop.de/cloud/) using
-[Node.js](https://nodejs.org/en/) and written in typescirpt.
+[node.js](https://nodejs.org/en/) and [typescirpt](https://www.typescriptlang.org/).
+
 
 ## Getting started
 
-This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop App you want to use. For example if you want to work with the task-App, type:
-
-</br>
-
-> npm i @dvelop/identityprovider @dvelop/task
-
-</br>
-
+This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop App you want to use.
+```
+npm i @dvelop/identityprovider @dvelop/task
+```
 ``` typescript
 import { getAuthSessionByApiKey } from '@dvelop/identityprovider';
 import * as taskApp from '@dvelop/task';
@@ -45,20 +44,19 @@ import * as taskApp from '@dvelop/task';
 })();
 ```
 
-<div style="text-align: center">
+<div align="center">
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
 </div>
-
 </br>
+
+## Build an app
 
 This SDK was designed framework agnostic but with express in mind.
 
-</br>
-
-> npm i @dvelop/app-router @dvelop/identityprovider
-
-</br>
-
+### Check the request-signature
+```
+npm i @dvelop/app-router
+```
 ``` typescript
 import * as appRouter from '@dvelop/app-router';
 
@@ -82,12 +80,17 @@ app.use((req, res, next) => {
 });
 ```
 
-<div style="text-align: center">
+<div align="center">
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
 </div>
 
 </br>
 
+### Authenticate the user
+
+```
+npm i @dvelop/identityprovider
+```
 ```typescript
 import * as idp from '@dvelop/identityprovider';
 
@@ -112,14 +115,14 @@ app.use((req, res, next) => {
   req.redirect(redirectionUri);
 });
 
-// send a personal greeting if a userName is defined
+// send a personal greeting if userName is defined
 app.get((req, res) => {
   const userName: string = req.user.name || "world";
   res.status(200).send(`Hello ${req.user.name}!`)
 });
 ```
 
-<div style="text-align: center">
+<div align="center">
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
 </div>
 
