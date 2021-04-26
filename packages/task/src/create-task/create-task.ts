@@ -19,20 +19,36 @@ import { v4 } from "uuid";
  * console.log(taskId) //2ua8dae2sc8k0rnpm117969bbg
  * ```
  */
-
 export async function createTask(systemBaseUri: string, authsessionId: string, task: Task): Promise<Task> {
-  if(!task.correlationKey){
+
+  if (!task.correlationKey) {
     task.correlationKey = v4();
   }
-  const response: AxiosResponse = await axios.post(`${systemBaseUri}/task/tasks`, task, {
-    headers: {
-      "Authorization": `Bearer ${authsessionId}`,
-      "Origin": systemBaseUri
-    },
-  });
 
-  const location: string = response.headers.location;
-  let createdTask: Task = {...task, location: location};
+  try {
+    const response: AxiosResponse = await axios.post(`${systemBaseUri}/task/tasks`, task, {
+      headers: {
+        "Authorization": `Bearer ${authsessionId}`,
+        "Origin": systemBaseUri
+      },
+    });
 
-  return createdTask;
+    const location: string = response.headers.location;
+    let createdTask: Task = { ...task, location: location };
+    return createdTask;
+
+  } catch (e) {
+    if (e.response) {
+      switch (e.response.status) {
+      case 400:
+        throw new Error(`Task is invalid.\nValidation: ${JSON.stringify(e.response.data)}`);
+      case 401:
+        throw new Error("The user is not authenticated.");
+      case 403:
+        throw new Error("The user is not eligible to create the task.");
+      }
+    }
+    throw new Error(`Failed to create Task: ${JSON.stringify(e)}`);
+  }
+
 }

@@ -25,10 +25,24 @@ export async function deleteTask(systemBaseUri: string, authsessionId: string, t
     throw new Error("Failed to delete Task.\nNo Location");
   }
 
-  await axios.delete(`${systemBaseUri}${location}`, {
-    headers: {
-      "Authorization": `Bearer ${authsessionId}`,
-      "Origin": systemBaseUri
-    },
-  });
+  try {
+    await axios.delete(`${systemBaseUri}${location}`, {
+      headers: {
+        "Authorization": `Bearer ${authsessionId}`,
+        "Origin": systemBaseUri
+      },
+    });
+  } catch (e) {
+    if (e.response) {
+      switch (e.response.status) {
+      case 401:
+        throw new Error("The user is not authenticated.");
+      case 403:
+        throw new Error("The user does not have the permission to delete this task.");
+      case 404:
+        throw new Error("The task does not exist.");
+      }
+    }
+    throw new Error(`Failed to delete Task: ${JSON.stringify(e)}`);
+  }
 }

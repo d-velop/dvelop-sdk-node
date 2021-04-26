@@ -25,10 +25,26 @@ export async function completeTask(systemBaseUri: string, authsessionId: string,
     throw new Error("Failed to complete Task.\nNo Location");
   }
 
-  await axios.post(`${systemBaseUri}${location}/completionState`, { "complete": true }, {
-    headers: {
-      "Authorization": `Bearer ${authsessionId}`,
-      "Origin": systemBaseUri
-    },
-  });
+  try {
+    await axios.post(`${systemBaseUri}${location}/completionState`, { "complete": true }, {
+      headers: {
+        "Authorization": `Bearer ${authsessionId}`,
+        "Origin": systemBaseUri
+      },
+    });
+  } catch (e) {
+    if (e.response) {
+      switch (e.response.status) {
+      case 401:
+        throw new Error("The user is not authenticated.");
+      case 403:
+        throw new Error("The user does not have the permission to complete this task.");
+      case 404:
+        throw new Error("The task does not exist.");
+      case 410:
+        throw new Error("This task was already completed.");
+      }
+    }
+    throw new Error(`Failed to create Task: ${JSON.stringify(e)}`);
+  }
 }

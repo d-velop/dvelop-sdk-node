@@ -38,8 +38,6 @@ describe("completeTask", () => {
     });
   });
 
-
-
   it("should make POST with correct URI with location given", async () => {
 
     const systemBaseUri = "HiItsMeSystemBaseUri";
@@ -89,5 +87,31 @@ describe("completeTask", () => {
     await completeTask(systemBaseUri, authessionId, location);
 
     expect(mockedAxios.post).toBeCalledWith(expect.any(String), expectedBody, expect.any(Object));
+  });
+
+  [
+    { status: 401, error: "The user is not authenticated." },
+    { status: 403, error: "The user does not have the permission to complete this task." },
+    { status: 404, error: "The task does not exist." },
+    { status: 410, error: "This task was already completed." }
+  ].forEach(testCase => {
+    it(`should throw "${testCase.error}" on status ${testCase.status}`, async () => {
+      mockedAxios.post.mockRejectedValue({ response: { status: testCase.status } });
+      await expect(completeTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", "/task/taks/1234567890")).rejects.toThrowError(testCase.error);
+    });
+  });
+
+  [100, 300, 414, 503].forEach(testCase => {
+    it("should throw generic error on unknown status", async () => {
+      const response = { response: { status: testCase, message: "HiItsMeError" } };
+      mockedAxios.post.mockRejectedValue(response);
+
+      await expect(completeTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", "/task/taks/1234567890")).rejects.toThrowError(`Failed to create Task: ${JSON.stringify(response)}`);
+    });
+  });
+
+  it("should throw generic error on unknown error", async () => {
+    mockedAxios.post.mockRejectedValue({});
+    await expect(completeTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", "/task/taks/1234567890")).rejects.toThrowError(`Failed to create Task: ${JSON.stringify({})}`);
   });
 });

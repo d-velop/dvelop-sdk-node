@@ -72,4 +72,31 @@ describe("updateTask", () => {
 
     expect(mockedAxios.patch).toBeCalledWith(expect.any(String), task, expect.any(Object));
   });
+
+
+  [
+    { status: 401, error: "The user is not authenticated." },
+    { status: 403, error: "The user does not have the permission to update this task." },
+    { status: 404, error: "The task does not exist." },
+    { status: 410, error: "This task was already completed." }
+  ].forEach(testCase => {
+    it(`should throw "${testCase.error}" on status ${testCase.status}`, async () => {
+      mockedAxios.patch.mockRejectedValue({ response: { status: testCase.status } });
+      await expect(updateTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", { location: "HiItsMeLocation" })).rejects.toThrowError(testCase.error);
+    });
+  });
+
+  [100, 300, 414, 503].forEach(testCase => {
+    it("should throw generic error on unknown status", async () => {
+      const response = { response: { status: testCase, message: "HiItsMeError" } };
+      mockedAxios.patch.mockRejectedValue(response);
+
+      await expect(updateTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", { location: "HiItsMeLocation" })).rejects.toThrowError(`Failed to update Task: ${JSON.stringify(response)}`);
+    });
+  });
+
+  it("should throw generic error on unknown error", async () => {
+    mockedAxios.patch.mockRejectedValue({});
+    await expect(updateTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", { location: "HiItsMeLocation" })).rejects.toThrowError(`Failed to update Task: ${JSON.stringify({})}`);
+  });
 });
