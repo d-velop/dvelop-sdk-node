@@ -1,13 +1,13 @@
 import axios from "axios";
 import { createTask } from "./create-task";
-import { Task, TaskDto } from "../task";
+import { Task } from "../task";
 
 jest.mock("axios");
 
 describe("createTask", () => {
 
   const mockedAxios = axios as jest.Mocked<typeof axios>;
-  
+
   beforeEach(() => {
     mockedAxios.post.mockReset();
     mockedAxios.post.mockResolvedValue({headers: {
@@ -16,18 +16,18 @@ describe("createTask", () => {
   });
 
   it("should make POST with correct URI", async () => {
-  
+
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task: TaskDto = {
+    let task: Task = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
     };
-  
+
     await createTask(systemBaseUri, authessionId, task);
-  
+
     expect(mockedAxios.post).toBeCalledWith(`${systemBaseUri}/task/tasks`, expect.any(Object), expect.any(Object));
   });
 
@@ -36,14 +36,14 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task: TaskDto = {
+    let task: Task = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
     };
-  
+
     await createTask(systemBaseUri, authessionId, task);
-  
+
     expect(mockedAxios.post).toBeCalledWith(expect.any(String), expect.any(Object), { headers: { "Authorization": `Bearer ${authessionId}` , "Origin" : systemBaseUri} });
   });
 
@@ -52,14 +52,14 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task: TaskDto = {
+    let task: Task = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
     };
-  
+
     await createTask(systemBaseUri, authessionId, task);
-  
+
     expect(mockedAxios.post).toBeCalledWith(expect.any(String), task ,expect.any(Object));
   });
 
@@ -68,13 +68,13 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task: TaskDto = {
+    let task: Task = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"]
     };
-  
+
     const createdTask: Task = await createTask(systemBaseUri, authessionId, task);
-  
+
     expect(createdTask.correlationKey).not.toBeUndefined();
     expect(createdTask.correlationKey).not.toBeNull();
     expect(createdTask.correlationKey).not.toEqual("");
@@ -85,12 +85,12 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task: TaskDto = {
+    let task: Task = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
     };
-  
+
     const createdTask: Task = await createTask(systemBaseUri, authessionId, task);
 
     expect(createdTask.correlationKey).toEqual("IAmSoUnique");
@@ -101,7 +101,7 @@ describe("createTask", () => {
     const authessionId = "HiItsMeAuthsessionId";
     const systemBaseUri = "HiItsMeSystemBaseUri";
 
-    let task: TaskDto = {
+    let task: Task = {
       subject: "Some nice subject for your work",
       assignees: ["HereShouldStandAndUserOrGroupId"],
       correlationKey: "IAmSoUnique",
@@ -110,9 +110,9 @@ describe("createTask", () => {
     mockedAxios.post.mockResolvedValue({headers: {
       location: "some/location/uri/abcdefg"
     }});
-  
+
     const createdTask: Task = await createTask(systemBaseUri, authessionId, task);
-  
+
     expect(createdTask.location).toEqual("some/location/uri/abcdefg");
   });
 });
