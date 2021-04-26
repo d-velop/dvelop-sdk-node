@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Task, TaskDto } from "../task";
+import { Task } from "../task";
 import { v4 } from "uuid";
 
 /**
@@ -20,7 +20,7 @@ import { v4 } from "uuid";
  * ```
  */
 
-export async function createTask(systemBaseUri: string, authsessionId: string, task: TaskDto): Promise<Task> {
+export async function createTask(systemBaseUri: string, authsessionId: string, task: Task): Promise<Task> {
   if(!task.correlationKey){
     task.correlationKey = v4();
   }

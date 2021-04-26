@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Task, instanceOfTask } from "../task";
+import { Task } from "../task";
 
 /**
  * Completes Task for given Task id
@@ -15,11 +15,10 @@ import { Task, instanceOfTask } from "../task";
 
 export async function completeTask(systemBaseUri: string, authsessionId: string, task: string | Task): Promise<void> {
 
-  let location: string;
-  if(instanceOfTask(task)){
-    location = task.location;
-  } else {
-    location = task;
+  let location: string = typeof task === "string" ? task : task.location!;
+
+  if(!location) {
+    throw new Error("Failed to complete Task.\nNo Location");
   }
 
   await axios.post(`${systemBaseUri}${location}/completionState`, { "complete": true }, {

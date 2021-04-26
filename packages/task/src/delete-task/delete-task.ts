@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Task, instanceOfTask } from "../task";
+import { Task } from "../task";
 
 /**
  * Delete Task for given Task id
@@ -15,17 +15,16 @@ import { Task, instanceOfTask } from "../task";
 
 export async function deleteTask(systemBaseUri: string, authsessionId: string, task: string | Task): Promise<void> {
 
-  let location: string;
-  if(instanceOfTask(task)){
-    location = task.location;
-  } else {
-    location = task;
+  let location: string = typeof task === "string" ? task : task.location!;
+
+  if (!location) {
+    throw new Error("Failed to delete Task.\nNo Location");
   }
 
   await axios.delete(`${systemBaseUri}${location}`, {
     headers: {
       "Authorization": `Bearer ${authsessionId}`,
-      "Origin" : systemBaseUri
+      "Origin": systemBaseUri
     },
   });
 }

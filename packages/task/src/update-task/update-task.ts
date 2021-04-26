@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Task, TaskDto } from "../task";
+import { Task } from "../task";
 
 /**
  * Updates a [Task] with {@link Task} for given id[string]
@@ -18,11 +18,15 @@ import { Task, TaskDto } from "../task";
  */
 
 export async function updateTask(systemBaseUri: string, authsessionId: string, task: Task,): Promise<void> {
-  let updateTask = task as TaskDto;
-  await axios.patch(`${systemBaseUri}${task.location}`, updateTask, {
+
+  if (!task.location) {
+    throw new Error("Failed to update Task.\nNo Location");
+  }
+
+  await axios.patch(`${systemBaseUri}${task.location}`, task, {
     headers: {
       "Authorization": `Bearer ${authsessionId}`,
-      "Origin" : systemBaseUri
+      "Origin": systemBaseUri
     },
   });
 }

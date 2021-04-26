@@ -104,7 +104,8 @@ export interface TaskLinks {
  * @property {TaskLinks} _links Contains links for the task. form(object) -> uri to form which is displayed on task; callback(object) -> uri is called with POST when task finished; attachment(object) -> uri for attachment as context action; process(object) -> uri of process which created the task; changeCallback(object) -> uri is called with POST when task was changed;
  */
 
-export interface TaskDto {
+export interface Task {
+  location?: string;
   subject?: string;
   description?: string;
   assignees?: string[];
@@ -116,12 +117,4 @@ export interface TaskDto {
   context?: TaskContext;
   metadata?: TaskMetaData[];
   _links?: TaskLinks;
-}
-
-export interface Task extends TaskDto {
-  location: string;
-}
-
-export function instanceOfTask(task: Task | string): task is Task {
-  return (task as Task).location !== undefined;
 }
