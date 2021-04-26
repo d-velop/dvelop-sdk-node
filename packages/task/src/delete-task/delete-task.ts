@@ -15,9 +15,13 @@ import { Task } from "../task";
 
 export async function deleteTask(systemBaseUri: string, authsessionId: string, task: string | Task): Promise<void> {
 
-  let location: string = typeof task === "string" ? task : task.location!;
+  let location: string;
 
-  if (!location) {
+  if (task && typeof task === "string") {
+    location = task;
+  } else if (task && (task as Task).location) {
+    location = (task as Task).location!;
+  } else {
     throw new Error("Failed to delete Task.\nNo Location");
   }
 
