@@ -26,16 +26,16 @@ jobs:
         folder: docs
 
   publish-prerelease:
-    name: release documentation
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up node.js
-        uses: actions/setup-node@v2
-      - name: Install npm dependencies
-        run: npm ci
-      - name: Publish code
-        run: lerna publish prerelease --no-push --yes
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+    name: Publish Prerelease to npm
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up node.js
+      uses: actions/setup-node@v2
+    - name: Install npm dependencies
+      run: npm ci
+    - name: Publish code
+      run: lerna publish prerelease --no-push --yes
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
