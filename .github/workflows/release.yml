@@ -35,6 +35,12 @@ jobs:
       uses: actions/setup-node@v2
     - name: Install npm dependencies
       run: npm ci
+    - name: Set GitHub identity
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email 'github-actions[bot]@users.noreply.github.com'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Publish code
       run: lerna publish prerelease --no-push --yes
       env:
