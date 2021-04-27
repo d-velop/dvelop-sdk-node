@@ -5,6 +5,11 @@ on:
     branches:
       - master
       - develop
+  push:
+    branches:
+      - master
+      - develop
+
 
 jobs:
   test:
@@ -16,14 +21,14 @@ jobs:
         node-version: [10.x, 12.x, 14.x, 15.x]
     name: Test for Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v2
-    - name: Set up Node.js ${{ matrix.node-version }}
+    - name: Set up node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
         registry-url: 'https://registry.npmjs.org'
-    - name: Install dependencies
+    - name: Install npm dependencies
       run: npm ci
     - name: Run tests
       run: npm test
@@ -32,29 +37,64 @@ jobs:
     name: Lint code
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v2
-    - name: Set up Node.js
+    - name: Set up node.js
       uses: actions/setup-node@v2
-    - name: Install dependencies
+    - name: Install npm dependencies
       run: npm ci
     - name: Run tests
       run: npm run lint
+
+  license:
+    name: Check license conformity
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up node.js
+      uses: actions/setup-node@v2
+    - name: Install npm dependencies
+      run: npm ci
+    - name: Run tests
+      run: npm run license
 
   generate-docs:
     name: Generate documentation
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v2
-    - name: Set up Node.js
+    - name: Set up node.js
       uses: actions/setup-node@v2
-    - name: Install dependencies
+    - name: Install npm dependencies
       run: npm ci
     - name: Generate docs
       run: npm run docs
     - name: Upload docs
       uses: actions/upload-artifact@v2
       with:
-        name: dvelop-sdk-docs-${{github.run_id}}
+        name: dvelop-sdk-${{github.run_id}}-docs
         path: docs
+
+  build:
+    name: Build code
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up node.js
+      uses: actions/setup-node@v2
+    - name: Install npm dependencies
+      run: npm ci
+    - name: Run build
+      run: npm run build
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: "@dvelop-sdk-${{github.run_id}}"
+        path: |
+          packages/*/lib/*
+          packages/*/package.json
+          packages/*/package-lock.json
+          packages/*/README.md

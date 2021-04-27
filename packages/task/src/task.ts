@@ -1,56 +1,166 @@
 /**
- * Task representation
- * @property {string} location Location of the task.
- * @property {string} subject Subject of task
- * @property {string} description A textual description of the task
- * @property {string[]} assignees The recipients (Id of users or groups from Identityprovider) of the task
- * @property {string} correlationKey Unique key for the task. Required for creating a task.
- * @property {string} priority Priority between 0 (low) and 100 (high)
- * @property {string} reminderDate Reminder date (format RFC3339)
- * @property {string} dueDate Due date (format RFC3339)
- * @property {string} retentionTime Time until finished task is delted from task database. (format ISO-8601 e.g. P30D for 30 days). Between 0 - 365 days.
- * @property {object} context Context of the Task. key(string) -> technical identifier; type(string) -> technical identifier for type of context; name(string) -> displayname;
- * @property {object[]} metadata Array of objects containing metadata of the task. key(string) -> technical identifier; caption(string) -> caption of metadata; values(string[]) -> values (0-255 char, currently one value allowed); i18n(object) -> to specify different translations
- * @property {object} _links Contains links for the task. form(object) -> uri to form which is displayed on task; callback(object) -> uri is called with POST when task finished; attachment(object) -> uri for attachment as context action; process(object) -> uri of process which created the task; changeCallback(object) -> uri is called with POST when task was changed;
+ * The context of a task.
+ *
+ * @example ```typescript
+ * {
+ *   ...
+ *   "context" : {
+ *     "key" : "myContextKey",
+ *     "type" : "bpm",
+ *     "name" : "my context name"
+ *   }
+ * }
+ * ```
  */
+export interface TaskContext {
 
-export interface TaskDto {
-    subject?: string;
-    description?: string;
-    assignees?: string[];
-    correlationKey?: string;
-    priority?: number;
-    reminderDate?: string;
-    dueDate?: string;
-    retentionTime?: string;
-    context?: {
-        key: string;
-        type: string;
-        name: string;
-    }
-    metadata?: {
-        key: string;
-        caption: string;
-        values: string[];
-        i18n?: {
-            caption: {
-                [key: string]: string;
-            }[]
-        }
-    }[];
-    _links?: {
-        form?: { href: string};
-        callback?: {href: string};
-        attachment?: {href: string};
-        process?: {href: string};
-        changeCallback?: {href: string};
-    }
+  /** Technical identifier for this context. */
+  key?: string;
+
+  /** Technical identifier for the type of this context. */
+  type?: string;
+
+  /** Display name for this context. */
+  name?: string;
 }
 
-export interface Task extends TaskDto{
-    location: string;
+/**
+ * Metadata for the task.
+ *
+ * @example ```typescript
+ * {
+ *   ...
+ *   "metadata" : [
+ *      {
+ *        "key" : "invoiceNumber",
+ *        "caption" : "Invoice Number",
+ *        "values" : ["INV123489"],
+ *        "i18n" : {
+ *          "caption" : {
+ *            "de" : "Rechnungsnummer",
+ *            "it" : "Numero di fattura"
+ *          }
+ *        }
+ *      }
+ *   ]
+ * }
+ * ```
+ */
+export interface TaskMetaData {
+
+  /** Unique key within these metadata consisting of only alphanumeric characters (1-255 character). Please make sure to use a distinct key for your tasks so that they do not collide with metadata of other task sources. */
+  key?: string;
+
+  /** Label of the metadata field. */
+  caption?: string;
+
+  /** Value of the metadata field. Currently, only one value is allowed per metadata field. If you use these values for delegation or responsibility rules, note the leading or trailing spaces. The spaces will be considered for the rules. */
+  values?: string[];
+
+  /** You can optionally add localized metadata to captions. */
+  i18n?: {
+    caption: {
+      [key: string]: string;
+    }[]
+  }
 }
 
-export function instanceOfTask(task: Task | string):task is Task{
-  return (task as Task).location !== undefined;
+/**
+ * Links for the task. With these you can interact with the Task-App in an asynchronous way. [Explore the documentation]{@link https://developer.d-velop.de/documentation/taskapp/en#creating-a-task}.
+ *
+ * @example ```typescript
+ * {
+ *   ...
+ *   "_links" : {
+ *     "form" : {
+ *       "href" : "https://example.com/form"
+ *     }
+ *   }
+ * }
+ * ```
+ */
+export interface TaskLinks {
+
+  /** This URI provides an editing dialog for the task. You can find further details in the section [Adding editing dialogs]{@link https://developer.d-velop.de/documentation/taskapp/en#adding-editing-dialogs}. */
+  form?: { href: string };
+
+  /** This URI is displayed as a context action in the user interface to display additional information for the user. */
+  attachment?: { href: string };
+
+  /** This URI is called on completion of a task. */
+  callback?: { href: string };
+
+  /** This URI represents the process by which the task was initiated. The process is displayed in the user interface as a separate perspective for the task. */
+  process?: { href: string };
+
+  /** This URI is called in case of updates to the task. */
+  changeCallback?: { href: string };
+}
+
+export interface Task {
+
+  /** Location of the task. This should be treated like an ID. */
+  location?: string;
+
+  /** Subject of the task */
+  subject?: string;
+
+  /** A textual description of the task. */
+  description?: string;
+
+  /** The recipients of the task. IDs for users and groups are provided by the [Identityprovider]{@link identityprovider}. */
+  assignees?: string[];
+
+  /** Unique key for the task. Required for creating a task. */
+  correlationKey?: string;
+
+  /** Priority between 0 (low) and 100 (high) */
+  priority?: number;
+
+  /**
+   * Reminder date in [RFC3339]{@link https://tools.ietf.org/html/rfc3339} format
+   *
+   * @example ```typescript
+   * {
+   *   ...
+   *   "reminderDate" : "2018-07-31T20:16:17.000+02:00"
+   * }
+   * ```
+   */
+  reminderDate?: string;
+
+  /**
+   * Reminder date in [RFC3339]{@link https://tools.ietf.org/html/rfc3339} format
+   *
+   * @example ```typescript
+   * {
+   *   ...
+   *   "dueDate" : "2018-08-15T20:16:17.000+02:00"
+   * }
+   * ```
+   */
+  dueDate?: string;
+
+  /**
+   * Time until finished task is deleted from task database in [ISO-8601](https://www.w3.org/TR/NOTE-datetime#:~:text=by%20Markus%20Kuhn.-,ISO%208601%20describes%20a%20large%20number%20of%20date%2Ftime%20formats,ISO%208601%20dates%20and%20times.) format.
+   *
+   * @default 30 days
+   *
+   * @example ```typescript
+   * {
+   *   ...
+   *   "retentionTime" : "P30D" // 30 days
+   * }
+   * ```
+   */
+  retentionTime?: string;
+
+  /** Context for the Task (See {@link TaskContext}) */
+  context?: TaskContext;
+
+  /** Metadata of the Task (See {@link TaskMetaData}) */
+  metaData?: TaskMetaData[];
+
+  /** Links for the task (See {@link TaskLinks}) */
+  _links?: TaskLinks;
 }

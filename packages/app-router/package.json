@@ -1,19 +1,22 @@
 {
   "name": "@dvelop-sdk/app-router",
-  "version": "0.0.3",
+  "version": "1.0.0-alpha.0",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "author": "Lennart <lennart.klose@d-velop.de>",
   "files": [
-    "dist"
+    "lib"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LenKlose/dvelop-sdk-node.git"
+    "url": "git+https://github.com/d-velop/dvelop-sdk-node.git"
   },
   "bugs": {
-    "url": "https://github.com/LenKlose/dvelop-sdk-node/issues"
+    "url": "https://github.com/d-velop/dvelop-sdk-node/issues"
+  },
+  "scripts": {
+    "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
   },
   "dependencies": {
     "uuid": "^8.3.2"

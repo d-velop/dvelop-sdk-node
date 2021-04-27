@@ -1,8 +1,12 @@
 {
-  "extends": ["eslint:recommended", "plugin:jest/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:jest/recommended"
+  ],
   "env": {
     "node": true,
-    "jest/globals": true
+    "jest/globals": true,
+    "es6": true
   },
   "parser": "@typescript-eslint/parser",
   "plugins": [
@@ -22,12 +26,18 @@
       "error",
       2
     ],
-    "function-call-argument-newline" : [
+    "function-call-argument-newline": [
       "error",
       "never"
     ],
-    "no-console" : [
+    "function-paren-newline": [
+      "error",
+      "never"
+    ],
+    "no-console": [
       "error"
-    ]
+    ],
+    "no-var": "error",
+    "@typescript-eslint/type-annotation-spacing": ["error", { "before": false, "after": true }]
   }
 }
