@@ -1,0 +1,25 @@
+{
+    "name": "@dvelop-sdk/task",
+    "version": "1.0.0-alpha.0",
+    "license": "Apache-2.0",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "author": "Patrick <patrick.rose@d-velop.de>",
+    "files": [
+        "lib"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/d-velop/dvelop-sdk-node.git"
+    },
+    "bugs": {
+        "url": "https://github.com/d-velop/dvelop-sdk-node/issues"
+    },
+    "dependencies": {
+        "axios": "^0.21.1",
+        "uuid": "^8.3.2"
+    },
+    "devDependencies": {
+        "@types/uuid": "^8.3.0"
+    }
+}

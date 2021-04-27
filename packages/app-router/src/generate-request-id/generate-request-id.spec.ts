@@ -5,18 +5,18 @@ jest.mock("uuid");
 
 describe("generateRequestId", () => {
 
-    const mockedUuid = uuid as jest.Mocked<typeof uuid>;
+  const mockedUuid = uuid as jest.Mocked<typeof uuid>;
 
-    beforeEach(() => {
-      mockedUuid.v4.mockReset();
-    });
+  beforeEach(() => {
+    mockedUuid.v4.mockReset();
+  });
 
-    it("should return UUID from v4", () => {
-      const uuid = "HiItsMeUuid";
+  it("should return UUID from v4", () => {
+    const uuid = "HiItsMeUuid";
 
-      mockedUuid.v4.mockImplementation(() => uuid);
+    mockedUuid.v4.mockImplementation(() => uuid);
 
-      const result = generateRequestId();
-      expect(result).toEqual(uuid);
-    });
+    const result = generateRequestId();
+    expect(result).toEqual(uuid);
+  });
 });

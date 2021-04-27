@@ -49,3 +49,4 @@ describe("validateAuthsessionId", () => {
     await expect(validateAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId")).rejects.toThrowError(`Failed to validate AuthSessionId.\n${error}`);
   });
 });
+ 
