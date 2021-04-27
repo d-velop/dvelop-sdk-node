@@ -45,6 +45,6 @@ jobs:
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Publish code
-      run: lerna publish from-package prerelease --no-push --no-verify-access --preId next --dist-tag next --yes
+      run: lerna publish from-package prerelease --no-push --no-verify-access --preid next --dist-tag next --yes
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
