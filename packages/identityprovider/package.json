@@ -10,10 +10,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LenKlose/dvelop-sdk-node.git"
+    "url": "git+https://github.com/d-velop/dvelop-sdk-node.git"
   },
   "bugs": {
-    "url": "https://github.com/LenKlose/dvelop-sdk-node/issues"
+    "url": "https://github.com/d-velop/dvelop-sdk-node/issues"
   },
   "scripts": {
     "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
