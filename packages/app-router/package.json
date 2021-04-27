@@ -15,6 +15,9 @@
   "bugs": {
     "url": "https://github.com/d-velop/dvelop-sdk-node/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
   },
