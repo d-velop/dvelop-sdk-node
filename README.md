@@ -1,13 +1,14 @@
 <div align="center">
+  <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
+  <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/1?style=for-the-badge">
+</div>
 
-  <div>
-    <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
-    <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/1?style=for-the-badge">
-  </div>
-  <div>
-    <img src="https://img.shields.io/badge/%40dvelop%2Fapp--router-merged-blueviolet?style=for-the-badge">
-    <img src="https://img.shields.io/badge/%40dvelop%2Fidentityprovider-merged-blueviolet?style=for-the-badge">
-    <img src="https://img.shields.io/badge/%40dvelop%2Ftask-in%20progress-%230052cc?style=for-the-badge">
+</br>
+
+<div align="center">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/app-router?label=app-router&style=for-the-badge">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/identityprovider?label=identityprovider&style=for-the-badge">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/task?label=task&style=for-the-badge">
   </div>
 </div>
 
