@@ -26,3 +26,4 @@ export { AuthSession } from "./get-auth-session/auth-session";
 export { getAuthSession } from "./get-auth-session/get-auth-session";
 export { ScimUser } from "./validate-auth-session-id/scrim-user";
 export { validateAuthSessionId } from "./validate-auth-session-id/validate-auth-session-id";
+export { getLoginRedirectionUri } from "./get-login-redirection-uri/get-login-redirection-uri";
