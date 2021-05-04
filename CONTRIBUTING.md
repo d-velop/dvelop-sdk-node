@@ -1,6 +1,6 @@
 # Contributing to the d.velop SDK for Node.js
 
-Thank you for considering contributing to this project. It will help to make this project more valuable for the
+Thank you for considering contributing to this project. It will help us to make this project more valuable for the
 community.
 
 We value any feedback and contributions whether it's a bug report, bugfix, additional feature or documentation.
@@ -40,7 +40,7 @@ Please follow the following steps prior to filing a bug report.
 
 When filing an issue, make sure to answer the following questions:
 
-1.  What version of the SDK are you using?
+1.  What package and version of the SDK are you using?
 
 2.  What operating system are you using?
 
@@ -62,7 +62,7 @@ You can submit feature requests on the [issues page](https://github.com/d-velop/
 Before you consider contributing please submit a feature request. This way we can discuss the scope and warn you potential problems of your idea.
 
 ### Get up and running
-For this project to work you need [node.js]() installed. We recommend the latest stable version. We also higly recommend [git]().
+For this project to work you need [node.js](https://nodejs.org/en/) installed. We recommend the latest stable version.
 
 1. Clone the project via:
 > ```git clone https://github.com/d-velop/dvelop-sdk-node.git```
@@ -78,9 +78,10 @@ If everything worked you should be able to run:
 ## Development
 
 ### General
-This SDK is devided into multiple packages. Ideally we want to keep a *one package per app* structure. If you want to contribute a new package please mention this in your feature request issue.
+This SDK is devided into multiple packages. Ideally we want to keep a *one package per app* structure. If you want to contribute a new package please mention this in your feature request.
 
 ### Technologies
+We already commited to some tools and/or frameworks to handle certain things. If you want to contribute within that scope please use the existing things at your disposal.
 
 * [typescirpt](https://www.typescriptlang.org/) is used for development. If you are familiar with javascript and/or typed languages this should not cause problems. Have a look at the [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) for a quick start.
 
@@ -88,9 +89,9 @@ This SDK is devided into multiple packages. Ideally we want to keep a *one packa
 
 * [axios](https://www.npmjs.com/package/axios) is used for HTTP requests.
 
-* [jest](https://jestjs.io/) is used for testing
+* [jest](https://jestjs.io/) is used for testing.
 
-* [eslint](https://eslint.org/) is used for linting and code conventions
+* [eslint](https://eslint.org/) is used for linting and code conventions.
 
 * [typedoc](https://typedoc.org/) is used for documentation.
 
@@ -104,7 +105,7 @@ This project comes with several utility commands. You can find the implementatio
 
 > ```npm run prepare```
 
-Runs a lerna bootstrap command. This is triggered by the [npm lifecycle] an should usually never get executed on its own.
+Runs a lerna bootstrap command. This is triggered by the [npm lifecycle](https://www.npmjs.com/package/npm-lifecycle) when doing a ```npm i``` an should usually never get executed on its own.
 
 </br>
 
@@ -116,7 +117,7 @@ Runs all tests for the project. *This command will be run automatically on commi
 
 > ```npm run test:watch```
 
-Continiusly runs tests on save that touch on changed files. This command should be run for development.
+Continously runs tests on save that touch on changed files. This command should be run for development.
 
 </br>
 
@@ -128,7 +129,7 @@ Compares written code against the eslint specifications. *This command will be r
 
 > ```npm run lint:fix```
 
-Trys to fix linting errors automatically.
+Trys to fix linting errors automatically. This should be your first action on linting errors.
 
 </br>
 
@@ -146,13 +147,13 @@ Rebuild **all** javascript files for the project. While you can safely run this 
 
 > ```npm run license```
 
-Runs automated license checking on the project dependencies.
+Runs automated license checking on the project dependencies. This command should be executed when adding a dependency to the project.
 
 </br>
 
 > ```npm run docs```
 
-Generate [typedoc](https://typedoc.org/) documentation locally in ```/docs``` which is ignored by git. Feel free to generate for inspection.
+Generate [typedoc](https://typedoc.org/) documentation locally in ```/docs``` which is ignored by git. Feel free to generate and have a look.
 
 </br>
 
@@ -163,8 +164,11 @@ Checks packages for changes and asks you for version updates and commits an upda
 ### TDD
 For developing we recommend Test-driven development (TDD). For every new function/class/file you create there should be its corresponding test-equivalent. Ideally there should be no need to ever run a build command for your development as all testing is done on the typescript code with building behind the scene. For convience while developing test-driven you can run ```npm run test:watch``` which will run all relevant tests when you save a file.
 
+### Adding a dependency
+Adding dependencies can be done by executing ```npm i dependency``` in the corresponding package (not the root). Please be aware that you should consult us before adding dependencies. Dependencies should not be added on the root level by you, unless specifically mentioned by us.
+
 ### Commit clean code
-Ideally your commits should include a single valuable contribution that is tested, linted and documented. On every commit ```npm test``` and ```npm lint``` is run by default and your commit gets aborted if one of these fails.
+Ideally your commits should include a single valuable contribution that is tested, linted and documented. On every commit ```npm test``` and ```npm lint``` is run by default and your commit gets aborted if one of these fails. Be aware that these commands run against the *real* current state of the project, not the committed one.
 
 
 ## Pull Request
@@ -183,4 +187,4 @@ Please be aware of the following notes prior to opening a pull request:
     test coverage percentage are unlikely to be merged until tests have
     been added.
 
-4. A pull request will automatically trigger a large set of actions (CI).
+4. A pull request will automatically trigger a large set of actions (CI). These will run various tests and other QA-measures.
