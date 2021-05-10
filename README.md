@@ -52,7 +52,7 @@ import * as taskApp from '@dvelop/task';
 
 ## Build an app
 
-This SDK was designed framework agnostic but with express in mind.
+This SDK was designed framework agnostic but with [express](https://www.npmjs.com/package/express) in mind.
 
 ### Check the request-signature
 ```
