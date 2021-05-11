@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AuthSession | @dvelop-sdk</title>
+	<title>TaskContext | @dvelop-sdk</title>
 	<meta name="description" content="Documentation for @dvelop-sdk">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,13 +55,13 @@
 					<a href="../modules.html">@dvelop-sdk</a>
 				</li>
 				<li>
-					<a href="../modules/identityprovider.html">identityprovider</a>
+					<a href="../modules/task.html">task</a>
 				</li>
 				<li>
-					<a href="identityprovider.authsession.html">AuthSession</a>
+					<a href="task.taskcontext.html">TaskContext</a>
 				</li>
 			</ul>
-			<h1>Interface AuthSession</h1>
+			<h1>Interface TaskContext</h1>
 		</div>
 	</div>
 </header>
@@ -71,14 +71,19 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A valid authentication-session for the d.velop cloud. Refer to the <a href="https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#validating-the-login">documentation</a> for further information.</p>
+						<p>The context of a task.</p>
 					</div>
 					<dl class="tsd-comment-tags">
-						<dt>property</dt>
-						<dd><p>{string} id Id for the AuthSession. This key will validate your requests. <strong>The AuthSessionId should be kept secret and never be publicly available</strong></p>
-						</dd>
-						<dt>property</dt>
-						<dd><p>{Date} expire Date-Object for the point in time at which the AuthSessionId will no longer be valid.</p>
+						<dt>example</dt>
+						<dd><pre><code class="language-typescript"><span style="color: #000000">{</span>
+<span style="color: #000000">  ...</span>
+<span style="color: #000000">  </span><span style="color: #A31515">&quot;context&quot;</span><span style="color: #000000"> : {</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;key&quot;</span><span style="color: #001080"> :</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;myContextKey&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080"> :</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;bpm&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;name&quot;</span><span style="color: #001080"> :</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;my context name&quot;</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">}</span>
+</code></pre>
 						</dd>
 					</dl>
 				</div>
@@ -87,7 +92,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">AuthSession</span>
+						<span class="target">TaskContext</span>
 					</li>
 				</ul>
 			</section>
@@ -98,8 +103,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="identityprovider.authsession.html#expire" class="tsd-kind-icon">expire</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="identityprovider.authsession.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.taskcontext.html#key" class="tsd-kind-icon">key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.taskcontext.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.taskcontext.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
@@ -108,24 +114,49 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="expire" class="tsd-anchor"></a>
-					<h3>expire</h3>
-					<div class="tsd-signature tsd-kind-icon">expire<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
+					<a name="key" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> key</h3>
+					<div class="tsd-signature tsd-kind-icon">key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/5778a93/packages/identityprovider/src/get-auth-session/auth-session.ts#L8">identityprovider/src/get-auth-session/auth-session.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/5778a93/packages/task/src/task.ts#L18">task/src/task.ts:18</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Technical identifier for this context.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="name" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/5778a93/packages/identityprovider/src/get-auth-session/auth-session.ts#L7">identityprovider/src/get-auth-session/auth-session.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/5778a93/packages/task/src/task.ts#L24">task/src/task.ts:24</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Display name for this context.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="type" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/5778a93/packages/task/src/task.ts#L21">task/src/task.ts:21</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Technical identifier for the type of this context.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -138,42 +169,54 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/app_router.html">app-<wbr>router</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/identityprovider.html">identityprovider</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/task.html">task</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="task.task-1.html" class="tsd-kind-icon">Task</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="identityprovider.authsession.html" class="tsd-kind-icon">Auth<wbr>Session</a>
+						<a href="task.taskcontext.html" class="tsd-kind-icon">Task<wbr>Context</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="identityprovider.authsession.html#expire" class="tsd-kind-icon">expire</a>
+								<a href="task.taskcontext.html#key" class="tsd-kind-icon">key</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="identityprovider.authsession.html#id" class="tsd-kind-icon">id</a>
+								<a href="task.taskcontext.html#name" class="tsd-kind-icon">name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="task.taskcontext.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="identityprovider.scimuser.html" class="tsd-kind-icon">Scim<wbr>User</a>
+						<a href="task.tasklinks.html" class="tsd-kind-icon">Task<wbr>Links</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="task.taskmetadata.html" class="tsd-kind-icon">Task<wbr>Meta<wbr>Data</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/identityprovider.html#getauthsession" class="tsd-kind-icon">get<wbr>Auth<wbr>Session</a>
+						<a href="../modules/task.html#completetask" class="tsd-kind-icon">complete<wbr>Task</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/identityprovider.html#getloginredirectionuri" class="tsd-kind-icon">get<wbr>Login<wbr>Redirection<wbr>Uri</a>
+						<a href="../modules/task.html#createtask" class="tsd-kind-icon">create<wbr>Task</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/identityprovider.html#validateauthsessionid" class="tsd-kind-icon">validate<wbr>Auth<wbr>Session<wbr>Id</a>
+						<a href="../modules/task.html#deletetask" class="tsd-kind-icon">delete<wbr>Task</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/task.html#updatetask" class="tsd-kind-icon">update<wbr>Task</a>
 					</li>
 				</ul>
 			</nav>
