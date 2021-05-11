@@ -6,7 +6,7 @@
   "types": "lib/index.d.ts",
   "author": "Lennart <lennart.klose@d-velop.de>",
   "files": [
-    "dist"
+    "lib"
   ],
   "repository": {
     "type": "git",
