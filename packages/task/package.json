@@ -1,10 +1,10 @@
 {
-  "name": "@dvelop-sdk/app-router",
+  "name": "@dvelop-sdk/task",
   "version": "1.0.2",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "author": "Lennart <lennart.klose@d-velop.de>",
+  "author": "Patrick <patrick.rose@d-velop.de>",
   "files": [
     "lib"
   ],
@@ -18,10 +18,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
-  },
   "dependencies": {
+    "axios": "^0.21.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

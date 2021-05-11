@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { ScimUser } from "./scrim-user";
+import { ScimUser } from "./scim-user";
 
 /**
  * Validates an AuthSessionId and returns a [ScimUser]{@link ScimUser}
