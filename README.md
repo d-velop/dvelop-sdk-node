@@ -23,15 +23,13 @@
 
 ## About
 
-**This project has alpha status. There are currently no npm-releases. Expect things to change.**
-
-This is the official SDK to build Apps for [d.velop cloud](https://www.d-velop.de/cloud/) using
+This is the official SDK to build apps for [d.velop cloud](https://www.d-velop.de/cloud/) using
 [node.js](https://nodejs.org/en/) and [typescirpt](https://www.typescriptlang.org/).
 
 
 ## Getting started
 
-This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop App you want to use.
+This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop app you want to use.
 ```
 npm i @dvelop/identityprovider @dvelop/task
 ```
@@ -41,7 +39,7 @@ import * as taskApp from '@dvelop/task';
 
 (async function main() {
   const authSessionId = await getAuthSessionByApiKey('<SYSTEM_BASE_URI>', '<API_KEY>');
-  await taskApp.completeTask(systemBaseUri, authSessionId, '123456');
+  await taskApp.completeTask(systemBaseUri, authSessionId, '<TASK_LOCATION>');
 })();
 ```
 
@@ -50,25 +48,45 @@ import * as taskApp from '@dvelop/task';
 </div>
 </br>
 
-## Build an app
+## Build an app with express
 
 This SDK was designed framework agnostic but with [express](https://www.npmjs.com/package/express) in mind.
 
-### Check the request-signature
 ```
-npm i @dvelop/app-router
+npm i express cookie-parser @dvelop-sdk/app-router @dvelop-sdk/identityprovider
+npm i @types/express @types/cookie-parser -D
 ```
-``` typescript
-import * as appRouter from '@dvelop/app-router';
 
-// check request signature and set d-velop stuff for further usage
-app.use((req, res, next) => {
+```typescript
+import express, { Application, Request, Response, NextFunction } from "express";
+import cookieParser from "cookie-parser";
+import * as appRouter from "@dvelop-sdk/app-router";
+import { validateAuthSessionId, getLoginRedirectionUri, ScimUser } from "@dvelop-sdk/identityprovider";
+
+const app: Application = express();
+const appName: string = "acme-lklo";
+
+declare global {
+  namespace Express {
+    interface Request {
+      systemBaseUri?: string;
+      tenantId?: string;
+      requestId?: string;
+      principal?: ScimUser;
+    }
+  }
+}
+
+// Middleware
+app.use(cookieParser());
+
+app.use((req: Request, res: Response, next: NextFunction) => {
 
   const systemBaseUri: string = req.header(appRouter.DVELOP_SYSTEM_BASE_URI_HEADER);
   const tenantId: string = req.header(appRouter.DVELOP_TENANT_ID_HEADER);
   const requestSignature: string = req.header(appRouter.DVELOP_REQUEST_SIGNATURE_HEADER);
 
-  const validRequest: boolean = validateRequestSignature(process.env.APP_SECRET, systemBaseUri, tenantId, requestSignature)
+  const validRequest: boolean = appRouter.validateRequestSignature(process.env.SIGNATURE_SECRET, systemBaseUri, tenantId, requestSignature)
 
   if (validRequest) {
     req.systemBaseUri = systemBaseUri;
@@ -79,47 +97,41 @@ app.use((req, res, next) => {
     res.status(403).send('Forbidden');
   }
 });
-```
 
-<div align="center">
-  <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
-</div>
+// Routes
+app.get(`/${appName}/me`, async (req: Request, res: Response) => {
 
-</br>
+  let authSessionId: string;
 
-### Authenticate the user
-
-```
-npm i @dvelop/identityprovider
-```
-```typescript
-import * as idp from '@dvelop/identityprovider';
-
-// validate authSessionId and set user OR redirect request to login
-app.use((req, res, next) => {
-
-  // TODO: const authSessionId: string =
-
-  if(authSessionId) {
-    try {
-      req.user = await validateAuthSessionId(req.systemBaseUri, authSessionId)
-      next();
-    } catch (e) {
-      if (e.status !== 401) {
-        // log error
-        res.status(500).send('Internal server error');
-      }
-    }
+  const authorizationHeader = req.get("Authorization");
+  const authorizationCookie = req.cookies["AuthSessionId"];
+  if (authorizationHeader) {
+    authSessionId = new RegExp(/^bearer (.*)$/, "i").exec(authorizationHeader)[1];
+  } else if (authorizationCookie) {
+    authSessionId = authorizationCookie;
   }
 
-  const redirectUri: string = idp.getLoginRedirectionUri(req.originalUrl);
-  req.redirect(redirectionUri);
+  try {
+    const user: ScimUser = await validateAuthSessionId(req.systemBaseUri, authSessionId);
+    req.principal = user;
+    res.status(200).send(`Hello ${req.principal.displayName}!`)
+  } catch (e) {
+    console.log("Unauthorized. Redirecting ...");
+    res.redirect(getLoginRedirectionUri(req.originalUrl));
+  }
 });
 
-// send a personal greeting if userName is defined
-app.get((req, res) => {
-  const userName: string = req.user.name || "world";
-  res.status(200).send(`Hello ${req.user.name}!`)
+app.get(`/${appName}`, (_: Request, res: Response) => {
+  res.status(200).send(`Hello from ${process.env.npm_package_name} (${process.env.npm_package_version})!`);
+});
+
+app.use("/", (_: Request, res: Response) => {
+  res.redirect(`/${appName}`);
+});
+
+// Start
+app.listen(8000, () => {
+  console.log(`Server listening on port 8000`);
 });
 ```
 
