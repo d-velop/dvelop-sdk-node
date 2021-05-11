@@ -27,7 +27,7 @@ so if you're unsure, just email us.
 
 ## File a bug report.
 
-You can file bug reports on the [issues page](https://github.com/d-velop/dvelop-sdk-node/issues).
+You can file bug reports on the [issues page](https://github.com/d-velop/dvelop-sdk-node/issues). Please name this issue ``Bug: <SHORT_DESCRIPTION>``.
 
 Please follow the following steps prior to filing a bug report.
 
@@ -52,7 +52,7 @@ When filing an issue, make sure to answer the following questions:
 
 # How to submit a feature request
 
-You can submit feature requests on the [issues page](https://github.com/d-velop/dvelop-sdk-node/issues).
+You can submit feature requests on the [issues page](https://github.com/d-velop/dvelop-sdk-node/issues). Please name this issue ``Feature: <SHORT_DESCRIPTION>``.
 
 # Contribute to the project
 
@@ -72,7 +72,7 @@ For this project to work you need [node.js](https://nodejs.org/en/) installed. W
 
 </br>
 
-If everything worked you should be able to run:
+If everything worked you should be able to successfully run:
 >```npm test```
 
 ## Development
@@ -81,7 +81,7 @@ If everything worked you should be able to run:
 This SDK is devided into multiple packages. Ideally we want to keep a *one package per app* structure. If you want to contribute a new package please mention this in your feature request.
 
 ### Technologies
-We already commited to some tools and/or frameworks to handle certain things. If you want to contribute within that scope please use the existing things at your disposal.
+We already committed to some tools and frameworks to handle certain things. If you want to contribute within that scope please use the existing things at your disposal.
 
 * [typescirpt](https://www.typescriptlang.org/) is used for development. If you are familiar with javascript and/or typed languages this should not cause problems. Have a look at the [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) for a quick start.
 
@@ -105,7 +105,7 @@ This project comes with several utility commands. You can find the implementatio
 
 > ```npm run prepare```
 
-Runs a lerna bootstrap command. This is triggered by the [npm lifecycle](https://www.npmjs.com/package/npm-lifecycle) when doing a ```npm i``` an should usually never get executed on its own.
+Runs a bootstrap command. This is triggered by the [npm lifecycle](https://www.npmjs.com/package/npm-lifecycle) when doing a ```npm i``` an should usually never get executed on its own.
 
 </br>
 
@@ -178,13 +178,8 @@ Please be aware of the following notes prior to opening a pull request:
 1.  This project is released under the license specified in [LICENSE](LICENSE).
     Any code you submit will be released under that license. Furthermore it's likely
     that we have to reject code which depends on third party code which isn't compatible
-    to the aforementioned license.
+    to the aforementioned license. You can check compatibility with ```npm run license```.
 
 2.  Wherever possible, pull requests should contain tests as appropriate. Bugfixes should contain tests that exercise the corrected behavior (i.e., the test should fail without the bugfix and pass with it), and new features should be accompanied by tests exercising the feature.
 
-3.  Pull requests that contain failing tests will not be merged until the test
-    failures are addressed. Pull requests that cause a significant drop in the
-    test coverage percentage are unlikely to be merged until tests have
-    been added.
-
-4. A pull request will automatically trigger a large set of actions (CI). These will run various tests and other QA-measures.
+3. A pull request will automatically trigger a large set of actions (CI). These will run various tests and other QA-measures. Pull requests that contain failing tests will not be merged until the test failures are addressed. Pull requests that cause a significant drop in the test coverage percentage are unlikely to be merged until tests have been added.
