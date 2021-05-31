@@ -157,7 +157,7 @@ Generate [typedoc](https://typedoc.org/) documentation locally in ```/docs``` wh
 
 </br>
 
-> ```npm run release```
+> ```npm run version```
 
 Checks packages for changes and asks you for version updates and commits an update. This should be the last command (and commit) before a pull request.
 
