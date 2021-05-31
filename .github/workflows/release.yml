@@ -44,7 +44,7 @@ jobs:
         echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-    - name: Publish code to npm
-      run: lerna publish from-package --no-push --no-verify-access --yes
+    - name: Tag packages as latest on npm
+      run: npx ts-node scripts/tag-as-latest.ts
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
