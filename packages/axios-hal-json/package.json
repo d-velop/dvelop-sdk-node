@@ -21,5 +21,8 @@
   },
   "scripts": {
     "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0"
   }
 }

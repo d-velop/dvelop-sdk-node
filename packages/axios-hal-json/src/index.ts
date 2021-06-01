@@ -25,3 +25,12 @@
  * @module axios-hal-json
  */
 
+import "axios";
+
+declare module "axios" {
+  // eslint-disable-next-line no-unused-vars
+  interface AxiosRequestConfig {
+    follows?: string[];
+    templates?: { [key: string]: string }
+  }
+}
