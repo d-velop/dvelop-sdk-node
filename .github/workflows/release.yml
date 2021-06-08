@@ -6,25 +6,7 @@ on:
       - master
 
 jobs:
-  release-docs:
-    name: release documentation
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Set up node.js
-      uses: actions/setup-node@v2
-    - name: Install npm dependencies
-      run: npm ci
-    - name: Generate docs
-      run: npm run docs
-    - name: Commit docs to gh-pages
-      uses: JamesIves/github-pages-deploy-action@4.1.0
-      with:
-        branch: gh-pages
-        folder: docs
-
-  publish-prerelease:
+  publish-release:
     if: "github.repository == 'd-velop/dvelop-sdk-node'"
     name: Publish to npm as latest
     runs-on: ubuntu-latest
@@ -48,3 +30,22 @@ jobs:
       run: npx ts-node scripts/tag-as-latest.ts
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release-docs:
+    name: release documentation
+    runs-on: ubuntu-latest
+    needs: publish-release
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up node.js
+      uses: actions/setup-node@v2
+    - name: Install npm dependencies
+      run: npm ci
+    - name: Generate docs
+      run: npm run docs
+    - name: Commit docs to gh-pages
+      uses: JamesIves/github-pages-deploy-action@4.1.0
+      with:
+        branch: gh-pages
+        folder: docs

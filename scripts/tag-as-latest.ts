@@ -9,6 +9,7 @@ import { execSync } from "child_process";
       console.log(`Successfully tagged ${p.name}@${p.version} as 'latest'`);
     });
   } catch(e) {
-    console.error(`License check unsuccessful.`);
+    console.error(`Tagging as latest unsuccessful: ${e}`);
+    throw e;
   }
 })();
