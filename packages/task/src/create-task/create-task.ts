@@ -1,6 +1,21 @@
 import axios, { AxiosResponse } from "axios";
+import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 import { Task } from "../task";
 import { v4 } from "uuid";
+import { UnauthenticatedUserError, UnauthorizedUserError } from "../errors";
+axios.interceptors.request.use(followHalJson);
+
+/**
+ * Tried to create an invalid Task. See ```validation```-propery.
+ * @category Error
+ */
+export class InvalidTaskError extends Error {
+  // eslint-disable-next-line no-unused-vars
+  constructor(public task: Task, public validation: any, public response: AxiosResponse) {
+    super(`Failed to create Task: Invalid Task.\nValidation: ${JSON.stringify(validation)}`);
+    Object.setPrototypeOf(this, InvalidTaskError.prototype);
+  }
+}
 
 /**
  * Creates a [Task]{@link Task} and returns it. This method will automatically generate a random correlation key if the task does not contain one.
@@ -26,11 +41,13 @@ export async function createTask(systemBaseUri: string, authSessionId: string, t
   }
 
   try {
-    const response: AxiosResponse = await axios.post(`${systemBaseUri}/task/tasks`, task, {
+    const response: AxiosResponse = await axios.post<Task>("/task", task, {
+      baseURL: systemBaseUri,
       headers: {
         "Authorization": `Bearer ${authSessionId}`,
         "Origin": systemBaseUri
       },
+      follows: ["tasks"]
     });
 
     const location: string = response.headers.location;
@@ -41,14 +58,15 @@ export async function createTask(systemBaseUri: string, authSessionId: string, t
     if (e.response) {
       switch (e.response.status) {
       case 400:
-        throw new Error(`Task is invalid.\nValidation: ${JSON.stringify(e.response.data)}`);
+        throw new InvalidTaskError(task, e.response.data, e.response);
       case 401:
-        throw new Error("The user is not authenticated.");
+        throw new UnauthenticatedUserError("Failed to create Task", e.response);
       case 403:
-        throw new Error("The user is not eligible to create the task.");
+        throw new UnauthorizedUserError("Failed to create Task", e.response);
       }
     }
-    throw new Error(`Failed to create Task: ${JSON.stringify(e)}`);
+    e.message = "Failed to create Task: " + e.message;
+    throw e;
   }
 
 }
