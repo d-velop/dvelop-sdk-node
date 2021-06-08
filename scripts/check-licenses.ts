@@ -8,7 +8,7 @@ import { execSync } from "child_process";
 
   packages.forEach(p => {
     try {
-      execSync(`license-checker --start ./packages/${p} --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause`);
+      execSync(`license-checker --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause --start ./packages/${p} --production`);
     } catch (e) {
       console.error(`License check unsuccessful in '${p}': ${e}`);
       error = true;
