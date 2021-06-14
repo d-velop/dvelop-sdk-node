@@ -52,8 +52,6 @@ jobs:
       uses: actions/setup-node@v2
     - name: Install npm dependencies
       run: npm ci
-    - name: Build packages
-      run: npm run build
     - name: Run license check
       run: npm run license
 
