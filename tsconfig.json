@@ -9,6 +9,9 @@
     },
     {
       "path": "./packages/identityprovider"
-    }
+    },
+    {
+      "path": "./packages/task"
+    },
   ]
 }

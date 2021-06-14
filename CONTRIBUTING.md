@@ -1,6 +1,6 @@
 # Contributing to the d.velop SDK for Node.js
 
-Thank you for considering contributing to this project. It will help to make this project more valuable for the
+Thank you for considering contributing to this project. It will help us to make this project more valuable for the
 community.
 
 We value any feedback and contributions whether it's a bug report, bugfix, additional feature or documentation.
@@ -27,7 +27,7 @@ so if you're unsure, just email us.
 
 ## File a bug report.
 
-You can file bug reports on the [issues page](https://github.com/d-velop/dvelop-sdk-node/issues).
+You can file bug reports on the [issues page](https://github.com/d-velop/dvelop-sdk-node/issues). Please name this issue ``Bug: <SHORT_DESCRIPTION>``.
 
 Please follow the following steps prior to filing a bug report.
 
@@ -40,7 +40,7 @@ Please follow the following steps prior to filing a bug report.
 
 When filing an issue, make sure to answer the following questions:
 
-1.  What version of the SDK are you using?
+1.  What package and version of the SDK are you using?
 
 2.  What operating system are you using?
 
@@ -50,82 +50,126 @@ When filing an issue, make sure to answer the following questions:
 
 5.  What did you see instead?
 
+# How to submit a feature request
+
+You can submit feature requests on the [issues page](https://github.com/d-velop/dvelop-sdk-node/issues). Please name this issue ``Feature: <SHORT_DESCRIPTION>``.
+
 # Contribute to the project
 
-## Workflow
-1. Please submit your idea as a Feature Request in the form of a Github Issue. This way we can keep track of ongoing development, warn you about potential problems and give helpful hints.
-2. Develop the functionality
-3. Create a pull request.
+## Prequisits
 
-## Feature Request
-TBD
+### Before you start
+Before you consider contributing please submit a feature request. This way we can discuss the scope and warn you potential problems of your idea.
+
+### Get up and running
+For this project to work you need [node.js](https://nodejs.org/en/) installed. We recommend the latest stable version.
+
+1. Clone the project via:
+> ```git clone https://github.com/d-velop/dvelop-sdk-node.git```
+
+2. Install dependecies via:
+> ```npm i```
+
+</br>
+
+If everything worked you should be able to successfully run:
+>```npm test```
 
 ## Development
-### Get up and runnding
-1. Clone the project.
-2. Run ```npm i```
-3. Run ```npm bootstrap```
-
-If everything worked you should be able to run ```npm test``` with success.
 
 ### General
-This project uses [TypeScript](https://www.typescriptlang.org/) a kind of next gen typed superset of JavaScript.
-If you are new to TypeScript pleas have a look at the *Get Started* section of the
-[TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html).
-We didn't want to put everything in one big package because not everybody needs all functions of the SDK.
-On the other hand multiple git repositories are unnecessary overhead. So we decided to use a single git project
-for all SDK packages. Furthermore we decided to use independent versioning because a breaking change
-in one package, requiring a new major version for this package, would also result in a new major version for all packages
-although there might be no breaking changes in these packages.
-The corresponding tool for this so called multi-package repository is [lerna.js](https://lerna.js.org/).
-Please read through its documentation to get a basic understanding of how this tool works.
+This SDK is devided into multiple packages. Ideally we want to keep a *one package per app* structure. If you want to contribute a new package please mention this in your feature request.
 
+### Technologies
+We already committed to some tools and frameworks to handle certain things. If you want to contribute within that scope please use the existing things at your disposal.
 
-### Style Guide
-Please use [this unoffical style guide](https://github.com/basarat/typescript-book/blob/master/docs/styleguide/styleguide.md) when naming things.
+* [typescirpt](https://www.typescriptlang.org/) is used for development. If you are familiar with javascript and/or typed languages this should not cause problems. Have a look at the [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) for a quick start.
+
+* [lerna.js](https://lerna.js.org/) to maintain the project on the root level and manage the indivual packages.
+
+* [axios](https://www.npmjs.com/package/axios) is used for HTTP requests.
+
+* [jest](https://jestjs.io/) is used for testing.
+
+* [eslint](https://eslint.org/) is used for linting and code conventions.
+
+* [typedoc](https://typedoc.org/) is used for documentation.
+
+### Development workflow
+
+### Build-in commands
+
+This project comes with several utility commands. You can find the implementation in the ```package.json``` file.
+
+</br>
+
+> ```npm run prepare```
+
+Runs a bootstrap command. This is triggered by the [npm lifecycle](https://www.npmjs.com/package/npm-lifecycle) when doing a ```npm i``` an should usually never get executed on its own.
+
+</br>
+
+> ```npm run test```
+
+Runs all tests for the project. *This command will be run automatically on commit*
+
+</br>
+
+> ```npm run test:watch```
+
+Continously runs tests on save that touch on changed files. This command should be run for development.
+
+</br>
+
+> ```npm run lint```
+
+Compares written code against the eslint specifications. *This command will be run automatically on commit*
+
+</br>
+
+> ```npm run lint:fix```
+
+Trys to fix linting errors automatically. This should be your first action on linting errors.
+
+</br>
+
+> ```npm run build```
+
+Build javascript files for the project. While you can safely run this command there should be no reason you ever have to.
+
+</br>
+
+> ```npm run build:force```
+
+Rebuild **all** javascript files for the project. While you can safely run this command there should be no reason you ever have to.
+
+</br>
+
+> ```npm run license```
+
+Runs automated license checking on the project dependencies. This command should be executed when adding a dependency to the project.
+
+</br>
+
+> ```npm run docs```
+
+Generate [typedoc](https://typedoc.org/) documentation locally in ```/docs``` which is ignored by git. Feel free to generate and have a look.
+
+</br>
+
+> ```npm run version```
+
+Checks packages for changes and asks you for version updates and commits an update. This should be the last command (and commit) before a pull request.
 
 ### TDD
 For developing we recommend Test-driven development (TDD). For every new function/class/file you create there should be its corresponding test-equivalent. Ideally there should be no need to ever run a build command for your development as all testing is done on the typescript code with building behind the scene. For convience while developing test-driven you can run ```npm run test:watch``` which will run all relevant tests when you save a file.
 
-### Use the existing frameworks
-Please be very careful when introducing new dependencies and try to use the existing ones whenever possible.
-| Functionality | Framework
-| :---: | :---:
-| HTTP-Requests | axios
-| Testing | jest
-| Linting | eslint
-| Documentation | jsdoc
+### Adding a dependency
+Adding dependencies can be done by executing ```npm i dependency``` in the corresponding package (not the root). Please be aware that you should consult us before adding dependencies. Dependencies should not be added on the root level by you, unless specifically mentioned by us.
 
-### Create a new package
-TBD
+### Commit clean code
+Ideally your commits should include a single valuable contribution that is tested, linted and documented. On every commit ```npm test``` and ```npm lint``` is run by default and your commit gets aborted if one of these fails. Be aware that these commands run against the *real* current state of the project, not the committed one.
 
-### Commit message
-
-Please use the following template for commit messages which is derived from
-[template of the git project](https://git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project):
-
-```
-Capitalized, short (50 chars or less) summary of changes
-
-More detailed explanatory text, if necessary.  Wrap it to
-about 72 characters or so.  In some contexts, the first
-line is treated as the subject of an email and the rest of
-the text as the body.  The blank line separating the
-summary from the body is critical (unless you omit the body
-entirely); tools like rebase can get confused if you run
-the two together.
-
-Write your commit message in the imperative: "Fix bug" and not "Fixed bug"
-or "Fixes bug."  This convention matches up with commit messages generated
-by commands like git merge and git revert.
-
-Further paragraphs come after blank lines.
-
-- Bullet points are okay, too
-
-- Typically a hyphen or asterisk is used for the bullet, followed by a
-  single space, with blank lines in between, but conventions vary here
-```
 
 ## Pull Request
 
@@ -134,20 +178,8 @@ Please be aware of the following notes prior to opening a pull request:
 1.  This project is released under the license specified in [LICENSE](LICENSE).
     Any code you submit will be released under that license. Furthermore it's likely
     that we have to reject code which depends on third party code which isn't compatible
-    to the aforementioned license.
+    to the aforementioned license. You can check compatibility with ```npm run license```.
 
-2.  If you would like to implement support for a significant feature that is not
-    yet available, please talk to us beforehand to avoid any
-    duplication of effort.
+2.  Wherever possible, pull requests should contain tests as appropriate. Bugfixes should contain tests that exercise the corrected behavior (i.e., the test should fail without the bugfix and pass with it), and new features should be accompanied by tests exercising the feature.
 
-3.  Wherever possible, pull requests should contain tests as appropriate.
-    Bugfixes should contain tests that exercise the corrected behavior (i.e., the
-    test should fail without the bugfix and pass with it), and new features
-    should be accompanied by tests exercising the feature.
-
-4.  Follow the [Code Conventions](#code-conventions).
-
-5.  Pull requests that contain failing tests will not be merged until the test
-    failures are addressed. Pull requests that cause a significant drop in the
-    test coverage percentage are unlikely to be merged until tests have
-    been added.
+3. A pull request will automatically trigger a large set of actions (CI). These will run various tests and other QA-measures. Pull requests that contain failing tests will not be merged until the test failures are addressed. Pull requests that cause a significant drop in the test coverage percentage are unlikely to be merged until tests have been added.

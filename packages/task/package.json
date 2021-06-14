@@ -1,11 +1,11 @@
 {
-  "name": "@dvelop-sdk/identityprovider",
-  "description": "This package contains functionality for the Identityprovider-App in the d.velop cloud.",
+  "name": "@dvelop-sdk/task",
+  "description": "This package contains functionality for the Task-App in the d.velop cloud.",
   "version": "1.0.4",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "author": "Lennart <lennart.klose@d-velop.de>",
+  "author": "Patrick <patrick.rose@d-velop.de>",
   "files": [
     "lib"
   ],
@@ -19,10 +19,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
-  },
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.0"
   }
 }
