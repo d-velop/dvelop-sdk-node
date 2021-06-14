@@ -24,6 +24,8 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
     - name: Install npm dependencies
       run: npm ci
+    - name: Build packages
+      run: npm ci
     - name: Run tests
       run: npm test
 
@@ -37,7 +39,7 @@ jobs:
       uses: actions/setup-node@v2
     - name: Install npm dependencies
       run: npm ci
-    - name: Run tests
+    - name: Run linting
       run: npm run lint
 
   license:
@@ -50,7 +52,7 @@ jobs:
       uses: actions/setup-node@v2
     - name: Install npm dependencies
       run: npm ci
-    - name: Run tests
+    - name: Run license check
       run: npm run license
 
   generate-docs:
