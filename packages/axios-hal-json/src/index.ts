@@ -33,4 +33,5 @@ declare module "axios" {
   }
 }
 
-export { followHalJson, HalJsonRequestChainError, NoHalJsonLinksInResponseError, NoHalJsonLinkToFollowError, NoHalJsonTemplateValueError } from "./followHalJson/follow-hal-json";
+export { HalJsonRequestChainError, NoHalJsonLinksInResponseError, NoHalJsonLinkToFollowError, NoHalJsonTemplateValueError} from "./errors";
+export { followHalJson } from "./followHalJson/follow-hal-json";
