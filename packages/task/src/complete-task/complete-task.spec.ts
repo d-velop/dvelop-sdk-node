@@ -34,7 +34,7 @@ describe("completeTask", () => {
         expect(mockedAxios.post).toHaveBeenCalledWith(`${location}/completionState`, expect.any(Object), expect.any(Object));
       });
 
-      it("should POST with given task", async () => {
+      it("should POST with given { complete: true }", async () => {
         await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", testCase);
         expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), { complete: true }, expect.any(Object));
       });

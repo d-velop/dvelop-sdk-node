@@ -20,7 +20,7 @@ export class TaskAlreadyCompletedError extends Error {
  * @throws [[NoTaskLocationError]] indicates that no location was given.
  * @throws [[UnauthenticatedError]] indicates that the authSessionId was invalid or expired.
  * @throws [[UnauthorizedError]] indicates that the user associated with the authSessionId does miss permissions.
- * @throws [[TaskNotFoundError]] indicates that for the given task does not exist.
+ * @throws [[TaskNotFoundError]] indicates that for the given location no task was found.
  * @throws [[TaskAlreadyCompleted]] indicates that a task is already marked as completed.
  *
  * @param {string} systemBaseUri SystemBaseUri for the tenant
