@@ -5,11 +5,11 @@ import { Task } from "./task";
  *
  * @category Error
  */
-export class UnauthenticatedUserError extends Error {
+export class UnauthenticatedError extends Error {
 // eslint-disable-next-line no-unused-vars
   constructor(context: string, public response: AxiosResponse) {
     super(`${context}: Unauthenticated User.`);
-    Object.setPrototypeOf(this, UnauthenticatedUserError.prototype);
+    Object.setPrototypeOf(this, UnauthenticatedError.prototype);
   }
 }
 
@@ -17,11 +17,11 @@ export class UnauthenticatedUserError extends Error {
  *
  * @category Error
  */
-export class UnauthorizedUserError extends Error {
+export class UnauthorizedError extends Error {
 // eslint-disable-next-line no-unused-vars
   constructor(context: string, public response: AxiosResponse) {
     super(`${context}: User is not eligible.`);
-    Object.setPrototypeOf(this, UnauthorizedUserError.prototype);
+    Object.setPrototypeOf(this, UnauthorizedError.prototype);
   }
 }
 
@@ -41,10 +41,10 @@ export class NoTaskLocationError extends Error {
  *
  * @category Error
  */
-export class TaskNoFoundError extends Error {
+export class TaskNotFoundError extends Error {
 // eslint-disable-next-line no-unused-vars
   constructor(context: string, public location: string, public response: AxiosResponse) {
     super(`${context}: Task does not exist at location: '${location}'.`);
-    Object.setPrototypeOf(this, TaskNoFoundError.prototype);
+    Object.setPrototypeOf(this, TaskNotFoundError.prototype);
   }
 }

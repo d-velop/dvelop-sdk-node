@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 import { Task } from "../task";
 import { v4 } from "uuid";
-import { UnauthenticatedUserError, UnauthorizedUserError } from "../errors";
+import { UnauthenticatedError, UnauthorizedError } from "../errors";
 axios.interceptors.request.use(followHalJson);
 
 /**
@@ -19,6 +19,10 @@ export class InvalidTaskError extends Error {
 
 /**
  * Creates a [Task]{@link Task} and returns it. This method will automatically generate a random correlation key if the task does not contain one.
+ *
+ * @throws [[InvalidTaskError]] indicates that the given task was not accepted because it is invalid. You can check the ```error.validation```-property.
+ * @throws [[UnauthenticatedError]] indicates that the authSessionId was invalid or expired.
+ * @throws [[UnauthorizedError]] indicates that the user associated with the authSessionId does miss permissions.
  *
  * @param {string} systemBaseUri SystemBaseUri for the tenant
  * @param {string} authRessionId Vaild AuthSessionId
@@ -60,9 +64,9 @@ export async function createTask(systemBaseUri: string, authSessionId: string, t
       case 400:
         throw new InvalidTaskError(task, e.response.data, e.response);
       case 401:
-        throw new UnauthenticatedUserError("Failed to create Task", e.response);
+        throw new UnauthenticatedError("Failed to create Task", e.response);
       case 403:
-        throw new UnauthorizedUserError("Failed to create Task", e.response);
+        throw new UnauthorizedError("Failed to create Task", e.response);
       }
     }
     e.message = "Failed to create Task: " + e.message;

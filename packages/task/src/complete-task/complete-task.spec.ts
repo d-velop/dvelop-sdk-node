@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { NoTaskLocationError, TaskNoFoundError, UnauthenticatedUserError, UnauthorizedUserError } from "../errors";
+import { NoTaskLocationError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
 import { completeTask, TaskAlreadyCompletedError } from "./complete-task";
 
 jest.mock("axios");
@@ -94,7 +94,7 @@ describe("completeTask", () => {
       });
     });
 
-    it("should throw UnauthenticatedUserError on status 401", async () => {
+    it("should throw UnauthenticatedError on status 401", async () => {
 
       const response: AxiosResponse = {
         status: 401
@@ -102,20 +102,20 @@ describe("completeTask", () => {
 
       mockedAxios.post.mockRejectedValue({ response });
 
-      let error: UnauthenticatedUserError;
+      let error: UnauthenticatedError;
       try {
         await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeLocation");
       } catch (e) {
         error = e;
       }
 
-      expect(error instanceof UnauthenticatedUserError).toBeTruthy();
+      expect(error instanceof UnauthenticatedError).toBeTruthy();
       expect(error.message).toContain("Failed to complete task:");
       expect(error.response).toEqual(response);
     });
 
 
-    it("should throw UnauthorizedUserError on status 403", async () => {
+    it("should throw UnauthorizedError on status 403", async () => {
 
       const response: AxiosResponse = {
         status: 403,
@@ -123,19 +123,19 @@ describe("completeTask", () => {
 
       mockedAxios.post.mockRejectedValue({ response });
 
-      let error: UnauthorizedUserError;
+      let error: UnauthorizedError;
       try {
         await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeLocation");
       } catch (e) {
         error = e;
       }
 
-      expect(error instanceof UnauthorizedUserError).toBeTruthy();
+      expect(error instanceof UnauthorizedError).toBeTruthy();
       expect(error.message).toContain("Failed to complete task:");
       expect(error.response).toEqual(response);
     });
 
-    it("should throw UnauthorizedUserError on status 404", async () => {
+    it("should throw TaskNotFoundError on status 404", async () => {
 
       const location = "HiItsMeLocation";
 
@@ -145,15 +145,16 @@ describe("completeTask", () => {
 
       mockedAxios.post.mockRejectedValue({ response });
 
-      let error: TaskNoFoundError;
+      let error: TaskNotFoundError;
       try {
         await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", location);
       } catch (e) {
         error = e;
       }
 
-      expect(error instanceof TaskNoFoundError).toBeTruthy();
+      expect(error instanceof TaskNotFoundError).toBeTruthy();
       expect(error.message).toContain("Failed to complete task:");
+      expect(error.message).toContain(location);
       expect(error.location).toEqual(location);
       expect(error.response).toEqual(response);
     });

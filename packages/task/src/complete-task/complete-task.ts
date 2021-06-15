@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { NoTaskLocationError, TaskNoFoundError, UnauthenticatedUserError, UnauthorizedUserError } from "../errors";
+import { NoTaskLocationError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
 import { Task } from "../task";
 
 /**
@@ -16,6 +16,12 @@ export class TaskAlreadyCompletedError extends Error {
 
 /**
  * Marks a [Task]{@link Task} as completed.
+ *
+ * @throws [[NoTaskLocationError]] indicates that no location was given.
+ * @throws [[UnauthenticatedError]] indicates that the authSessionId was invalid or expired.
+ * @throws [[UnauthorizedError]] indicates that the user associated with the authSessionId does miss permissions.
+ * @throws [[TaskNotFoundError]] indicates that for the given task does not exist.
+ * @throws [[TaskAlreadyCompleted]] indicates that a task is already marked as completed.
  *
  * @param {string} systemBaseUri SystemBaseUri for the tenant
  * @param {string} authSessionId Vaild AuthSessionId
@@ -60,11 +66,11 @@ export async function completeTask(systemBaseUri: string, authSessionId: string,
     if (e.response) {
       switch (e.response.status) {
       case 401:
-        throw new UnauthenticatedUserError(context, e.response);
+        throw new UnauthenticatedError(context, e.response);
       case 403:
-        throw new UnauthorizedUserError(context, e.response);
+        throw new UnauthorizedError(context, e.response);
       case 404:
-        throw new TaskNoFoundError(context, location, e.response);
+        throw new TaskNotFoundError(context, location, e.response);
       case 410:
         throw new TaskAlreadyCompletedError(context, location, e.response);
       }

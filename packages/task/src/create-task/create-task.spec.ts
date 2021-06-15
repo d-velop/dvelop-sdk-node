@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import "@dvelop-sdk/axios-hal-json";
 import { createTask, InvalidTaskError } from "./create-task";
 import { Task } from "../task";
-import { UnauthenticatedUserError, UnauthorizedUserError } from "../errors";
+import { UnauthenticatedError, UnauthorizedError } from "../errors";
 
 jest.mock("axios");
 
@@ -151,7 +151,7 @@ describe("createTask", () => {
       expect(error.response).toEqual(response);
     });
 
-    it("should throw UnauthenticatedUserError on status 401", async () => {
+    it("should throw UnauthenticatedError on status 401", async () => {
 
       const response: AxiosResponse = {
         data: {},
@@ -160,19 +160,19 @@ describe("createTask", () => {
 
       mockedAxios.post.mockRejectedValue({ response });
 
-      let error: UnauthenticatedUserError;
+      let error: UnauthenticatedError;
       try {
         await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
       } catch (e) {
         error = e;
       }
 
-      expect(error instanceof UnauthenticatedUserError).toBeTruthy();
+      expect(error instanceof UnauthenticatedError).toBeTruthy();
       expect(error.message).toContain("Failed to create Task:");
       expect(error.response).toEqual(response);
     });
 
-    it("should throw UnauthorizedUserError on status 403", async () => {
+    it("should throw UnauthorizedError on status 403", async () => {
 
       const response: AxiosResponse = {
         data: {},
@@ -181,14 +181,14 @@ describe("createTask", () => {
 
       mockedAxios.post.mockRejectedValue({ response });
 
-      let error: UnauthorizedUserError;
+      let error: UnauthorizedError;
       try {
         await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
       } catch (e) {
         error = e;
       }
 
-      expect(error instanceof UnauthorizedUserError).toBeTruthy();
+      expect(error instanceof UnauthorizedError).toBeTruthy();
       expect(error.message).toContain("Failed to create Task:");
       expect(error.response).toEqual(response);
     });
