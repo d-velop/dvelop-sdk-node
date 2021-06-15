@@ -22,8 +22,9 @@
  * </div>
  * @module task
  */
-export { createTask } from "./create-task/create-task";
-export { completeTask } from "./complete-task/complete-task";
+export { Task, TaskContext, TaskMetaData, TaskLinks } from "./task";
+export { UnauthenticatedError, UnauthorizedError, NoTaskLocationError, TaskNotFoundError } from "./errors";
+export { createTask, InvalidTaskError } from "./create-task/create-task";
+export { completeTask, TaskAlreadyCompletedError } from "./complete-task/complete-task";
 export { deleteTask } from "./delete-task/delete-task";
 export { updateTask } from "./update-task/update-task";
-export { Task, TaskContext, TaskMetaData, TaskLinks } from "./task";
