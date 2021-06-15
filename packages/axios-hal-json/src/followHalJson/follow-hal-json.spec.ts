@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { followHalJson, HalJsonRequestChainError, NoHalJsonLinksInResponseError, NoHalJsonLinkToFollowError, NoHalJsonTemplateValueError } from "./follow-hal-json";
+import { HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInResponseError, NoHalJsonTemplateValueError } from "../errors";
+import { followHalJson } from "./follow-hal-json";
 
 jest.mock("axios");
 
