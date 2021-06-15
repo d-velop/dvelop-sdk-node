@@ -8,6 +8,11 @@
     "transform": {
         "^.+\\.ts$": "ts-jest"
     },
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+        "**/src/**/*.ts",
+        "!**/src/index.ts"
+    ],
     "coverageReporters": ["text"]
 
 }
