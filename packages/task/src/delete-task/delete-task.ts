@@ -1,8 +1,16 @@
 import axios from "axios";
+import { NoTaskLocationError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
 import { Task } from "../task";
 
 /**
  * Delete a [Task]{@link Task}.
+ *
+ *
+ * @throws [[NoTaskLocationError]] indicates that no location was given.
+ * @throws [[UnauthenticatedError]] indicates that the authSessionId was invalid or expired.
+ * @throws [[UnauthorizedError]] indicates that the user associated with the authSessionId does miss permissions.
+ * @throws [[TaskNotFoundError]] indicates that for the given location no task was found.
+ *
  * @param {string} systemBaseUri SystemBaseUri for the tenant
  * @param {string} authSessionId Vaild AuthSessionId
  * @param {string|Task} task Location of a task or the [Task]{@link Task} itself
@@ -24,6 +32,7 @@ import { Task } from "../task";
 
 export async function deleteTask(systemBaseUri: string, authSessionId: string, task: string | Task): Promise<void> {
 
+  const context: string = "Failed to delete task";
   let location: string;
 
   if (task && typeof task === "string") {
@@ -31,11 +40,12 @@ export async function deleteTask(systemBaseUri: string, authSessionId: string, t
   } else if (task && (task as Task).location) {
     location = (task as Task).location!;
   } else {
-    throw new Error("Failed to delete Task.\nNo Location");
+    throw new NoTaskLocationError(context, task);
   }
 
   try {
-    await axios.delete(`${systemBaseUri}${location}`, {
+    await axios.delete(location, {
+      baseURL: systemBaseUri,
       headers: {
         "Authorization": `Bearer ${authSessionId}`,
         "Origin": systemBaseUri
@@ -45,13 +55,14 @@ export async function deleteTask(systemBaseUri: string, authSessionId: string, t
     if (e.response) {
       switch (e.response.status) {
       case 401:
-        throw new Error("The user is not authenticated.");
+        throw new UnauthenticatedError(context, e.response);
       case 403:
-        throw new Error("The user does not have the permission to delete this task.");
+        throw new UnauthorizedError(context, e.response);
       case 404:
-        throw new Error("The task does not exist.");
+        throw new TaskNotFoundError(context, location, e.response);
       }
     }
-    throw new Error(`Failed to delete Task: ${JSON.stringify(e)}`);
+    e.message = `${context}: ${e.message}`;
+    throw e;
   }
 }
