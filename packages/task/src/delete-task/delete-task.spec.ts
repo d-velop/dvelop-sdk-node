@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { NoTaskLocationError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
+import { NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
 import { deleteTask } from "./delete-task";
 
 jest.mock("axios");
@@ -150,6 +150,29 @@ describe("deleteTask", () => {
       expect(error instanceof TaskNotFoundError).toBeTruthy();
       expect(error.message).toContain("Failed to delete task:");
       expect(error.message).toContain(location);
+      expect(error.location).toEqual(location);
+      expect(error.response).toEqual(response);
+    });
+
+    it("should throw TaskAlreadyCompletedError on status 410", async () => {
+
+      const location = "HiItsMeLocation";
+
+      const response: AxiosResponse = {
+        status: 410,
+      } as AxiosResponse;
+
+      mockedAxios.delete.mockRejectedValue({ response });
+
+      let error: TaskAlreadyCompletedError;
+      try {
+        await deleteTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", location);
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error instanceof TaskAlreadyCompletedError).toBeTruthy();
+      expect(error.message).toContain("Failed to delete task:");
       expect(error.location).toEqual(location);
       expect(error.response).toEqual(response);
     });

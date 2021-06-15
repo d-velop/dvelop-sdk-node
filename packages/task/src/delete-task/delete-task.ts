@@ -1,5 +1,5 @@
 import axios from "axios";
-import { NoTaskLocationError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
+import { NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
 import { Task } from "../task";
 
 /**
@@ -60,6 +60,8 @@ export async function deleteTask(systemBaseUri: string, authSessionId: string, t
         throw new UnauthorizedError(errorContext, e.response);
       case 404:
         throw new TaskNotFoundError(errorContext, location, e.response);
+      case 410:
+        throw new TaskAlreadyCompletedError(errorContext, location, e.response);
       }
     }
     e.message = `${errorContext}: ${e.message}`;
