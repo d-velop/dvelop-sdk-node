@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import "@dvelop-sdk/axios-hal-json";
-import { createTask, InvalidTaskError } from "./create-task";
+import { createTask } from "./create-task";
 import { Task } from "../task";
-import { UnauthenticatedError, UnauthorizedError } from "../errors";
+import { InvalidTaskError, UnauthenticatedError, UnauthorizedError } from "../errors";
 
 jest.mock("axios");
 
@@ -145,7 +145,7 @@ describe("createTask", () => {
       }
 
       expect(error instanceof InvalidTaskError).toBeTruthy();
-      expect(error.message).toContain("Failed to create Task:");
+      expect(error.message).toContain("Failed to create task:");
       expect(error.task).toEqual(expect.objectContaining(task));
       expect(error.validation).toEqual(data);
       expect(error.response).toEqual(response);
@@ -168,7 +168,7 @@ describe("createTask", () => {
       }
 
       expect(error instanceof UnauthenticatedError).toBeTruthy();
-      expect(error.message).toContain("Failed to create Task:");
+      expect(error.message).toContain("Failed to create task:");
       expect(error.response).toEqual(response);
     });
 
@@ -189,7 +189,7 @@ describe("createTask", () => {
       }
 
       expect(error instanceof UnauthorizedError).toBeTruthy();
-      expect(error.message).toContain("Failed to create Task:");
+      expect(error.message).toContain("Failed to create task:");
       expect(error.response).toEqual(response);
     });
 
@@ -211,7 +211,7 @@ describe("createTask", () => {
 
       expect(resultError).toBe(error);
       expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to create Task:");
+      expect(resultError.message).toContain("Failed to create task:");
     });
   });
 });

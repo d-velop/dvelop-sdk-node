@@ -1,18 +1,7 @@
-import axios, { AxiosResponse } from "axios";
-import { NoTaskLocationError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
+import axios from "axios";
+import { UnauthenticatedError, UnauthorizedError, NoTaskLocationError, TaskNotFoundError, TaskAlreadyCompletedError } from "../errors";
 import { Task } from "../task";
 
-/**
- * Tried to complete a Task which was already completed.
- * @category Error
- */
-export class TaskAlreadyCompletedError extends Error {
-  // eslint-disable-next-line no-unused-vars
-  constructor(context: string, public location: string, public response: AxiosResponse) {
-    super(`${context}: Task was already completed at location: ${location}`);
-    Object.setPrototypeOf(this, TaskAlreadyCompletedError.prototype);
-  }
-}
 
 /**
  * Marks a [Task]{@link Task} as completed.
@@ -43,7 +32,7 @@ export class TaskAlreadyCompletedError extends Error {
 
 export async function completeTask(systemBaseUri: string, authSessionId: string, task: string | Task): Promise<void> {
 
-  const context = "Failed to complete task";
+  const errorContext = "Failed to complete task";
   let location: string;
 
   if (task && typeof task === "string") {
@@ -51,7 +40,7 @@ export async function completeTask(systemBaseUri: string, authSessionId: string,
   } else if (task && (task as Task).location) {
     location = (task as Task).location!;
   } else {
-    throw new NoTaskLocationError(context, task);
+    throw new NoTaskLocationError(errorContext, task);
   }
 
   try {
@@ -66,16 +55,16 @@ export async function completeTask(systemBaseUri: string, authSessionId: string,
     if (e.response) {
       switch (e.response.status) {
       case 401:
-        throw new UnauthenticatedError(context, e.response);
+        throw new UnauthenticatedError(errorContext, e.response);
       case 403:
-        throw new UnauthorizedError(context, e.response);
+        throw new UnauthorizedError(errorContext, e.response);
       case 404:
-        throw new TaskNotFoundError(context, location, e.response);
+        throw new TaskNotFoundError(errorContext, location, e.response);
       case 410:
-        throw new TaskAlreadyCompletedError(context, location, e.response);
+        throw new TaskAlreadyCompletedError(errorContext, location, e.response);
       }
     }
-    e.message = `${context}: ${e.message}`;
+    e.message = `${errorContext}: ${e.message}`;
     throw e;
   }
 }

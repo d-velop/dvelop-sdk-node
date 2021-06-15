@@ -2,20 +2,9 @@ import axios, { AxiosResponse } from "axios";
 import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 import { Task } from "../task";
 import { v4 } from "uuid";
-import { UnauthenticatedError, UnauthorizedError } from "../errors";
+import { InvalidTaskError, UnauthenticatedError, UnauthorizedError } from "../errors";
 axios.interceptors.request.use(followHalJson);
 
-/**
- * Tried to create an invalid Task. See ```validation```-propery.
- * @category Error
- */
-export class InvalidTaskError extends Error {
-  // eslint-disable-next-line no-unused-vars
-  constructor(public task: Task, public validation: any, public response: AxiosResponse) {
-    super(`Failed to create Task: Invalid Task.\nValidation: ${JSON.stringify(validation)}`);
-    Object.setPrototypeOf(this, InvalidTaskError.prototype);
-  }
-}
 
 /**
  * Creates a [Task]{@link Task} and returns it. This method will automatically generate a random correlation key if the task does not contain one.
@@ -40,6 +29,8 @@ export class InvalidTaskError extends Error {
  */
 export async function createTask(systemBaseUri: string, authSessionId: string, task: Task): Promise<Task> {
 
+  const errorContext: string = "Failed to create task";
+
   if (!task.correlationKey) {
     task.correlationKey = v4();
   }
@@ -62,14 +53,14 @@ export async function createTask(systemBaseUri: string, authSessionId: string, t
     if (e.response) {
       switch (e.response.status) {
       case 400:
-        throw new InvalidTaskError(task, e.response.data, e.response);
+        throw new InvalidTaskError(errorContext, task, e.response.data, e.response);
       case 401:
-        throw new UnauthenticatedError("Failed to create Task", e.response);
+        throw new UnauthenticatedError(errorContext, e.response);
       case 403:
-        throw new UnauthorizedError("Failed to create Task", e.response);
+        throw new UnauthorizedError(errorContext, e.response);
       }
     }
-    e.message = "Failed to create Task: " + e.message;
+    e.message = `${errorContext}: ${e.message}`;
     throw e;
   }
 

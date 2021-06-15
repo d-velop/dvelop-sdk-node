@@ -32,7 +32,7 @@ import { Task } from "../task";
 
 export async function deleteTask(systemBaseUri: string, authSessionId: string, task: string | Task): Promise<void> {
 
-  const context: string = "Failed to delete task";
+  const errorContext: string = "Failed to delete task";
   let location: string;
 
   if (task && typeof task === "string") {
@@ -40,7 +40,7 @@ export async function deleteTask(systemBaseUri: string, authSessionId: string, t
   } else if (task && (task as Task).location) {
     location = (task as Task).location!;
   } else {
-    throw new NoTaskLocationError(context, task);
+    throw new NoTaskLocationError(errorContext, task);
   }
 
   try {
@@ -55,14 +55,14 @@ export async function deleteTask(systemBaseUri: string, authSessionId: string, t
     if (e.response) {
       switch (e.response.status) {
       case 401:
-        throw new UnauthenticatedError(context, e.response);
+        throw new UnauthenticatedError(errorContext, e.response);
       case 403:
-        throw new UnauthorizedError(context, e.response);
+        throw new UnauthorizedError(errorContext, e.response);
       case 404:
-        throw new TaskNotFoundError(context, location, e.response);
+        throw new TaskNotFoundError(errorContext, location, e.response);
       }
     }
-    e.message = `${context}: ${e.message}`;
+    e.message = `${errorContext}: ${e.message}`;
     throw e;
   }
 }

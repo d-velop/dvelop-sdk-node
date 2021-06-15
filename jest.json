@@ -1,18 +1,20 @@
 {
-    "roots": [
-        "packages"
-    ],
-    "testMatch": [
-        "**/*.spec.ts"
-    ],
-    "transform": {
-        "^.+\\.ts$": "ts-jest"
-    },
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-        "**/src/**/*.ts",
-        "!**/src/index.ts"
-    ],
-    "coverageReporters": ["text"]
-
+  "roots": [
+    "packages"
+  ],
+  "testMatch": [
+    "**/*.spec.ts"
+  ],
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
+  },
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "**/src/**/*.ts",
+    "!**/src/index.ts",
+    "!**/src/errors.ts"
+  ],
+  "coverageReporters": [
+    "text"
+  ]
 }
