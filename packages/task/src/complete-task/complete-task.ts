@@ -1,5 +1,18 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import { NoTaskLocationError, TaskNoFoundError, UnauthenticatedUserError, UnauthorizedUserError } from "../errors";
 import { Task } from "../task";
+
+/**
+ * Tried to complete a Task which was already completed.
+ * @category Error
+ */
+export class TaskAlreadyCompletedError extends Error {
+  // eslint-disable-next-line no-unused-vars
+  constructor(context: string, public location: string, public response: AxiosResponse) {
+    super(`${context}: Task was already completed at location: ${location}`);
+    Object.setPrototypeOf(this, TaskAlreadyCompletedError.prototype);
+  }
+}
 
 /**
  * Marks a [Task]{@link Task} as completed.
@@ -24,6 +37,7 @@ import { Task } from "../task";
 
 export async function completeTask(systemBaseUri: string, authSessionId: string, task: string | Task): Promise<void> {
 
+  const context = "Failed to complete task";
   let location: string;
 
   if (task && typeof task === "string") {
@@ -31,29 +45,31 @@ export async function completeTask(systemBaseUri: string, authSessionId: string,
   } else if (task && (task as Task).location) {
     location = (task as Task).location!;
   } else {
-    throw new Error("Failed to complete Task.\nNo Location");
+    throw new NoTaskLocationError(context, task);
   }
 
   try {
-    await axios.post(`${systemBaseUri}${location}/completionState`, { "complete": true }, {
+    await axios.post<void>(`${location}/completionState`, { complete: true }, {
+      baseURL: systemBaseUri,
       headers: {
         "Authorization": `Bearer ${authSessionId}`,
         "Origin": systemBaseUri
-      },
+      }
     });
   } catch (e) {
     if (e.response) {
       switch (e.response.status) {
       case 401:
-        throw new Error("The user is not authenticated.");
+        throw new UnauthenticatedUserError(context, e.response);
       case 403:
-        throw new Error("The user does not have the permission to complete this task.");
+        throw new UnauthorizedUserError(context, e.response);
       case 404:
-        throw new Error("The task does not exist.");
+        throw new TaskNoFoundError(context, location, e.response);
       case 410:
-        throw new Error("This task was already completed.");
+        throw new TaskAlreadyCompletedError(context, location, e.response);
       }
     }
-    throw new Error(`Failed to create Task: ${JSON.stringify(e)}`);
+    e.message = `${context}: ${e.message}`;
+    throw e;
   }
 }
