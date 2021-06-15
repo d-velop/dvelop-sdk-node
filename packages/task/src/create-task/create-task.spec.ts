@@ -22,30 +22,30 @@ describe("createTask", () => {
       });
     });
 
-    it("should do POST", async () => {
+    it("should send POST", async () => {
       await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
       expect(mockedAxios.post).toHaveBeenCalledTimes(1);
     });
 
-    it("should POST to /task", async () => {
+    it("should send to /task", async () => {
       await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
       expect(mockedAxios.post).toHaveBeenCalledWith("/task", expect.any(Object), expect.any(Object));
     });
 
-    it("should POST with given task", async () => {
+    it("should send with given task", async () => {
       const task: Task = { subject: "HiItsMeSubject", correlationKey: "HiItsMeCorrelationKey" };
       await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { ...task });
       expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining(task), expect.any(Object));
     });
 
-    it("should POST given task with added correlationKey if none given", async () => {
+    it("should send given task with added correlationKey if none given", async () => {
       const task: Task = { subject: "HiItsMeSubject" };
       await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { ...task });
       expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining(task), expect.any(Object));
       expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ correlationKey: expect.any(String) }), expect.any(Object));
     });
 
-    it("should POST with systemBaseUri as BaseURL", async () => {
+    it("should send with systemBaseUri as BaseURL", async () => {
       const systemBaseUri: string = "HiItsMeSystemBaseUri";
       await createTask(systemBaseUri, "HiItsMeAuthSessionId", {});
       expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
@@ -53,7 +53,7 @@ describe("createTask", () => {
       }));
     });
 
-    it("should POST with authSessionId as Authorization-Header", async () => {
+    it("should send with authSessionId as Authorization-Header", async () => {
       const authSessionId: string = "HiItsMeAuthSessionId";
       await createTask("HiItsMeSystemBaseUri", authSessionId, {});
       expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
@@ -61,7 +61,7 @@ describe("createTask", () => {
       }));
     });
 
-    it("should POST with systemBaseUri as Origin-Header", async () => {
+    it("should send with systemBaseUri as Origin-Header", async () => {
       const systemBaseUri: string = "HiItsMeSystemBaseUri";
       await createTask(systemBaseUri, "HiItsMeAuthSessionId", {});
       expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
@@ -69,7 +69,7 @@ describe("createTask", () => {
       }));
     });
 
-    it("should POST with follows: tasks", async () => {
+    it("should send with follows: tasks", async () => {
       await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
       expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
         follows: ["tasks"]
