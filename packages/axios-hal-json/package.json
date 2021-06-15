@@ -1,7 +1,7 @@
 {
   "name": "@dvelop-sdk/axios-hal-json",
   "description": "This package extends axios to handle hal-json specification in the d.velop cloud.",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
