@@ -10,6 +10,7 @@ import { Task } from "../task";
  * @throws [[UnauthenticatedError]] indicates that the authSessionId was invalid or expired.
  * @throws [[UnauthorizedError]] indicates that the user associated with the authSessionId does miss permissions.
  * @throws [[TaskNotFoundError]] indicates that for the given location no task was found.
+ * @throws [[TaskAlreadyCompleted]] indicates that a task is already marked as completed.
  *
  * @param {string} systemBaseUri SystemBaseUri for the tenant
  * @param {string} authSessionId Vaild AuthSessionId

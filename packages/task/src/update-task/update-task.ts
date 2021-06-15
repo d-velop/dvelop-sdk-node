@@ -6,6 +6,7 @@ import { Task } from "../task";
  * Update an existing [Task]{@link Task}.
  *
  * @throws [[NoTaskLocationError]] indicates that no location was given.
+ * @throws [[InvalidTaskError]] indicates that the given task was not accepted because it is invalid. You can check the ```error.validation```-property.
  * @throws [[UnauthenticatedError]] indicates that the authSessionId was invalid or expired.
  * @throws [[UnauthorizedError]] indicates that the user associated with the authSessionId does miss permissions.
  * @throws [[TaskNotFoundError]] indicates that for the given location no task was found.
