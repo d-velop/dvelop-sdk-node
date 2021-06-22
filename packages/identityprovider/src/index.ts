@@ -22,6 +22,7 @@
  * </div>
  * @module identityprovider
  */
+export { UnauthorizedError, ForbiddenError, NotFoundError } from "./errors";
 export { AuthSession } from "./get-auth-session/auth-session";
 export { getAuthSession } from "./get-auth-session/get-auth-session";
 export { ScimUser } from "./validate-auth-session-id/scim-user";
