@@ -7,24 +7,27 @@ axios.interceptors.request.use(followHalJson);
 
 
 /**
- * Creates a [Task]{@link Task} and returns it. This method will automatically generate a random correlation key if the task does not contain one.
+ * Create a {@link Task}.
  *
- * @throws [[InvalidTaskError]] indicates that the given task was not accepted because it is invalid. You can check the ```error.validation```-property.
- * @throws [[UnauthenticatedError]] indicates that the authSessionId was invalid or expired.
- * @throws [[UnauthorizedError]] indicates that the user associated with the authSessionId does miss permissions.
+ * *This method will automatically generate a random correlation key if the task does not contain one.*
  *
  * @param {string} systemBaseUri SystemBaseUri for the tenant
- * @param {string} authRessionId Vaild AuthSessionId
- * @param {Task} task Task to be created
- * @returns {Task} Created Task
+ * @param {string} authRessionId Valid AuthSessionId
+ * @param {Task} task {@link Task} to be created
+ * @returns {Task} Created {@link Task}
+ *
+ * @throws {@link InvalidTaskError} indicates that the given task was not accepted because it is invalid. You can check the ```error.validation```-property.
+ * @throws {@link UnauthenticatedError} indicates that the authSessionId was invalid or expired.
+ * @throws {@link UnauthorizedError} indicates that the user associated with the authSessionId does miss permissions.
  *
  * @example ```typescript
+ *
  * const task: Task = {
  *   subject: "Cover up lab accident",
  *   assignees: ["USER_ID_1", "USER_ID_2"],
  *   correlationKey: "everythingIsFine", // can be randomly generated
  * }
- * task = await createTask("https://umbrella-corp.d-velop.cloud", "AUTH_SESSION_ID ", task);
+ * task = await createTask("https://umbrella-corp.d-velop.cloud", "AUTH_SESSION_ID", task);
  * ```
  */
 export async function createTask(systemBaseUri: string, authSessionId: string, task: Task): Promise<Task> {

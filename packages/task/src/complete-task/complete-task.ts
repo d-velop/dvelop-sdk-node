@@ -4,21 +4,21 @@ import { Task } from "../task";
 
 
 /**
- * Marks a [Task]{@link Task} as completed.
- *
- * @throws [[NoTaskLocationError]] indicates that no location was given.
- * @throws [[UnauthenticatedError]] indicates that the authSessionId was invalid or expired.
- * @throws [[UnauthorizedError]] indicates that the user associated with the authSessionId does miss permissions.
- * @throws [[TaskNotFoundError]] indicates that for the given location no task was found.
- * @throws [[TaskAlreadyCompleted]] indicates that a task is already marked as completed.
+ * Mark a {@link Task} as completed.
  *
  * @param {string} systemBaseUri SystemBaseUri for the tenant
  * @param {string} authSessionId Vaild AuthSessionId
- * @param {string|Task} task Location of a task or the [Task]{@link Task} itself
+ * @param {string|Task} task Location of the task or {@link Task}
  *
+ * @throws {@link NoTaskLocationError} indicates that no location was given.
+ * @throws {@link UnauthenticatedError} indicates that the authSessionId was invalid or expired.
+ * @throws {@link UnauthorizedError} indicates that the user associated with the authSessionId does miss permissions.
+ * @throws {@link TaskNotFoundError} indicates that for the given location no task was found.
+ * @throws {@link TaskAlreadyCompletedError} indicates that a task is already marked as completed.
+
  * @example ```typescript
- * const taskLocation: string = "/some/task/location";
- * await completeTask("https://umbrella-corp.d-velop.cloud", "AUTH_SESSION_ID", taskLocation);
+ *
+ * await completeTask("https://umbrella-corp.d-velop.cloud", "AUTH_SESSION_ID", "/some/task/location");
  *
  * // or
  *
@@ -28,7 +28,7 @@ import { Task } from "../task";
  * }
  * await completeTask("https://umbrella-corp.d-velop.cloud", "AUTH_SESSION_ID", task);
  * ```
- */
+  */
 
 export async function completeTask(systemBaseUri: string, authSessionId: string, task: string | Task): Promise<void> {
 

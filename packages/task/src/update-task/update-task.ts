@@ -3,26 +3,32 @@ import { InvalidTaskError, NoTaskLocationError, TaskAlreadyCompletedError, TaskN
 import { Task } from "../task";
 
 /**
- * Update an existing [Task]{@link Task}.
+ * Update an existing {@link Task}.
  *
- * @throws [[NoTaskLocationError]] indicates that no location was given.
- * @throws [[InvalidTaskError]] indicates that the given task was not accepted because it is invalid. You can check the ```error.validation```-property.
- * @throws [[UnauthenticatedError]] indicates that the authSessionId was invalid or expired.
- * @throws [[UnauthorizedError]] indicates that the user associated with the authSessionId does miss permissions.
- * @throws [[TaskNotFoundError]] indicates that for the given location no task was found.
- * @throws [[TaskAlreadyCompleted]] indicates that a task is already marked as completed.
- *
- * @param {string} systemBaseUri SystemBaseUri for the tenant.
+ * @param {string} systemBaseUri SystemBaseUri for the tenant
  * @param {string} authSessionId Vaild AuthSessionId
- * @param {Task} task Task object with values to be updated.
+ * @param {Task} task {@link Task} with updated values
+ * @returns {Task} Updated {@link Task}
+ *
+ * @throws {@link NoTaskLocationError} indicates that no location was given.
+ * @throws {@link InvalidTaskError} indicates that the given task was not accepted because it is invalid. You can check the ```error.validation```-property.
+ * @throws {@link UnauthenticatedError} indicates that the authSessionId was invalid or expired.
+ * @throws {@link UnauthorizedError} indicates that the user associated with the authSessionId does miss permissions.
+ * @throws {@link TaskNotFoundError} indicates that for the given location no task was found.
+ * @throws {@link TaskAlreadyCompletedError} indicates that a task is already marked as completed.
  *
  * @example ```typescript
- * task.description = "Try harder! Bribe some people if u must."
+ *
+ * const task: Task = {
+ *   ...
+ *   description: "Try harder! Bribe some people if you must."
+ * }
+ *
  * await updateTask("https://umbrella-corp.d-velop.cloud", "AUTH_SESSION_ID", task);
  * ```
  */
 
-export async function updateTask(systemBaseUri: string, authSessionId: string, task: Task,): Promise<void> {
+export async function updateTask(systemBaseUri: string, authSessionId: string, task: Task,): Promise<Task> {
 
   const errorContext: string = "Failed to update task";
   let location: string;
@@ -41,6 +47,7 @@ export async function updateTask(systemBaseUri: string, authSessionId: string, t
         "Origin": systemBaseUri
       },
     });
+    return task;
   } catch (e) {
     if (e.response) {
       switch (e.response.status) {
