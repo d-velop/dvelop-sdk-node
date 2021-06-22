@@ -1,5 +1,8 @@
 import axios, { AxiosResponse } from "axios";
+import { followHalJson } from "@dvelop-sdk/axios-hal-json";
+import { UnauthorizedError } from "../errors";
 import { AuthSession } from "./auth-session";
+axios.interceptors.request.use(followHalJson);
 
 export interface AuthSessionDto {
   AuthSessionId: string;
@@ -20,16 +23,30 @@ export interface AuthSessionDto {
  * ```
  */
 export async function getAuthSession(systemBaseUri: string, apiKey: string): Promise<AuthSession> {
-  const response: AxiosResponse<AuthSessionDto> = await axios.get<AuthSessionDto>(`${systemBaseUri}/identityprovider/login`, {
-    headers: {
-      "Authorization": `Bearer ${apiKey}`
-    }
-  }).catch(e => {
-    throw new Error(`Failed to get AuthSession for given API-Key.\n${e}`);
-  });
 
-  return {
-    id: response.data.AuthSessionId,
-    expire: new Date(response.data.Expire)
-  };
+  const errorContext: string = "Failed to get authSession";
+
+  try {
+    const response: AxiosResponse<AuthSessionDto> = await axios.get<AuthSessionDto>("/identityprovider", {
+      baseURL: systemBaseUri,
+      headers: {
+        "Authorization": `Bearer ${apiKey}`
+      },
+      follows: ["login"]
+    });
+
+    return {
+      id: response.data.AuthSessionId,
+      expire: new Date(response.data.Expire)
+    };
+  } catch (e) {
+    if (e.response) {
+      switch (e.response.status) {
+      case 401:
+        throw new UnauthorizedError(errorContext, e.response);
+      }
+    }
+    e.message = `${errorContext}: ${e.message}`;
+    throw e;
+  }
 }
