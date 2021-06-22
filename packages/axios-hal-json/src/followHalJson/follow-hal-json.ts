@@ -8,14 +8,14 @@ import "../index";
  *
  * The original axios config is preserved except the ```url``` property. During hal-json request the method is set to 'GET' and the Accept-Header is set to 'application/hal+json, application/json'.
  *
- * @throws [[HalJsonRequestChainError]] indicates that a request in the follow-chain failed.
- * @throws [[NoHalJsonLinksInResponseError]] indicates that a response within the follow-chain does not contain _links.
- * @throws [[NoHalJsonLinkToFollowError]] indicates that a response in the follow-chain does not contain a follow link in _links.
- * @throws [[NoHalJsonTemplateValueError]] indicates that a link in the follow-chain needs to be templated but no template value was given.
+ * @param {AxiosRequestConfig} config Config object for axios request
+ * @returns {AxiosRequestConfig} Config object for axios request. The ```url``` property will contain the final url
  *
- * @param {AxiosRequestConfig} config Config object for axios request.
- * @returns {AxiosRequestConfig} Config object for axios request. The ```url``` property will contain the final url.
- *
+ * @throws {@link HalJsonRequestChainError} indicates that a request in the follow-chain failed.
+ * @throws {@link NoHalJsonLinksInResponseError} indicates that a response within the follow-chain does not contain _links.
+ * @throws {@link NoHalJsonLinkToFollowError} indicates that a response in the follow-chain does not contain a follow link in _links.
+ * @throws {@link NoHalJsonTemplateValueError} indicates that a link in the follow-chain needs to be templated but no template value was given.
+
  * @example ```typescript
  *
  * import axios from "axios";

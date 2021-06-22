@@ -1,7 +1,7 @@
 import { AxiosRequestConfig, AxiosResponse} from "axios";
 
 /**
- * A request in the follow-chain failed
+ * A request in the follow-chain failed.
  * @category Error
  */
 export class HalJsonRequestChainError extends Error {
