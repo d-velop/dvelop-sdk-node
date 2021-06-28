@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from "axios";
-import { followHalJson } from "@dvelop-sdk/axios-hal-json";
+import "../index";
 import { ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
 import { ScimUser } from "./scim-user";
-axios.interceptors.request.use(followHalJson);
 
 /**
  * Validates an AuthSessionId and returns a [ScimUser]{@link ScimUser}
@@ -28,7 +27,8 @@ export async function validateAuthSessionId(systemBaseUri: string, authSessionId
     const response: AxiosResponse<ScimUser> = await axios.get<ScimUser>("/identityprovider", {
       baseURL: systemBaseUri,
       headers: {
-        "Authorization": `Bearer ${authSessionId}`
+        "Authorization": `Bearer ${authSessionId}`,
+        "Content-Type": "application/json"
       },
       follows: ["validate"]
     });

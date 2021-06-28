@@ -1,8 +1,6 @@
 import axios, { AxiosResponse } from "axios";
-import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 import { UnauthorizedError } from "../errors";
 import { AuthSession } from "./auth-session";
-axios.interceptors.request.use(followHalJson);
 
 export interface AuthSessionDto {
   AuthSessionId: string;

@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { UnauthorizedError } from "../errors";
 import { AuthSession } from "./auth-session";
-import { getAuthSession, AuthSessionDto } from "./get-auth-session";
+import { getAuthSession } from "../index";
 
 jest.mock("axios");
 
@@ -62,7 +62,7 @@ describe("getAuthSession", () => {
 
     it("should return AuthSessionId", async () => {
 
-      const authSessionDto: AuthSessionDto = {
+      const authSessionDto = {
         AuthSessionId: "HiItsMeAuthSessionId",
         Expire: "1992-02-16T16:11:03.8019256Z"
       };
@@ -77,7 +77,7 @@ describe("getAuthSession", () => {
 
     it("should return parsed expireDate", async () => {
 
-      const authSessionDto: AuthSessionDto = {
+      const authSessionDto = {
         AuthSessionId: "HiItsMeAuthSessionId",
         Expire: "1992-02-16T16:11:03.8019256Z"
       };
