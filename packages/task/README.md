@@ -14,10 +14,10 @@
 
   <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/taskapp/en">Task-App</a> in the d.velop cloud.</p>
 
-  <a href="https://d-velop.github.io/dvelop-sdk-node/modules/task.html"><strong>Explore the docs</strong></a>
+  <a href="https://d-velop.github.io/dvelop-sdk-node/modules/task.html"><strong>Explore the docs »</strong></a>
   </br>
-  <a href="https://www.npmjs.com/package/@dvelop-sdk/task"><strong>Install via npm</strong></a>
+  <a href="https://www.npmjs.com/package/@dvelop-sdk/task"><strong>Install via npm »</strong></a>
   </br>
-  <a href="https://github.com/d-velop/dvelop-sdk-node"><strong>Check us out on GitHub</strong></a>
+  <a href="https://github.com/d-velop/dvelop-sdk-node"><strong>Check us out on GitHub »</strong></a>
 
 </div>
