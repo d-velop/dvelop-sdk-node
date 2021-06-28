@@ -15,9 +15,13 @@
   <p>This package contains functionality for the <a href="https://developer.d-velop.de/dev/en/basics">App-Router</a> in the d.velop cloud.</p>
 
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules/axios-hal-json.html"><strong>Explore the docs »</strong></a>
+
   </br>
+
   <a href="https://www.npmjs.com/package/@dvelop-sdk/axios-hal-json"><strong>Install via npm »</strong></a>
+
   </br>
+
   <a href="https://github.com/d-velop/dvelop-sdk-node"><strong>Check us out on GitHub »</strong></a>
 
 </div>
