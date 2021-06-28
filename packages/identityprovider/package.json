@@ -1,7 +1,7 @@
 {
   "name": "@dvelop-sdk/identityprovider",
   "description": "This package contains functionality for the Identityprovider-App in the d.velop cloud.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -23,7 +23,7 @@
     "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
   },
   "dependencies": {
-    "@dvelop-sdk/axios-hal-json": "^1.0.1",
+    "@dvelop-sdk/axios-hal-json": "^1.0.2",
     "axios": "^0.21.1"
   }
 }
