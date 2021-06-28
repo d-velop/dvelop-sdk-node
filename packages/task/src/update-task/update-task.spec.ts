@@ -1,6 +1,8 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { updateTask } from "./update-task";
 import { Task } from "../task";
+import { InvalidTaskError, NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
+
 
 jest.mock("axios");
 
@@ -12,91 +14,217 @@ describe("updateTask", () => {
     mockedAxios.patch.mockReset();
   });
 
-  [
-    "", null, undefined
-  ].forEach(testCase => {
-    it("should throw on missing location in task", async () => {
+  describe("axios-params", () => {
 
-      const systemBaseUri = "HiItsMeSystemBaseUri";
-      const authessionId = "HiItsMeAuthsessionId";
-      const task: Task = {
-        location: testCase,
-        subject: "Nice Subject",
-        description: "a description",
-      };
+    beforeEach(() => {
+      mockedAxios.patch.mockResolvedValue(null);
+    });
 
-      await expect(updateTask(systemBaseUri, authessionId, task)).rejects.toThrowError("Failed to update Task.\nNo Location");
+    it("should send PATCH", async () => {
+      await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { location: "HiItsMeLocation" });
+      expect(mockedAxios.patch).toHaveBeenCalledTimes(1);
+    });
+
+    it("should send to location", async () => {
+      const location: string = "HiItsMeLocation";
+      await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { location: location });
+      expect(mockedAxios.patch).toHaveBeenCalledWith(location, expect.any(Object), expect.any(Object));
+    });
+
+    it("should send with given task", async () => {
+      const task: Task = { location: "HiItsMeLocation", subject: "HiItsMeSubject", correlationKey: "HiItsMeCorrelationKey" };
+      await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { ...task });
+      expect(mockedAxios.patch).toHaveBeenCalledWith(expect.any(String), expect.objectContaining(task), expect.any(Object));
+    });
+
+    it("should send with systemBaseUri as BaseURL", async () => {
+      const systemBaseUri: string = "HiItsMeSystemBaseUri";
+      await updateTask(systemBaseUri, "HiItsMeAuthSessionId", { location: "HiItsMeLocation" });
+      expect(mockedAxios.patch).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+        baseURL: systemBaseUri
+      }));
+    });
+
+    it("should send with authSessionId as Authorization-Header", async () => {
+      const authSessionId: string = "HiItsMeAuthSessionId";
+      await updateTask("HiItsMeSystemBaseUri", authSessionId, { location: "HiItsMeLocation" });
+      expect(mockedAxios.patch).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+        headers: expect.objectContaining({ "Authorization": `Bearer ${authSessionId}` })
+      }));
+    });
+
+    it("should send with systemBaseUri as Origin-Header", async () => {
+      const systemBaseUri: string = "HiItsMeSystemBaseUri";
+      await updateTask(systemBaseUri, "HiItsMeAuthSessionId", { location: "HiItsMeLocation" });
+      expect(mockedAxios.patch).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+        headers: expect.objectContaining({ "Origin": systemBaseUri })
+      }));
     });
   });
 
-  it("should make PATCH with correct URI", async () => {
+  describe("errors", () => {
 
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-    let task: Task = {
-      location: "/it/is/a/location/1234567890",
-      subject: "Let us change the subject",
-      description: "My nice updated description"
-    };
+    [
+      "",
+      null,
+      undefined
+    ].forEach(testCase => {
+      it(`should throw NoTaskLocationError on location=${testCase}`, async () => {
 
-    await updateTask(systemBaseUri, "HiItsMeAuthSessionId", task);
+        const task: Task = { location: "" };
+        let error: NoTaskLocationError;
 
-    expect(mockedAxios.patch).toBeCalledWith(`${systemBaseUri}${task.location}`, expect.any(Object), expect.any(Object));
-  });
+        try {
+          await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", task);
+        } catch (e) {
+          error = e;
+        }
 
-  it("should make PATCH with correct headers", async () => {
-
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-    let task: Task = {
-      location: "/it/is/a/location/1234567890",
-      subject: "Let us change the subject",
-      description: "My nice updated description"
-    };
-
-    await updateTask(systemBaseUri, authessionId, task);
-
-    expect(mockedAxios.patch).toBeCalledWith(expect.any(String), expect.any(Object), { headers: { "Authorization": `Bearer ${authessionId}`, "Origin": systemBaseUri } });
-  });
-
-  it("should make PATCH with correct body", async () => {
-
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-    let task: Task = {
-      location: "/it/is/a/location/1234567890",
-      subject: "Let us change the subject",
-      description: "My nice updated description"
-    };
-
-    await updateTask(systemBaseUri, authessionId, task);
-
-    expect(mockedAxios.patch).toBeCalledWith(expect.any(String), task, expect.any(Object));
-  });
-
-
-  [
-    { status: 401, error: "The user is not authenticated." },
-    { status: 403, error: "The user does not have the permission to update this task." },
-    { status: 404, error: "The task does not exist." },
-    { status: 410, error: "This task was already completed." }
-  ].forEach(testCase => {
-    it(`should throw "${testCase.error}" on status ${testCase.status}`, async () => {
-      mockedAxios.patch.mockRejectedValue({ response: { status: testCase.status } });
-      await expect(updateTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", { location: "HiItsMeLocation" })).rejects.toThrowError(testCase.error);
+        expect(error instanceof NoTaskLocationError).toBeTruthy();
+        expect(error.message).toContain("Failed to update task");
+        expect(error.task).toEqual(task);
+        expect(mockedAxios.delete).toHaveBeenCalledTimes(0);
+      });
     });
   });
 
-  [100, 300, 414, 503].forEach(testCase => {
-    it("should throw generic error on unknown status", async () => {
-      const response = { response: { status: testCase, message: "HiItsMeError" } };
-      mockedAxios.patch.mockRejectedValue(response);
+  it("should throw InvalidTaskError on status 400", async () => {
 
-      await expect(updateTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", { location: "HiItsMeLocation" })).rejects.toThrowError(`Failed to update Task: ${JSON.stringify(response)}`);
-    });
+    const task: Task = {
+      location: "HiItsMeLocation",
+      subject: "HiItsMeSubject",
+      context: { name: "HiItsMeContext" }
+    };
+
+    const data: any = { hiitsme: "ValidationJson" };
+
+    const response: AxiosResponse = {
+      data,
+      status: 400,
+    } as AxiosResponse;
+
+    mockedAxios.patch.mockRejectedValue({ response });
+
+    let error: InvalidTaskError;
+    try {
+      await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", task);
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error instanceof InvalidTaskError).toBeTruthy();
+    expect(error.message).toContain("Failed to update task");
+    expect(error.task).toEqual(expect.objectContaining(task));
+    expect(error.validation).toEqual(data);
+    expect(error.response).toEqual(response);
   });
 
-  it("should throw generic error on unknown error", async () => {
-    mockedAxios.patch.mockRejectedValue({});
-    await expect(updateTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", { location: "HiItsMeLocation" })).rejects.toThrowError(`Failed to update Task: ${JSON.stringify({})}`);
+  it("should throw UnauthenticatedError on status 401", async () => {
+
+    const response: AxiosResponse = {
+      data: {},
+      status: 401,
+    } as AxiosResponse;
+
+    mockedAxios.patch.mockRejectedValue({ response });
+
+    let error: UnauthenticatedError;
+    try {
+      await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { location: "HiItsMeLocation" });
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error instanceof UnauthenticatedError).toBeTruthy();
+    expect(error.message).toContain("Failed to update task:");
+    expect(error.response).toEqual(response);
+  });
+
+  it("should throw UnauthorizedError on status 403", async () => {
+
+    const response: AxiosResponse = {
+      data: {},
+      status: 403,
+    } as AxiosResponse;
+
+    mockedAxios.patch.mockRejectedValue({ response });
+
+    let error: UnauthorizedError;
+    try {
+      await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { location: "HiItsMeLocation" });
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error instanceof UnauthorizedError).toBeTruthy();
+    expect(error.message).toContain("Failed to update task:");
+    expect(error.response).toEqual(response);
+  });
+
+  it("should throw TaskNotFoundError on status 404", async () => {
+
+    const location = "HiItsMeLocation";
+
+    const response: AxiosResponse = {
+      status: 404,
+    } as AxiosResponse;
+
+    mockedAxios.patch.mockRejectedValue({ response });
+
+    let error: TaskNotFoundError;
+    try {
+      await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { location: location });
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error instanceof TaskNotFoundError).toBeTruthy();
+    expect(error.message).toContain("Failed to update task:");
+    expect(error.message).toContain(location);
+    expect(error.location).toEqual(location);
+    expect(error.response).toEqual(response);
+  });
+
+  it("should throw TaskAlreadyCompletedError on status 410", async () => {
+
+    const location = "HiItsMeLocation";
+
+    const response: AxiosResponse = {
+      status: 410,
+    } as AxiosResponse;
+
+    mockedAxios.patch.mockRejectedValue({ response });
+
+    let error: TaskAlreadyCompletedError;
+    try {
+      await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { location: location });
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error instanceof TaskAlreadyCompletedError).toBeTruthy();
+    expect(error.message).toContain("Failed to update task:");
+    expect(error.location).toEqual(location);
+    expect(error.response).toEqual(response);
+  });
+
+  it("should throw UnknownErrors", async () => {
+
+    const errorString: string = "HiItsMeError";
+    const error: Error = new Error(errorString);
+    mockedAxios.patch.mockImplementation(() => {
+      throw error;
+    });
+
+    let resultError: Error;
+    try {
+      await updateTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { location: "HiItsMeLocation" });
+    } catch (e) {
+      resultError = e;
+    }
+
+    expect(resultError).toBe(error);
+    expect(resultError.message).toContain(errorString);
+    expect(resultError.message).toContain("Failed to update task:");
   });
 });

@@ -2,10 +2,5 @@
   "packages": [
     "packages/*"
   ],
-  "version": "independent",
-  "command": {
-    "version": {
-      "message": "Automated task: lerna versioning"
-    }
-  }
+  "version": "independent"
 }

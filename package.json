@@ -13,7 +13,7 @@
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b",
     "docs": "typedoc",
-    "version": "lerna version --no-push"
+    "version": "lerna version --no-push --no-git-tag-version"
   },
   "pre-commit": [
     "test",

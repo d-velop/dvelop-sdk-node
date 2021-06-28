@@ -1,5 +1,5 @@
-import axios from "axios";
-import { Task } from "../task";
+import axios, { AxiosResponse } from "axios";
+import { NoTaskLocationError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError, TaskAlreadyCompletedError } from "../errors";
 import { completeTask } from "./complete-task";
 
 jest.mock("axios");
@@ -13,105 +13,193 @@ describe("completeTask", () => {
   });
 
   [
-    "", null, undefined
+    "HiItsMeLocation",
+    { location: "HiItsMeLocation" }
   ].forEach(testCase => {
 
-    it("should throw on missing location as string", async () => {
+    describe(`http-call with location ${typeof testCase === "string" ? "as string" : "in task"}`, () => {
 
-      const systemBaseUri = "HiItsMeSystemBaseUri";
-      const authessionId = "HiItsMeAuthsessionId";
+      beforeEach(() => {
+        mockedAxios.post.mockResolvedValue(null);
+      });
 
-      await expect(completeTask(systemBaseUri, authessionId, testCase)).rejects.toThrowError("Failed to complete Task.\nNo Location");
-    });
+      it("should do POST", async () => {
+        await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", testCase);
+        expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+      });
 
-    it("should throw on missing location in task", async () => {
+      it("should POST to location", async () => {
+        const location: string = typeof testCase === "string" ? testCase : testCase.location;
+        await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", testCase);
+        expect(mockedAxios.post).toHaveBeenCalledWith(`${location}/completionState`, expect.any(Object), expect.any(Object));
+      });
 
-      const systemBaseUri = "HiItsMeSystemBaseUri";
-      const authessionId = "HiItsMeAuthsessionId";
-      const task: Task = {
-        location: testCase,
-        subject: "Nice Subject",
-        description: "a description",
-      };
+      it("should POST with given { complete: true }", async () => {
+        await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", testCase);
+        expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), { complete: true }, expect.any(Object));
+      });
 
-      await expect(completeTask(systemBaseUri, authessionId, task)).rejects.toThrowError("Failed to complete Task.\nNo Location");
-    });
-  });
+      it("should POST with systemBaseUri as BaseURL", async () => {
+        const systemBaseUri: string = "HiItsMeSystemBaseUri";
+        await completeTask(systemBaseUri, "HiItsMeAuthSessionId", testCase);
+        expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+          baseURL: systemBaseUri
+        }));
+      });
 
-  it("should make POST with correct URI with location given", async () => {
+      it("should POST with authSessionId as Authorization-Header", async () => {
+        const authSessionId: string = "HiItsMeAuthSessionId";
+        await completeTask("HiItsMeSystemBaseUri", authSessionId, testCase);
+        expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+          headers: expect.objectContaining({ "Authorization": `Bearer ${authSessionId}` })
+        }));
+      });
 
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-    const authessionId = "HiItsMeAuthsessionId";
-    const location = "/task/taks/1234567890";
-
-    await completeTask(systemBaseUri, authessionId, location);
-
-    expect(mockedAxios.post).toBeCalledWith(`${systemBaseUri}${location}/completionState`, expect.any(Object), expect.any(Object));
-  });
-
-  it("should make POST with correct URI with task object given", async () => {
-
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-    const authessionId = "HiItsMeAuthsessionId";
-    const myTask: Task = {
-      location: "/it/is/a/location/1234567890",
-      subject: "Nice Subject",
-      description: "a description",
-    };
-
-    await completeTask(systemBaseUri, authessionId, myTask);
-
-    expect(mockedAxios.post).toBeCalledWith(`${systemBaseUri}${myTask.location}/completionState`, expect.any(Object), expect.any(Object));
-  });
-
-  it("should make POST with correct headers", async () => {
-
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-    const location = "/task/taks/1234567890";
-
-    await completeTask(systemBaseUri, authessionId, location);
-
-    expect(mockedAxios.post).toBeCalledWith(expect.any(String), expect.any(Object), { headers: { "Authorization": `Bearer ${authessionId}`, "Origin": systemBaseUri } });
-  });
-
-  it("should make POST with correct body", async () => {
-
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-    const location = "/task/taks/1234567890";
-
-    const expectedBody = { "complete": true };
-
-
-    await completeTask(systemBaseUri, authessionId, location);
-
-    expect(mockedAxios.post).toBeCalledWith(expect.any(String), expectedBody, expect.any(Object));
-  });
-
-  [
-    { status: 401, error: "The user is not authenticated." },
-    { status: 403, error: "The user does not have the permission to complete this task." },
-    { status: 404, error: "The task does not exist." },
-    { status: 410, error: "This task was already completed." }
-  ].forEach(testCase => {
-    it(`should throw "${testCase.error}" on status ${testCase.status}`, async () => {
-      mockedAxios.post.mockRejectedValue({ response: { status: testCase.status } });
-      await expect(completeTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", "/task/taks/1234567890")).rejects.toThrowError(testCase.error);
+      it("should POST with systemBaseUri as Origin-Header", async () => {
+        const systemBaseUri: string = "HiItsMeSystemBaseUri";
+        await completeTask(systemBaseUri, "HiItsMeAuthSessionId", testCase);
+        expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+          headers: expect.objectContaining({ "Origin": systemBaseUri })
+        }));
+      });
     });
   });
 
-  [100, 300, 414, 503].forEach(testCase => {
-    it("should throw generic error on unknown status", async () => {
-      const response = { response: { status: testCase, message: "HiItsMeError" } };
-      mockedAxios.post.mockRejectedValue(response);
 
-      await expect(completeTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", "/task/taks/1234567890")).rejects.toThrowError(`Failed to create Task: ${JSON.stringify(response)}`);
+  describe("errors", () => {
+
+    [
+      "",
+      null,
+      undefined
+    ].forEach(testCaseLocation => {
+      [
+        testCaseLocation,
+        { location: testCaseLocation }
+      ].forEach(testCaseTask => {
+        it(`should throw NoTaskLocationError on location=${testCaseLocation} ${typeof testCaseTask === "string" ? "as string" : "in task"}`, async () => {
+
+          let error: NoTaskLocationError;
+          try {
+            await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", testCaseTask);
+          } catch (e) {
+            error = e;
+          }
+
+          expect(error instanceof NoTaskLocationError).toBeTruthy();
+          expect(error.message).toContain("Failed to complete task");
+          expect(error.task).toEqual(testCaseTask);
+          expect(mockedAxios.post).toHaveBeenCalledTimes(0);
+        });
+      });
     });
-  });
 
-  it("should throw generic error on unknown error", async () => {
-    mockedAxios.post.mockRejectedValue({});
-    await expect(completeTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", "/task/taks/1234567890")).rejects.toThrowError(`Failed to create Task: ${JSON.stringify({})}`);
+    it("should throw UnauthenticatedError on status 401", async () => {
+
+      const response: AxiosResponse = {
+        status: 401
+      } as AxiosResponse;
+
+      mockedAxios.post.mockRejectedValue({ response });
+
+      let error: UnauthenticatedError;
+      try {
+        await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeLocation");
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error instanceof UnauthenticatedError).toBeTruthy();
+      expect(error.message).toContain("Failed to complete task:");
+      expect(error.response).toEqual(response);
+    });
+
+
+    it("should throw UnauthorizedError on status 403", async () => {
+
+      const response: AxiosResponse = {
+        status: 403,
+      } as AxiosResponse;
+
+      mockedAxios.post.mockRejectedValue({ response });
+
+      let error: UnauthorizedError;
+      try {
+        await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeLocation");
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error instanceof UnauthorizedError).toBeTruthy();
+      expect(error.message).toContain("Failed to complete task:");
+      expect(error.response).toEqual(response);
+    });
+
+    it("should throw TaskNotFoundError on status 404", async () => {
+
+      const location = "HiItsMeLocation";
+
+      const response: AxiosResponse = {
+        status: 404,
+      } as AxiosResponse;
+
+      mockedAxios.post.mockRejectedValue({ response });
+
+      let error: TaskNotFoundError;
+      try {
+        await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", location);
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error instanceof TaskNotFoundError).toBeTruthy();
+      expect(error.message).toContain("Failed to complete task:");
+      expect(error.message).toContain(location);
+      expect(error.location).toEqual(location);
+      expect(error.response).toEqual(response);
+    });
+
+    it("should throw TaskAlreadyCompletedError on status 410", async () => {
+
+      const location = "HiItsMeLocation";
+
+      const response: AxiosResponse = {
+        status: 410,
+      } as AxiosResponse;
+
+      mockedAxios.post.mockRejectedValue({ response });
+
+      let error: TaskAlreadyCompletedError;
+      try {
+        await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", location);
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error instanceof TaskAlreadyCompletedError).toBeTruthy();
+      expect(error.message).toContain("Failed to complete task:");
+      expect(error.location).toEqual(location);
+      expect(error.response).toEqual(response);
+    });
+
+    it("should rethrow with added context on unknown error", async () => {
+
+      const errorString: string = "HiItsMeError";
+      const error: Error = new Error(errorString);
+      mockedAxios.post.mockImplementation(() => {
+        throw error;
+      });
+
+      let resultError: Error;
+      try {
+        await completeTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeLocation");
+      } catch (e) {
+        resultError = e;
+      }
+
+      expect(resultError).toBe(error);
+      expect(resultError.message).toContain(errorString);
+      expect(resultError.message).toContain("Failed to complete task:");
+    });
   });
 });

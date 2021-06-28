@@ -1,6 +1,8 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import "@dvelop-sdk/axios-hal-json";
 import { createTask } from "./create-task";
 import { Task } from "../task";
+import { InvalidTaskError, UnauthenticatedError, UnauthorizedError } from "../errors";
 
 jest.mock("axios");
 
@@ -10,143 +12,206 @@ describe("createTask", () => {
 
   beforeEach(() => {
     mockedAxios.post.mockReset();
-    mockedAxios.post.mockResolvedValue({
-      headers: {
-        location: "some/location/uri/4711"
+  });
+
+  describe("axios-params", () => {
+
+    beforeEach(() => {
+      mockedAxios.post.mockResolvedValue({
+        headers: { location: "HiItsMeLocations" }
+      });
+    });
+
+    it("should send POST", async () => {
+      await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
+      expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+    });
+
+    it("should send to /task", async () => {
+      await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
+      expect(mockedAxios.post).toHaveBeenCalledWith("/task", expect.any(Object), expect.any(Object));
+    });
+
+    it("should send with given task", async () => {
+      const task: Task = { subject: "HiItsMeSubject", correlationKey: "HiItsMeCorrelationKey" };
+      await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { ...task });
+      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining(task), expect.any(Object));
+    });
+
+    it("should send given task with added correlationKey if none given", async () => {
+      const task: Task = { subject: "HiItsMeSubject" };
+      await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", { ...task });
+      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining(task), expect.any(Object));
+      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ correlationKey: expect.any(String) }), expect.any(Object));
+    });
+
+    it("should send with systemBaseUri as BaseURL", async () => {
+      const systemBaseUri: string = "HiItsMeSystemBaseUri";
+      await createTask(systemBaseUri, "HiItsMeAuthSessionId", {});
+      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+        baseURL: systemBaseUri
+      }));
+    });
+
+    it("should send with authSessionId as Authorization-Header", async () => {
+      const authSessionId: string = "HiItsMeAuthSessionId";
+      await createTask("HiItsMeSystemBaseUri", authSessionId, {});
+      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+        headers: expect.objectContaining({ "Authorization": `Bearer ${authSessionId}` })
+      }));
+    });
+
+    it("should send with systemBaseUri as Origin-Header", async () => {
+      const systemBaseUri: string = "HiItsMeSystemBaseUri";
+      await createTask(systemBaseUri, "HiItsMeAuthSessionId", {});
+      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+        headers: expect.objectContaining({ "Origin": systemBaseUri })
+      }));
+    });
+
+    it("should send with follows: tasks", async () => {
+      await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
+      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
+        follows: ["tasks"]
+      }));
+    });
+  });
+
+  describe("response", () => {
+
+    it("should return task", async () => {
+
+      const task: Task = {
+        subject: "HiItsMeSubject",
+        context: { name: "HiItsMeContext" }
+      };
+
+      mockedAxios.post.mockResolvedValue({
+        headers: { location: "HiItsMeLocations" }
+      });
+
+      const result: Task = await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", task);
+      expect(result).toEqual(expect.objectContaining(task));
+    });
+
+    it("should set location from header", async () => {
+
+      const location: string = "HiItsMeLocation";
+
+      mockedAxios.post.mockResolvedValue({
+        headers: { location: location }
+      });
+
+      const result: Task = await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
+      expect(result).toEqual(expect.objectContaining({ location: location }));
+    });
+
+    it("should set correlationKey", async () => {
+
+      const location: string = "HiItsMeLocation";
+
+      mockedAxios.post.mockResolvedValue({
+        headers: { location: location }
+      });
+
+      const result: Task = await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
+      expect(result).toEqual(expect.objectContaining({ correlationKey: expect.any(String) }));
+    });
+  });
+
+  describe("errors", () => {
+
+    it("should throw InvalidTaskError on status 400", async () => {
+
+      const task: Task = {
+        subject: "HiItsMeSubject",
+        context: { name: "HiItsMeContext" }
+      };
+
+      const data: any = { hiitsme: "ValidationJson" };
+
+      const response: AxiosResponse = {
+        data,
+        status: 400,
+      } as AxiosResponse;
+
+      mockedAxios.post.mockRejectedValue({ response });
+
+      let error: InvalidTaskError;
+      try {
+        await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", task);
+      } catch (e) {
+        error = e;
       }
+
+      expect(error instanceof InvalidTaskError).toBeTruthy();
+      expect(error.message).toContain("Failed to create task:");
+      expect(error.task).toEqual(expect.objectContaining(task));
+      expect(error.validation).toEqual(data);
+      expect(error.response).toEqual(response);
     });
-  });
 
-  it("should make POST with correct URI", async () => {
+    it("should throw UnauthenticatedError on status 401", async () => {
 
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
+      const response: AxiosResponse = {
+        data: {},
+        status: 401,
+      } as AxiosResponse;
 
-    let task: Task = {
-      subject: "Some nice subject for your work",
-      assignees: ["HereShouldStandAndUserOrGroupId"],
-      correlationKey: "IAmSoUnique",
-    };
+      mockedAxios.post.mockRejectedValue({ response });
 
-    await createTask(systemBaseUri, authessionId, task);
-
-    expect(mockedAxios.post).toBeCalledWith(`${systemBaseUri}/task/tasks`, expect.any(Object), expect.any(Object));
-  });
-
-  it("should make POST with correct headers", async () => {
-
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-
-    let task: Task = {
-      subject: "Some nice subject for your work",
-      assignees: ["HereShouldStandAndUserOrGroupId"],
-      correlationKey: "IAmSoUnique",
-    };
-
-    await createTask(systemBaseUri, authessionId, task);
-
-    expect(mockedAxios.post).toBeCalledWith(expect.any(String), expect.any(Object), { headers: { "Authorization": `Bearer ${authessionId}`, "Origin": systemBaseUri } });
-  });
-
-  it("should make POST with correct body", async () => {
-
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-
-    let task: Task = {
-      subject: "Some nice subject for your work",
-      assignees: ["HereShouldStandAndUserOrGroupId"],
-      correlationKey: "IAmSoUnique",
-    };
-
-    await createTask(systemBaseUri, authessionId, task);
-
-    expect(mockedAxios.post).toBeCalledWith(expect.any(String), task, expect.any(Object));
-  });
-
-  it("should generate a correlation key", async () => {
-
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-
-    let task: Task = {
-      subject: "Some nice subject for your work",
-      assignees: ["HereShouldStandAndUserOrGroupId"]
-    };
-
-    const createdTask: Task = await createTask(systemBaseUri, authessionId, task);
-
-    expect(createdTask.correlationKey).not.toBeUndefined();
-    expect(createdTask.correlationKey).not.toBeNull();
-    expect(createdTask.correlationKey).not.toEqual("");
-  });
-
-  it("should use the correlation key the user added to the task object", async () => {
-
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-
-    let task: Task = {
-      subject: "Some nice subject for your work",
-      assignees: ["HereShouldStandAndUserOrGroupId"],
-      correlationKey: "IAmSoUnique",
-    };
-
-    const createdTask: Task = await createTask(systemBaseUri, authessionId, task);
-
-    expect(createdTask.correlationKey).toEqual("IAmSoUnique");
-  });
-
-  it("should return the correct location", async () => {
-
-    const authessionId = "HiItsMeAuthsessionId";
-    const systemBaseUri = "HiItsMeSystemBaseUri";
-
-    let task: Task = {
-      subject: "Some nice subject for your work",
-      assignees: ["HereShouldStandAndUserOrGroupId"],
-      correlationKey: "IAmSoUnique",
-    };
-
-    mockedAxios.post.mockResolvedValue({
-      headers: {
-        location: "some/location/uri/abcdefg"
+      let error: UnauthenticatedError;
+      try {
+        await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
+      } catch (e) {
+        error = e;
       }
+
+      expect(error instanceof UnauthenticatedError).toBeTruthy();
+      expect(error.message).toContain("Failed to create task:");
+      expect(error.response).toEqual(response);
     });
 
-    const createdTask: Task = await createTask(systemBaseUri, authessionId, task);
+    it("should throw UnauthorizedError on status 403", async () => {
 
-    expect(createdTask.location).toEqual("some/location/uri/abcdefg");
-  });
+      const response: AxiosResponse = {
+        data: {},
+        status: 403,
+      } as AxiosResponse;
 
-  it("should throw error containing validation JSON", async () => {
-    const validationJson = { someValue: false };
-    mockedAxios.post.mockRejectedValue({ response: { status: 400, data: validationJson } });
-    await expect(createTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", {})).rejects.toThrowError(`Task is invalid.\nValidation: ${JSON.stringify(validationJson)}`);
-  });
+      mockedAxios.post.mockRejectedValue({ response });
 
-  [
-    { status: 401, error: "The user is not authenticated." },
-    { status: 403, error: "The user is not eligible to create the task." },
-  ].forEach(testCase => {
-    it(`should throw "${testCase.error}" on status ${testCase.status}`, async () => {
-      mockedAxios.post.mockRejectedValue({ response: { status: testCase.status } });
-      await expect(createTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", {})).rejects.toThrowError(testCase.error);
+      let error: UnauthorizedError;
+      try {
+        await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error instanceof UnauthorizedError).toBeTruthy();
+      expect(error.message).toContain("Failed to create task:");
+      expect(error.response).toEqual(response);
     });
-  });
 
-  [100, 300, 414, 503].forEach(testCase => {
-    it("should throw generic error on unknown status", async () => {
-      const response = { response: { status: testCase, message: "HiItsMeError" } };
-      mockedAxios.post.mockRejectedValue(response);
 
-      await expect(createTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", {})).rejects.toThrowError(`Failed to create Task: ${JSON.stringify(response)}`);
+    it("should throw UnknownErrors", async () => {
+
+      const errorString: string = "HiItsMeError";
+      const error: Error = new Error(errorString);
+      mockedAxios.post.mockImplementation(() => {
+        throw error;
+      });
+
+      let resultError: Error;
+      try {
+        await createTask("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {});
+      } catch (e) {
+        resultError = e;
+      }
+
+      expect(resultError).toBe(error);
+      expect(resultError.message).toContain(errorString);
+      expect(resultError.message).toContain("Failed to create task:");
     });
-  });
-
-  it("should throw generic error on unknown error", async () => {
-    mockedAxios.post.mockRejectedValue({});
-    await expect(createTask("HiItsMeAuthsessionId", "HiItsMeAuthsessionId", {})).rejects.toThrowError(`Failed to create Task: ${JSON.stringify({})}`);
   });
 });

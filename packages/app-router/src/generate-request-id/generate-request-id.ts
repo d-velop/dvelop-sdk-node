@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 
 /**
- * Returns a unique Version 4 UUID which can be used as requestId.
+ * Generate a unique Version 4 UUID which can be used as requestId.
  * @returns {string}
  *
  * @example ```typescript
