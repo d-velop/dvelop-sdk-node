@@ -8,10 +8,13 @@
       "path": "./packages/app-router",
     },
     {
+      "path": "./packages/axios-hal-json"
+    },
+    {
       "path": "./packages/identityprovider"
     },
     {
       "path": "./packages/task"
-    },
+    }
   ]
 }

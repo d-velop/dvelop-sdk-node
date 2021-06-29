@@ -1,29 +1,36 @@
 import axios from "axios";
-import { Task } from "../task";
+import { Task, NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../index";
 
 /**
- * Delete a [Task]{@link Task}.
+ * Delete a {@link Task}.
+ *
  * @param {string} systemBaseUri SystemBaseUri for the tenant
  * @param {string} authSessionId Vaild AuthSessionId
- * @param {string|Task} task Location of a task or the [Task]{@link Task} itself
+ * @param {string|Task} task Location of the task or the {@link Task}
+ *
+ * @throws {@link NoTaskLocationError} indicates that no location was given.
+ * @throws {@link UnauthenticatedError} indicates that the authSessionId was invalid or expired.
+ * @throws {@link UnauthorizedError} indicates that the user associated with the authSessionId does miss permissions.
+ * @throws {@link TaskNotFoundError} indicates that for the given location no task was found.
+ * @throws {@link TaskAlreadyCompletedError} indicates that a task is already marked as completed.
  *
  * @example ```typescript
- * const taskLocation: string = "/some/task/location";
- * await deleteTask("https://umbrella-corp.d-velop.cloud", "AUTH_SESSION_ID", taskLocation);
+ *
+ * await deleteTask("https://umbrella-corp.d-velop.cloud", "AUTH_SESSION_ID", "/some/task/location");
  *
  * // or
  *
  * const task: Task = {
- *   location: "/some/task/location",
+ *     location: "/some/task/location",
  *   ...
  * }
  * await deleteTask("https://umbrella-corp.d-velop.cloud", "AUTH_SESSION_ID", task);
- *
  * ```
  */
 
 export async function deleteTask(systemBaseUri: string, authSessionId: string, task: string | Task): Promise<void> {
 
+  const errorContext: string = "Failed to delete task";
   let location: string;
 
   if (task && typeof task === "string") {
@@ -31,11 +38,12 @@ export async function deleteTask(systemBaseUri: string, authSessionId: string, t
   } else if (task && (task as Task).location) {
     location = (task as Task).location!;
   } else {
-    throw new Error("Failed to delete Task.\nNo Location");
+    throw new NoTaskLocationError(errorContext, task);
   }
 
   try {
-    await axios.delete(`${systemBaseUri}${location}`, {
+    await axios.delete(location, {
+      baseURL: systemBaseUri,
       headers: {
         "Authorization": `Bearer ${authSessionId}`,
         "Origin": systemBaseUri
@@ -45,13 +53,16 @@ export async function deleteTask(systemBaseUri: string, authSessionId: string, t
     if (e.response) {
       switch (e.response.status) {
       case 401:
-        throw new Error("The user is not authenticated.");
+        throw new UnauthenticatedError(errorContext, e.response);
       case 403:
-        throw new Error("The user does not have the permission to delete this task.");
+        throw new UnauthorizedError(errorContext, e.response);
       case 404:
-        throw new Error("The task does not exist.");
+        throw new TaskNotFoundError(errorContext, location, e.response);
+      case 410:
+        throw new TaskAlreadyCompletedError(errorContext, location, e.response);
       }
     }
-    throw new Error(`Failed to delete Task: ${JSON.stringify(e)}`);
+    e.message = `${errorContext}: ${e.message}`;
+    throw e;
   }
 }

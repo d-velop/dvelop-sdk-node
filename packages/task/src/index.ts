@@ -22,8 +22,13 @@
  * </div>
  * @module task
  */
+import axios from "axios";
+import { followHalJson } from "@dvelop-sdk/axios-hal-json";
+axios.interceptors.request.use(followHalJson);
+
+export { Task, TaskContext, TaskMetaData, TaskLinks } from "./task";
+export { InvalidTaskError, UnauthenticatedError, UnauthorizedError, NoTaskLocationError, TaskNotFoundError, TaskAlreadyCompletedError } from "./errors";
 export { createTask } from "./create-task/create-task";
 export { completeTask } from "./complete-task/complete-task";
 export { deleteTask } from "./delete-task/delete-task";
 export { updateTask } from "./update-task/update-task";
-export { Task, TaskContext, TaskMetaData, TaskLinks } from "./task";

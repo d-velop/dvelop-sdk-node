@@ -22,6 +22,11 @@
  * </div>
  * @module identityprovider
  */
+import axios from "axios";
+import { followHalJson } from "@dvelop-sdk/axios-hal-json";
+axios.interceptors.request.use(followHalJson);
+
+export { UnauthorizedError, ForbiddenError, NotFoundError } from "./errors";
 export { AuthSession } from "./get-auth-session/auth-session";
 export { getAuthSession } from "./get-auth-session/get-auth-session";
 export { ScimUser } from "./validate-auth-session-id/scim-user";

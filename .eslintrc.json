@@ -13,6 +13,7 @@
     "@typescript-eslint",
     "jest"
   ],
+  "ignorePatterns": ["tmp-*.ts"],
   "rules": {
     "semi": [
       "error",

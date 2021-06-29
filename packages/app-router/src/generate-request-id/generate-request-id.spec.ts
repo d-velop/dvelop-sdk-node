@@ -1,5 +1,5 @@
 import * as uuid from "uuid";
-import { generateRequestId } from "./generate-request-id";
+import { generateRequestId } from "../index";
 
 jest.mock("uuid");
 

@@ -1,7 +1,6 @@
-import { validateRequestSignature } from "./validate-request-signature";
+import { validateRequestSignature, InvalidRequestSignatureError } from "../index";
 
 describe("validateRequestSignature", () => {
-
   [
     {
       systemBaseUri: "https://header.example.com",
@@ -16,8 +15,8 @@ describe("validateRequestSignature", () => {
       appSecret: "ptuQ0b0BskmLLxXsjjhH9Su8ozTvZl6Z/5/HlaORoRh=",
     }
   ].forEach(testCase => {
-    it(`should return true on: ${JSON.stringify(testCase)})`, () => {
-      expect(validateRequestSignature(testCase.appSecret, testCase.systemBaseUri, testCase.tenantId, testCase.signature)).toBeTruthy();
+    it(`should pass on: ${JSON.stringify(testCase)})`, () => {
+      expect(() => validateRequestSignature(testCase.appSecret, testCase.systemBaseUri, testCase.tenantId, testCase.signature)).not.toThrowError();
     });
   });
 
@@ -59,8 +58,20 @@ describe("validateRequestSignature", () => {
       appSecret: "abcd",
     }
   ].forEach(testCase => {
-    it(`should return false on: ${JSON.stringify(testCase)})`, () => {
-      expect(validateRequestSignature(testCase.appSecret, testCase.systemBaseUri, testCase.tenantId, testCase.signature)).toBeFalsy();
+    it(`should throw InvalidRequestSignatureError on: ${JSON.stringify(testCase)})`, () => {
+
+      let error: InvalidRequestSignatureError;
+      try {
+        validateRequestSignature(testCase.appSecret, testCase.systemBaseUri, testCase.tenantId, testCase.signature);
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error instanceof InvalidRequestSignatureError).toBeTruthy();
+      expect(error.message).toContain("Failed to validate requestSignature:");
+      expect(error.systemBaseUri).toEqual(testCase.systemBaseUri);
+      expect(error.tenantId).toEqual(testCase.tenantId);
+      expect(error.requestSignature).toEqual(testCase.signature);
     });
   });
 });

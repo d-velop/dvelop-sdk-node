@@ -10,22 +10,22 @@
  */
 
 export interface ScimUser {
-  id: string;
-  userName: string;
-  name: {
-    familyName: string;
-    givenName: string;
+  id?: string;
+  userName?: string;
+  name?: {
+    familyName?: string;
+    givenName?: string;
   };
-  displayName: string;
-  emails: {
-    value: string;
+  displayName?: string;
+  emails?: {
+    value?: string;
   }[];
-  groups: {
-    value: string;
-    display: string;
+  groups?: {
+    value?: string;
+    display?: string;
   }[];
-  photos: {
-    value: string;
-    type: string;
+  photos?: {
+    value?: string;
+    type?: string;
   }[];
 }
