@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { UnauthorizedError } from "../errors";
-import { AuthSession } from "./auth-session";
+import { AuthSession, UnauthorizedError } from "../index";
 
 export interface AuthSessionDto {
   AuthSessionId: string;

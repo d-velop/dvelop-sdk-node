@@ -1,7 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { UnauthorizedError } from "../errors";
-import { AuthSession } from "./auth-session";
-import { getAuthSession } from "../index";
+import { AuthSession, getAuthSession, UnauthorizedError } from "../index";
 
 jest.mock("axios");
 
