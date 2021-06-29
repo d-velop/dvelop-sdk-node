@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
-import { Task } from "../index";
 import { v4 } from "uuid";
-import { InvalidTaskError, UnauthenticatedError, UnauthorizedError } from "../index";
+import { Task, InvalidTaskError, UnauthenticatedError, UnauthorizedError } from "../index";
 
 
 /**
