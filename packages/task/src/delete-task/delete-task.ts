@@ -1,6 +1,6 @@
 import axios from "axios";
-import { NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
-import { Task } from "../task";
+import { NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../index";
+import { Task } from "../index";
 
 /**
  * Delete a {@link Task}.

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { UnauthenticatedError, UnauthorizedError, NoTaskLocationError, TaskNotFoundError, TaskAlreadyCompletedError } from "../errors";
-import { Task } from "../task";
+import { UnauthenticatedError, UnauthorizedError, NoTaskLocationError, TaskNotFoundError, TaskAlreadyCompletedError } from "../index";
+import { Task } from "../index";
 
 
 /**
