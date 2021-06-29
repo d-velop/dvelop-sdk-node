@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
-import { deleteTask } from "./delete-task";
+import { deleteTask, NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../index";
 
 jest.mock("axios");
 

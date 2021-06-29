@@ -1,8 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import "@dvelop-sdk/axios-hal-json";
-import { createTask } from "./create-task";
-import { Task } from "../task";
-import { InvalidTaskError, UnauthenticatedError, UnauthorizedError } from "../errors";
+import { Task, createTask, InvalidTaskError, UnauthenticatedError, UnauthorizedError } from "../index";
 
 jest.mock("axios");
 

@@ -1,7 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import "../index";
-import { ForbiddenError, NotFoundError, UnauthorizedError } from "../errors";
-import { ScimUser } from "./scim-user";
+import { ScimUser, ForbiddenError, NotFoundError, UnauthorizedError } from "../index";
 
 /**
  * Validates an AuthSessionId and returns a [ScimUser]{@link ScimUser}

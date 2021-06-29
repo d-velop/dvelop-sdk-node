@@ -1,5 +1,5 @@
 import * as crypto from "crypto";
-import { InvalidRequestSignatureError } from "../errors";
+import { InvalidRequestSignatureError } from "../index";
 
 /**
  * Validate a request-signature against your appSecret.

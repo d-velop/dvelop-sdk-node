@@ -1,6 +1,5 @@
 import axios from "axios";
-import { InvalidTaskError, NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../errors";
-import { Task } from "../task";
+import { Task, InvalidTaskError, NoTaskLocationError, TaskAlreadyCompletedError, TaskNotFoundError, UnauthenticatedError, UnauthorizedError } from "../index";
 
 /**
  * Update an existing {@link Task}.

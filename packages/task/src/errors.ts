@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { Task } from "./task";
+import { Task } from "./index";
 
 
 /**

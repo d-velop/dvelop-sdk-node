@@ -1,9 +1,6 @@
 import axios, { AxiosResponse } from "axios";
-import { followHalJson } from "@dvelop-sdk/axios-hal-json";
-import { Task } from "../task";
 import { v4 } from "uuid";
-import { InvalidTaskError, UnauthenticatedError, UnauthorizedError } from "../errors";
-axios.interceptors.request.use(followHalJson);
+import { Task, InvalidTaskError, UnauthenticatedError, UnauthorizedError } from "../index";
 
 
 /**
