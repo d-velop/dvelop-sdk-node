@@ -1,8 +1,6 @@
-import { InvalidRequestSignatureError } from "../errors";
-import { validateRequestSignature } from "./validate-request-signature";
+import { validateRequestSignature, InvalidRequestSignatureError } from "../index";
 
 describe("validateRequestSignature", () => {
-
   [
     {
       systemBaseUri: "https://header.example.com",
