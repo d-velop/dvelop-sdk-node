@@ -1,7 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInResponseError, NoHalJsonTemplateValueError } from "../errors";
-import "../index";
-
+import { HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInResponseError, NoHalJsonTemplateValueError } from "../index";
 
 /**
  * This method can be registered as a [axios interceptor]{@link https://github.com/axios/axios#interceptors} to add hal-json follow behaviour. After registering just add ```follows``` and ```templates``` to your [request-config]{@link https://github.com/axios/axios#request-config}. To work with relative hal-json links use the ```baseUri``` and ```uri``` property.
