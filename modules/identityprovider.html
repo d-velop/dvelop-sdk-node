@@ -89,6 +89,14 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Error Classes</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/identityprovider.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/identityprovider.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/identityprovider.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.authsession.html" class="tsd-kind-icon">Auth<wbr>Session</a></li>
@@ -118,17 +126,21 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/0504d39/packages/identityprovider/src/get-auth-session/get-auth-session.ts#L22">identityprovider/src/get-auth-session/get-auth-session.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/get-auth-session/get-auth-session.ts#L27">packages/identityprovider/src/get-auth-session/get-auth-session.ts:27</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns an <a href="../interfaces/identityprovider.authsession.html">AuthSession</a> based on an API-Key.
-									<strong>The AuthSessionId should be kept secret and never be publicly available</strong></p>
+									<p>Returns an <a href="../interfaces/identityprovider.authsession.html">AuthSession</a> based on an API-Key.</p>
 								</div>
+								<p><strong>The AuthSessionId should be kept secret and never be publicly available.</strong></p>
 								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p><a href="../classes/identityprovider.unauthorizederror.html">UnauthorizedError</a> indicates an invalid authSessionId or no authSessionId was sent.</p>
+									</dd>
 									<dt>example</dt>
-									<dd><pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">authSession</span><span style="color: #000000">: </span><span style="color: #267F99">AuthSession</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getAuthSession</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://dharma-initiative.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;&lt;API_KEY&gt;&quot;</span><span style="color: #000000">);</span>
+									<dd><pre><code class="language-typescript">
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">authSession</span><span style="color: #000000">: </span><span style="color: #267F99">AuthSession</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getAuthSession</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;&lt;API_KEY&gt;&quot;</span><span style="color: #000000">);</span>
 <span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">authSession</span><span style="color: #000000">.</span><span style="color: #001080">id</span><span style="color: #000000">); </span><span style="color: #008000">//a valid authSessionId</span>
 <span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;still valid:&#039;</span><span style="color: #000000">, </span><span style="color: #001080">authSession</span><span style="color: #000000">.</span><span style="color: #001080">expire</span><span style="color: #000000">.</span><span style="color: #795E26">getTime</span><span style="color: #000000">() &gt; </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Date</span><span style="color: #000000">().</span><span style="color: #795E26">getTime</span><span style="color: #000000">()); </span><span style="color: #008000">//still valid: true</span>
 </code></pre>
@@ -140,13 +152,13 @@
 								<li>
 									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant.</p>
+										<p>SystemBaseUri for the tenant</p>
 									</div>
 								</li>
 								<li>
 									<h5>apiKey: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>API-Key provided by the d.velop cloud.</p>
+										<p>API-Key provided by the d.velop cloud</p>
 									</div>
 								</li>
 							</ul>
@@ -164,7 +176,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/0504d39/packages/identityprovider/src/get-login-redirection-uri/get-login-redirection-uri.ts#L11">identityprovider/src/get-login-redirection-uri/get-login-redirection-uri.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/get-login-redirection-uri/get-login-redirection-uri.ts#L12">packages/identityprovider/src/get-login-redirection-uri/get-login-redirection-uri.ts:12</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -184,7 +196,7 @@
 								<li>
 									<h5>successUri: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The URI the request should be redirected to after a successful login.</p>
+										<p>The URI the request should be redirected to after a successful login</p>
 									</div>
 								</li>
 							</ul>
@@ -202,7 +214,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/0504d39/packages/identityprovider/src/validate-auth-session-id/validate-auth-session-id.ts#L15">identityprovider/src/validate-auth-session-id/validate-auth-session-id.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/validate-auth-session-id/validate-auth-session-id.ts#L20">packages/identityprovider/src/validate-auth-session-id/validate-auth-session-id.ts:20</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -210,6 +222,15 @@
 									<p>Validates an AuthSessionId and returns a <a href="../interfaces/identityprovider.scimuser.html">ScimUser</a></p>
 								</div>
 								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p><a href="../classes/identityprovider.unauthorizederror.html">UnauthorizedError</a> indicates an invalid authSessionId or no authSessionId was sent.</p>
+									</dd>
+									<dt>throws</dt>
+									<dd><p><a href="../classes/identityprovider.forbiddenerror.html">ForbiddenError</a> indicates that a valid authSessionId for an external user was sent but external validation was set to false.</p>
+									</dd>
+									<dt>throws</dt>
+									<dd><p><a href="../classes/identityprovider.notfounderror.html">NotFoundError</a> indicates that a valid token for a deleted user was sent.</p>
+									</dd>
 									<dt>example</dt>
 									<dd><pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">user</span><span style="color: #000000">: </span><span style="color: #267F99">ScimUser</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">validateAuthSessionId</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;vXo4FMlnYYiGArNfjfJHEJDNWfjfejglgnewjgrjokgajifahfhdahfuewfhlR/4FxJxmNsjlq2XgWQm/GYVBq/hEvsJy1BK4WLoCXek=&amp;ga8gds7gafkajgkj24ut8ugudash34jGlDG&amp;dr6j0zusHVN8PcyerI0YXqRu30f8AGoUaZ6vInCDtZInS6aK2PplAelsv9t8&quot;</span><span style="color: #000000">);</span>
 <span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">user</span><span style="color: #000000">.</span><span style="color: #001080">displayName</span><span style="color: #000000">) </span><span style="color: #008000">//Mike Glotzkowski</span>
@@ -222,13 +243,13 @@
 								<li>
 									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant.</p>
+										<p>SystemBaseUri for the tenant</p>
 									</div>
 								</li>
 								<li>
 									<h5>authSessionId: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>AuthSessionId which should be validated.</p>
+										<p>AuthSessionId which should be validated</p>
 									</div>
 								</li>
 							</ul>
@@ -247,6 +268,9 @@
 					<li class=" tsd-kind-module">
 						<a href="app_router.html">app-<wbr>router</a>
 					</li>
+					<li class=" tsd-kind-module">
+						<a href="axios_hal_json.html">axios-<wbr>hal-<wbr>json</a>
+					</li>
 					<li class="current tsd-kind-module">
 						<a href="identityprovider.html">identityprovider</a>
 					</li>
@@ -257,6 +281,15 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/identityprovider.authsession.html" class="tsd-kind-icon">Auth<wbr>Session</a>
 					</li>
@@ -287,6 +320,9 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
 			</ul>
 		</div>
 	</div>
