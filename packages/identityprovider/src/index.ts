@@ -32,3 +32,4 @@ export { getAuthSession } from "./get-auth-session/get-auth-session";
 export { ScimUser } from "./validate-auth-session-id/scim-user";
 export { validateAuthSessionId } from "./validate-auth-session-id/validate-auth-session-id";
 export { getLoginRedirectionUri } from "./get-login-redirection-uri/get-login-redirection-uri";
+export { requestAppSession } from "./request-app-session/request-app-session";
