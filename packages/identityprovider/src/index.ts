@@ -26,10 +26,11 @@ import axios from "axios";
 import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 axios.interceptors.request.use(followHalJson);
 
-export { UnauthorizedError, ForbiddenError, NotFoundError } from "./errors";
+export { UnauthorizedError, ForbiddenError, NotFoundError, InvalidAppSessionSignatureError } from "./errors";
 export { AuthSession } from "./get-auth-session/auth-session";
 export { getAuthSession } from "./get-auth-session/get-auth-session";
 export { ScimUser } from "./validate-auth-session-id/scim-user";
 export { validateAuthSessionId } from "./validate-auth-session-id/validate-auth-session-id";
 export { getLoginRedirectionUri } from "./get-login-redirection-uri/get-login-redirection-uri";
 export { requestAppSession } from "./request-app-session/request-app-session";
+export { validateAppSessionSignature } from "./validate-app-session-signature/validate-app-session-signature";
