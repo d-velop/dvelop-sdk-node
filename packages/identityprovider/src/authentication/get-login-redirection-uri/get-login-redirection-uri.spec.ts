@@ -1,4 +1,4 @@
-import { getLoginRedirectionUri } from "../index";
+import { getLoginRedirectionUri } from "../../index";
 
 describe("getLoginUri", () => {
   [

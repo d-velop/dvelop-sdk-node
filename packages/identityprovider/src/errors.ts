@@ -36,3 +36,15 @@ export class NotFoundError extends Error {
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 }
+
+/**
+*
+* @category Error
+*/
+export class InvalidAppSessionSignatureError extends Error {
+  // eslint-disable-next-line no-unused-vars
+  constructor() {
+    super("Invalid AppSessionSingature: An AppSession was sent that contains no valid signature.");
+    Object.setPrototypeOf(this, InvalidAppSessionSignatureError.prototype);
+  }
+}
