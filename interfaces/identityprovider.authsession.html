@@ -71,16 +71,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A valid authentication-session for the d.velop cloud. Refer to the <a href="https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#validating-the-login">documentation</a> for further information.</p>
+						<p>Used for authentication in the d.velop cloud. Refer to the <a href="https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#validating-the-login">documentation</a> for further information.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>property</dt>
-						<dd><p>{string} id Id for the AuthSession. This key will validate your requests. <strong>The AuthSessionId should be kept secret and never be publicly available</strong></p>
-						</dd>
-						<dt>property</dt>
-						<dd><p>{Date} expire Date-Object for the point in time at which the AuthSessionId will no longer be valid.</p>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -113,9 +105,14 @@
 					<div class="tsd-signature tsd-kind-icon">expire<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/get-auth-session/auth-session.ts#L9">packages/identityprovider/src/get-auth-session/auth-session.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/ab611f3/packages/identityprovider/src/authentication/get-auth-session/auth-session.ts#L16">packages/identityprovider/src/authentication/get-auth-session/auth-session.ts:16</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Date at which the AuthSessionId will no longer be valid.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="id" class="tsd-anchor"></a>
@@ -123,9 +120,14 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/get-auth-session/auth-session.ts#L8">packages/identityprovider/src/get-auth-session/auth-session.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/ab611f3/packages/identityprovider/src/authentication/get-auth-session/auth-session.ts#L10">packages/identityprovider/src/authentication/get-auth-session/auth-session.ts:10</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>This key will validate your requests (usually sent as Bearer-Token). <strong>The AuthSessionId should be kept secret and never be publicly available</strong></p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -155,6 +157,9 @@
 						<a href="../classes/identityprovider.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.invalidappsessionsignatureerror.html" class="tsd-kind-icon">Invalid<wbr>App<wbr>Session<wbr>Signature<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/identityprovider.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
@@ -182,7 +187,16 @@
 						<a href="../modules/identityprovider.html#getauthsession" class="tsd-kind-icon">get<wbr>Auth<wbr>Session</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/identityprovider.html#getimpersonatedauthsessionid" class="tsd-kind-icon">get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/identityprovider.html#getloginredirectionuri" class="tsd-kind-icon">get<wbr>Login<wbr>Redirection<wbr>Uri</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/identityprovider.html#requestappsession" class="tsd-kind-icon">request<wbr>App<wbr>Session</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/identityprovider.html#validateappsessionsignature" class="tsd-kind-icon">validate<wbr>App<wbr>Session<wbr>Signature</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/identityprovider.html#validateauthsessionid" class="tsd-kind-icon">validate<wbr>Auth<wbr>Session<wbr>Id</a>

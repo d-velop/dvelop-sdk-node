@@ -73,29 +73,6 @@
 					<div class="lead">
 						<p>User representation according to the <a href="https://tools.ietf.org/html/rfc7644" class="external">System for Cross-domain Identity Management (SCIM)</a>.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>property</dt>
-						<dd><p>{string} id Unique Id</p>
-						</dd>
-						<dt>property</dt>
-						<dd><p>{string} userName Technical user name</p>
-						</dd>
-						<dt>property</dt>
-						<dd><p>{object} name Name object containing familyName (string) and givenName (string)</p>
-						</dd>
-						<dt>property</dt>
-						<dd><p>{string} displayName Display name assigned to the user</p>
-						</dd>
-						<dt>property</dt>
-						<dd><p>{object[]} emails Array of objects containing value (string) which represents the e-mail address</p>
-						</dd>
-						<dt>property</dt>
-						<dd><p>{object[]} groups Array of objects containing value (string) which represents the group ID and display (string) which represents the group name</p>
-						</dd>
-						<dt>property</dt>
-						<dd><p>{object[]} photos Array of objects containing value (string) which represents a relative URL to the photo and type (string)</p>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -133,9 +110,14 @@
 					<div class="tsd-signature tsd-kind-icon">display<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/validate-auth-session-id/scim-user.ts#L19">packages/identityprovider/src/validate-auth-session-id/scim-user.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/ab611f3/packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts#L20">packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts:20</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Display name assigned by the administrators</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="emails" class="tsd-anchor"></a>
@@ -143,9 +125,14 @@
 					<div class="tsd-signature tsd-kind-icon">emails<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>value<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/validate-auth-session-id/scim-user.ts#L20">packages/identityprovider/src/validate-auth-session-id/scim-user.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/ab611f3/packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts#L23">packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts:23</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>E-Mail addesses</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="groups" class="tsd-anchor"></a>
@@ -153,9 +140,14 @@
 					<div class="tsd-signature tsd-kind-icon">groups<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>display<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>value<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/validate-auth-session-id/scim-user.ts#L23">packages/identityprovider/src/validate-auth-session-id/scim-user.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/ab611f3/packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts#L28">packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts:28</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Groups assigned to the user</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="id" class="tsd-anchor"></a>
@@ -163,9 +155,14 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/validate-auth-session-id/scim-user.ts#L13">packages/identityprovider/src/validate-auth-session-id/scim-user.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/ab611f3/packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts#L8">packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts:8</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Unique UserId</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="name" class="tsd-anchor"></a>
@@ -173,9 +170,14 @@
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>familyName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>givenName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/validate-auth-session-id/scim-user.ts#L15">packages/identityprovider/src/validate-auth-session-id/scim-user.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/ab611f3/packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts#L14">packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts:14</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Name object containg family name and given name</p>
+						</div>
+					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -194,9 +196,14 @@
 					<div class="tsd-signature tsd-kind-icon">photos<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>type<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>value<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/validate-auth-session-id/scim-user.ts#L27">packages/identityprovider/src/validate-auth-session-id/scim-user.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/ab611f3/packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts#L34">packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts:34</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Photos for the user usually provided by URL in value</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="username" class="tsd-anchor"></a>
@@ -204,9 +211,14 @@
 					<div class="tsd-signature tsd-kind-icon">user<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/c0f1992/packages/identityprovider/src/validate-auth-session-id/scim-user.ts#L14">packages/identityprovider/src/validate-auth-session-id/scim-user.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/ab611f3/packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts#L11">packages/identityprovider/src/authentication/validate-auth-session-id/scim-user.ts:11</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Technical username</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -234,6 +246,9 @@
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/identityprovider.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.invalidappsessionsignatureerror.html" class="tsd-kind-icon">Invalid<wbr>App<wbr>Session<wbr>Signature<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/identityprovider.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a>
@@ -278,7 +293,16 @@
 						<a href="../modules/identityprovider.html#getauthsession" class="tsd-kind-icon">get<wbr>Auth<wbr>Session</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/identityprovider.html#getimpersonatedauthsessionid" class="tsd-kind-icon">get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/identityprovider.html#getloginredirectionuri" class="tsd-kind-icon">get<wbr>Login<wbr>Redirection<wbr>Uri</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/identityprovider.html#requestappsession" class="tsd-kind-icon">request<wbr>App<wbr>Session</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/identityprovider.html#validateappsessionsignature" class="tsd-kind-icon">validate<wbr>App<wbr>Session<wbr>Signature</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/identityprovider.html#validateauthsessionid" class="tsd-kind-icon">validate<wbr>Auth<wbr>Session<wbr>Id</a>
