@@ -34,4 +34,4 @@ export { validateAuthSessionId } from "./validate-auth-session-id/validate-auth-
 export { getLoginRedirectionUri } from "./get-login-redirection-uri/get-login-redirection-uri";
 export { requestAppSession } from "./request-app-session/request-app-session";
 export { validateAppSessionSignature } from "./validate-app-session-signature/validate-app-session-signature";
-export { getImpersonateAuthSession } from "./get-impersonate-auth-session/get-impersonate-auth-session";
+export { getImpersonatedAuthSessionId } from "./get-impersonated-auth-session-id/get-impersonated-auth-session-id";

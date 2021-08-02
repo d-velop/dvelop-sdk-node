@@ -1,7 +1,7 @@
 import axios from "axios";
 import { UnauthorizedError } from "../index";
 
-interface InpersonationAuthSessionDto {
+interface ImpersonatedAuthSessionDto {
   authSessionId: string;
 }
 
@@ -15,12 +15,12 @@ interface InpersonationAuthSessionDto {
  *
  * //TODO: example
  */
-export async function getImpersonateAuthSession(systemBaseUri: string, appSession: string, userId: string): Promise<string> {
+export async function getImpersonatedAuthSessionId(systemBaseUri: string, appSession: string, userId: string): Promise<string> {
 
   const errorContext: string = "Failed to impersonate user";
 
   try {
-    const response = await axios.get<InpersonationAuthSessionDto>("/identityprovider/impersonatesession", {
+    const response = await axios.get<ImpersonatedAuthSessionDto>("/identityprovider/impersonatesession", {
       baseURL: systemBaseUri,
       headers: {
         "Content-Type": "application/json",

@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from "axios";
-import { getImpersonateAuthSession, UnauthorizedError } from "../index";
+import { getImpersonatedAuthSessionId, UnauthorizedError } from "../index";
 
 jest.mock("axios");
 
-describe("getImpersonateAuthSession", () => {
+describe("getImpersonatedAuthSessionId", () => {
 
   const mockedAxios = axios as jest.Mocked<typeof axios>;
 
@@ -20,18 +20,18 @@ describe("getImpersonateAuthSession", () => {
     });
 
     it("should send GET", async () => {
-      await getImpersonateAuthSession("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
+      await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
       expect(mockedAxios.get).toHaveBeenCalledTimes(1);
     });
 
     it("should send to /identityprovider", async () => {
-      await getImpersonateAuthSession("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
+      await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
       expect(mockedAxios.get).toHaveBeenCalledWith("/identityprovider/impersonatesession", expect.any(Object));
     });
 
     it("should send with systemBaseUri as BaseURL", async () => {
       const systemBaseUri: string = "HiItsMeSystemBaseUri";
-      await getImpersonateAuthSession(systemBaseUri, "HiItsMeAppSession", "HiItsMeUserId");
+      await getImpersonatedAuthSessionId(systemBaseUri, "HiItsMeAppSession", "HiItsMeUserId");
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         baseURL: systemBaseUri
       }));
@@ -39,7 +39,7 @@ describe("getImpersonateAuthSession", () => {
 
     it("should send with authSessionId as Authorization-Header", async () => {
       const appSession: string = "HiItsMeAppSession";
-      await getImpersonateAuthSession("HiItsMeSystemBaseUri", appSession, "HiItsMeUserId");
+      await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", appSession, "HiItsMeUserId");
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         headers: expect.objectContaining({ "Authorization": `Bearer ${appSession}` })
       }));
@@ -47,7 +47,7 @@ describe("getImpersonateAuthSession", () => {
 
     it("should send with userId as param", async () => {
       const userId: string = "HiItsMeUserId";
-      await getImpersonateAuthSession("HiItsMeSystemBaseUri", "HiItsMeAppSession", userId);
+      await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", userId);
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         params: expect.objectContaining({ userId: userId })
       }));
@@ -66,7 +66,7 @@ describe("getImpersonateAuthSession", () => {
         }
       });
 
-      const result: string = await getImpersonateAuthSession("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
+      const result: string = await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
       expect(result).toEqual(authSessionId);
     });
   });
@@ -83,7 +83,7 @@ describe("getImpersonateAuthSession", () => {
 
       let error: UnauthorizedError;
       try {
-        await getImpersonateAuthSession("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
+        await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
       } catch (e) {
         error = e;
       }
@@ -103,7 +103,7 @@ describe("getImpersonateAuthSession", () => {
 
       let resultError: Error;
       try {
-        await getImpersonateAuthSession("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
+        await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
       } catch (e) {
         resultError = e;
       }
