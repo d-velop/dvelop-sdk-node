@@ -1,4 +1,4 @@
-import { validateAppSessionSignature, InvalidAppSessionSignatureError } from "../index";
+import { validateAppSessionSignature, InvalidAppSessionSignatureError } from "../../index";
 
 describe("validateAppSessionSignature", () => {
 

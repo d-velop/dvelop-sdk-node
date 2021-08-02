@@ -1,10 +1,11 @@
 {
+    "out": "docs",
+    "name": "@dvelop-sdk",
     "entryPoints": [
         "packages/app-router/src/index.ts",
         "packages/axios-hal-json/src/index.ts",
         "packages/identityprovider/src/index.ts",
         "packages/task/src/index.ts"
     ],
-    "out": "docs",
-    "name": "@dvelop-sdk"
+    "categoryOrder": ["Authentication", "Error", "*"]
 }
