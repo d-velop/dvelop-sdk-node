@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { validateAuthSessionId, ScimUser, ForbiddenError, NotFoundError, UnauthorizedError } from "../index";
+import { validateAuthSessionId, ScimUser, ForbiddenError, NotFoundError, UnauthorizedError } from "../../index";
 
 jest.mock("axios");
 

@@ -95,7 +95,7 @@ We already committed to some tools and frameworks to handle certain things. If y
 
 * [typedoc](https://typedoc.org/) is used for documentation.
 
-### Development workflow
+## Development workflow
 
 ### Build-in commands
 
@@ -166,6 +166,71 @@ For developing we recommend Test-driven development (TDD). For every new functio
 
 ### Adding a dependency
 Adding dependencies can be done by executing ```npm i dependency``` in the corresponding package (not the root). Please be aware that you should consult us before adding dependencies. Dependencies should not be added on the root level by you, unless specifically mentioned by us.
+
+### Documentation
+As mentioned we are using [typedoc](https://typedoc.org/) to document code. A documentation is generated from inline documentation and provided via [GitHub Pages](https://pages.github.com/).
+
+- **Functions**
+  - Should be annotated above function definition
+  - must contain
+    - A general description of what the function achieves
+    - ```@param {<TYPE>} <NAME> <DESCRIPTION>``` for every parameter
+    - ```@throws {@link <ERROR_CLASS>} <DESCRIPTION>``` for every expected error
+    - ```@category``` if a module provides multiple distict functionalities
+    - ```@example``` a short example
+  - Example:
+     ```
+      /**
+       * Provides a greeting string.
+       *
+       * @param {string} to name of the person that should be greeted
+       *
+       * @throws {@link UnknownPersonError} indicated that the person to be greeted was not found.
+       *
+       * @category Social
+       *
+       * @example ```typescript
+       * const greeting: string = sayHi("Emma Watson");
+       * console.log(greeting) //print "Moin moin Emma Watson!"
+       * ```
+       */
+       export function sayHi(to: string): string {
+         ...
+      ```
+
+- **Interfaces**
+  - Should be annotated above for gerenal information and ```@category```
+  - Should be annotated inline for every property
+  - must contain
+    - A general description
+    - A description for each property
+  - Example:
+    ```
+    /**
+     * This is my interface. It faces inter really well.
+     * @category MyStuff
+     */
+    export interface MyInterface {
+
+      /**
+       * Value held by my interface. **DO NOT put numbers here**
+       */
+      value: string;
+    }
+    ```
+
+- **Errors**
+  - Should be annotated above for general information
+  - Should always be annotated with ```@category Error``` regardless of context.
+  - Example:
+    ```
+     /**
+      * Music is playing but its not Britney.
+      * @category Error
+      */
+     export class UppsIDidItAgainError extends Error {
+       ...
+    ```
 
 ### Commit clean code
 Ideally your commits should include a single valuable contribution that is tested, linted and documented. On every commit ```npm test``` and ```npm lint``` is run by default and your commit gets aborted if one of these fails. Be aware that these commands run against the *real* current state of the project, not the committed one.
