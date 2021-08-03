@@ -12,7 +12,7 @@
 
   </br>
 
-  <p>This package is an extensions for <a href="https://github.com/axios/axios">axios</a> to follow links according to <a href="https://stateless.group/hal_specification.html">Hypertext Application Language (hal-json).</a></p>
+  <p>This package is an extensions for <a href="https://github.com/axios/axios">axios</a> to follow links according to <a href="https://stateless.group/hal_specification.html">Hypertext Application Language (hal-json). Hal-Json is widely used in the d.velop cloud.</a></p>
 
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules/axios-hal-json.html"><strong>Explore the docs »</strong></a>
 
