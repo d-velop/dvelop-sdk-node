@@ -33,7 +33,9 @@ export async function followHalJson(config: AxiosRequestConfig): Promise<AxiosRe
 
   if (config.url) {
     try {
-      config.url = templateUrl(config.url, config.templates);
+      const t: any = templateUrl(config.url, config.templates);
+      config.url = t.url;
+      config.params = t.params;
     } catch (e) {
       e.config = config;
       throw e;
@@ -45,12 +47,14 @@ export async function followHalJson(config: AxiosRequestConfig): Promise<AxiosRe
   }
 
   for (let f of config.follows) {
-    config.url = await getFollowUrl({ ...config }, f);
+    const follow: any = await getFollowUrl({ ...config }, f);
+    config.url = follow.url;
+    config.params = follow.params;
   }
   return config;
 }
 
-async function getFollowUrl(config: AxiosRequestConfig, follow: string): Promise<string> {
+async function getFollowUrl(config: AxiosRequestConfig, follow: string): Promise<{ url: string, params: { [key: string]: string } }> {
 
   if (!config.headers) {
     config.headers = {};
@@ -79,19 +83,33 @@ async function getFollowUrl(config: AxiosRequestConfig, follow: string): Promise
   let followUrl: string = response.data._links[follow].href;
 
   try {
-    followUrl = templateUrl(followUrl, config.templates);
+    return templateUrl(followUrl, config.templates);
   } catch (e) {
     e.config = config;
     e.response = response;
     throw e;
   }
-
-  return followUrl;
 }
 
-function templateUrl(url: string, templates: { [key: string]: string } | undefined): string {
+function templateUrl(url: string, templates: { [key: string]: string } | undefined): { url: string, params: { [key: string]: string } } {
 
   let matches: RegExpExecArray | null;
+  let params: { [key: string]: string } = {};
+
+  while ((matches = /{\?(.*?)}/g.exec(url)) !== null) {
+
+    const template: string = matches[0];
+    const templateParams: string[] = template.slice(2, -1).split(",");
+
+    templateParams.forEach(p => {
+      if (templates && templates[p]) {
+        params[p] = templates[p];
+      }
+    });
+
+    url = url.replace(template, "");
+  }
+
 
   while ((matches = /{(.*?)}/g.exec(url)) !== null) {
 
@@ -110,5 +128,5 @@ function templateUrl(url: string, templates: { [key: string]: string } | undefin
     url = url.replace(template, value);
   }
 
-  return url;
+  return { url, params };
 }

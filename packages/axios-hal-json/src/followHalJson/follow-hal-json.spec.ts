@@ -163,17 +163,26 @@ describe("followHalJson", () => {
   describe("on templates", () => {
 
     [
-      { url: "No template", templates: {}, expected: "No template" },
-      { url: "No template", templates: { "unneeded": "hi" }, expected: "No template" },
-      { url: "{test}", templates: { "test": "hi" }, expected: "hi" },
-      { url: "{test1}{test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "hiho" },
-      { url: "{test1} {test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "hi ho" },
-      { url: "{test1}{test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "hiho" },
-      { url: "{test1}/{test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "hi/ho" },
-      { url: "test{test1}/{test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "testhi/ho" },
-      { url: "{test1}/{test2}test", templates: { "test1": "hi", "test2": "ho" }, expected: "hi/hotest" },
-      { url: "!@#$%^^&*()_+{!!}", templates: { "!!": "hi" }, expected: "!@#$%^^&*()_+hi" },
-      { url: "{test}", templates: { "test": "hi", "unneeded": "ho" }, expected: "hi" },
+      { url: "No template", templates: {}, expectedUrl: "No template" },
+      { url: "No template", templates: { "unneeded": "hi" }, expectedUrl: "No template" },
+      { url: "{test}", templates: { "test": "hi" }, expectedUrl: "hi" },
+      { url: "{test1}{test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hiho" },
+      { url: "{test1} {test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hi ho" },
+      { url: "{test1}{test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hiho" },
+      { url: "{test1}/{test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hi/ho" },
+      { url: "test{test1}/{test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "testhi/ho" },
+      { url: "{test1}/{test2}test", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hi/hotest" },
+      { url: "!@#$%^^&*()_+{!!}", templates: { "!!": "hi" }, expectedUrl: "!@#$%^^&*()_+hi" },
+      { url: "{test}", templates: { "test": "hi", "unneeded": "ho" }, expectedUrl: "hi" },
+
+      { url: "{?test}", templates: { "test": "hi", "unneeded": "ho" }, expectedUrl: "", expectedTemplates: { "test": "hi" } },
+      { url: "{?test1,test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "", expectedTemplates: { "test1": "hi", "test2": "ho" } },
+      { url: "{?test1,test2}", templates: { "test1": "hi", "unneeded": "ho" }, expectedUrl: "", expectedTemplates: { "test1": "hi" } },
+      { url: "test{?test}test", templates: { "test": "hi", "unneeded": "ho" }, expectedUrl: "testtest", expectedTemplates: { "test": "hi" } },
+      { url: "{?test1,test2}test", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "test", expectedTemplates: { "test1": "hi", "test2": "ho" } },
+      { url: "test{?test1,test2}", templates: { "test1": "hi", "unneeded": "ho" }, expectedUrl: "test", expectedTemplates: { "test1": "hi" } },
+      { url: "/test{?test1,test2}", templates: { "unneeded": "hi", "test2": "ho" }, expectedUrl: "/test", expectedTemplates: { "test2": "ho" } },
+      { url: "/test{?}", templates: { "unneeded": "hi" }, expectedUrl: "/test", expectedTemplates: {} },
     ].forEach(testCase => {
 
       const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -182,17 +191,18 @@ describe("followHalJson", () => {
         mockedAxios.get.mockReset();
       });
 
-      it(`should replace templates in "${testCase.url}" to "${testCase.expected} for initial templating"`, async () => {
+      it(`should replace templates in "${testCase.url}" to "${testCase.expectedUrl}" for initial templating"`, async () => {
 
         const result: AxiosRequestConfig = await followHalJson({
           url: testCase.url,
           templates: testCase.templates
         });
 
-        expect(result.url).toEqual(testCase.expected);
+        expect(result.url).toEqual(testCase.expectedUrl);
+        expect(result.params).toEqual(testCase.expectedTemplates || {});
       });
 
-      it(`should replace templates in "${testCase.url}" to "${testCase.expected} for response templating"`, async () => {
+      it(`should replace templates in "${testCase.url}" to "${testCase.expectedUrl} for response templating"`, async () => {
 
         const response: AxiosResponse = {
           data: {
@@ -210,10 +220,9 @@ describe("followHalJson", () => {
           follows: ["follow"],
           templates: testCase.templates
         });
-        expect(result.url).toEqual(testCase.expected);
+        expect(result.url).toEqual(testCase.expectedUrl);
+        expect(result.params).toEqual(testCase.expectedTemplates || {});
       });
-
-
     });
 
     [
