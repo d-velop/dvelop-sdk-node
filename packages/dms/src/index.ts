@@ -27,7 +27,10 @@ import axios from "axios";
 import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 axios.interceptors.request.use(followHalJson);
 
+
+
 export { UnauthorizedError, RepositoryNotFoundError } from "./errors";
 export { Repository } from "./repositories/repository";
 export { getRepositories } from "./repositories/get-repositories/get-repositories";
 export { getRepository } from "./repositories/get-repository/get-repository";
+export { SearchParams, SearchResult, search } from "./repositories/search/search";
