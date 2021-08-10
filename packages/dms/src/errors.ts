@@ -23,3 +23,15 @@ export class RepositoryNotFoundError extends Error {
     Object.setPrototypeOf(this, RepositoryNotFoundError.prototype);
   }
 }
+
+/**
+*
+* @category Error
+*/
+export class DmsApiError extends Error {
+  // eslint-disable-next-line no-unused-vars
+  constructor(context: string, public errorString: string, public response: AxiosResponse) {
+    super(`${context}: API-Error: ${errorString}.`);
+    Object.setPrototypeOf(this, DmsApiError.prototype);
+  }
+}
