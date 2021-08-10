@@ -97,6 +97,38 @@ describe("search", () => {
       }));
     });
 
+    // sortProperty?: string;
+    // ascending?: boolean;
+    // page?: number;
+    // pageSize?: number;
+
+    it("should send with templates: categories", async () => {
+      const categories = ["HiItsMeCategory1", "HiItsMeCategory2", "HiItsMeCategory3"];
+      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        categories: categories
+      });
+      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+        templates: expect.objectContaining({ "sourcecategories": categories })
+      }));
+    });
+
+    it("should send with templates: properties", async () => {
+      const properties = [
+        { "HiItsMeProterty1": ["HiItsMeProperty1Value"] },
+        { "HiItsMeProterty2": ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"] }
+      ];
+      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        properties: properties
+      });
+      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+        templates: expect.objectContaining({ "sourceproperties": properties })
+      }));
+    });
+
     it("should send with templates: fulltext", async () => {
       const fulltext: string = "HiItsMeFulltext";
       await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
@@ -106,6 +138,54 @@ describe("search", () => {
       });
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         templates: expect.objectContaining({ "fulltext": fulltext })
+      }));
+    });
+
+    it("should send with templates: sortproperty", async () => {
+      const sortProperty: string = "HiItsMeFulltext";
+      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        sortProperty: sortProperty
+      });
+      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+        templates: expect.objectContaining({ "sourcepropertysort": sortProperty })
+      }));
+    });
+
+    it("should send with templates: ascending", async () => {
+      const ascending: boolean = true;
+      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        ascending: ascending
+      });
+      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+        templates: expect.objectContaining({ "ascending": ascending })
+      }));
+    });
+
+    it("should send with templates: page", async () => {
+      const page: number = 42;
+      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        page: page
+      });
+      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+        templates: expect.objectContaining({ "page": page })
+      }));
+    });
+
+    it("should send with templates: pagesize", async () => {
+      const pageSize: number = 42;
+      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        pageSize: pageSize
+      });
+      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+        templates: expect.objectContaining({ "pagesize": pageSize })
       }));
     });
   });
