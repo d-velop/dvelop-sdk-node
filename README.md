@@ -30,16 +30,59 @@ This is the official SDK to build apps for [d.velop cloud](https://www.d-velop.d
 
 This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop app you want to use.
 ```
-npm i @dvelop/identityprovider @dvelop/task
+npm i @dvelop-sdk/task
 ```
 ``` typescript
-import { getAuthSessionByApiKey } from '@dvelop/identityprovider';
-import * as taskApp from '@dvelop/task';
+import { createTask, InvalidTaskError } from "@dvelop-sdk/task";
 
-(async function main() {
-  const authSessionId = await getAuthSessionByApiKey('<SYSTEM_BASE_URI>', '<API_KEY>');
-  await taskApp.completeTask(systemBaseUri, authSessionId, '<TASK_LOCATION>');
+(async () => {
+
+  try {
+    const task = await createTask(systemBaseUri, apiKey, {
+      subject: "Remember to be awesome!",
+      assignees: ["1'm-74lk1n6-70-y0u"]
+    });
+    console.log("Task was created:", task);
+  } catch (e) {
+    if (e instanceof InvalidTaskError) {
+      console.error(e.validation);
+    } else {
+      console.error(e.message)
+    }
+  }
 })();
+```
+
+You can also run them in ES6 javascript:
+```
+npm i @dvelop-sdk/task
+```
+```json
+//package.json
+{
+  "type":"module",
+}
+```
+```javascript
+//main.js
+
+async function main() {
+  try {
+    const task = await createTask(systemBaseUri, apiKey, {
+      subject: "Remember to be awesome!",
+      assignees: ["1'm-74lk1n6-70-y0u"]
+    });
+    console.log("Task was created:", task);
+  } catch (e) {
+    if (e instanceof InvalidTaskError) {
+      console.error(e.validation);
+    } else {
+      console.error(e.message)
+    }
+  }
+}
+
+await main();
 ```
 
 <div align="center">
