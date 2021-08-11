@@ -86,15 +86,54 @@
 					<h2>Getting started</h2>
 				</a>
 				<p>This SDK is diveded into <a href="https://developer.d-velop.de/dev/de/explore-the-apps">apps</a>. Install individual packages per d-velop app you want to use.</p>
-				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">i</span><span style="color: #000000"> @</span><span style="color: #001080">dvelop</span><span style="color: #000000">/</span><span style="color: #001080">identityprovider</span><span style="color: #000000"> @</span><span style="color: #001080">dvelop</span><span style="color: #000000">/</span><span style="color: #001080">task</span>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">i</span><span style="color: #000000"> @</span><span style="color: #001080">dvelop</span><span style="color: #000000">-</span><span style="color: #001080">sdk</span><span style="color: #000000">/</span><span style="color: #001080">task</span>
 </code></pre>
-				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">getAuthSessionByApiKey</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@dvelop/identityprovider&#039;</span><span style="color: #000000">;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #0000FF">*</span><span style="color: #000000"> </span><span style="color: #AF00DB">as</span><span style="color: #000000"> </span><span style="color: #001080">taskApp</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@dvelop/task&#039;</span><span style="color: #000000">;</span>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">createTask</span><span style="color: #000000">, </span><span style="color: #001080">InvalidTaskError</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/task&quot;</span><span style="color: #000000">;</span>
 
-<span style="color: #000000">(</span><span style="color: #0000FF">async</span><span style="color: #000000"> </span><span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">main</span><span style="color: #000000">() {</span>
-<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">authSessionId</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getAuthSessionByApiKey</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;&lt;SYSTEM_BASE_URI&gt;&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;&lt;API_KEY&gt;&#039;</span><span style="color: #000000">);</span>
-<span style="color: #000000">  </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">taskApp</span><span style="color: #000000">.</span><span style="color: #795E26">completeTask</span><span style="color: #000000">(</span><span style="color: #001080">systemBaseUri</span><span style="color: #000000">, </span><span style="color: #001080">authSessionId</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;&lt;TASK_LOCATION&gt;&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">(</span><span style="color: #0000FF">async</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+
+<span style="color: #000000">  </span><span style="color: #AF00DB">try</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">task</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">createTask</span><span style="color: #000000">(</span><span style="color: #001080">systemBaseUri</span><span style="color: #000000">, </span><span style="color: #001080">apiKey</span><span style="color: #000000">, {</span>
+<span style="color: #000000">      </span><span style="color: #001080">subject:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Remember to be awesome!&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">assignees:</span><span style="color: #000000"> [</span><span style="color: #A31515">&quot;1&#039;m-74lk1n6-70-y0u&quot;</span><span style="color: #000000">]</span>
+<span style="color: #000000">    });</span>
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Task was created:&quot;</span><span style="color: #000000">, </span><span style="color: #001080">task</span><span style="color: #000000">);</span>
+<span style="color: #000000">  } </span><span style="color: #AF00DB">catch</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000"> </span><span style="color: #0000FF">instanceof</span><span style="color: #000000"> </span><span style="color: #267F99">InvalidTaskError</span><span style="color: #000000">) {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">validation</span><span style="color: #000000">);</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">message</span><span style="color: #000000">)</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  }</span>
 <span style="color: #000000">})();</span>
+</code></pre>
+				<p>You can also run them in ES6 javascript:</p>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">i</span><span style="color: #000000"> @</span><span style="color: #001080">dvelop</span><span style="color: #000000">-</span><span style="color: #001080">sdk</span><span style="color: #000000">/</span><span style="color: #001080">task</span>
+</code></pre>
+				<pre><code class="language-json"><span style="color: #008000">//package.json</span>
+<span style="color: #000000">{</span>
+<span style="color: #000000">  </span><span style="color: #0451A5">&quot;type&quot;</span><span style="color: #000000">:</span><span style="color: #A31515">&quot;module&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<pre><code class="language-javascript"><span style="color: #008000">//main.js</span>
+
+<span style="color: #0000FF">async</span><span style="color: #000000"> </span><span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">main</span><span style="color: #000000">() {</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">try</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">task</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">createTask</span><span style="color: #000000">(</span><span style="color: #001080">systemBaseUri</span><span style="color: #000000">, </span><span style="color: #001080">apiKey</span><span style="color: #000000">, {</span>
+<span style="color: #000000">      </span><span style="color: #001080">subject:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Remember to be awesome!&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">assignees:</span><span style="color: #000000"> [</span><span style="color: #A31515">&quot;1&#039;m-74lk1n6-70-y0u&quot;</span><span style="color: #000000">]</span>
+<span style="color: #000000">    });</span>
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Task was created:&quot;</span><span style="color: #000000">, </span><span style="color: #001080">task</span><span style="color: #000000">);</span>
+<span style="color: #000000">  } </span><span style="color: #AF00DB">catch</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000"> </span><span style="color: #0000FF">instanceof</span><span style="color: #000000"> </span><span style="color: #267F99">InvalidTaskError</span><span style="color: #000000">) {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">validation</span><span style="color: #000000">);</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">message</span><span style="color: #000000">)</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">}</span>
+
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">main</span><span style="color: #000000">();</span>
 </code></pre>
 				<div align="center">
 					<a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
