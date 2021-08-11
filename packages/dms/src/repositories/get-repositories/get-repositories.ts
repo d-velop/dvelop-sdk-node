@@ -1,8 +1,17 @@
 import axios, { AxiosResponse } from "axios";
-import { Repository, UnauthorizedError } from "../../index";
+import { Repository, UnauthorizedError, _internals } from "../../index";
 
-interface RepositoriesDto {
-  repositories: Repository[];
+export interface RepositoryListDto {
+  _links: _internals.HalJsonLinks;
+  repositories: _internals.RepositoryDto[];
+  count: number;
+  hasAdminRight: boolean;
+}
+
+export function transformRepositoryListDtoToRepositoryArray(dto: RepositoryListDto): Repository[];
+export function transformRepositoryListDtoToRepositoryArray<T>(dto: RepositoryListDto, transformer: (dto: _internals.RepositoryDto)=> T): T;
+export function transformRepositoryListDtoToRepositoryArray(dto: RepositoryListDto, transform: (dto: _internals.RepositoryDto)=> any = _internals.transformRepositoryDtoToRepository): any {
+  return dto.repositories.map(r => transform(r));
 }
 
 /**
@@ -20,12 +29,14 @@ interface RepositoriesDto {
  * console.log("Repositories:", repoList); // Booty Bay Documents, Everlook Documents, Ratchet Documents
  * ```
  */
-export async function getRepositories(systemBaseUri: string, authSessionId: string): Promise<Repository[]> {
+export async function getRepositories(systemBaseUri: string, authSessionId: string): Promise<Repository[]>;
+export async function getRepositories<T>(systemBaseUri: string, authSessionId: string, transform: (dto: RepositoryListDto)=> T): Promise<T>;
+export async function getRepositories(systemBaseUri: string, authSessionId: string, transform: (dto: RepositoryListDto)=> any = transformRepositoryListDtoToRepositoryArray): Promise<any>{
 
   const errorContext: string = "Failed to get repositories";
 
   try {
-    const response: AxiosResponse<RepositoriesDto> = await axios.get<RepositoriesDto>("/dms", {
+    const response: AxiosResponse<RepositoryListDto> = await axios.get<RepositoryListDto>("/dms", {
       baseURL: systemBaseUri,
       headers: {
         "Authorization": `Bearer ${authSessionId}`
@@ -33,7 +44,7 @@ export async function getRepositories(systemBaseUri: string, authSessionId: stri
       follows: ["allrepos"]
     });
 
-    return response.data.repositories;
+    return transform(response.data);
   } catch (e) {
     if (e.response) {
       switch (e.response.status) {

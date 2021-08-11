@@ -1,5 +1,31 @@
 import axios, { AxiosResponse } from "axios";
-import { Repository, UnauthorizedError, RepositoryNotFoundError } from "../../index";
+import { UnauthorizedError, RepositoryNotFoundError, _internals } from "../../index";
+
+
+export interface RepositoryDto {
+  _links: _internals.HalJsonLinks;
+  id: string;
+  name: string;
+  supportsFulltextSearch: boolean;
+  serverId: string;
+  available: boolean;
+  isDefault: boolean;
+  version: string;
+}
+
+export interface Repository {
+  id: string;
+  name: string;
+  sourceId: string;
+}
+
+export function transformRepositoryDtoToRepository(dto: RepositoryDto): Repository {
+  return {
+    id: dto.id,
+    name: dto.name,
+    sourceId: dto._links["source"].href
+  };
+}
 
 /**
  * Returns {@link Repository}-object for specified id.
@@ -17,12 +43,15 @@ import { Repository, UnauthorizedError, RepositoryNotFoundError } from "../../in
  * console.log(repo.name); // Booty Bay Documents
  * ```
  */
-export async function getRepository(systemBaseUri: string, authSessionId: string, repositoryId: string): Promise<Repository>{
+export async function getRepository(systemBaseUri: string, authSessionId: string, repositoryId: string): Promise<Repository>;
+export async function getRepository<T>(systemBaseUri: string, authSessionId: string, repositoryId: string, transform: (dto: RepositoryDto)=> T): Promise<T>;
+export async function getRepository(systemBaseUri: string, authSessionId: string, repositoryId: string, transform: (dto: RepositoryDto)=> any = transformRepositoryDtoToRepository): Promise<any> {
 
   const errorContext: string = "Failed to get repository";
+  let response: AxiosResponse<RepositoryDto>;
 
   try {
-    const response: AxiosResponse<Repository> = await axios.get<Repository>("/dms", {
+    response = await axios.get<RepositoryDto>("/dms", {
       baseURL: systemBaseUri,
       headers: {
         "Authorization": `Bearer ${authSessionId}`
@@ -31,7 +60,7 @@ export async function getRepository(systemBaseUri: string, authSessionId: string
       templates: { "repositoryid": repositoryId }
     });
 
-    return response.data;
+    return transform(response.data);
   } catch (e) {
     if (e.response) {
       switch (e.response.status) {

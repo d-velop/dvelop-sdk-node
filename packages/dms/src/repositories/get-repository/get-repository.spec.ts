@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Repository, getRepository, UnauthorizedError, RepositoryNotFoundError } from "../../index";
+import { getRepository, UnauthorizedError, RepositoryNotFoundError, _internals } from "../../index";
 
 jest.mock("axios");
 
@@ -23,18 +23,18 @@ describe("getRepository", () => {
     });
 
     it("should send GET", async () => {
-      await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeRepoId");
+      await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeRepoId", (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledTimes(1);
     });
 
     it("should send to /dms", async () => {
-      await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeRepoId");
+      await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeRepoId", (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith("/dms", expect.any(Object));
     });
 
     it("should send with systemBaseUri as BaseURL", async () => {
       const systemBaseUri: string = "HiItsMeSystemBaseUri";
-      await getRepository(systemBaseUri, "HiItsMeAuthSessionId", "HiItsMeRepoId");
+      await getRepository(systemBaseUri, "HiItsMeAuthSessionId", "HiItsMeRepoId", (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         baseURL: systemBaseUri
       }));
@@ -42,14 +42,14 @@ describe("getRepository", () => {
 
     it("should send with authSessionId as Authorization-Header", async () => {
       const authSessionId: string = "HiItsMeAuthSessionId";
-      await getRepository("HiItsMeSystemBaseUri", authSessionId, "HiItsMeRepoId");
+      await getRepository("HiItsMeSystemBaseUri", authSessionId, "HiItsMeRepoId", (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         headers: expect.objectContaining({ "Authorization": `Bearer ${authSessionId}` })
       }));
     });
 
     it("should send with follows: login", async () => {
-      await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeRepoId");
+      await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeRepoId", (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         follows: ["repo"]
       }));
@@ -57,25 +57,28 @@ describe("getRepository", () => {
 
     it("should send with templates: repositoryid", async () => {
       const repositoryId: string = "HiItsMeRepositoryId";
-      await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", repositoryId);
+      await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", repositoryId, (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         templates: { "repositoryid": repositoryId }
       }));
     });
   });
 
-  describe("response", () => {
+  describe("transform", () => {
 
-    it("should return repository", async () => {
+    it("should return transform-result", async () => {
 
-      const repository = { id: "repo", name: "repository" };
+      const dto = { test: "HiItsMeTest" };
+      mockedAxios.get.mockResolvedValue({ data: dto });
+      const transformResult = "HiItsMeTransformResult";
+      const mockedTransform = jest.fn().mockReturnValue(transformResult);
 
-      mockedAxios.get.mockResolvedValue({
-        data: repository
-      });
 
-      const result: Repository = await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeRepoId");
-      expect(result).toEqual(repository);
+      const result = await getRepository("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", "HiItsMeRepoId", mockedTransform);
+
+      expect(mockedTransform).toHaveBeenCalledTimes(1);
+      expect(mockedTransform).toHaveBeenCalledWith(dto);
+      expect(result).toBe(transformResult);
     });
   });
 
@@ -142,5 +145,33 @@ describe("getRepository", () => {
       expect(resultError.message).toContain(errorString);
       expect(resultError.message).toContain("Failed to get repository:");
     });
+  });
+});
+
+describe("transformRepositoryDtoToRepository", () => {
+  it("should map values", () => {
+    const dto: _internals.RepositoryDto = {
+      _links: {
+        source: {
+          href: "HiItsMeSourceHref"
+        },
+        irrelevant: {
+          href: "I'm irrelevant"
+        }
+      },
+      id: "HiItsMeId",
+      name: "HiItsMe",
+      supportsFulltextSearch: true,
+      serverId: "HiItsMe",
+      available: false,
+      isDefault: true,
+      version: "HiItsMe"
+    };
+
+    const result = _internals.transformRepositoryDtoToRepository(dto);
+
+    expect(result.id).toEqual(dto.id);
+    expect(result.name).toEqual(dto.name);
+    expect(result.sourceId).toEqual(dto._links["source"].href);
   });
 });

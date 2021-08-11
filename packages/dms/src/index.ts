@@ -28,9 +28,9 @@ import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 axios.interceptors.request.use(followHalJson);
 
 
-
 export { UnauthorizedError, RepositoryNotFoundError, DmsApiError } from "./errors";
-export { Repository } from "./repositories/repository";
 export { getRepositories } from "./repositories/get-repositories/get-repositories";
-export { getRepository } from "./repositories/get-repository/get-repository";
+export { Repository, getRepository } from "./repositories/get-repository/get-repository";
 export { SearchParams, SearchResultPage, search } from "./repositories/search/search";
+
+export * as _internals from "./index-internal";

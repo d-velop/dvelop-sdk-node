@@ -13,7 +13,9 @@
     "@typescript-eslint",
     "jest"
   ],
-  "ignorePatterns": ["tmp-*.ts"],
+  "ignorePatterns": [
+    "tmp-*.ts"
+  ],
   "rules": {
     "semi": [
       "error",
@@ -39,6 +41,26 @@
       "error"
     ],
     "no-var": "error",
-    "@typescript-eslint/type-annotation-spacing": ["error", { "before": false, "after": true }]
+    "@typescript-eslint/type-annotation-spacing": [
+      "error",
+      {
+        "before": false,
+        "after": true
+      }
+    ],
+    "no-redeclare": "off",
+    "@typescript-eslint/no-redeclare": [
+      "error"
+    ],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/adjacent-overload-signatures": [
+      "error"
+    ]
   }
 }
