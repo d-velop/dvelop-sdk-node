@@ -35,16 +35,59 @@ This is the official SDK to build apps for [d.velop cloud](https://www.d-velop.d
 
 This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop app you want to use.
 ```
-npm i @dvelop/identityprovider @dvelop/task
+npm i @dvelop-sdk/task
 ```
 ``` typescript
-import { getAuthSessionByApiKey } from '@dvelop/identityprovider';
-import * as taskApp from '@dvelop/task';
+import { createTask, InvalidTaskError } from "@dvelop-sdk/task";
 
-(async function main() {
-  const authSessionId = await getAuthSessionByApiKey('<SYSTEM_BASE_URI>', '<API_KEY>');
-  await taskApp.completeTask(systemBaseUri, authSessionId, '<TASK_LOCATION>');
+(async () => {
+
+  try {
+    const task = await createTask(systemBaseUri, apiKey, {
+      subject: "Remember to be awesome!",
+      assignees: ["1'm-74lk1n6-70-y0u"]
+    });
+    console.log("Task was created:", task);
+  } catch (e) {
+    if (e instanceof InvalidTaskError) {
+      console.error(e.validation);
+    } else {
+      console.error(e.message)
+    }
+  }
 })();
+```
+
+You can also run them in ES6 javascript:
+```
+npm i @dvelop-sdk/task
+```
+```json
+//package.json
+{
+  "type":"module",
+}
+```
+```javascript
+//main.js
+
+async function main() {
+  try {
+    const task = await createTask(systemBaseUri, apiKey, {
+      subject: "Remember to be awesome!",
+      assignees: ["1'm-74lk1n6-70-y0u"]
+    });
+    console.log("Task was created:", task);
+  } catch (e) {
+    if (e instanceof InvalidTaskError) {
+      console.error(e.validation);
+    } else {
+      console.error(e.message)
+    }
+  }
+}
+
+await main();
 ```
 
 <div align="center">
@@ -52,58 +95,62 @@ import * as taskApp from '@dvelop/task';
 </div>
 </br>
 
-## Build an app with express
+## Build a d.velop app in no time with express
 
 This SDK was designed framework agnostic but with [express](https://www.npmjs.com/package/express) in mind.
 
+Install dependencies:
 ```
-npm i express cookie-parser @dvelop-sdk/app-router @dvelop-sdk/identityprovider
-npm i @types/express @types/cookie-parser -D
+npm i typescript express cookie-parser @dvelop-sdk/app-router @dvelop-sdk/identityprovider
 ```
+```
+npm i @types/express @types/cookie-parser ts-node-dev -D
+```
+Be sure to set the ```esModuleInterop```-flag for typescript:
+```json
+//tsconfig.json
 
-```typescript
-import express, { Application, Request, Response, NextFunction } from "express";
-import cookieParser from "cookie-parser";
-import * as appRouter from "@dvelop-sdk/app-router";
-import { validateAuthSessionId, getLoginRedirectionUri, ScimUser } from "@dvelop-sdk/identityprovider";
-
-const app: Application = express();
-const appName: string = "acme-lklo";
-
-declare global {
-  namespace Express {
-    interface Request {
-      systemBaseUri?: string;
-      tenantId?: string;
-      requestId?: string;
-      principal?: ScimUser;
-    }
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    // ...
   }
 }
+```
 
-// Middleware
-app.use(cookieParser());
+Set up your app:
+```typescript
+// src/middleware/dvelop.ts
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+import { Request, Response, NextFunction } from "express";
+import * as appRouter from "@dvelop-sdk/app-router";
+import * as idp from "@dvelop-sdk/identityprovider";
+
+// ATTENTION: This should never be checked into version control
+const APP_SECRET = process.env.APP_SECRET;
+
+export function validateSignatureAndSetDvelopContext(req: Request, res: Response, next: NextFunction) {
 
   const systemBaseUri: string = req.header(appRouter.DVELOP_SYSTEM_BASE_URI_HEADER);
   const tenantId: string = req.header(appRouter.DVELOP_TENANT_ID_HEADER);
   const requestSignature: string = req.header(appRouter.DVELOP_REQUEST_SIGNATURE_HEADER);
 
-  const validRequest: boolean = appRouter.validateRequestSignature(process.env.SIGNATURE_SECRET, systemBaseUri, tenantId, requestSignature)
-
-  if (validRequest) {
-    req.systemBaseUri = systemBaseUri;
-    req.tenantId = tenantId
-    req.requestId = req.header(appRouter.DVELOP_REQUEST_ID_HEADER);
-    next();
-  } else {
-    res.status(403).send('Forbidden');
+  try {
+    appRouter.validateRequestSignature(APP_SECRET, systemBaseUri, tenantId, requestSignature);
+  } catch (e) {
+    if (e instanceof appRouter.InvalidRequestSignatureError) {
+      console.log(e);
+      res.status(403).send('Forbidden');
+    }
   }
-});
 
-// Routes
-app.get(`/${appName}/me`, async (req: Request, res: Response) => {
+  req.systemBaseUri = systemBaseUri;
+  req.tenantId = tenantId
+  req.requestId = req.header(appRouter.DVELOP_REQUEST_ID_HEADER);
+  next();
+}
+
+export async function validateUser(req: Request, res: Response, next: NextFunction) {
 
   let authSessionId: string;
 
@@ -116,17 +163,57 @@ app.get(`/${appName}/me`, async (req: Request, res: Response) => {
   }
 
   try {
-    const user: ScimUser = await validateAuthSessionId(req.systemBaseUri, authSessionId);
-    req.principal = user;
-    res.status(200).send(`Hello ${req.principal.displayName}!`)
+    const user: idp.ScimUser = await idp.validateAuthSessionId(req.systemBaseUri, authSessionId);
+    req.user = user;
+    next();
   } catch (e) {
-    console.log("Unauthorized. Redirecting ...");
-    res.redirect(getLoginRedirectionUri(req.originalUrl));
+    if (e instanceof idp.UnauthorizedError) {
+      res.redirect(idp.getLoginRedirectionUri(req.originalUrl));
+    }
   }
+};
+```
+
+```typescript
+// src/main.ts
+import express, { Application, Request, Response } from "express"
+import { ScimUser } from "@dvelop-sdk/identityprovider";
+import { validateSignatureAndSetDvelopContext, validateUser } from "./middleware/dvelop";
+import cookieParser from "cookie-parser";
+
+declare global {
+  namespace Express {
+    interface Request {
+      systemBaseUri?: string;
+      tenantId?: string;
+      requestId?: string;
+      user?: ScimUser
+    }
+  }
+}
+
+const app: Application = express();
+const appName: string = "acme-myapp";
+const appPort: number = 8001;
+
+app.use(validateSignatureAndSetDvelopContext);
+
+app.use(cookieParser());
+app.use(validateUser);
+
+app.get(`/${appName}/me`, (req: Request, res: Response) => {
+
+  res.status(200).send(`
+    <h1>Hello ${req.user.displayName}</h1>
+    <p>Greetings from ${process.env.npm_package_name} (${process.env.npm_package_version})!</p>
+  `);
 });
 
-app.get(`/${appName}`, (_: Request, res: Response) => {
-  res.status(200).send(`Hello from ${process.env.npm_package_name} (${process.env.npm_package_version})!`);
+app.get(`/${appName}`, (req: Request, res: Response) => {
+  res.status(200).send(`
+    <h1>Hello Tenant ${req.tenantId} (${req.systemBaseUri})</h1>
+    <p>Greetings from ${process.env.npm_package_name} (${process.env.npm_package_version})!</p>
+  `);
 });
 
 app.use("/", (_: Request, res: Response) => {
@@ -134,9 +221,15 @@ app.use("/", (_: Request, res: Response) => {
 });
 
 // Start
-app.listen(8000, () => {
-  console.log(`Server listening on port 8000`);
+app.listen(appPort, () => {
+  console.log(`D.velop app listening on port ${appPort} ...`);
 });
+```
+
+
+Don't forget to set your APP_SECRET and then start your app:
+```
+npx ts-node-dev src/main.ts
 ```
 
 <div align="center">
