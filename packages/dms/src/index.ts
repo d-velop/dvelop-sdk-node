@@ -27,6 +27,9 @@ import axios from "axios";
 import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 axios.interceptors.request.use(followHalJson);
 
+// Utils
+export * from "./utils/context";
+
 // Errors
 export { UnauthorizedError, RepositoryNotFoundError, DmsAppBadRequestError, DmsObjectNotFoundError } from "./errors";
 
