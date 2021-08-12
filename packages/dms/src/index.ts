@@ -27,10 +27,15 @@ import axios from "axios";
 import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 axios.interceptors.request.use(followHalJson);
 
+// Errors
+export { UnauthorizedError, RepositoryNotFoundError, DmsAppBadRequestError, DmsObjectNotFoundError } from "./errors";
 
-export { UnauthorizedError, RepositoryNotFoundError, DmsApiError } from "./errors";
+// Repositories
 export { getRepositories } from "./repositories/get-repositories/get-repositories";
 export { Repository, getRepository } from "./repositories/get-repository/get-repository";
+
+// DmsObjects
 export { SearchParams, SearchResultPage, search } from "./repositories/search/search";
+export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
 
 export * as _internals from "./index-internal";
