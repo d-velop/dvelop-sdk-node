@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { DmsAppBadRequestError, DmsObjectNotFoundError, _internals } from "../../index";
+import { DmsAppBadRequestError, DmsObjectNotFoundError, internals } from "../../index";
 
 /**
  * Paramerters for getDmsObject-method.
@@ -24,7 +24,7 @@ export interface DmsObjectWithMappingDto {
     displayValue?: string;
   }[];
   sourceCategories: string[];
-  _links: _internals.HalJsonLinks;
+  _links: internals.HalJsonLinks;
 }
 
 /**

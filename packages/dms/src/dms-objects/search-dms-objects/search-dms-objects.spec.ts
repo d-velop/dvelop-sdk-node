@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { DmsApiError } from "../../errors";
-import { search, SearchResultPage, UnauthorizedError } from "../../index";
+import { searchDmsObjects, SearchResultPage, DmsApiError, UnauthorizedError } from "../../index";
 
 jest.mock("axios");
 
@@ -28,7 +27,7 @@ describe("search", () => {
     });
 
     it("should send GET", async () => {
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId"
       });
@@ -36,7 +35,7 @@ describe("search", () => {
     });
 
     it("should send to /dms", async () => {
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId"
       });
@@ -45,7 +44,7 @@ describe("search", () => {
 
     it("should send with systemBaseUri as BaseURL", async () => {
       const systemBaseUri: string = "HiItsMeSystemBaseUri";
-      await search(systemBaseUri, "HiItsMeAuthSessionId", {
+      await searchDmsObjects(systemBaseUri, "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId"
       });
@@ -56,7 +55,7 @@ describe("search", () => {
 
     it("should send with authSessionId as Authorization-Header", async () => {
       const authSessionId: string = "HiItsMeAuthSessionId";
-      await search("HiItsMeSystemBaseUri", authSessionId, {
+      await searchDmsObjects("HiItsMeSystemBaseUri", authSessionId, {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId"
       });
@@ -66,7 +65,7 @@ describe("search", () => {
     });
 
     it("should send with follows: login", async () => {
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId"
       });
@@ -77,7 +76,7 @@ describe("search", () => {
 
     it("should send with templates: repositoryid", async () => {
       const repositoryId: string = "HiItsMeRepositoryId";
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: repositoryId,
         sourceId: "HiItsMeSourceId"
       });
@@ -88,7 +87,7 @@ describe("search", () => {
 
     it("should send with templates: sourceid", async () => {
       const sourceId: string = "HiItsMeSourceId";
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: sourceId
       });
@@ -104,7 +103,7 @@ describe("search", () => {
 
     it("should send with templates: categories", async () => {
       const categories = ["HiItsMeCategory1", "HiItsMeCategory2", "HiItsMeCategory3"];
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId",
         categories: categories
@@ -119,7 +118,7 @@ describe("search", () => {
         { "HiItsMeProterty1": ["HiItsMeProperty1Value"] },
         { "HiItsMeProterty2": ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"] }
       ];
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId",
         properties: properties
@@ -131,7 +130,7 @@ describe("search", () => {
 
     it("should send with templates: fulltext", async () => {
       const fulltext: string = "HiItsMeFulltext";
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId",
         fulltext: fulltext
@@ -143,7 +142,7 @@ describe("search", () => {
 
     it("should send with templates: sortproperty", async () => {
       const sortProperty: string = "HiItsMeFulltext";
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId",
         sortProperty: sortProperty
@@ -155,7 +154,7 @@ describe("search", () => {
 
     it("should send with templates: ascending", async () => {
       const ascending: boolean = true;
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId",
         ascending: ascending
@@ -167,7 +166,7 @@ describe("search", () => {
 
     it("should send with templates: page", async () => {
       const page: number = 42;
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId",
         page: page
@@ -179,7 +178,7 @@ describe("search", () => {
 
     it("should send with templates: pagesize", async () => {
       const pageSize: number = 42;
-      await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId",
         pageSize: pageSize
@@ -200,7 +199,7 @@ describe("search", () => {
 
       mockedAxios.get.mockResolvedValue({ data });
 
-      const result: SearchResultPage = await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+      const result: SearchResultPage = await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId"
       });
@@ -251,7 +250,7 @@ describe("search", () => {
               .mockResolvedValueOnce({ data: data1 })
               .mockResolvedValueOnce({ data: data2 });
 
-            firstPage = await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+            firstPage = await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
               repositoryId: "HiItsMeRepositoryId",
               sourceId: "HiItsMeSourceId"
             });
@@ -285,7 +284,7 @@ describe("search", () => {
               .mockResolvedValueOnce({ data: data1 })
               .mockResolvedValueOnce({ data: data2 });
 
-            firstPage = await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+            firstPage = await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
               repositoryId: "HiItsMeRepositoryId",
               sourceId: "HiItsMeSourceId"
             });
@@ -308,7 +307,7 @@ describe("search", () => {
               .mockResolvedValueOnce({ data: data1 })
               .mockRejectedValueOnce({ response });
 
-            firstPage = await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+            firstPage = await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
               repositoryId: "HiItsMeRepositoryId",
               sourceId: "HiItsMeSourceId"
             });
@@ -335,7 +334,7 @@ describe("search", () => {
                 throw error;
               });
 
-            await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+            await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
               repositoryId: "HiItsMeRepositoryId",
               sourceId: "HiItsMeSourceId"
             });
@@ -365,7 +364,7 @@ describe("search", () => {
               .mockResolvedValueOnce({ data: data2 })
               .mockResolvedValueOnce({ data: data3 });
 
-            firstPage = await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+            firstPage = await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
               repositoryId: "HiItsMeRepositoryId",
               sourceId: "HiItsMeSourceId"
             });
@@ -401,7 +400,7 @@ describe("search", () => {
               .mockResolvedValueOnce({ data: data2 })
               .mockResolvedValueOnce({ data: data3 });
 
-            firstPage = await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+            firstPage = await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
               repositoryId: "HiItsMeRepositoryId",
               sourceId: "HiItsMeSourceId"
             });
@@ -426,7 +425,7 @@ describe("search", () => {
               .mockResolvedValueOnce({ data: data2 })
               .mockRejectedValueOnce({ response });
 
-            firstPage = await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+            firstPage = await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
               repositoryId: "HiItsMeRepositoryId",
               sourceId: "HiItsMeSourceId"
             });
@@ -455,7 +454,7 @@ describe("search", () => {
                 throw error;
               });
 
-            await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+            await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
               repositoryId: "HiItsMeRepositoryId",
               sourceId: "HiItsMeSourceId"
             });
@@ -494,7 +493,7 @@ describe("search", () => {
 
       let error;
       try {
-        await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+        await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
           repositoryId: "HiItsMeRepositoryId",
           sourceId: "HiItsMeSourceId"
         });
@@ -518,7 +517,7 @@ describe("search", () => {
 
       let error: UnauthorizedError;
       try {
-        await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+        await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
           repositoryId: "HiItsMeRepositoryId",
           sourceId: "HiItsMeSourceId"
         });
@@ -541,7 +540,7 @@ describe("search", () => {
 
       let resultError: Error;
       try {
-        await search("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
+        await searchDmsObjects("HiItsMeSystemBaseUri", "HiItsMeAuthSessionId", {
           repositoryId: "HiItsMeRepositoryId",
           sourceId: "HiItsMeSourceId"
         });

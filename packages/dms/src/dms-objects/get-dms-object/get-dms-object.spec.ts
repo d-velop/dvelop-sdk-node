@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { DmsAppBadRequestError, DmsObjectNotFoundError } from "../../errors";
-import { GetDmsObjectParams, DmsObject, getDmsObject, _internals } from "../../index";
+import { GetDmsObjectParams, DmsObject, getDmsObject, DmsAppBadRequestError, DmsObjectNotFoundError, internals } from "../../index";
 
 jest.mock("axios");
 
@@ -92,7 +91,7 @@ describe("getDmsObject", () => {
 
       const response = {
         test: "HiItsMeTest"
-      } as unknown as AxiosResponse<_internals.DmsObjectWithMappingDto>;
+      } as unknown as AxiosResponse<internals.DmsObjectWithMappingDto>;
       const systemBaseUri: string = "HiItsMeSystemBaseUri";
       const authSessionId: string = "HiItsMeAuthSessionId";
       const params: GetDmsObjectParams = {
@@ -221,7 +220,7 @@ describe("getDmsObject", () => {
             }
           }
         }
-      } as unknown as AxiosResponse<_internals.DmsObjectWithMappingDto>;
+      } as unknown as AxiosResponse<internals.DmsObjectWithMappingDto>;
 
       const systemBaseUri = "HiItsmeSystemBaseUri";
       const authSessionId = "HiItsmeAuthSessionId";
@@ -231,7 +230,7 @@ describe("getDmsObject", () => {
         sourceId: "HiItsMeSourceId"
       };
 
-      const result: DmsObject = _internals.transformGetDmsObjectResponseToDmsObject(response, systemBaseUri, authSessionId, params);
+      const result: DmsObject = internals.transformGetDmsObjectResponseToDmsObject(response, systemBaseUri, authSessionId, params);
 
       expect(result.repositoryId).toEqual(params.repositoryId);
       expect(result.id).toEqual(response.data.id);

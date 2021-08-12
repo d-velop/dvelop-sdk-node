@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { getRepository, UnauthorizedError, RepositoryNotFoundError, _internals } from "../../index";
+import { getRepository, UnauthorizedError, RepositoryNotFoundError, internals } from "../../index";
 
 jest.mock("axios");
 
@@ -150,7 +150,7 @@ describe("getRepository", () => {
 
 describe("transformRepositoryDtoToRepository", () => {
   it("should map values", () => {
-    const dto: _internals.RepositoryDto = {
+    const dto: internals.RepositoryDto = {
       _links: {
         source: {
           href: "HiItsMeSourceHref"
@@ -168,7 +168,7 @@ describe("transformRepositoryDtoToRepository", () => {
       version: "HiItsMe"
     };
 
-    const result = _internals.transformRepositoryDtoToRepository(dto);
+    const result = internals.transformRepositoryDtoToRepository(dto);
 
     expect(result.id).toEqual(dto.id);
     expect(result.name).toEqual(dto.name);

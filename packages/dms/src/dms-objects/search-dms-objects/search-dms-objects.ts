@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from "axios";
-import { DmsApiError } from "../../errors";
-import { UnauthorizedError } from "../../index";
+import { DmsApiError, UnauthorizedError } from "../../index";
 
-export interface SearchParams {
+export interface SearchDmsObjectsParams {
   repositoryId: string;
   sourceId: string;
   categories?: string[];
@@ -31,7 +30,7 @@ export interface SearchResultPage {
 }
 
 
-export async function search(systemBaseUri: string, authSessionId: string, params: SearchParams): Promise<SearchResultPage> {
+export async function searchDmsObjects(systemBaseUri: string, authSessionId: string, params: SearchDmsObjectsParams): Promise<SearchResultPage> {
 
   const errorContext: string = "Failed to search repository";
 

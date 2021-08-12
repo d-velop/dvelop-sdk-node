@@ -1,16 +1,16 @@
 import axios, { AxiosResponse } from "axios";
-import { Repository, UnauthorizedError, _internals } from "../../index";
+import { Repository, UnauthorizedError, internals } from "../../index";
 
 export interface RepositoryListDto {
-  _links: _internals.HalJsonLinks;
-  repositories: _internals.RepositoryDto[];
+  _links: internals.HalJsonLinks;
+  repositories: internals.RepositoryDto[];
   count: number;
   hasAdminRight: boolean;
 }
 
 export function transformRepositoryListDtoToRepositoryArray(dto: RepositoryListDto): Repository[];
-export function transformRepositoryListDtoToRepositoryArray<T>(dto: RepositoryListDto, transformer: (dto: _internals.RepositoryDto)=> T): T;
-export function transformRepositoryListDtoToRepositoryArray(dto: RepositoryListDto, transform: (dto: _internals.RepositoryDto)=> any = _internals.transformRepositoryDtoToRepository): any {
+export function transformRepositoryListDtoToRepositoryArray<T>(dto: RepositoryListDto, transformer: (dto: internals.RepositoryDto)=> T): T;
+export function transformRepositoryListDtoToRepositoryArray(dto: RepositoryListDto, transform: (dto: internals.RepositoryDto)=> any = internals.transformRepositoryDtoToRepository): any {
   return dto.repositories.map(r => transform(r));
 }
 

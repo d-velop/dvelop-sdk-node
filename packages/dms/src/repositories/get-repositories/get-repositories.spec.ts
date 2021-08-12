@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Repository, getRepositories, UnauthorizedError, _internals } from "../../index";
+import { Repository, getRepositories, UnauthorizedError, internals } from "../../index";
 
 jest.mock("axios");
 
@@ -121,19 +121,19 @@ describe("getRepositories", () => {
 describe("transformRepositoryListDtoToRepositoryArray", () => {
   it("should call transform", async () => {
 
-    const repo1: _internals.RepositoryDto = {
+    const repo1: internals.RepositoryDto = {
       test: "HiItsMeRepo1Test"
-    } as unknown as _internals.RepositoryDto;
+    } as unknown as internals.RepositoryDto;
 
-    const repo2: _internals.RepositoryDto = {
+    const repo2: internals.RepositoryDto = {
       test: "HiItsMeRepo2Test"
-    } as unknown as _internals.RepositoryDto;
+    } as unknown as internals.RepositoryDto;
 
-    const repo3: _internals.RepositoryDto = {
+    const repo3: internals.RepositoryDto = {
       test: "HiItsMeRepo3Test"
-    } as unknown as _internals.RepositoryDto;
+    } as unknown as internals.RepositoryDto;
 
-    const dto: _internals.RepositoryListDto = {
+    const dto: internals.RepositoryListDto = {
       _links: {
         irrelevant: {
           href: "HiItsMeIrrelevantHref"
@@ -146,7 +146,7 @@ describe("transformRepositoryListDtoToRepositoryArray", () => {
     const transformResult = "HiItsMeTransformResult";
     const mockedTransform = jest.fn().mockReturnValue(transformResult);
 
-    const result = _internals.transformRepositoryListDtoToRepositoryArray(dto, mockedTransform);
+    const result = internals.transformRepositoryListDtoToRepositoryArray(dto, mockedTransform);
 
     expect(mockedTransform).toHaveBeenCalledTimes(3);
     expect(mockedTransform).toHaveBeenNthCalledWith(1, repo1);

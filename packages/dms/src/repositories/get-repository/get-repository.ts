@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from "axios";
-import { UnauthorizedError, RepositoryNotFoundError, _internals } from "../../index";
+import { UnauthorizedError, RepositoryNotFoundError, internals } from "../../index";
 
 
 export interface RepositoryDto {
-  _links: _internals.HalJsonLinks;
+  _links: internals.HalJsonLinks;
   id: string;
   name: string;
   supportsFulltextSearch: boolean;
