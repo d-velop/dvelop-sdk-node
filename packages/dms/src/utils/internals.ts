@@ -10,4 +10,4 @@ export interface HalJsonLinks {
 export { AxiosResponse, AxiosError } from "axios";
 export { GetRepositoryListDto, transformGetRepositoryListDto } from "../repositories/get-repositories/get-repositories";
 export { GetRepositoryDto, transformGetRepositoryDto } from "../repositories/get-repository/get-repository";
-// export { DmsObjectWithMappingDto, transformGetDmsObjectResponseToDmsObject } from "../dms-objects/get-dms-object/get-dms-object";
+export { GetDmsObjectDto, transformGetDmsObjectDto } from "../dms-objects/get-dms-object/get-dms-object";

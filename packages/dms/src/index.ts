@@ -31,14 +31,14 @@ axios.interceptors.request.use(followHalJson);
 export { TenantContext } from "./utils/tenant-context";
 
 // Errors
-export { BadRequestError, UnauthorizedError, NotFoundError, RepositoryNotFoundError, DmsAppBadRequestError, DmsObjectNotFoundError } from "./utils/errors";
+export { BadRequestError, UnauthorizedError, NotFoundError } from "./utils/errors";
 
 // Repositories
 export { getRepositories } from "./repositories/get-repositories/get-repositories";
 export { GetRepositoryParams, Repository, getRepository } from "./repositories/get-repository/get-repository";
 
 // DmsObjects
-// export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
+export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
 // export { SearchDmsObjectsParams, SearchResultPage, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
 
 export * from "./utils/errors";
