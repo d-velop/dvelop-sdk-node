@@ -28,18 +28,18 @@ import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 axios.interceptors.request.use(followHalJson);
 
 // Utils
-export * from "./utils/context";
+export { TenantContext } from "./utils/tenant-context";
 
 // Errors
-export { UnauthorizedError, RepositoryNotFoundError, DmsAppBadRequestError, DmsObjectNotFoundError } from "./errors";
+export { BadRequestError, UnauthorizedError, NotFoundError, RepositoryNotFoundError, DmsAppBadRequestError, DmsObjectNotFoundError } from "./utils/errors";
 
 // Repositories
 export { getRepositories } from "./repositories/get-repositories/get-repositories";
-export { Repository, getRepository } from "./repositories/get-repository/get-repository";
+export { GetRepositoryParams, Repository, getRepository } from "./repositories/get-repository/get-repository";
 
 // DmsObjects
-export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
-export { SearchDmsObjectsParams, SearchResultPage, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
+// export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
+// export { SearchDmsObjectsParams, SearchResultPage, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
 
-export * from "./errors";
-export * as internals from "./internal";
+export * from "./utils/errors";
+export * as internals from "./utils/internals";

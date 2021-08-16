@@ -1,17 +1,22 @@
 import axios, { AxiosResponse } from "axios";
-import { Repository, UnauthorizedError, internals } from "../../index";
+import { TenantContext, Repository, UnauthorizedError, internals } from "../../index";
 
-export interface RepositoryListDto {
+export interface GetRepositoryListDto {
   _links: internals.HalJsonLinks;
-  repositories: internals.RepositoryDto[];
+  repositories: internals.GetRepositoryDto[];
   count: number;
   hasAdminRight: boolean;
 }
 
-export function transformRepositoryListDtoToRepositoryArray(dto: RepositoryListDto): Repository[];
-export function transformRepositoryListDtoToRepositoryArray<T>(dto: RepositoryListDto, transformer: (dto: internals.RepositoryDto)=> T): T;
-export function transformRepositoryListDtoToRepositoryArray(dto: RepositoryListDto, transform: (dto: internals.RepositoryDto)=> any = internals.transformRepositoryDtoToRepository): any {
-  return dto.repositories.map(r => transform(r));
+export function transformGetRepositoryListDto(response: AxiosResponse<GetRepositoryListDto>): Repository[] {
+  const dtos: internals.GetRepositoryDto[] = response.data.repositories;
+  return dtos.map(dto => {
+    return {
+      id: dto.id,
+      name: dto.name,
+      sourceId: dto._links["source"].href
+    };
+  });
 }
 
 /**
@@ -29,27 +34,28 @@ export function transformRepositoryListDtoToRepositoryArray(dto: RepositoryListD
  * console.log("Repositories:", repoList); // Booty Bay Documents, Everlook Documents, Ratchet Documents
  * ```
  */
-export async function getRepositories(systemBaseUri: string, authSessionId: string): Promise<Repository[]>;
-export async function getRepositories<T>(systemBaseUri: string, authSessionId: string, transform: (dto: RepositoryListDto)=> T): Promise<T>;
-export async function getRepositories(systemBaseUri: string, authSessionId: string, transform: (dto: RepositoryListDto)=> any = transformRepositoryListDtoToRepositoryArray): Promise<any>{
-
-  const errorContext: string = "Failed to get repositories";
+export async function getRepositories(context: TenantContext): Promise<Repository[]>;
+export async function getRepositories<T>(context: TenantContext, transform: (response: AxiosResponse<GetRepositoryListDto>)=> T): Promise<T>;
+export async function getRepositories(context: TenantContext, transform: (response: AxiosResponse<GetRepositoryListDto>)=> any = transformGetRepositoryListDto): Promise<any> {
 
   try {
-    const response: AxiosResponse<RepositoryListDto> = await axios.get<RepositoryListDto>("/dms", {
-      baseURL: systemBaseUri,
+    const response: AxiosResponse<GetRepositoryListDto> = await axios.get<GetRepositoryListDto>("/dms", {
+      baseURL: context.systemBaseUri,
       headers: {
-        "Authorization": `Bearer ${authSessionId}`
+        "Authorization": `Bearer ${context.authSessionId}`
       },
       follows: ["allrepos"]
     });
 
-    return transform(response.data);
+    return transform(response);
   } catch (e) {
-    if (e.response) {
-      switch (e.response.status) {
+
+    const errorContext: string = "Failed to get repositories";
+
+    if (axios.isAxiosError(e)) {
+      switch (e.response?.status) {
       case 401:
-        throw new UnauthorizedError(errorContext, e.response);
+        throw new UnauthorizedError(errorContext, e);
       }
     }
     e.message = `${errorContext}: ${e.message}`;
