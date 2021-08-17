@@ -23,13 +23,13 @@ describe("updateDmsObject", () => {
       alterationText: "HiItsMeAlterationText",
       properties: [
         {
-          key: "HiItsMePropertyKey2",
+          id: "HiItsMePropertyKey2",
           values: ["HiItsMePropertyValue1_1", "HiItsMePropertyValue1_2"]
         }, {
-          key: "HiItsMePropertyKey2",
+          id: "HiItsMePropertyKey2",
           values: ["HiItsMePropertyValue2_1"]
         }, {
-          key: "HiItsMePropertyKey2",
+          id: "HiItsMePropertyKey2",
           values: []
         }
       ]

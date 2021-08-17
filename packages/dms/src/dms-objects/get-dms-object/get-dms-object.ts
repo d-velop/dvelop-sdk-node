@@ -2,10 +2,15 @@ import axios, { AxiosResponse } from "axios";
 import { TenantContext, BadRequestError, UnauthorizedError, NotFoundError, internals } from "../../index";
 
 export interface GetDmsObjectParams {
+  /** ID of the repository */
   repositoryId: string;
+  /** ID of the source */
   sourceId: string;
+  /** ID of the DmsObject */
   dmsObjectId: string;
+  /** Short description of changes */
 }
+
 
 export interface GetDmsObjectDto {
   id: string;
