@@ -40,6 +40,7 @@ export { GetRepositoryParams, Repository, getRepository } from "./repositories/g
 // DmsObjects
 export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
 export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms-object/create-dms-object";
+export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms-object/update-dms-object";
 // export { SearchDmsObjectsParams, SearchResultPage, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
 
 export * from "./utils/errors";

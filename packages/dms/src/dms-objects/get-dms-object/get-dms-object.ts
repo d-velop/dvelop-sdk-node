@@ -76,7 +76,7 @@ export async function getDmsObject(context: TenantContext, params: GetDmsObjectP
  * TODO
  * ```
  */
-export async function getDmsObject<T>(context: TenantContext, params: GetDmsObjectParams, transform: (response: AxiosResponse<GetDmsObjectDto>)=> T): Promise<DmsObject>
+export async function getDmsObject<T>(context: TenantContext, params: GetDmsObjectParams, transform: (response: AxiosResponse<GetDmsObjectDto>)=> T): Promise<T>
 export async function getDmsObject(context: TenantContext, params: GetDmsObjectParams, transform: (response: AxiosResponse<GetDmsObjectDto>)=> any = transformGetDmsObjectDto): Promise<any> {
 
   try {

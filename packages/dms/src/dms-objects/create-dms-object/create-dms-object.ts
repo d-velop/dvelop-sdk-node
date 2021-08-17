@@ -73,6 +73,5 @@ export async function createDmsObject(context: TenantContext, params: CreateDmsO
 
     e.message = `${errorContext}: ${e.message}`;
     throw e;
-
   }
 }
