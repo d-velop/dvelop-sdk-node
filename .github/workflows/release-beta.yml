@@ -1,14 +1,14 @@
-name: pre-release
+name: release-beta
 
 on:
   push:
     branches:
-      - develop
+      - feature/dms
 
 jobs:
-  publish-prerelease:
+  publish-beta:
     if: "github.repository == 'd-velop/dvelop-sdk-node'"
-    name: Publish to npm as next
+    name: Publish to npm as beta
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -27,6 +27,6 @@ jobs:
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Publish code to npm
-      run: lerna publish from-package --no-push --no-verify-access --dist-tag next --yes
+      run: lerna publish from-package --no-push --no-verify-access --dist-tag beta --yes
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
