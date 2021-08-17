@@ -37,9 +37,6 @@ export function transformGetRepositoryDto(response: AxiosResponse<GetRepositoryD
  * @param context A {@link TenantContext} object.
  * @param params A {@link GetRepositoryParams} containing the repositoryId.
  *
- * @param systemBaseUri SystemBaseUri for the tenant
- * @param authSessionId Valid AuthSessionId
- * @param repositoryId Id for the repository
  * @throws {@link BadRequestError} indicates invalid method params.
  * @throws {@link UnauthorizedError} indicates an invalid authSessionId or no authSessionId was sent.
  * @throws {@link NotFoundError} indicates that no repository with the specified id exists.
