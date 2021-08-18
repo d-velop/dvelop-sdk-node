@@ -1,14 +1,13 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { GetRepositoryParams, Repository, getRepository, DmsAppErrorDto, BadRequestError, UnauthorizedError, NotFoundError, internals } from "../../index";
-import { TenantContext } from "../../utils/tenant-context";
+import { TenantContext, GetDmsObjectParams, DmsObject, getDmsObject, DmsAppErrorDto, BadRequestError, UnauthorizedError, NotFoundError, internals } from "../../index";
 
 jest.mock("axios");
 
-describe("getRepository", () => {
+describe("getDmsObject", () => {
 
   const mockedAxios = axios as jest.Mocked<typeof axios>;
   let context: TenantContext;
-  let params: GetRepositoryParams;
+  let params: GetDmsObjectParams;
 
   beforeEach(() => {
     context = {
@@ -17,7 +16,9 @@ describe("getRepository", () => {
     };
 
     params = {
-      repositoryId: "HiItsMeRepositoryId"
+      repositoryId: "HiItsMeRepositoryId",
+      sourceId: "HiItsMeSourceId",
+      dmsObjectId: "HiItsMeDmsObjectId"
     };
 
     mockedAxios.get.mockReset();
@@ -36,40 +37,44 @@ describe("getRepository", () => {
     });
 
     it("should send GET", async () => {
-      await getRepository(context, params, (_) => { });
+      await getDmsObject(context, params, (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledTimes(1);
     });
 
     it("should send to /dms", async () => {
-      await getRepository(context, params, (_) => { });
+      await getDmsObject(context, params, (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith("/dms", expect.any(Object));
     });
 
     it("should send with systemBaseUri as BaseURL", async () => {
-      await getRepository(context, params, (_) => { });
+      await getDmsObject(context, params, (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         baseURL: context.systemBaseUri
       }));
     });
 
     it("should send with authSessionId as Authorization-Header", async () => {
-      await getRepository(context, params, (_) => { });
+      await getDmsObject(context, params, (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
         headers: expect.objectContaining({ "Authorization": `Bearer ${context.authSessionId}` })
       }));
     });
 
-    it("should send with follows: repo", async () => {
-      await getRepository(context, params, (_) => { });
+    it("should send with follows: repo, dmsobjectwithmapping", async () => {
+      await getDmsObject(context, params, (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        follows: ["repo"]
+        follows: ["repo", "dmsobjectwithmapping"]
       }));
     });
 
-    it("should send with templates: repositoryid", async () => {
-      await getRepository(context, params, (_) => { });
+    it("should send with templates: dmsObjectid, dmsobjectid & sourceid", async () => {
+      await getDmsObject(context, params, (_) => { });
       expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        templates: { "repositoryid": params.repositoryId }
+        templates: {
+          "repositoryid": params.repositoryId,
+          "dmsobjectid": params.dmsObjectId,
+          "sourceid": params.sourceId
+        }
       }));
     });
   });
@@ -80,7 +85,7 @@ describe("getRepository", () => {
 
       it("should call default transform-function with result and return", async () => {
 
-        const dto: internals.GetRepositoryDto = {
+        const dto: internals.GetDmsObjectDto = {
           _links: {
             source: {
               href: "HiItsMeSourceHref"
@@ -90,34 +95,53 @@ describe("getRepository", () => {
             }
           },
           id: "HiItsMeId",
-          name: "HiItsMe",
-          supportsFulltextSearch: true,
-          serverId: "HiItsMe",
-          available: false,
-          isDefault: true,
-          version: "HiItsMe"
+          sourceProperties: [
+            {
+              key: "HiItsMePropertyKey1",
+              value: "HiItsMePropertyValue1",
+              values: ["HiItsMePropertyValue1_1", "HiItsMePropertyValue1_2"],
+              displayValue: "HiItsMeDisplayValue1"
+            },
+            {
+              key: "HiItsMePropertyKey2",
+              value: "HiItsMePropertyValue2",
+              values: ["HiItsMePropertyValue2_1", "HiItsMePropertyValue2_2"],
+              displayValue: "HiItsMeDisplayValue2"
+            }
+          ],
+          sourceCategories: ["HiItsMeCategory1", "HiItsMeCategory2"]
         };
 
-        mockedAxios.get.mockResolvedValue({ data: dto });
+        mockedAxios.get.mockResolvedValue({
+          data: dto,
+          config: {
+            params: {
+              "repositoryid": params.repositoryId,
+              "sourceid": params.sourceId
+            }
+          }
+        });
 
-        const result: Repository = await getRepository(context, params);
+        const result: DmsObject = await getDmsObject(context, params);
 
+        expect(result.repositoryId).toEqual(params.repositoryId);
+        expect(result.sourceId).toEqual(params.sourceId);
         expect(result.id).toEqual(dto.id);
-        expect(result.name).toEqual(dto.name);
-        expect(result.sourceId).toEqual(dto._links["source"].href);
+        expect(result.categories).toEqual(dto.sourceCategories);
+        expect(result.properties).toEqual(dto.sourceProperties);
       });
     });
 
     it("should call given transform-function with result and return", async () => {
 
-      const response: AxiosResponse<internals.GetRepositoryDto> = {
+      const response: AxiosResponse<internals.GetDmsObjectDto> = {
         data: { test: "HiItsMeTest" }
       } as AxiosResponse;
       mockedAxios.get.mockResolvedValue(response);
       const transformResult = "HiItsMeTransformResult";
       const mockedTransform = jest.fn().mockReturnValue(transformResult);
 
-      const result: Repository = await getRepository(context, params, mockedTransform);
+      const result: DmsObject = await getDmsObject(context, params, mockedTransform);
 
       expect(mockedTransform).toHaveBeenCalledTimes(1);
       expect(mockedTransform).toHaveBeenCalledWith(response);
@@ -143,13 +167,13 @@ describe("getRepository", () => {
 
       let error: BadRequestError;
       try {
-        await getRepository(context, params, (_) => { });
+        await getDmsObject(context, params, (_) => { });
       } catch (e) {
         error = e;
       }
 
       expect(error instanceof BadRequestError).toBeTruthy();
-      expect(error.message).toContain("Failed to get repository:");
+      expect(error.message).toContain("Failed to get dmsObject:");
       expect(error.requestError).toEqual(requestError);
     });
 
@@ -169,13 +193,13 @@ describe("getRepository", () => {
 
       let error: UnauthorizedError;
       try {
-        await getRepository(context, params, (_) => { });
+        await getDmsObject(context, params, (_) => { });
       } catch (e) {
         error = e;
       }
 
       expect(error instanceof UnauthorizedError).toBeTruthy();
-      expect(error.message).toContain("Failed to get repository:");
+      expect(error.message).toContain("Failed to get dmsObject:");
       expect(error.requestError).toEqual(requestError);
     });
 
@@ -195,13 +219,13 @@ describe("getRepository", () => {
 
       let error: NotFoundError;
       try {
-        await getRepository(context, params, (_) => { });
+        await getDmsObject(context, params, (_) => { });
       } catch (e) {
         error = e;
       }
 
       expect(error instanceof NotFoundError).toBeTruthy();
-      expect(error.message).toContain("Failed to get repository:");
+      expect(error.message).toContain("Failed to get dmsObject:");
       expect(error.requestError).toEqual(requestError);
     });
 
@@ -221,14 +245,14 @@ describe("getRepository", () => {
 
       let resultError: AxiosError;
       try {
-        await getRepository(context, params, (_) => { });
+        await getDmsObject(context, params, (_) => { });
       } catch (e) {
         resultError = e;
       }
 
       expect(resultError).toBe(requestError);
       expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to get repository:");
+      expect(resultError.message).toContain("Failed to get dmsObject:");
     });
 
     it("should throw UnknownErrors on no Response", async () => {
@@ -248,14 +272,14 @@ describe("getRepository", () => {
 
       let resultError: AxiosError;
       try {
-        await getRepository(context, params, (_) => { });
+        await getDmsObject(context, params, (_) => { });
       } catch (e) {
         resultError = e;
       }
 
       expect(resultError).toBe(requestError);
       expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to get repository:");
+      expect(resultError.message).toContain("Failed to get dmsObject:");
     });
 
     it("should throw UnknownErrors on non AxiosError", async () => {
@@ -269,14 +293,14 @@ describe("getRepository", () => {
 
       let resultError: Error;
       try {
-        await getRepository(context, params, (_) => { });
+        await getDmsObject(context, params, (_) => { });
       } catch (e) {
         resultError = e;
       }
 
       expect(resultError).toBe(error);
       expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to get repository:");
+      expect(resultError.message).toContain("Failed to get dmsObject:");
     });
   });
 });

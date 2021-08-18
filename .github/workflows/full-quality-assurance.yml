@@ -3,7 +3,12 @@ name: full-quality-assurance
 on:
   pull_request:
     branches:
+      - master
       - develop
+  push:
+    branches:
+      - develop
+
 
 jobs:
   test:

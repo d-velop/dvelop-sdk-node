@@ -1,7 +1,7 @@
 name: slim-quality-assurance
 
 on:
-  push:
+  pull_request:
     branches-ignore:
       - master
       - develop
@@ -35,7 +35,7 @@ jobs:
       uses: actions/setup-node@v2
     - name: Install npm dependencies
       run: npm ci
-    - name: Run tests
+    - name: Run linting
       run: npm run lint
 
   license:

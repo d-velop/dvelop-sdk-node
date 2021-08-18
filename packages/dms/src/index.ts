@@ -27,7 +27,20 @@ import axios from "axios";
 import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 axios.interceptors.request.use(followHalJson);
 
-export { UnauthorizedError, RepositoryNotFoundError } from "./errors";
-export { Repository } from "./repositories/repository";
+// Utils
+export { TenantContext } from "./utils/tenant-context";
+
+// Errors
+export { BadRequestError, UnauthorizedError, NotFoundError } from "./utils/errors";
+
+// Repositories
 export { getRepositories } from "./repositories/get-repositories/get-repositories";
-export { getRepository } from "./repositories/get-repository/get-repository";
+export { GetRepositoryParams, Repository, getRepository } from "./repositories/get-repository/get-repository";
+
+// DmsObjects
+export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
+export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms-object/create-dms-object";
+export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms-object/update-dms-object";
+
+export * from "./utils/errors";
+export * as internals from "./utils/internals";

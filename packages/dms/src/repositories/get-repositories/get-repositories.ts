@@ -1,8 +1,22 @@
 import axios, { AxiosResponse } from "axios";
-import { Repository, UnauthorizedError } from "../../index";
+import { TenantContext, Repository, UnauthorizedError, internals } from "../../index";
 
-interface RepositoriesDto {
-  repositories: Repository[];
+export interface GetRepositoryListDto {
+  _links: internals.HalJsonLinks;
+  repositories: internals.GetRepositoryDto[];
+  count: number;
+  hasAdminRight: boolean;
+}
+
+export function transformGetRepositoryListDto(response: AxiosResponse<GetRepositoryListDto>): Repository[] {
+  const dtos: internals.GetRepositoryDto[] = response.data.repositories;
+  return dtos.map(dto => {
+    return {
+      id: dto.id,
+      name: dto.name,
+      sourceId: dto._links["source"].href
+    };
+  });
 }
 
 /**
@@ -20,25 +34,28 @@ interface RepositoriesDto {
  * console.log("Repositories:", repoList); // Booty Bay Documents, Everlook Documents, Ratchet Documents
  * ```
  */
-export async function getRepositories(systemBaseUri: string, authSessionId: string): Promise<Repository[]> {
-
-  const errorContext: string = "Failed to get repositories";
+export async function getRepositories(context: TenantContext): Promise<Repository[]>;
+export async function getRepositories<T>(context: TenantContext, transform: (response: AxiosResponse<GetRepositoryListDto>)=> T): Promise<T>;
+export async function getRepositories(context: TenantContext, transform: (response: AxiosResponse<GetRepositoryListDto>)=> any = transformGetRepositoryListDto): Promise<any> {
 
   try {
-    const response: AxiosResponse<RepositoriesDto> = await axios.get<RepositoriesDto>("/dms", {
-      baseURL: systemBaseUri,
+    const response: AxiosResponse<GetRepositoryListDto> = await axios.get<GetRepositoryListDto>("/dms", {
+      baseURL: context.systemBaseUri,
       headers: {
-        "Authorization": `Bearer ${authSessionId}`
+        "Authorization": `Bearer ${context.authSessionId}`
       },
       follows: ["allrepos"]
     });
 
-    return response.data.repositories;
+    return transform(response);
   } catch (e) {
-    if (e.response) {
-      switch (e.response.status) {
+
+    const errorContext: string = "Failed to get repositories";
+
+    if (axios.isAxiosError(e)) {
+      switch (e.response?.status) {
       case 401:
-        throw new UnauthorizedError(errorContext, e.response);
+        throw new UnauthorizedError(errorContext, e);
       }
     }
     e.message = `${errorContext}: ${e.message}`;
