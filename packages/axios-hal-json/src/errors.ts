@@ -36,14 +36,3 @@ export class NoHalJsonLinkToFollowError extends Error {
   }
 }
 
-/**
- * A link in the follow-chain needs to be templated but no template value was given.
- * @category Error
- */
-export class NoHalJsonTemplateValueError extends Error {
-  // eslint-disable-next-line no-unused-vars
-  constructor(public template: string, public followUrl: string, public config?: AxiosRequestConfig, public response?: AxiosResponse) {
-    super(`No template value for '${template}'. Needed for url: '${followUrl}`);
-    Object.setPrototypeOf(this, NoHalJsonTemplateValueError.prototype);
-  }
-}
