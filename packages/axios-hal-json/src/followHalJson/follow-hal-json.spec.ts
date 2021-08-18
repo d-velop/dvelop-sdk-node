@@ -106,8 +106,7 @@ describe("followHalJson", () => {
       }
 
       expect(expectedError instanceof HalJsonRequestChainError).toBeTruthy();
-      expect(expectedError.config).toBeTruthy();
-      expect(expectedError.originalError).toBe(error);
+      expect(expectedError.requestError).toBe(error);
     });
 
     it("throw error if no _links are given", async () => {
@@ -128,7 +127,6 @@ describe("followHalJson", () => {
         expectedError = e;
       }
       expect(expectedError instanceof NoHalJsonLinksInResponseError).toBeTruthy();
-      expect(expectedError.config).toBeTruthy();
       expect(expectedError.response).toBe(response);
     });
 
@@ -153,8 +151,6 @@ describe("followHalJson", () => {
           expectedError = e;
         }
         expect(expectedError instanceof NoHalJsonLinkToFollowError).toBeTruthy();
-        expect(expectedError.follow).toEqual("follow");
-        expect(expectedError.config).toBeTruthy();
         expect(expectedError.response).toBe(testCase);
       });
     });

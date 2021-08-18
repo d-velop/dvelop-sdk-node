@@ -63,15 +63,15 @@ async function getFollowUrl(config: AxiosRequestConfig, follow: string): Promise
   try {
     response = await axios.request(config);
   } catch (e) {
-    throw new HalJsonRequestChainError(config, e);
+    throw new HalJsonRequestChainError(follow, e);
   }
 
   if (!response.data._links) {
-    throw new NoHalJsonLinksInResponseError(config, response);
+    throw new NoHalJsonLinksInResponseError(follow, response);
   }
 
   if (!response.data._links[follow] || !response.data._links[follow].href) {
-    throw new NoHalJsonLinkToFollowError(follow, config, response);
+    throw new NoHalJsonLinkToFollowError(follow, response);
   }
 
   let followUrl: string = response.data._links[follow].href;
