@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { followHalJson, HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInResponseError, NoHalJsonTemplateValueError } from "../index";
+import { followHalJson, HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInResponseError } from "../index";
 
 jest.mock("axios");
 
@@ -106,8 +106,7 @@ describe("followHalJson", () => {
       }
 
       expect(expectedError instanceof HalJsonRequestChainError).toBeTruthy();
-      expect(expectedError.config).toBeTruthy();
-      expect(expectedError.originalError).toBe(error);
+      expect(expectedError.requestError).toBe(error);
     });
 
     it("throw error if no _links are given", async () => {
@@ -128,7 +127,6 @@ describe("followHalJson", () => {
         expectedError = e;
       }
       expect(expectedError instanceof NoHalJsonLinksInResponseError).toBeTruthy();
-      expect(expectedError.config).toBeTruthy();
       expect(expectedError.response).toBe(response);
     });
 
@@ -153,8 +151,6 @@ describe("followHalJson", () => {
           expectedError = e;
         }
         expect(expectedError instanceof NoHalJsonLinkToFollowError).toBeTruthy();
-        expect(expectedError.follow).toEqual("follow");
-        expect(expectedError.config).toBeTruthy();
         expect(expectedError.response).toBe(testCase);
       });
     });
@@ -163,17 +159,33 @@ describe("followHalJson", () => {
   describe("on templates", () => {
 
     [
-      { url: "No template", templates: {}, expected: "No template" },
-      { url: "No template", templates: { "unneeded": "hi" }, expected: "No template" },
-      { url: "{test}", templates: { "test": "hi" }, expected: "hi" },
-      { url: "{test1}{test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "hiho" },
-      { url: "{test1} {test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "hi ho" },
-      { url: "{test1}{test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "hiho" },
-      { url: "{test1}/{test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "hi/ho" },
-      { url: "test{test1}/{test2}", templates: { "test1": "hi", "test2": "ho" }, expected: "testhi/ho" },
-      { url: "{test1}/{test2}test", templates: { "test1": "hi", "test2": "ho" }, expected: "hi/hotest" },
-      { url: "!@#$%^^&*()_+{!!}", templates: { "!!": "hi" }, expected: "!@#$%^^&*()_+hi" },
-      { url: "{test}", templates: { "test": "hi", "unneeded": "ho" }, expected: "hi" },
+      { url: "No template", templates: {}, expectedUrl: "No template" },
+      { url: "No template", templates: { "unneeded": "hi" }, expectedUrl: "No template" },
+      { url: "{test}", templates: { "test": "hi" }, expectedUrl: "hi" },
+      { url: "{test1}{test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hiho" },
+      { url: "{test1} {test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hi ho" },
+      { url: "{test1}{test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hiho" },
+      { url: "{test1}/{test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hi/ho" },
+      { url: "test{test1}/{test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "testhi/ho" },
+      { url: "{test1}/{test2}test", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "hi/hotest" },
+      { url: "!@#$%^^&*()_+{!!}", templates: { "!!": "hi" }, expectedUrl: "!@#$%^^&*()_+hi" },
+      { url: "{test}", templates: { "test": "hi", "unneeded": "ho" }, expectedUrl: "hi" },
+
+      { url: "{?test}", templates: { "test": "hi", "unneeded": "ho" }, expectedUrl: "", expectedParams: { "test": "hi" } },
+      { url: "{?test1,test2}", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "", expectedParams: { "test1": "hi", "test2": "ho" } },
+      { url: "{?test1,test2}", templates: { "test1": "hi", "unneeded": "ho" }, expectedUrl: "", expectedParams: { "test1": "hi" } },
+      { url: "test{?test}test", templates: { "test": "hi", "unneeded": "ho" }, expectedUrl: "testtest", expectedParams: { "test": "hi" } },
+      { url: "{?test1,test2}test", templates: { "test1": "hi", "test2": "ho" }, expectedUrl: "test", expectedParams: { "test1": "hi", "test2": "ho" } },
+      { url: "test{?test1,test2}", templates: { "test1": "hi", "unneeded": "ho" }, expectedUrl: "test", expectedParams: { "test1": "hi" } },
+      { url: "/test{?test1,test2}", templates: { "unneeded": "hi", "test2": "ho" }, expectedUrl: "/test", expectedParams: { "test2": "ho" } },
+      { url: "/test{?}", templates: { "unneeded": "hi" }, expectedUrl: "/test", expectedParams: {} },
+
+      { url: "a{B}c{D}e", templates: { D: "d" }, expectedUrl: "acde" },
+      { url: "a{B}c{D}e", templates: {}, expectedUrl: "ace" },
+      { url: "a{B}c{D}e", templates: null, expectedUrl: "ace" },
+      { url: "a{B}c{D}e", templates: undefined, expectedUrl: "ace" },
+      { url: "a{B}c{D}e", expectedUrl: "ace" },
+      { url: "a{B}c{D}e", templates: { B: "b" }, expectedUrl: "abce" }
     ].forEach(testCase => {
 
       const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -182,17 +194,18 @@ describe("followHalJson", () => {
         mockedAxios.get.mockReset();
       });
 
-      it(`should replace templates in "${testCase.url}" to "${testCase.expected} for initial templating"`, async () => {
+      it(`should replace templates in "${testCase.url}" to "${testCase.expectedUrl}" for initial templating"`, async () => {
 
         const result: AxiosRequestConfig = await followHalJson({
           url: testCase.url,
           templates: testCase.templates
         });
 
-        expect(result.url).toEqual(testCase.expected);
+        expect(result.url).toEqual(testCase.expectedUrl);
+        expect(result.params).toEqual(testCase.expectedParams || {});
       });
 
-      it(`should replace templates in "${testCase.url}" to "${testCase.expected} for response templating"`, async () => {
+      it(`should replace templates in "${testCase.url}" to "${testCase.expectedUrl} for response templating"`, async () => {
 
         const response: AxiosResponse = {
           data: {
@@ -210,79 +223,8 @@ describe("followHalJson", () => {
           follows: ["follow"],
           templates: testCase.templates
         });
-        expect(result.url).toEqual(testCase.expected);
-      });
-
-
-    });
-
-    [
-      { url: "a{B}c{D}e", templates: { D: "d" }, failTemplate: "{B}", failUrl: "a{B}c{D}e" },
-      { url: "a{B}c{D}e", templates: {}, failTemplate: "{B}", failUrl: "a{B}c{D}e" },
-      { url: "a{B}c{D}e", templates: null, failTemplate: "{B}", failUrl: "a{B}c{D}e" },
-      { url: "a{B}c{D}e", templates: undefined, failTemplate: "{B}", failUrl: "a{B}c{D}e" },
-      { url: "a{B}c{D}e", failTemplate: "{B}", failUrl: "a{B}c{D}e" },
-      { url: "a{B}c{D}e", templates: { B: "b" }, failTemplate: "{D}", failUrl: "abc{D}e" }
-    ].forEach(testCase => {
-
-      const mockedAxios = axios as jest.Mocked<typeof axios>;
-
-      beforeEach(() => {
-        mockedAxios.get.mockReset();
-      });
-
-
-      it("should throw NoHalJsonTemplateValueError if missing template for response templating", async () => {
-
-        const config: AxiosRequestConfig = {
-          baseURL: "HiItsMeBaseUrl",
-          url: testCase.url,
-          templates: testCase.templates
-        };
-
-        let expectedError: NoHalJsonTemplateValueError;
-
-        try {
-          await followHalJson(config);
-        } catch (e) {
-          expectedError = e;
-        }
-        expect(expectedError instanceof NoHalJsonTemplateValueError).toBeTruthy();
-        expect(expectedError.template).toEqual(testCase.failTemplate);
-        expect(expectedError.followUrl).toEqual(testCase.failUrl);
-        expect(expectedError.config).toEqual(config);
-      });
-
-      it("should throw NoHalJsonTemplateValueError if missing template for initial templating", async () => {
-
-        const config: AxiosRequestConfig = {
-          follows: ["follow"],
-          templates: testCase.templates
-        };
-
-        const response: AxiosResponse = {
-          data: {
-            _links: {
-              follow: {
-                href: testCase.url
-              }
-            }
-          }
-        } as AxiosResponse;
-
-        mockedAxios.request.mockResolvedValue(response);
-        let expectedError: NoHalJsonTemplateValueError;
-
-        try {
-          await followHalJson(config);
-        } catch (e) {
-          expectedError = e;
-        }
-
-        expect(expectedError instanceof NoHalJsonTemplateValueError).toBeTruthy();
-        expect(expectedError.template).toEqual(testCase.failTemplate);
-        expect(expectedError.followUrl).toEqual(testCase.failUrl);
-        expect(expectedError.config).toBeTruthy();
+        expect(result.url).toEqual(testCase.expectedUrl);
+        expect(result.params).toEqual(testCase.expectedParams || {});
       });
     });
   });

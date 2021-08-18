@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse} from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 
 /**
  * A request in the follow-chain failed.
@@ -6,8 +6,8 @@ import { AxiosRequestConfig, AxiosResponse} from "axios";
  */
 export class HalJsonRequestChainError extends Error {
   // eslint-disable-next-line no-unused-vars
-  constructor(public config: AxiosRequestConfig, public originalError: Error) {
-    super(`Request in hal-json chain failed for config: ${JSON.stringify(config)}`);
+  constructor(follow: string, public requestError: AxiosError) {
+    super(`Request for in the follow-chain failed. Cannot follow '${follow}'.`);
     Object.setPrototypeOf(this, HalJsonRequestChainError.prototype);
   }
 }
@@ -18,8 +18,8 @@ export class HalJsonRequestChainError extends Error {
  */
 export class NoHalJsonLinksInResponseError extends Error {
   // eslint-disable-next-line no-unused-vars
-  constructor(public config: AxiosRequestConfig, public response: AxiosResponse) {
-    super(`No _links found in response: ${JSON.stringify(response.data)}`);
+  constructor(follow: string, public response: AxiosResponse) {
+    super(`Request in the follow-chain does not contain any _links. Cannot follow '${follow}'.`);
     Object.setPrototypeOf(this, NoHalJsonLinksInResponseError.prototype);
   }
 }
@@ -30,20 +30,9 @@ export class NoHalJsonLinksInResponseError extends Error {
  */
 export class NoHalJsonLinkToFollowError extends Error {
   // eslint-disable-next-line no-unused-vars
-  constructor(public follow: string, public config: AxiosRequestConfig, public response: AxiosResponse) {
-    super(`No href for '${follow}' found in _links: ${JSON.stringify(response.data._links)}`);
+  constructor(follow: string, public response: AxiosResponse) {
+    super(`Request in the follow-chain does not contain '${follow}' in _links.`);
     Object.setPrototypeOf(this, NoHalJsonLinkToFollowError.prototype);
   }
 }
 
-/**
- * A link in the follow-chain needs to be templated but no template value was given.
- * @category Error
- */
-export class NoHalJsonTemplateValueError extends Error {
-  // eslint-disable-next-line no-unused-vars
-  constructor(public template: string, public followUrl: string, public config?: AxiosRequestConfig, public response?: AxiosResponse) {
-    super(`No template value for '${template}'. Needed for url: '${followUrl}`);
-    Object.setPrototypeOf(this, NoHalJsonTemplateValueError.prototype);
-  }
-}
