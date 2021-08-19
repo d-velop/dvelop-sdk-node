@@ -1,19 +1,8 @@
 import axios, { AxiosResponse } from "axios";
-import { TenantContext, BadRequestError, UnauthorizedError, NotFoundError, internals } from "../../index";
+import { TenantContext, BadRequestError, UnauthorizedError, NotFoundError } from "../../index";
 
 export interface GetRepositoryParams {
   repositoryId: string;
-}
-
-export interface GetRepositoryDto {
-  _links: internals.HalJsonLinks;
-  id: string;
-  name: string;
-  supportsFulltextSearch: boolean;
-  serverId: string;
-  available: boolean;
-  isDefault: boolean;
-  version: string;
 }
 
 export interface Repository {
@@ -22,8 +11,8 @@ export interface Repository {
   sourceId: string;
 }
 
-export function transformGetRepositoryDto(response: AxiosResponse<GetRepositoryDto>): Repository {
-  const dto: GetRepositoryDto = response.data;
+export function transformGetRepositoryResponse(response: AxiosResponse<any>): Repository {
+  const dto: any = response.data;
   return {
     id: dto.id,
     name: dto.name,
@@ -79,11 +68,11 @@ export async function getRepository(context: TenantContext, params: GetRepositor
  * console.log(name); //Booty Bay Documents
  * ```
  */
-export async function getRepository<T>(context: TenantContext, params: GetRepositoryParams, transform: (response: AxiosResponse<GetRepositoryDto>)=> T): Promise<T>;
-export async function getRepository(context: TenantContext, params: GetRepositoryParams, transform: (response: AxiosResponse<GetRepositoryDto>)=> any = transformGetRepositoryDto): Promise<any> {
+export async function getRepository<T>(context: TenantContext, params: GetRepositoryParams, transform: (response: AxiosResponse<any>)=> T): Promise<T>;
+export async function getRepository(context: TenantContext, params: GetRepositoryParams, transform: (response: AxiosResponse<any>)=> any = transformGetRepositoryResponse): Promise<any> {
 
   try {
-    const response: AxiosResponse<GetRepositoryDto> = await axios.get<GetRepositoryDto>("/dms", {
+    const response: AxiosResponse<any> = await axios.get("/dms", {
       baseURL: context.systemBaseUri,
       headers: {
         "Authorization": `Bearer ${context.authSessionId}`
