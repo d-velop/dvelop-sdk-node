@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { TenantContext, GetDmsObjectParams, DmsObject, getDmsObject, DmsAppErrorDto, BadRequestError, UnauthorizedError, NotFoundError, internals } from "../../index";
+import { TenantContext, GetDmsObjectParams, DmsObject, getDmsObject, DmsAppErrorDto, BadRequestError, UnauthorizedError, NotFoundError } from "../../index";
 
 jest.mock("axios");
 
@@ -85,7 +85,7 @@ describe("getDmsObject", () => {
 
       it("should call default transform-function with result and return", async () => {
 
-        const dto: internals.GetDmsObjectDto = {
+        const dto: any = {
           _links: {
             source: {
               href: "HiItsMeSourceHref"
@@ -134,7 +134,7 @@ describe("getDmsObject", () => {
 
     it("should call given transform-function with result and return", async () => {
 
-      const response: AxiosResponse<internals.GetDmsObjectDto> = {
+      const response: AxiosResponse<any> = {
         data: { test: "HiItsMeTest" }
       } as AxiosResponse;
       mockedAxios.get.mockResolvedValue(response);
