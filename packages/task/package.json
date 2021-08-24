@@ -20,7 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@dvelop-sdk/axios-hal-json": "^1.0.7",
+    "@dvelop-sdk/axios-hal-json": "^2.0.1",
     "axios": "^0.21.1",
     "uuid": "^8.3.2"
   },
