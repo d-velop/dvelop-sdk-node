@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { TenantContext, Repository, getRepositories, UnauthorizedError, internals } from "../../index";
+import { TenantContext, Repository, getRepositories, UnauthorizedError } from "../../index";
 import { DmsAppErrorDto } from "../../utils/errors";
 
 jest.mock("axios");
@@ -69,7 +69,7 @@ describe("getRepositories", () => {
 
       it("should call default transform-function with result and return", async () => {
 
-        const dto: internals.GetRepositoryListDto = {
+        const dto: any = {
           _links: {},
           count: 50,
           hasAdminRight: true,
@@ -129,7 +129,7 @@ describe("getRepositories", () => {
 
     it("should call given transform-function with result and return", async () => {
 
-      const response: AxiosResponse<internals.GetRepositoryListDto> = {
+      const response: AxiosResponse<any> = {
         data: { test: "HiItsMeTest" }
       } as AxiosResponse;
       mockedAxios.get.mockResolvedValue(response);

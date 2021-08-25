@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { TenantContext, BadRequestError, UnauthorizedError, NotFoundError, internals } from "../../index";
+import { TenantContext, BadRequestError, UnauthorizedError, NotFoundError } from "../../index";
 
 export interface GetDmsObjectParams {
   /** ID of the repository */
@@ -9,19 +9,6 @@ export interface GetDmsObjectParams {
   /** ID of the DmsObject */
   dmsObjectId: string;
   /** Short description of changes */
-}
-
-
-export interface GetDmsObjectDto {
-  id: string;
-  sourceProperties: {
-    key: string;
-    value: string;
-    values?: any;
-    displayValue?: string;
-  }[];
-  sourceCategories: string[];
-  _links: internals.HalJsonLinks
 }
 
 export interface DmsObject {
@@ -46,7 +33,7 @@ export interface DmsObject {
   }[]
 }
 
-export function transformGetDmsObjectDto(response: AxiosResponse<GetDmsObjectDto>): DmsObject {
+export function transformGetDmsObjectResponse(response: AxiosResponse<any>): DmsObject {
   return {
     repositoryId: response.config.params.repositoryid,
     sourceId: response.config.params.sourceid,
@@ -81,11 +68,11 @@ export async function getDmsObject(context: TenantContext, params: GetDmsObjectP
  * TODO
  * ```
  */
-export async function getDmsObject<T>(context: TenantContext, params: GetDmsObjectParams, transform: (response: AxiosResponse<GetDmsObjectDto>)=> T): Promise<T>
-export async function getDmsObject(context: TenantContext, params: GetDmsObjectParams, transform: (response: AxiosResponse<GetDmsObjectDto>)=> any = transformGetDmsObjectDto): Promise<any> {
+export async function getDmsObject<T>(context: TenantContext, params: GetDmsObjectParams, transform: (response: AxiosResponse<any>)=> T): Promise<T>
+export async function getDmsObject(context: TenantContext, params: GetDmsObjectParams, transform: (response: AxiosResponse<any>)=> any = transformGetDmsObjectResponse): Promise<any> {
 
   try {
-    const response: AxiosResponse<GetDmsObjectDto> = await axios.get<GetDmsObjectDto>("/dms", {
+    const response: AxiosResponse<any> = await axios.get("/dms", {
       baseURL: context.systemBaseUri,
       headers: {
         "Authorization": `Bearer ${context.authSessionId}`,

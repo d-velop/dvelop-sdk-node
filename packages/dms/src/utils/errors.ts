@@ -42,3 +42,16 @@ export class NotFoundError extends Error {
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 }
+
+/**
+* Indicates that a request was denied. This could have multiple reasons.
+* Make sure the user has sufficient permissions and no other user is blocking the request.
+* @category Error
+*/
+export class ServiceDeniedError extends Error {
+  // eslint-disable-next-line no-unused-vars
+  constructor(context: string, message: string) {
+    super(`${context}: ${message}`);
+    Object.setPrototypeOf(this, ServiceDeniedError.prototype);
+  }
+}

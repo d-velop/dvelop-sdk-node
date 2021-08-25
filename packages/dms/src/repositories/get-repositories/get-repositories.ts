@@ -1,15 +1,8 @@
 import axios, { AxiosResponse } from "axios";
-import { TenantContext, Repository, UnauthorizedError, internals } from "../../index";
+import { TenantContext, Repository, UnauthorizedError } from "../../index";
 
-export interface GetRepositoryListDto {
-  _links: internals.HalJsonLinks;
-  repositories: internals.GetRepositoryDto[];
-  count: number;
-  hasAdminRight: boolean;
-}
-
-export function transformGetRepositoryListDto(response: AxiosResponse<GetRepositoryListDto>): Repository[] {
-  const dtos: internals.GetRepositoryDto[] = response.data.repositories;
+export function transformGetRepositoriesResponse(response: AxiosResponse<any>): Repository[] {
+  const dtos: any[] = response.data.repositories;
   return dtos.map(dto => {
     return {
       id: dto.id,
@@ -35,11 +28,11 @@ export function transformGetRepositoryListDto(response: AxiosResponse<GetReposit
  * ```
  */
 export async function getRepositories(context: TenantContext): Promise<Repository[]>;
-export async function getRepositories<T>(context: TenantContext, transform: (response: AxiosResponse<GetRepositoryListDto>)=> T): Promise<T>;
-export async function getRepositories(context: TenantContext, transform: (response: AxiosResponse<GetRepositoryListDto>)=> any = transformGetRepositoryListDto): Promise<any> {
+export async function getRepositories<T>(context: TenantContext, transform: (response: AxiosResponse<any>)=> T): Promise<T>;
+export async function getRepositories(context: TenantContext, transform: (response: AxiosResponse<any>)=> any = transformGetRepositoriesResponse): Promise<any> {
 
   try {
-    const response: AxiosResponse<GetRepositoryListDto> = await axios.get<GetRepositoryListDto>("/dms", {
+    const response: AxiosResponse<any> = await axios.get("/dms", {
       baseURL: context.systemBaseUri,
       headers: {
         "Authorization": `Bearer ${context.authSessionId}`

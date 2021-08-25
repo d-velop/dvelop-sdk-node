@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInResponseError, NoHalJsonTemplateValueError } from "../index";
+import { HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInResponseError } from "../index";
 
 /**
  * This method can be registered as a [axios interceptor]{@link https://github.com/axios/axios#interceptors} to add hal-json follow behaviour. After registering just add ```follows``` and ```templates``` to your [request-config]{@link https://github.com/axios/axios#request-config}. To work with relative hal-json links use the ```baseUri``` and ```uri``` property.
@@ -12,7 +12,6 @@ import { HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInR
  * @throws {@link HalJsonRequestChainError} indicates that a request in the follow-chain failed.
  * @throws {@link NoHalJsonLinksInResponseError} indicates that a response within the follow-chain does not contain _links.
  * @throws {@link NoHalJsonLinkToFollowError} indicates that a response in the follow-chain does not contain a follow link in _links.
- * @throws {@link NoHalJsonTemplateValueError} indicates that a link in the follow-chain needs to be templated but no template value was given.
 
  * @example ```typescript
  *
@@ -32,14 +31,9 @@ import { HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInR
 export async function followHalJson(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
 
   if (config.url) {
-    try {
-      const t: any = templateUrl(config.url, config.templates);
-      config.url = t.url;
-      config.params = t.params;
-    } catch (e) {
-      e.config = config;
-      throw e;
-    }
+    const t: any = templateUrl(config.url, config.templates);
+    config.url = t.url;
+    config.params = t.params;
   }
 
   if (!config.follows || config.follows.length === 0) {
@@ -51,6 +45,8 @@ export async function followHalJson(config: AxiosRequestConfig): Promise<AxiosRe
     config.url = follow.url;
     config.params = follow.params;
   }
+
+  delete config.follows;
   return config;
 }
 
@@ -69,64 +65,57 @@ async function getFollowUrl(config: AxiosRequestConfig, follow: string): Promise
   try {
     response = await axios.request(config);
   } catch (e) {
-    throw new HalJsonRequestChainError(config, e);
+    throw new HalJsonRequestChainError(follow, e);
   }
 
   if (!response.data._links) {
-    throw new NoHalJsonLinksInResponseError(config, response);
+    throw new NoHalJsonLinksInResponseError(follow, response);
   }
 
   if (!response.data._links[follow] || !response.data._links[follow].href) {
-    throw new NoHalJsonLinkToFollowError(follow, config, response);
+    throw new NoHalJsonLinkToFollowError(follow, response);
   }
 
   let followUrl: string = response.data._links[follow].href;
 
-  try {
-    return templateUrl(followUrl, config.templates);
-  } catch (e) {
-    e.config = config;
-    e.response = response;
-    throw e;
-  }
+  return templateUrl(followUrl, config.templates);
+
 }
 
 function templateUrl(url: string, templates: { [key: string]: string } | undefined): { url: string, params: { [key: string]: string } } {
 
-  let matches: RegExpExecArray | null;
+  let matchArray: RegExpExecArray | null;
   let params: { [key: string]: string } = {};
 
-  while ((matches = /{\?(.*?)}/g.exec(url)) !== null) {
+  while ((matchArray = /{(.*?)}/g.exec(url)) !== null) {
 
-    const template: string = matches[0];
-    const templateParams: string[] = template.slice(2, -1).split(",");
+    const matchWithBrackets: string = matchArray[0];
+    const matchWithoutBrackets: string = matchArray[1];
 
-    templateParams.forEach(p => {
-      if (templates && templates[p]) {
-        params[p] = templates[p];
+    // find matches like {?a,b,c}
+    if (matchWithoutBrackets.match(/^\?.*/)) {
+
+      const keys: string[] = matchWithoutBrackets.slice(1).split(",");
+
+      keys.forEach(key => {
+        if (templates && templates[key]) {
+          params[key] = templates[key];
+        }
+      });
+
+      url = url.replace(matchWithBrackets, "");
+
+    } else {
+
+      if (templates && templates[matchWithoutBrackets]) {
+        url = url.replace(matchWithBrackets, templates[matchWithoutBrackets]);
+      } else {
+        url = url.replace(matchWithBrackets, "");
       }
-    });
-
-    url = url.replace(template, "");
-  }
-
-
-  while ((matches = /{(.*?)}/g.exec(url)) !== null) {
-
-    const template: string = matches[0];
-
-    if (!templates || Object.keys(templates).length === 0) {
-      throw new NoHalJsonTemplateValueError(template, url);
     }
-
-    const value: string = templates[template.slice(1, -1)];
-
-    if (!value) {
-      throw new NoHalJsonTemplateValueError(template, url);
-    }
-
-    url = url.replace(template, value);
   }
 
   return { url, params };
 }
+
+
