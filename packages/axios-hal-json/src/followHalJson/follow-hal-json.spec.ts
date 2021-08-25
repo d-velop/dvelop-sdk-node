@@ -52,6 +52,7 @@ describe("followHalJson", () => {
       const resultConfig: AxiosRequestConfig = await followHalJson(config);
 
       expect(resultConfig.url).toEqual(finalUrl);
+      expect(resultConfig.follows).toBeUndefined();
       expect(mockedAxios.request).toBeCalledTimes(4);
 
     });

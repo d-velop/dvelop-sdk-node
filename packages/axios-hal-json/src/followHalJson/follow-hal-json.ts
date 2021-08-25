@@ -45,6 +45,8 @@ export async function followHalJson(config: AxiosRequestConfig): Promise<AxiosRe
     config.url = follow.url;
     config.params = follow.params;
   }
+
+  delete config.follows;
   return config;
 }
 
