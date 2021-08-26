@@ -101,11 +101,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="axios_hal_json.haljsonrequestchainerror.html#config" class="tsd-kind-icon">config</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="axios_hal_json.haljsonrequestchainerror.html#message" class="tsd-kind-icon">message</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="axios_hal_json.haljsonrequestchainerror.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="axios_hal_json.haljsonrequestchainerror.html#originalerror" class="tsd-kind-icon">original<wbr>Error</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="axios_hal_json.haljsonrequestchainerror.html#preparestacktrace" class="tsd-kind-icon">prepare<wbr>Stack<wbr>Trace</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="axios_hal_json.haljsonrequestchainerror.html#requesterror" class="tsd-kind-icon">request<wbr>Error</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="axios_hal_json.haljsonrequestchainerror.html#stack" class="tsd-kind-icon">stack</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="axios_hal_json.haljsonrequestchainerror.html#stacktracelimit" class="tsd-kind-icon">stack<wbr>Trace<wbr>Limit</a></li>
 							</ul>
@@ -125,23 +124,23 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Hal<wbr>Json<wbr>Request<wbr>Chain<wbr>Error<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AxiosRequestConfig</span>, originalError<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="axios_hal_json.haljsonrequestchainerror.html" class="tsd-signature-type" data-tsd-kind="Class">HalJsonRequestChainError</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Hal<wbr>Json<wbr>Request<wbr>Chain<wbr>Error<span class="tsd-signature-symbol">(</span>follow<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, requestError<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AxiosError</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="axios_hal_json.haljsonrequestchainerror.html" class="tsd-signature-type" data-tsd-kind="Class">HalJsonRequestChainError</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides Error.constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/8ece740/packages/axios-hal-json/src/errors.ts#L7">packages/axios-hal-json/src/errors.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/b8571e9/packages/axios-hal-json/src/errors.ts#L7">packages/axios-hal-json/src/errors.ts:7</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>config: <span class="tsd-signature-type">AxiosRequestConfig</span></h5>
+									<h5>follow: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>originalError: <span class="tsd-signature-type">Error</span></h5>
+									<h5>requestError: <span class="tsd-signature-type">AxiosError</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="axios_hal_json.haljsonrequestchainerror.html" class="tsd-signature-type" data-tsd-kind="Class">HalJsonRequestChainError</a></h4>
@@ -151,13 +150,6 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="config" class="tsd-anchor"></a>
-					<h3>config</h3>
-					<div class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AxiosRequestConfig</span></div>
-					<aside class="tsd-sources">
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 					<a name="message" class="tsd-anchor"></a>
 					<h3>message</h3>
@@ -178,13 +170,6 @@
 						<ul>
 							<li>Defined in node_modules/typescript/lib/lib.es5.d.ts:973</li>
 						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="originalerror" class="tsd-anchor"></a>
-					<h3>original<wbr>Error</h3>
-					<div class="tsd-signature tsd-kind-icon">original<wbr>Error<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span></div>
-					<aside class="tsd-sources">
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-external">
@@ -230,6 +215,13 @@
 							</li>
 						</ul>
 					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="requesterror" class="tsd-anchor"></a>
+					<h3>request<wbr>Error</h3>
+					<div class="tsd-signature tsd-kind-icon">request<wbr>Error<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AxiosError</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 					<a name="stack" class="tsd-anchor"></a>
@@ -318,20 +310,17 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="axios_hal_json.haljsonrequestchainerror.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="axios_hal_json.haljsonrequestchainerror.html#config" class="tsd-kind-icon">config</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="axios_hal_json.haljsonrequestchainerror.html#message" class="tsd-kind-icon">message</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="axios_hal_json.haljsonrequestchainerror.html#name" class="tsd-kind-icon">name</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="axios_hal_json.haljsonrequestchainerror.html#originalerror" class="tsd-kind-icon">original<wbr>Error</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-external">
 								<a href="axios_hal_json.haljsonrequestchainerror.html#preparestacktrace" class="tsd-kind-icon">prepare<wbr>Stack<wbr>Trace</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="axios_hal_json.haljsonrequestchainerror.html#requesterror" class="tsd-kind-icon">request<wbr>Error</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="axios_hal_json.haljsonrequestchainerror.html#stack" class="tsd-kind-icon">stack</a>
@@ -351,9 +340,6 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="axios_hal_json.nohaljsonlinksinresponseerror.html" class="tsd-kind-icon">No<wbr>Hal<wbr>Json<wbr>Links<wbr>InResponse<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="axios_hal_json.nohaljsontemplatevalueerror.html" class="tsd-kind-icon">No<wbr>Hal<wbr>Json<wbr>Template<wbr>Value<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/axios_hal_json.html#followhaljson" class="tsd-kind-icon">follow<wbr>Hal<wbr>Json</a>
