@@ -31,7 +31,7 @@ import { HalJsonRequestChainError, NoHalJsonLinkToFollowError, NoHalJsonLinksInR
 export async function followHalJson(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
 
   if (config.url) {
-    const t: any = templateUrl(config.url, config.templates);
+    const t: any = templateUrl(config.url, config.params, config.templates);
     config.url = t.url;
     config.params = t.params;
   }
@@ -78,14 +78,14 @@ async function getFollowUrl(config: AxiosRequestConfig, follow: string): Promise
 
   let followUrl: string = response.data._links[follow].href;
 
-  return templateUrl(followUrl, config.templates);
-
+  return templateUrl(followUrl, config.params, config.templates);
 }
 
-function templateUrl(url: string, templates: { [key: string]: string } | undefined): { url: string, params: { [key: string]: string } } {
+function templateUrl(url: string, originalParams: { [key: string]: string | undefined }, templates: { [key: string]: string } | undefined): { url: string, params: { [key: string]: string } } {
 
   let matchArray: RegExpExecArray | null;
-  let params: { [key: string]: string } = {};
+
+  let params: { [key: string]: string } = originalParams ? originalParams as { [key: string]: string } : {};
 
   while ((matchArray = /{(.*?)}/g.exec(url)) !== null) {
 
