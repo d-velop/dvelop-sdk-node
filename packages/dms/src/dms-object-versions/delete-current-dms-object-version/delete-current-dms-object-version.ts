@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosInstance, AxiosResponse } from "axios";
 import { TenantContext, getDmsObject, _http } from "../../index";
 import { ServiceDeniedError } from "../../utils/errors";
 
@@ -17,10 +17,10 @@ export interface DeleteCurrentDmsObjectVersionParams {
 export type DeleteCurrentDmsObjectVersionTransformer<T> = (response: AxiosResponse<any>, context: TenantContext, params: DeleteCurrentDmsObjectVersionParams)=> T;
 
 export const deleteCurrentDmsObjectVersionDefaultTransformer: DeleteCurrentDmsObjectVersionTransformer<boolean> = function (response: AxiosResponse<any>, _: TenantContext, __: DeleteCurrentDmsObjectVersionParams): boolean {
-  if (response.data) {
-    return true;
-  } else {
+  if (response.data?._links?.delete || response.data?._links?.deleteWithReason) {
     return false;
+  } else {
+    return true;
   }
 };
 
@@ -53,7 +53,9 @@ export async function deleteCurrentDmsObjectVersion(context: TenantContext, para
 export async function deleteCurrentDmsObjectVersion<T>(context: TenantContext, params: DeleteCurrentDmsObjectVersionParams, transform: DeleteCurrentDmsObjectVersionTransformer<T>): Promise<T>;
 export async function deleteCurrentDmsObjectVersion(context: TenantContext, params: DeleteCurrentDmsObjectVersionParams, transform: DeleteCurrentDmsObjectVersionTransformer<any> = deleteCurrentDmsObjectVersionDefaultTransformer): Promise<any> {
 
+  const axiosInstance: AxiosInstance = _http.getAxiosInstance();
   const errorContext: string = "Failed to delete current DmsObjectVersion";
+
   const getDmsObjectResponse: AxiosResponse<any> = await getDmsObject(context, params, (response) => response);
 
   let url: string;
@@ -66,7 +68,7 @@ export async function deleteCurrentDmsObjectVersion(context: TenantContext, para
   }
 
   try {
-    let response: AxiosResponse<any> = await axios.delete<any>(url, {
+    let response: AxiosResponse<any> = await axiosInstance.delete<any>(url, {
       baseURL: context.systemBaseUri,
       headers: {
         "Authorization": `Bearer ${context.authSessionId}`,

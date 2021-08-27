@@ -1,17 +1,16 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import * as index from "../../index";
 import { ServiceDeniedError } from "../../utils/errors";
 import { TenantContext } from "../../utils/tenant-context";
-import { deleteCurrentDmsObjectVersion, DeleteCurrentDmsObjectVersionParams, DeleteCurrentDmsObjectVersionTransformer } from "./delete-current-dms-object-version";
+import { deleteCurrentDmsObjectVersion, deleteCurrentDmsObjectVersionDefaultTransformer, DeleteCurrentDmsObjectVersionParams, DeleteCurrentDmsObjectVersionTransformer } from "./delete-current-dms-object-version";
 
-jest.mock("axios");
 jest.mock("../../index");
 jest.mock("../../utils/http");
 
 describe("deleteCurrentDmsObjectVersion", () => {
 
   const mockedGetDmsObject = jest.fn();
-  const mockedAxios = axios as jest.Mocked<typeof axios>;
+  const mockedAxiosDelete = jest.fn();
   const mockedIsAxiosError = jest.fn();
   const mockedMapAxiosError = jest.fn();
 
@@ -21,6 +20,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
 
   beforeAll(() => {
     jest.spyOn(index, "getDmsObject").mockImplementation(mockedGetDmsObject);
+    jest.spyOn(index._http, "getAxiosInstance").mockReturnValue({ delete: mockedAxiosDelete } as unknown as AxiosInstance);
     jest.spyOn(index._http, "isAxiosError").mockImplementation(mockedIsAxiosError);
     jest.spyOn(index._http, "mapAxiosError").mockImplementation(mockedMapAxiosError);
   });
@@ -28,9 +28,9 @@ describe("deleteCurrentDmsObjectVersion", () => {
   beforeEach(() => {
 
     mockedGetDmsObject.mockReset();
+    mockedAxiosDelete.mockReset();
     mockedIsAxiosError.mockReset();
     mockedMapAxiosError.mockReset();
-    mockedAxios.delete.mockReset();
 
     context = {
       systemBaseUri: "HiItsMeSystemBaseUri",
@@ -47,7 +47,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
     transform = jest.fn();
 
     mockedGetDmsObject.mockResolvedValue({ data: { _links: { delete: { href: "HiItsMeDeleteHref" } } } });
-    mockedAxios.delete.mockResolvedValue({ data: {} });
+    mockedAxiosDelete.mockResolvedValue({ data: {} });
   });
 
   it("should call getDmsObject correctly", async () => {
@@ -115,7 +115,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
         mockedGetDmsObject.mockResolvedValue({ data: testCase.responseData });
 
         await deleteCurrentDmsObjectVersion(context, params, transform);
-        expect(mockedAxios.delete).toHaveBeenCalledWith(href, expect.any(Object));
+        expect(mockedAxiosDelete).toHaveBeenCalledWith(href, expect.any(Object));
       });
 
       it("should have correct axios-params", async () => {
@@ -124,13 +124,13 @@ describe("deleteCurrentDmsObjectVersion", () => {
 
         await deleteCurrentDmsObjectVersion(context, params, transform);
 
-        expect(mockedAxios.delete).toHaveBeenCalledTimes(1);
+        expect(mockedAxiosDelete).toHaveBeenCalledTimes(1);
 
-        expect(mockedAxios.delete).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+        expect(mockedAxiosDelete).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
           baseURL: context.systemBaseUri
         }));
 
-        expect(mockedAxios.delete).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+        expect(mockedAxiosDelete).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
           headers: expect.objectContaining({
             "Authorization": `Bearer ${context.authSessionId}`,
             "Accept": "application/hal+json",
@@ -145,7 +145,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
       const deleteError: AxiosError = {
         message: "HiItsMeErrorMessage"
       } as AxiosError;
-      mockedAxios.delete.mockRejectedValue(deleteError);
+      mockedAxiosDelete.mockRejectedValue(deleteError);
 
       mockedIsAxiosError.mockReturnValue(true);
 
@@ -171,7 +171,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
       const deleteError: AxiosError = {
         message: "HiItsMeErrorMessage"
       } as AxiosError;
-      mockedAxios.delete.mockRejectedValue(deleteError);
+      mockedAxiosDelete.mockRejectedValue(deleteError);
 
       mockedIsAxiosError.mockReturnValue(false);
 
@@ -195,14 +195,43 @@ describe("deleteCurrentDmsObjectVersion", () => {
     const deleteResponse: AxiosResponse<any> = {
       data: { test: "HiItsMeTest" }
     } as AxiosResponse;
-    mockedAxios.delete.mockResolvedValue(deleteResponse);
+    mockedAxiosDelete.mockResolvedValue(deleteResponse);
 
     await deleteCurrentDmsObjectVersion(context, params, transform);
 
     expect(transform).toHaveBeenCalledTimes(1);
     expect(transform).toHaveBeenCalledWith(deleteResponse, context, params);
   });
+});
 
+describe("deleteCurrentDmsObjectVersionDefaultTransformer", () => {
 
+  [
+    { _links: { delete: { href: "HiItsMeDeleteHref" } } },
+    { _links: { deleteWithReason: { href: "HiItsMeDeleteWithReasonHref" } } },
+    { _links: { delete: { href: "HiItsMeDeleteHref" }, deleteWithReason: { href: "HiItsMeDeleteWithReasonHref" } } }
+  ].forEach(testCase => {
+    it("should return true on data", () => {
+      const response: AxiosResponse = { data: testCase } as AxiosResponse;
+      const result: boolean = deleteCurrentDmsObjectVersionDefaultTransformer(response, {} as TenantContext, {} as DeleteCurrentDmsObjectVersionParams);
+      expect(result).toBeFalsy();
+    });
+  });
+
+  [
+    null,
+    undefined,
+    {},
+    { _links: null },
+    { _links: undefined },
+    { _links: {} },
+    { _links: { irrelevant: "HiImIrrelevant" } },
+  ].forEach(testCase => {
+    it(`should return false on data: '${testCase}'`, () => {
+      const response: AxiosResponse = { data: testCase } as AxiosResponse;
+      const result: boolean = deleteCurrentDmsObjectVersionDefaultTransformer(response, {} as TenantContext, {} as DeleteCurrentDmsObjectVersionParams);
+      expect(result).toBeTruthy();
+    });
+  });
 
 });

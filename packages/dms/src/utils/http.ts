@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import { BadRequestError, UnauthorizedError, NotFoundError } from "../index";
 
 export interface HalJsonDto {
@@ -8,6 +8,10 @@ export interface HalJsonDto {
       templated: boolean;
     }
   }
+}
+
+export function getAxiosInstance(): AxiosInstance {
+  return axios.create();
 }
 
 export function isAxiosError(error: Error): boolean {
