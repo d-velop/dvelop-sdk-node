@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
+import { followHalJson } from "../../../axios-hal-json/lib";
 import { BadRequestError, UnauthorizedError, NotFoundError } from "../index";
 
 export interface HalJsonDto {
@@ -10,8 +11,23 @@ export interface HalJsonDto {
   }
 }
 
+let _axiosFactory: ()=> AxiosInstance;
+
 export function getAxiosInstance(): AxiosInstance {
-  return axios.create();
+  if (!_axiosFactory) {
+    _axiosFactory = defaultAxiosFactory;
+  }
+  return _axiosFactory();
+}
+
+export function setAxiosFactory(axiosFactory: ()=> AxiosInstance): void {
+  _axiosFactory = axiosFactory;
+}
+
+export function defaultAxiosFactory(): AxiosInstance {
+  const axiosInstance: AxiosInstance = axios.create();
+  axiosInstance.interceptors.request.use(followHalJson);
+  return axiosInstance;
 }
 
 export function isAxiosError(error: Error): boolean {

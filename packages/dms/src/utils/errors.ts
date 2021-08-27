@@ -14,7 +14,7 @@ export interface DmsAppErrorDto {
 export class BadRequestError extends Error {
   // eslint-disable-next-line no-unused-vars
   constructor(context: string, public requestError: AxiosError<DmsAppErrorDto>) {
-    super(`${context}: ${requestError.response?.data.reason}`);
+    super(`${context}: ${requestError.response?.data?.reason}`);
     Object.setPrototypeOf(this, BadRequestError.prototype);
   }
 }
