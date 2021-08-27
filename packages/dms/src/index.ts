@@ -43,5 +43,9 @@ export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms
 export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms-object/update-dms-object";
 export { DeleteDmsObjectParams, deleteDmsObject } from "./dms-objects/delete-dms-object/delete-dms-object";
 
+// DmsObjectVersions
+export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-object-versions/delete-current-dms-object-version/delete-current-dms-object-version";
+
 export * from "./utils/errors";
 export * as internals from "./utils/internals";
+export * as _http from "./utils/http";

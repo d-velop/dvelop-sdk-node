@@ -1,12 +1,3 @@
-
-export interface HalJsonLinks {
-  [key: string]: {
-    href: string;
-    templated?: boolean;
-    icon?: string;
-  }
-}
-
 export { AxiosResponse, AxiosError } from "axios";
 export { transformGetRepositoriesResponse } from "../repositories/get-repositories/get-repositories";
 export { transformGetRepositoryResponse } from "../repositories/get-repository/get-repository";
