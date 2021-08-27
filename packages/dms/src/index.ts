@@ -41,7 +41,6 @@ export { GetRepositoryParams, Repository, getRepository } from "./repositories/g
 export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
 export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms-object/create-dms-object";
 export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms-object/update-dms-object";
-export { DeleteDmsObjectParams, deleteDmsObject } from "./dms-objects/delete-dms-object/delete-dms-object";
 
 // DmsObjectVersions
 export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-object-versions/delete-current-dms-object-version/delete-current-dms-object-version";
