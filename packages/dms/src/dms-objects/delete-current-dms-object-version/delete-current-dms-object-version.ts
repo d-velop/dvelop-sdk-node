@@ -1,6 +1,7 @@
-import { AxiosInstance, AxiosResponse } from "axios";
-import { TenantContext, getDmsObject, _http } from "../../index";
+import { AxiosResponse, getAxiosInstance, isAxiosError, mapAxiosError } from "../../utils/http";
+import { TenantContext } from "../../utils/tenant-context";
 import { ServiceDeniedError } from "../../utils/errors";
+import { getDmsObject } from "../get-dms-object/get-dms-object";
 
 
 export interface DeleteCurrentDmsObjectVersionParams {
@@ -53,7 +54,6 @@ export async function deleteCurrentDmsObjectVersion(context: TenantContext, para
 export async function deleteCurrentDmsObjectVersion<T>(context: TenantContext, params: DeleteCurrentDmsObjectVersionParams, transform: DeleteCurrentDmsObjectVersionTransformer<T>): Promise<T>;
 export async function deleteCurrentDmsObjectVersion(context: TenantContext, params: DeleteCurrentDmsObjectVersionParams, transform: DeleteCurrentDmsObjectVersionTransformer<any> = deleteCurrentDmsObjectVersionDefaultTransformer): Promise<any> {
 
-  const axiosInstance: AxiosInstance = _http.getAxiosInstance();
   const errorContext: string = "Failed to delete current DmsObjectVersion";
 
   const getDmsObjectResponse: AxiosResponse<any> = await getDmsObject(context, params, (response) => response);
@@ -68,7 +68,7 @@ export async function deleteCurrentDmsObjectVersion(context: TenantContext, para
   }
 
   try {
-    let response: AxiosResponse<any> = await axiosInstance.delete<any>(url, {
+    let response: AxiosResponse<any> = await getAxiosInstance().delete<any>(url, {
       baseURL: context.systemBaseUri,
       headers: {
         "Authorization": `Bearer ${context.authSessionId}`,
@@ -82,8 +82,8 @@ export async function deleteCurrentDmsObjectVersion(context: TenantContext, para
 
     return transform(response, context, params);
   } catch (e) {
-    if (_http.isAxiosError(e)) {
-      throw _http.mapAxiosError(errorContext, e);
+    if (isAxiosError(e)) {
+      throw mapAxiosError(errorContext, e);
     } else {
       e.message = `${errorContext}: ${e.message}`;
       throw e;

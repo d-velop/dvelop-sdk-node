@@ -29,9 +29,9 @@ axios.interceptors.request.use(followHalJson);
 
 // Utils
 export { TenantContext } from "./utils/tenant-context";
-
-// Errors
-export { BadRequestError, UnauthorizedError, NotFoundError } from "./utils/errors";
+export * from "./utils/errors";
+export * as internals from "./internals";
+export * as _http from "./utils/http";
 
 // Repositories
 export { getRepositories } from "./repositories/get-repositories/get-repositories";
@@ -42,10 +42,5 @@ export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-d
 export { GetDmsObjectFileTransformer, getDmsObjectFile, getDmsObjectPdf } from "./dms-objects/get-dms-object-file/get-dms-object-file";
 export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms-object/create-dms-object";
 export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms-object/update-dms-object";
+export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
 
-// DmsObjectVersions
-export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-object-versions/delete-current-dms-object-version/delete-current-dms-object-version";
-
-export * from "./utils/errors";
-export * as internals from "./utils/internals";
-export * as _http from "./utils/http";

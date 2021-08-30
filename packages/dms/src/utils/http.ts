@@ -2,14 +2,8 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { followHalJson } from "../../../axios-hal-json/lib";
 import { BadRequestError, UnauthorizedError, NotFoundError } from "../index";
 
-export interface HalJsonDto {
-  _links?: {
-    [key: string]: {
-      href: string;
-      templated: boolean;
-    }
-  }
-}
+export { AxiosInstance, AxiosResponse, AxiosError } from "axios";
+export const isAxiosError = axios.isAxiosError;
 
 let _axiosFactory: ()=> AxiosInstance;
 
@@ -28,10 +22,6 @@ export function defaultAxiosFactory(): AxiosInstance {
   const axiosInstance: AxiosInstance = axios.create();
   axiosInstance.interceptors.request.use(followHalJson);
   return axiosInstance;
-}
-
-export function isAxiosError(error: Error): boolean {
-  return axios.isAxiosError(error);
 }
 
 export function mapAxiosError(context: string, axiosError: AxiosError): Error {
