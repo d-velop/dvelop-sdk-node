@@ -37,8 +37,8 @@ export class UnauthorizedError extends Error {
 */
 export class NotFoundError extends Error {
   // eslint-disable-next-line no-unused-vars
-  constructor(context: string, public requestError: AxiosError<DmsAppErrorDto>) {
-    super(`${context}: ${requestError.response?.data}`);
+  constructor(context: string, errorMessage: string, public requestError?: AxiosError<DmsAppErrorDto>) {
+    super(`${context}: ${errorMessage}`);
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 }

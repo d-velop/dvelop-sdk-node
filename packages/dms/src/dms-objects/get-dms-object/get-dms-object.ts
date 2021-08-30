@@ -100,7 +100,7 @@ export async function getDmsObject(context: TenantContext, params: GetDmsObjectP
         throw new UnauthorizedError(errorContext, e);
 
       case 404:
-        throw new NotFoundError(errorContext, e);
+        throw new NotFoundError(errorContext, e.response.data.reason, e);
       }
     e.message = `${errorContext}: ${e.message}`;
     throw e;

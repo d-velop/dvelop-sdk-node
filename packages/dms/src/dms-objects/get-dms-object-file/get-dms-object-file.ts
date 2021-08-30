@@ -1,5 +1,6 @@
 import { AxiosInstance, AxiosResponse } from "axios";
 import { TenantContext, GetDmsObjectParams, getDmsObject, _http } from "../../index";
+import { NotFoundError } from "../../utils/errors";
 
 export type GetDmsObjectFileTransformer<T> = (response: AxiosResponse<ArrayBuffer>, context: TenantContext, params: GetDmsObjectParams)=> T;
 
@@ -13,7 +14,7 @@ export async function getDmsObjectFile(context: TenantContext, params: GetDmsObj
   if (getDmsObjectResponse.data?._links?.mainblobcontent) {
     url = getDmsObjectResponse.data._links.mainblobcontent.href;
   } else {
-    throw "error";
+    throw new NotFoundError("Failed to get dmsObjectFile", "No href for mainblobcontent indicating there is no file for this dmsObject.");
   }
 
   const response: AxiosResponse<ArrayBuffer> = await requestDmsObjectBlob(context, url);
@@ -30,15 +31,14 @@ export async function getDmsObjectPdf(context: TenantContext, params: GetDmsObje
   if (getDmsObjectResponse.data?._links?.pdfblobcontent) {
     url = getDmsObjectResponse.data._links.pdfblobcontent.href;
   } else {
-    // throw new ServiceDeniedError(errorContext, "No deletion-href found indicating missing permissions.");
-    throw "error";
+    throw new NotFoundError("Failed to get dmsObjectPdf", "No href for pdfblobcontent indicating there is no pdf for this dmsObject.");
   }
 
   const response: AxiosResponse<ArrayBuffer> = await requestDmsObjectBlob(context, url);
   return transform(response, context, params);
 }
 
-export async function requestDmsObjectBlob(context: TenantContext, url: string): Promise<AxiosResponse<ArrayBuffer>> {
+async function requestDmsObjectBlob(context: TenantContext, url: string): Promise<AxiosResponse<ArrayBuffer>> {
 
   const http: AxiosInstance = _http.getAxiosInstance();
 

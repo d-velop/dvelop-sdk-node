@@ -1,6 +1,7 @@
 import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import * as index from "../../index";
 import { TenantContext, GetDmsObjectParams, GetDmsObjectFileTransformer } from "../../index";
+import { NotFoundError } from "../../utils/errors";
 import { getDmsObjectFile, getDmsObjectPdf } from "./get-dms-object-file";
 
 jest.mock("../../index");
@@ -9,11 +10,13 @@ jest.mock("../../utils/http");
   {
     testContext: "getDmsObjectFile",
     call: async (context: TenantContext, params: GetDmsObjectParams, transform?: GetDmsObjectFileTransformer<any>) => getDmsObjectFile(context, params, transform),
-    dmsObejectResponse: { _links: { mainblobcontent: { href: "HiItsMeHref" } } }
+    dmsObejectResponse: { _links: { mainblobcontent: { href: "HiItsMeHref" } } },
+    notFoundErrorMessage: "Failed to get dmsObjectFile: No href for mainblobcontent indicating there is no file for this dmsObject."
   }, {
     testContext: "getDmsObjectPdf",
     call: async (context: TenantContext, params: GetDmsObjectParams, transform?: GetDmsObjectFileTransformer<any>) => getDmsObjectPdf(context, params, transform),
-    dmsObejectResponse: { _links: { pdfblobcontent: { href: "HiItsMeHref" } } }
+    dmsObejectResponse: { _links: { pdfblobcontent: { href: "HiItsMeHref" } } },
+    notFoundErrorMessage: "Failed to get dmsObjectPdf: No href for pdfblobcontent indicating there is no pdf for this dmsObject."
   }
 ].forEach(testCase => {
   describe(`${testCase.testContext}`, () => {
@@ -60,7 +63,6 @@ jest.mock("../../utils/http");
 
     it("should call getDmsObject correctly", async () => {
       await testCase.call(context, params, transform);
-      // await getDmsObjectFile(context, params, transform);
       expect(mockedGetDmsObject).toHaveBeenCalledTimes(1);
       expect(mockedGetDmsObject).toHaveBeenCalledWith(context, params, expect.any(Function));
     });
@@ -77,6 +79,32 @@ jest.mock("../../utils/http");
       }
 
       expect(expectedError).toBe(error);
+    });
+
+    [
+      { data: null },
+      { data: undefined },
+      { data: {} },
+      { data: { _links: null } },
+      { data: { _links: undefined } },
+      { data: { _links: {} } },
+      { data: { _links: { irrelevant: "HiImIrrelevant" } } }
+    ].forEach(dmsObj => {
+
+      it("should throw NotFoundError when no href is given", async () => {
+
+        mockedGetDmsObject.mockResolvedValue(dmsObj);
+
+        let expectedError: Error;
+        try {
+          await testCase.call(context, params, transform);
+        } catch (e) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof NotFoundError).toBeTruthy();
+        expect(expectedError.message).toContain(testCase.notFoundErrorMessage);
+      });
     });
 
     it("should do GET correctly", async () => {

@@ -44,7 +44,7 @@ export function mapAxiosError(context: string, axiosError: AxiosError): Error {
       return new UnauthorizedError(context, axiosError);
 
     case 404:
-      return new NotFoundError(context, axiosError);
+      return new NotFoundError(context, axiosError.response.data?.reason);
     }
   }
 
