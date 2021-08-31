@@ -1,6 +1,6 @@
-import { AxiosInstance, AxiosResponse } from "axios";
-import { TenantContext, GetDmsObjectParams, getDmsObject, _http } from "../../index";
+import { TenantContext, GetDmsObjectParams, getDmsObject } from "../../index";
 import { NotFoundError } from "../../utils/errors";
+import { AxiosInstance, AxiosResponse, getAxiosInstance, isAxiosError, mapAxiosError } from "../../utils/http";
 
 export type GetDmsObjectFileTransformer<T> = (response: AxiosResponse<ArrayBuffer>, context: TenantContext, params: GetDmsObjectParams)=> T;
 
@@ -40,7 +40,7 @@ export async function getDmsObjectPdf(context: TenantContext, params: GetDmsObje
 
 async function requestDmsObjectBlob(context: TenantContext, url: string): Promise<AxiosResponse<ArrayBuffer>> {
 
-  const http: AxiosInstance = _http.getAxiosInstance();
+  const http: AxiosInstance = getAxiosInstance();
 
   try {
     return await http.get(url, {
@@ -54,8 +54,8 @@ async function requestDmsObjectBlob(context: TenantContext, url: string): Promis
 
   } catch (e) {
     const errorContext = "Failed to download dmsObjectFile";
-    if (_http.isAxiosError(e)) {
-      throw _http.mapAxiosError(errorContext, e);
+    if (isAxiosError(e)) {
+      throw mapAxiosError(errorContext, e);
     } else {
       e.message = `${errorContext}: ${e.message}`;
       throw e;

@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
-import { BadRequestError, UnauthorizedError, NotFoundError, _http } from "../index";
+import { BadRequestError, UnauthorizedError, NotFoundError } from "./errors";
+import { getAxiosInstance, isAxiosError, mapAxiosError, setAxiosFactory } from "./http";
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -8,7 +9,7 @@ describe("axiosInstance", () => {
 
   beforeEach(() => {
     mockedAxios.create.mockReset();
-    _http.setAxiosFactory(null);
+    setAxiosFactory(null);
   });
 
   it("should initialize axiosFactory with default factory", () => {
@@ -23,15 +24,15 @@ describe("axiosInstance", () => {
 
     mockedAxios.create.mockReturnValue(mockedAxiosInstance);
 
-    const result = _http.getAxiosInstance();
+    const result = getAxiosInstance();
     expect(result).toBe(mockedAxiosInstance);
     expect(mockedAxiosInstance.interceptors.request.use).toHaveBeenLastCalledWith(expect.any(Function));
   });
 
   it("should use custom axiosFactory", () => {
     const factory = (() => "axios") as unknown as ()=> AxiosInstance;
-    _http.setAxiosFactory(factory);
-    expect(_http.getAxiosInstance()).toEqual("axios");
+    setAxiosFactory(factory);
+    expect(getAxiosInstance()).toEqual("axios");
   });
 });
 
@@ -48,7 +49,7 @@ describe("isAxiosError", () => {
       const error = new Error("HiItsMeError");
       mockedAxios.isAxiosError.mockReturnValue(testCase);
 
-      const result = _http.isAxiosError(error);
+      const result = isAxiosError(error);
 
       expect(result).toBe(testCase);
       expect(axios.isAxiosError).toHaveBeenCalledTimes(1);
@@ -76,7 +77,7 @@ describe("mapAxiosError", () => {
       }
     } as AxiosError;
 
-    const result: Error = _http.mapAxiosError(context, axiosError);
+    const result: Error = mapAxiosError(context, axiosError);
 
     expect(result instanceof BadRequestError).toBeTruthy();
     expect(result.message).toContain(context);
@@ -92,7 +93,7 @@ describe("mapAxiosError", () => {
       }
     } as AxiosError;
 
-    const result: Error = _http.mapAxiosError(context, axiosError);
+    const result: Error = mapAxiosError(context, axiosError);
 
     expect(result instanceof UnauthorizedError).toBeTruthy();
     expect(result.message).toContain(context);
@@ -108,7 +109,7 @@ describe("mapAxiosError", () => {
       }
     } as AxiosError;
 
-    const result: Error = _http.mapAxiosError(context, axiosError);
+    const result: Error = mapAxiosError(context, axiosError);
 
     expect(result instanceof NotFoundError).toBeTruthy();
     expect(result.message).toContain(context);
@@ -130,7 +131,7 @@ describe("mapAxiosError", () => {
         response: testCase
       } as AxiosError;
 
-      const result: Error = _http.mapAxiosError(context, axiosError);
+      const result: Error = mapAxiosError(context, axiosError);
 
       expect(result).toBe(axiosError);
       expect(result.message).toContain(context);
