@@ -17,6 +17,9 @@ export interface UpdateDmsObjectParams {
     /** Value(s) - Single values must be given as an array of length 1 */
     values: string[];
   }[];
+
+  fileName?: string;
+  file?: string | ArrayBuffer;
 }
 
 /**
