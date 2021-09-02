@@ -1,4 +1,4 @@
-import {  DmsError } from "../../utils/errors";
+import { DmsError } from "../../utils/errors";
 import { AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 import { TenantContext } from "../../utils/tenant-context";
 import { storeFileTemporarily } from "../store-file-temporarily/store-file-femporarily";
@@ -15,7 +15,7 @@ const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapReq
 const dmsObjectId = "HiItsMeDmsObjectId";
 let context: TenantContext;
 let params: CreateDmsObjectParams;
-let mockTransform;
+let mockTransform: any;
 
 beforeEach(() => {
 
@@ -43,7 +43,17 @@ describe("createDmsObject", () => {
       params = {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId",
-        categoryId: "HiItsMeCategoryId"
+        categoryId: "HiItsMeCategoryId",
+        properties: [
+          {
+            key: "HiItsMeProperty1Key",
+            values: ["HiItsMeProperty1Value"]
+          },
+          {
+            key: "HiItsMeProperty2Key",
+            values: ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"]
+          }
+        ]
       };
     });
 
@@ -58,7 +68,10 @@ describe("createDmsObject", () => {
       expect(mockPOST).toHaveBeenCalledTimes(1);
       expect(mockPOST).toHaveBeenCalledWith("/dms", {
         sourceId: params.sourceId,
-        sourceCategory: params.categoryId
+        sourceCategory: params.categoryId,
+        sourceProperties: {
+          properties: params.properties
+        }
       }, {
         baseURL: context.systemBaseUri,
         follows: ["repo", "dmsobjectwithmapping"],
