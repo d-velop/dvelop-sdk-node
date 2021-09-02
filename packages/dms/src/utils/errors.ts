@@ -24,10 +24,6 @@ export class DmsError extends Error {
   isAxiosError(): boolean {
     return isAxiosError(this.originalError);
   }
-
-  addContext(context: string) {
-    this.message = `${context} > ${this.message}`;
-  }
 }
 
 /**
