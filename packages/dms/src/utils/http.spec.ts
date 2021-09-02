@@ -1,6 +1,5 @@
-import axios, { AxiosError, AxiosInstance } from "axios";
-import { BadRequestError, UnauthorizedError, NotFoundError } from "./errors";
-import { getAxiosInstance, isAxiosError, mapAxiosError, setAxiosFactory } from "./http";
+import axios, { AxiosInstance } from "axios";
+import { getAxiosInstance, isAxiosError, setAxiosFactory } from "./http";
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -56,86 +55,4 @@ describe("isAxiosError", () => {
       expect(axios.isAxiosError).toHaveBeenCalledWith(error);
     });
   });
-
-});
-
-describe("mapAxiosError", () => {
-
-  const mockedAxios = axios as jest.Mocked<typeof axios>;
-
-  beforeEach(() => {
-    mockedAxios.isAxiosError.mockReset();
-  });
-
-  it("should map status 400 to BadRequestError", () => {
-
-    const context = "HiItsMeContext";
-
-    const axiosError: AxiosError = {
-      response: {
-        status: 400
-      }
-    } as AxiosError;
-
-    const result: Error = mapAxiosError(context, axiosError);
-
-    expect(result instanceof BadRequestError).toBeTruthy();
-    expect(result.message).toContain(context);
-  });
-
-  it("should map status 401 to UnauthorizedError", () => {
-
-    const context = "HiItsMeContext";
-
-    const axiosError: AxiosError = {
-      response: {
-        status: 401,
-      }
-    } as AxiosError;
-
-    const result: Error = mapAxiosError(context, axiosError);
-
-    expect(result instanceof UnauthorizedError).toBeTruthy();
-    expect(result.message).toContain(context);
-  });
-
-  it("should map status 404 to NotFoundError", () => {
-
-    const context = "HiItsMeContext";
-
-    const axiosError: AxiosError = {
-      response: {
-        status: 404,
-      }
-    } as AxiosError;
-
-    const result: Error = mapAxiosError(context, axiosError);
-
-    expect(result instanceof NotFoundError).toBeTruthy();
-    expect(result.message).toContain(context);
-  });
-
-  [
-    null,
-    undefined,
-    {},
-    { status: null },
-    { status: undefined },
-    { status: 500 }
-  ].forEach(testCase => {
-    it("should return originalError with context if no status", () => {
-
-      const context = "HiItsMeContext";
-
-      const axiosError: AxiosError = {
-        response: testCase
-      } as AxiosError;
-
-      const result: Error = mapAxiosError(context, axiosError);
-
-      expect(result).toBe(axiosError);
-      expect(result.message).toContain(context);
-    });
-  });
-
 });
