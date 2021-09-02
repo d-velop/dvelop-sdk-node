@@ -2,7 +2,7 @@ import { NotFoundError } from "../../utils/errors";
 import { TenantContext } from "../../utils/tenant-context";
 import { GetDmsObjectParams, getDmsObject } from "../get-dms-object/get-dms-object";
 import { GetDmsObjectFileTransformer, getDmsObjectFile, getDmsObjectPdf } from "./get-dms-object-file";
-import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, isAxiosError, mapAxiosError } from "../../utils/http";
+import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 
 jest.mock("../get-dms-object/get-dms-object");
 const mockGetDmsObject = getDmsObject as jest.MockedFunction<typeof getDmsObject>;
@@ -10,8 +10,11 @@ const mockGetDmsObject = getDmsObject as jest.MockedFunction<typeof getDmsObject
 jest.mock("../../utils/http");
 const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAxiosInstance>;
 const mockGET = jest.fn();
-const mockIsAxiosError = isAxiosError as jest.MockedFunction<typeof isAxiosError>;
-const mockMapAxiosError = mapAxiosError as jest.MockedFunction<typeof mapAxiosError>;
+const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
+let mockTransform: any;
+
+let context: TenantContext;
+let params: GetDmsObjectParams;
 
 [
   {
@@ -28,13 +31,17 @@ const mockMapAxiosError = mapAxiosError as jest.MockedFunction<typeof mapAxiosEr
 ].forEach(testCase => {
   describe(`${testCase.testContext}`, () => {
 
-    let context: TenantContext;
-    let params: GetDmsObjectParams;
-    let transform: GetDmsObjectFileTransformer<any>;
-
     beforeEach(() => {
 
       jest.resetAllMocks();
+
+      mockGetDmsObject.mockResolvedValue({ data: testCase.dmsObejectResponse });
+      mockGetAxiosInstace.mockReturnValueOnce({
+        get: mockGET
+      } as unknown as AxiosInstance);
+
+      mockGET.mockResolvedValue({ data: {} });
+      mockTransform = jest.fn();
 
       context = {
         systemBaseUri: "HiItsMeSystemBaseUri",
@@ -46,19 +53,10 @@ const mockMapAxiosError = mapAxiosError as jest.MockedFunction<typeof mapAxiosEr
         sourceId: "HiItsMeSourceId",
         dmsObjectId: "HiItsMeDmsObjectId"
       };
-
-      transform = jest.fn();
-
-      mockGetDmsObject.mockResolvedValue({ data: testCase.dmsObejectResponse });
-      mockGetAxiosInstace.mockReturnValueOnce({
-        get: mockGET
-      } as unknown as AxiosInstance);
-
-      mockGET.mockResolvedValue({ data: {} });
     });
 
     it("should call getDmsObject correctly", async () => {
-      await testCase.call(context, params, transform);
+      await testCase.call(context, params, mockTransform);
       expect(mockGetDmsObject).toHaveBeenCalledTimes(1);
       expect(mockGetDmsObject).toHaveBeenCalledWith(context, params, expect.any(Function));
     });
@@ -69,7 +67,7 @@ const mockMapAxiosError = mapAxiosError as jest.MockedFunction<typeof mapAxiosEr
 
       let expectedError: Error;
       try {
-        await testCase.call(context, params, transform);
+        await testCase.call(context, params, mockTransform);
       } catch (e) {
         expectedError = e;
       }
@@ -93,7 +91,7 @@ const mockMapAxiosError = mapAxiosError as jest.MockedFunction<typeof mapAxiosEr
 
         let expectedError: Error;
         try {
-          await testCase.call(context, params, transform);
+          await testCase.call(context, params, mockTransform);
         } catch (e) {
           expectedError = e;
         }
@@ -105,28 +103,43 @@ const mockMapAxiosError = mapAxiosError as jest.MockedFunction<typeof mapAxiosEr
 
     it("should do GET correctly", async () => {
 
-      await testCase.call(context, params, transform);
+      await testCase.call(context, params, mockTransform);
 
       expect(mockGET).toHaveBeenCalledTimes(1);
-      expect(mockGET).toHaveBeenCalledWith("HiItsMeHref", expect.any(Object));
+      expect(mockGET).toHaveBeenCalledWith("HiItsMeHref", {
 
-      expect(mockGET).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        baseURL: context.systemBaseUri
-      }));
-
-      expect(mockGET).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        headers: expect.objectContaining({
+        baseURL: context.systemBaseUri,
+        headers: {
           "Authorization": `Bearer ${context.authSessionId}`,
           "Accept": "application/octet-stream"
-        })
-      }));
-
-      expect(mockGET).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+        },
         responseType: "arraybuffer"
-      }));
+      });
     });
 
-    it("should call transform", async () => {
+    it("should throw mappedError on requestError", async () => {
+
+      const getError: AxiosError = {
+        message: "HiItsMeErrorMessage"
+      } as AxiosError;
+      mockGET.mockRejectedValue(getError);
+
+      const mappedError: Error = new Error("HiItsMeMappedError");
+      mockMapRequestError.mockReturnValue(mappedError);
+
+      let expectedError: Error;
+      try {
+        await testCase.call(context, params, mockTransform);
+      } catch (e) {
+        expectedError = e;
+      }
+
+      expect(mockMapRequestError).toHaveBeenCalledTimes(1);
+      expect(mockMapRequestError).toHaveBeenCalledWith([400, 404], "Failed to download dmsObjectFile", getError);
+      expect(expectedError).toEqual(mappedError);
+    });
+
+    it("should return custom transform", async () => {
 
       const response: AxiosResponse = {
         statusText: "sucess"
@@ -134,72 +147,25 @@ const mockMapAxiosError = mapAxiosError as jest.MockedFunction<typeof mapAxiosEr
 
       mockGET.mockResolvedValue(response);
 
-      await testCase.call(context, params, transform);
+      await testCase.call(context, params, mockTransform);
 
-      expect(transform).toHaveBeenCalledTimes(1);
-      expect(transform).toHaveBeenLastCalledWith(response, context, params);
+      expect(mockTransform).toHaveBeenCalledTimes(1);
+      expect(mockTransform).toHaveBeenLastCalledWith(response, context, params);
     });
 
-    it("should return data by default", async () => {
+    describe("default transform", () => {
 
-      const file = new ArrayBuffer(42);
+      it("should not transform", async () => {
+        const file = new ArrayBuffer(42);
 
-      mockGET.mockResolvedValue({
-        data: new ArrayBuffer(42)
-      } as AxiosResponse);
+        mockGET.mockResolvedValue({
+          data: new ArrayBuffer(42)
+        } as AxiosResponse);
 
-      const result: ArrayBuffer = await testCase.call(context, params);
+        const result: ArrayBuffer = await testCase.call(context, params);
 
-      expect(result).toEqual(file);
-    });
-
-    it("should throw mappedError on axiosError", async () => {
-
-      const getError: AxiosError = {
-        message: "HiItsMeErrorMessage"
-      } as AxiosError;
-      mockGET.mockRejectedValue(getError);
-
-      mockIsAxiosError.mockReturnValue(true);
-
-      const mappedError: Error = new Error("HiItsMeMappedError");
-      mockMapAxiosError.mockReturnValue(mappedError);
-
-      let expectedError: Error;
-      try {
-        await testCase.call(context, params, transform);
-      } catch (e) {
-        expectedError = e;
-      }
-
-      expect(mockIsAxiosError).toHaveBeenCalledTimes(1);
-      expect(mockIsAxiosError).toHaveBeenCalledWith(getError);
-      expect(mockMapAxiosError).toHaveBeenCalledTimes(1);
-      expect(mockMapAxiosError).toHaveBeenCalledWith("Failed to download dmsObjectFile", getError);
-      expect(expectedError).toEqual(mappedError);
-    });
-
-    it("should throw on non axiosError", async () => {
-
-      const getError: AxiosError = {
-        message: "HiItsMeErrorMessage"
-      } as AxiosError;
-      mockGET.mockRejectedValue(getError);
-
-      mockIsAxiosError.mockReturnValue(false);
-
-      let expectedError: Error;
-      try {
-        await testCase.call(context, params, transform);
-      } catch (e) {
-        expectedError = e;
-      }
-
-      expect(mockIsAxiosError).toHaveBeenCalledTimes(1);
-      expect(mockIsAxiosError).toHaveBeenCalledWith(getError);
-      expect(mockMapAxiosError).toHaveBeenCalledTimes(0);
-      expect(expectedError).toEqual(getError);
-      expect(expectedError.message).toContain("Failed to download dmsObjectFile");
+        expect(result).toEqual(file);
+      });
     });
   });
 });
