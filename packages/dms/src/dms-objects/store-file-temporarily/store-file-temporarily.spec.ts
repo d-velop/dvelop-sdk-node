@@ -1,26 +1,28 @@
-describe("storeFileTemporarily", () => {
-
-});
-
 import { TenantContext } from "../../utils/tenant-context";
-import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, isAxiosError, mapAxiosError } from "../../utils/http";
+import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 import { storeFileTemporarily, StoreFileTemporarilyParams, StoreFileTemporarilyTransformer } from "./store-file-femporarily";
 
 jest.mock("../../utils/http");
 const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAxiosInstance>;
 const mockPOST = jest.fn();
-const mockIsAxiosError = isAxiosError as jest.MockedFunction<typeof isAxiosError>;
-const mockMapAxiosError = mapAxiosError as jest.MockedFunction<typeof mapAxiosError>;
+const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
 
-describe("deleteCurrentDmsObjectVersion", () => {
+let context: TenantContext;
+let params: StoreFileTemporarilyParams;
+let mockTransform: StoreFileTemporarilyTransformer<any>;
 
-  let context: TenantContext;
-  let params: StoreFileTemporarilyParams;
-  let transform: StoreFileTemporarilyTransformer<any>;
+describe("storeFileTemporarily", () => {
 
   beforeEach(() => {
 
     jest.resetAllMocks();
+
+    mockGetAxiosInstace.mockReturnValueOnce({
+      post: mockPOST
+    } as unknown as AxiosInstance);
+
+    mockPOST.mockResolvedValue({ headers: { "location": "HiItsMeLocation" } });
+    mockTransform = jest.fn();
 
     context = {
       systemBaseUri: "HiItsMeSystemBaseUri",
@@ -31,19 +33,11 @@ describe("deleteCurrentDmsObjectVersion", () => {
       repositoryId: "HiItsMeRepositoryId",
       file: new ArrayBuffer(42)
     };
-
-    transform = jest.fn();
-
-    mockGetAxiosInstace.mockReturnValueOnce({
-      post: mockPOST
-    } as unknown as AxiosInstance);
-
-    mockPOST.mockResolvedValue({ headers: { "location": "HiItsMeLocation" } });
   });
 
 
   it("should do POST correctly", async () => {
-    await storeFileTemporarily(context, params, transform);
+    await storeFileTemporarily(context, params, mockTransform);
 
     expect(mockPOST).toHaveBeenCalledTimes(1);
     expect(mockPOST).toHaveBeenCalledWith("/dms", params.file, expect.objectContaining({
@@ -59,79 +53,51 @@ describe("deleteCurrentDmsObjectVersion", () => {
     }));
   });
 
-  it("should call transform", async () => {
+  it("should throw mappedError on requestError", async () => {
 
+    const postError: AxiosError = {
+      message: "HiItsMeErrorMessage"
+    } as AxiosError;
+    mockPOST.mockRejectedValue(postError);
+
+    const mappedError: Error = new Error("HiItsMeMappedError");
+    mockMapRequestError.mockReturnValue(mappedError);
+
+    let expectedError: Error;
+    try {
+      await storeFileTemporarily(context, params, mockTransform);
+    } catch (e) {
+      expectedError = e;
+    }
+
+    expect(mockMapRequestError).toHaveBeenCalledTimes(1);
+    expect(mockMapRequestError).toHaveBeenCalledWith([400], "Failed to store file temporarily", postError);
+    expect(expectedError).toEqual(mappedError);
+  });
+
+  it("should return custom transform", async () => {
     const postResponse: AxiosResponse<any> = {
       data: { test: "HiItsMeTest" }
     } as AxiosResponse;
     mockPOST.mockResolvedValue(postResponse);
 
-    await storeFileTemporarily(context, params, transform);
+    await storeFileTemporarily(context, params, mockTransform);
 
-    expect(transform).toHaveBeenCalledTimes(1);
-    expect(transform).toHaveBeenCalledWith(postResponse, context, params);
+    expect(mockTransform).toHaveBeenCalledTimes(1);
+    expect(mockTransform).toHaveBeenCalledWith(postResponse, context, params);
   });
 
-  it("should return location on default transform", async () => {
+  describe("default transform", () => {
+    it("should return location-header", async () => {
 
-    const location = "HiItsMeLocation";
-    const postResponse: AxiosResponse<any> = {
-      headers: {"location": location}
-    } as AxiosResponse;
-    mockPOST.mockResolvedValue(postResponse);
+      const location = "HiItsMeLocation";
+      const postResponse: AxiosResponse<any> = {
+        headers: { "location": location }
+      } as AxiosResponse;
+      mockPOST.mockResolvedValue(postResponse);
 
-    const result = await storeFileTemporarily(context, params);
-    expect(result).toEqual(location);
-  });
-
-
-  it("should throw mappedError on axiosError", async () => {
-
-    const postError: AxiosError = {
-      message: "HiItsMeErrorMessage"
-    } as AxiosError;
-    mockPOST.mockRejectedValue(postError);
-
-    mockIsAxiosError.mockReturnValue(true);
-
-    const mappedError: Error = new Error("HiItsMeMappedError");
-    mockMapAxiosError.mockReturnValue(mappedError);
-
-    let expectedError: Error;
-    try {
-      await storeFileTemporarily(context, params, transform);
-    } catch (e) {
-      expectedError = e;
-    }
-
-    expect(mockIsAxiosError).toHaveBeenCalledTimes(1);
-    expect(mockIsAxiosError).toHaveBeenCalledWith(postError);
-    expect(mockMapAxiosError).toHaveBeenCalledTimes(1);
-    expect(mockMapAxiosError).toHaveBeenCalledWith("Failed to store file temporarily", postError);
-    expect(expectedError).toEqual(mappedError);
-  });
-
-  it("should throw on non axiosError", async () => {
-
-    const postError: AxiosError = {
-      message: "HiItsMeErrorMessage"
-    } as AxiosError;
-    mockPOST.mockRejectedValue(postError);
-
-    mockIsAxiosError.mockReturnValue(false);
-
-    let expectedError: Error;
-    try {
-      await storeFileTemporarily(context, params, transform);
-    } catch (e) {
-      expectedError = e;
-    }
-
-    expect(mockIsAxiosError).toHaveBeenCalledTimes(1);
-    expect(mockIsAxiosError).toHaveBeenCalledWith(postError);
-    expect(mockMapAxiosError).toHaveBeenCalledTimes(0);
-    expect(expectedError).toEqual(postError);
-    expect(expectedError.message).toContain("Failed to store file temporarily");
+      const result = await storeFileTemporarily(context, params);
+      expect(result).toEqual(location);
+    });
   });
 });
-
