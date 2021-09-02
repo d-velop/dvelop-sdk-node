@@ -101,17 +101,15 @@ export async function createDmsObject(context: TenantContext, params: CreateDmsO
     };
   }
 
-  if (params.file) {
-    if (params.file && params.file instanceof ArrayBuffer) {
-      data.fileName = params.fileName;
-      data.contentLocationUri = await storeFileTemporarily(context, {
-        repositoryId: params.repositoryId,
-        file: params.file
-      });
-    } else if (params.file && typeof params.file === "string") {
-      data.fileName = params.fileName;
-      data.contentLocationUri = params.file;
-    }
+  if (params.file && params.file instanceof ArrayBuffer) {
+    data.fileName = params.fileName;
+    data.contentLocationUri = await storeFileTemporarily(context, {
+      repositoryId: params.repositoryId,
+      file: params.file
+    });
+  } else if (params.file && typeof params.file === "string") {
+    data.fileName = params.fileName;
+    data.contentLocationUri = params.file;
   }
 
   let response: AxiosResponse<void>;

@@ -24,7 +24,6 @@ beforeEach(() => {
   mockGetAxiosInstace.mockReturnValueOnce({
     post: mockPOST
   } as unknown as AxiosInstance);
-
   mockPOST.mockResolvedValue({ headers: { location: `/${dmsObjectId}` } });
   mockTransform = jest.fn();
 

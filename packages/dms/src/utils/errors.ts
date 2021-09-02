@@ -1,5 +1,17 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { isAxiosError } from "./http";
+
+function formatErrorMessage(context: string, originalError?: Error, message?: string) {
+  if (message) {
+    return `${context}: ${message}`;
+  } else if (isAxiosError(originalError) && originalError?.response?.data?.reason) {
+    return `${context}: ${originalError.response.data.reason}`;
+  } else if (originalError) {
+    return `${context}: ${originalError.message}`;
+  } else {
+    return context;
+  }
+}
 
 export interface DmsAppErrorDto {
   reason: string;
@@ -8,10 +20,8 @@ export interface DmsAppErrorDto {
   requestId: string;
 }
 
-
-
 /**
-*
+* General Error.
 * @category Error
 */
 export class DmsError extends Error {
@@ -51,6 +61,18 @@ export class BadInputError extends DmsError {
 }
 
 /**
+*
+* @category Error
+*/
+export class ForbiddenError extends DmsError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(context: string, public originalError?: AxiosError<DmsAppErrorDto>, message?: string) {
+    super(context, originalError, message);
+    Object.setPrototypeOf(this, ForbiddenError.prototype);
+  }
+}
+
+/**
  * Invalid authorization.
  * @category Error
  */
@@ -62,17 +84,7 @@ export class UnauthorizedError extends Error {
   }
 }
 
-/**
-*
-* @category Error
-*/
-export class ForbiddenError extends Error {
-  // eslint-disable-next-line no-unused-vars
-  constructor(context: string, message: string, public requestError?: AxiosError<DmsAppErrorDto>) {
-    super();
-    Object.setPrototypeOf(this, ForbiddenError.prototype);
-  }
-}
+
 
 /**
 * Indicates that a resource was not found.
@@ -96,31 +108,5 @@ export class ServiceDeniedError extends Error {
   constructor(context: string, message: string) {
     super(`${context}: ${message}`);
     Object.setPrototypeOf(this, ServiceDeniedError.prototype);
-  }
-}
-
-let _errorHandler: (error: Error)=> void;
-
-export function handleError(error: Error): void {
-  _errorHandler(error);
-}
-
-export function setErrorHandler(errorHandler: (error: Error)=> void): void {
-  _errorHandler = errorHandler;
-}
-
-export function defaultErrorHandler(error: Error): void {
-  throw error;
-}
-
-function formatErrorMessage(context: string, originalError?: Error, message?: string) {
-  if (message) {
-    return `${context}: ${message}`;
-  } else if (axios.isAxiosError(originalError) && originalError?.response?.data?.reason) {
-    return `${context}: ${originalError.response.data.reason}`;
-  } else if (originalError) {
-    return `${context}: ${originalError.message}`;
-  } else {
-    return context;
   }
 }

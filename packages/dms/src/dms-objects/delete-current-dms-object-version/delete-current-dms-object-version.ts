@@ -1,6 +1,6 @@
-import { AxiosResponse, getAxiosInstance, isAxiosError, mapAxiosError } from "../../utils/http";
+import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 import { TenantContext } from "../../utils/tenant-context";
-import { ServiceDeniedError } from "../../utils/errors";
+import { ForbiddenError } from "../../utils/errors";
 import { getDmsObject } from "../get-dms-object/get-dms-object";
 
 
@@ -30,7 +30,7 @@ export const deleteCurrentDmsObjectVersionDefaultTransformer: DeleteCurrentDmsOb
  *
  * @param context
  * @param params
- * @returns A boolean value indicating if the dmsObject was completly deleted (aka: You just deleted the first version of it)
+ * @returns Boolean value indicating if the dmsObject was completly deleted (aka: You just deleted the first version of it)
  *
  * @throws
  *
@@ -64,11 +64,12 @@ export async function deleteCurrentDmsObjectVersion(context: TenantContext, para
   } else if (getDmsObjectResponse.data?._links?.deleteWithReason?.href) {
     url = getDmsObjectResponse.data._links.deleteWithReason.href;
   } else {
-    throw new ServiceDeniedError(errorContext, "No deletion-href found indicating missing permissions.");
+    throw new ForbiddenError(errorContext, undefined, "Deletion denied for user.");
   }
 
+  let response: AxiosResponse<any>;
   try {
-    let response: AxiosResponse<any> = await getAxiosInstance().delete<any>(url, {
+    response = await getAxiosInstance().delete<any>(url, {
       baseURL: context.systemBaseUri,
       headers: {
         "Authorization": `Bearer ${context.authSessionId}`,
@@ -80,14 +81,10 @@ export async function deleteCurrentDmsObjectVersion(context: TenantContext, para
       }
     });
 
-    return transform(response, context, params);
   } catch (e) {
-    if (isAxiosError(e)) {
-      throw mapAxiosError(errorContext, e);
-    } else {
-      e.message = `${errorContext}: ${e.message}`;
-      throw e;
-    }
+    throw mapRequestError([], errorContext, e);
   }
+
+  return transform(response, context, params);
 }
 
