@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from "axios";
-import { TenantContext, BadRequestError, UnauthorizedError, NotFoundError } from "../../index";
+import { Context } from "../../utils/context";
+import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 
 export interface GetRepositoryParams {
   repositoryId: string;
@@ -11,19 +11,21 @@ export interface Repository {
   sourceId: string;
 }
 
-export function transformGetRepositoryResponse(response: AxiosResponse<any>): Repository {
+export type GetRepositoryTransformer<T> = (response: AxiosResponse<any>, context: Context, params: GetRepositoryParams)=> T;
+
+export const getRepositoryDefaultTransformer: GetRepositoryTransformer<Repository> = (response: AxiosResponse<any>, _: Context, __: GetRepositoryParams) => {
   const dto: any = response.data;
   return {
     id: dto.id,
     name: dto.name,
     sourceId: dto._links["source"].href
   };
-}
+};
 
 /**
  * Returns {@link Repository}-object for specified id.
  *
- * @param context A {@link TenantContext} object.
+ * @param context A {@link Context} object.
  * @param params A {@link GetRepositoryParams} containing the repositoryId.
  *
  * @throws {@link BadRequestError} indicates invalid method params.
@@ -41,7 +43,7 @@ export function transformGetRepositoryResponse(response: AxiosResponse<any>): Re
  * console.log(repo.name); //Booty Bay Documents
  * ```
  */
-export async function getRepository(context: TenantContext, params: GetRepositoryParams): Promise<Repository>;
+export async function getRepository(context: Context, params: GetRepositoryParams): Promise<Repository>;
 /**
  * An additional transform-function can be supplied. Check out the docs for more information.
  *
@@ -68,11 +70,12 @@ export async function getRepository(context: TenantContext, params: GetRepositor
  * console.log(name); //Booty Bay Documents
  * ```
  */
-export async function getRepository<T>(context: TenantContext, params: GetRepositoryParams, transform: (response: AxiosResponse<any>)=> T): Promise<T>;
-export async function getRepository(context: TenantContext, params: GetRepositoryParams, transform: (response: AxiosResponse<any>)=> any = transformGetRepositoryResponse): Promise<any> {
+export async function getRepository<T>(context: Context, params: GetRepositoryParams, transform: GetRepositoryTransformer<T>): Promise<T>;
+export async function getRepository(context: Context, params: GetRepositoryParams, transform: GetRepositoryTransformer<any> = getRepositoryDefaultTransformer): Promise<any> {
 
+  let response: AxiosResponse<any>;
   try {
-    const response: AxiosResponse<any> = await axios.get("/dms", {
+    response = await getAxiosInstance().get("/dms", {
       baseURL: context.systemBaseUri,
       headers: {
         "Authorization": `Bearer ${context.authSessionId}`
@@ -80,28 +83,11 @@ export async function getRepository(context: TenantContext, params: GetRepositor
       follows: ["repo"],
       templates: { "repositoryid": params.repositoryId }
     });
-
-    return transform(response);
-
   } catch (e) {
-
-    const errorContext: string = "Failed to get repository";
-
-    if (axios.isAxiosError(e))
-      switch (e.response?.status) {
-      case 400:
-        throw new BadRequestError(errorContext, e);
-
-      case 401:
-        throw new UnauthorizedError(errorContext, e);
-
-      case 404:
-        throw new NotFoundError(errorContext, e);
-      }
-
-    e.message = `${errorContext}: ${e.message}`;
-    throw e;
+    throw mapRequestError([404], "Failed to get repository", e);
   }
+
+  return transform(response, context, params);
 }
 
 

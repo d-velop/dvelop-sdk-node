@@ -13,9 +13,7 @@
   "collectCoverageFrom": [
     "**/src/**/*.ts",
     "!**/src/index.ts",
-    "!**/src/errors.ts",
-    "!**/src/utils/errors.ts",
-    "!**/src/utils/internals.ts"
+    "!**/src/internals.ts"
   ],
   "coverageReporters": [
     "text"

@@ -23,7 +23,7 @@
     "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
   },
   "dependencies": {
-    "@dvelop-sdk/axios-hal-json": "^2.0.0",
+    "@dvelop-sdk/axios-hal-json": "^2.0.4",
     "axios": "^0.21.1"
   }
 }

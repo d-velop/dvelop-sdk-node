@@ -1,228 +1,245 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { TenantContext, CreateDmsObjectParams, createDmsObject, DmsAppErrorDto, BadRequestError, UnauthorizedError } from "../../index";
+import { DmsError } from "../../utils/errors";
+import { AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { Context } from "../../utils/context";
+import { storeFileTemporarily } from "../store-file-temporarily/store-file-femporarily";
+import { createDmsObject, CreateDmsObjectParams } from "./create-dms-object";
 
-jest.mock("axios");
+jest.mock("../store-file-temporarily/store-file-femporarily");
+const mockStoryFileTemporarily = storeFileTemporarily as jest.MockedFunction<typeof storeFileTemporarily>;
+
+jest.mock("../../utils/http");
+const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAxiosInstance>;
+const mockPOST = jest.fn();
+const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
+
+const dmsObjectId = "HiItsMeDmsObjectId";
+let context: Context;
+let params: CreateDmsObjectParams;
+let mockTransform: any;
+
+beforeEach(() => {
+
+  jest.resetAllMocks();
+
+  mockGetAxiosInstace.mockReturnValueOnce({
+    post: mockPOST
+  } as unknown as AxiosInstance);
+  mockPOST.mockResolvedValue({ headers: { location: `/${dmsObjectId}` } });
+  mockTransform = jest.fn();
+
+  context = {
+    systemBaseUri: "HiItsMeSystemBaseUri",
+    authSessionId: "HiItsMeAuthSessionId"
+  };
+
+});
 
 describe("createDmsObject", () => {
 
-  const mockedAxios = axios as jest.Mocked<typeof axios>;
-  let context: TenantContext;
-  let params: CreateDmsObjectParams;
-
-  beforeEach(() => {
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri",
-      authSessionId: "HiItsMeAuthSessionId"
-    };
-
-    params = {
-      repositoryId: "HiItsMeRepositoryId",
-      sourceId: "HiItsMeSourceId",
-      categoryId: "HiItsMeCategoryId"
-    };
-
-    mockedAxios.post.mockReset();
-    mockedAxios.isAxiosError.mockReset();
-  });
-
-  describe("axios-params", () => {
+  describe("on no file", () => {
 
     beforeEach(() => {
-      mockedAxios.post.mockResolvedValue({});
+      params = {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        categoryId: "HiItsMeCategoryId",
+        properties: [
+          {
+            key: "HiItsMeProperty1Key",
+            values: ["HiItsMeProperty1Value"]
+          },
+          {
+            key: "HiItsMeProperty2Key",
+            values: ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"]
+          }
+        ]
+      };
     });
 
-    it("should send POST", async () => {
-      await createDmsObject(context, params, (_) => { });
-      expect(mockedAxios.post).toHaveBeenCalledTimes(1);
+    it("should not call storeFileTemprarily", async () => {
+      await createDmsObject(context, params, mockTransform);
+      expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(0);
     });
 
-    it("should send to /dms", async () => {
-      await createDmsObject(context, params, (_) => { });
-      expect(mockedAxios.post).toHaveBeenCalledWith(`/dms/r/${params.repositoryId}/o2m`, expect.any(Object), expect.any(Object));
-    });
+    it("should do POST correctly", async () => {
+      await createDmsObject(context, params, mockTransform);
 
-    it("should send with correct body", async () => {
-      await createDmsObject(context, params, (_) => { });
-      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+      expect(mockPOST).toHaveBeenCalledTimes(1);
+      expect(mockPOST).toHaveBeenCalledWith("/dms", {
         sourceId: params.sourceId,
-        sourceCategory: params.categoryId
-      }), expect.any(Object));
-    });
-
-    it("should send with systemBaseUri as BaseURL", async () => {
-      await createDmsObject(context, params, (_) => { });
-      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
-        baseURL: context.systemBaseUri
-      }));
-    });
-
-    it("should send with correct headers", async () => {
-      await createDmsObject(context, params, (_) => { });
-      expect(mockedAxios.post).toHaveBeenCalledWith(expect.any(String), expect.any(Object), expect.objectContaining({
-        headers: expect.objectContaining({
+        sourceCategory: params.categoryId,
+        sourceProperties: {
+          properties: params.properties
+        }
+      }, {
+        baseURL: context.systemBaseUri,
+        follows: ["repo", "dmsobjectwithmapping"],
+        templates: { repositoryid: params.repositoryId },
+        headers: {
           "Authorization": `Bearer ${context.authSessionId}`,
-          "Accept": "application/hal+json",
-          "Content-Type": "application/hal+json"
-        })
-      }));
+          "Content-Type": "application/hal+json",
+          "Accept": "application/hal+json"
+        }
+      });
     });
   });
 
+  describe("on file as contentLocationUri", () => {
 
-
-  describe("response", () => {
-
-    describe("default transform", () => {
-
-      it("should call default transform-function with result and return", async () => {
-        mockedAxios.post.mockResolvedValue({});
-        const result: void = await createDmsObject(context, params);
-        expect(result).toBeFalsy();
-      });
+    beforeEach(() => {
+      params = {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        categoryId: "HiItsMeCategoryId",
+        fileName: "HiItsMeFileName",
+        file: "HiItsMeFileUrl"
+      };
     });
 
-    it("should call given transform-function with result and return", async () => {
+    it("should not call storeFileTemprarily", async () => {
+      await createDmsObject(context, params, mockTransform);
+      expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(0);
+    });
 
-      const response: AxiosResponse = {
-        data: { test: "HiItsMeTest" }
-      } as AxiosResponse;
-      mockedAxios.post.mockResolvedValue(response);
-      const transformResult = "HiItsMeTransformResult";
-      const mockedTransform: (response: AxiosResponse)=> string = jest.fn().mockReturnValue(transformResult);
+    it("should do POST correctly", async () => {
+      await createDmsObject(context, params, mockTransform);
 
-      const result: string = await createDmsObject<string>(context, params, mockedTransform);
-
-      expect(mockedTransform).toHaveBeenCalledTimes(1);
-      expect(mockedTransform).toHaveBeenCalledWith(response);
-      expect(result).toBe(transformResult);
+      expect(mockPOST).toHaveBeenCalledTimes(1);
+      expect(mockPOST).toHaveBeenCalledWith("/dms", {
+        sourceId: params.sourceId,
+        sourceCategory: params.categoryId,
+        fileName: params.fileName,
+        contentLocationUri: params.file
+      }, {
+        baseURL: context.systemBaseUri,
+        follows: ["repo", "dmsobjectwithmapping"],
+        templates: { repositoryid: params.repositoryId },
+        headers: {
+          "Authorization": `Bearer ${context.authSessionId}`,
+          "Content-Type": "application/hal+json",
+          "Accept": "application/hal+json"
+        }
+      });
     });
   });
 
-  describe("errors", () => {
+  describe("on file as ArrayBuffer", () => {
 
-    it("should throw BadRequestError on status 400", async () => {
+    const temporaryFileLocation = "HiItsMeTemporaryFileLocation";
 
-      const requestError = {
-        response: {
-          status: 400,
-          data: {
-            reason: "HiItsMeErrorReason"
-          }
-        }
-      } as AxiosError<DmsAppErrorDto>;
+    beforeEach(() => {
 
-      mockedAxios.post.mockRejectedValue(requestError);
-      mockedAxios.isAxiosError.mockReturnValue(true);
+      mockStoryFileTemporarily.mockResolvedValue(temporaryFileLocation);
 
-      let error: BadRequestError;
-      try {
-        await createDmsObject(context, params, (_) => { });
-      } catch (e) {
-        error = e;
-      }
-
-      expect(error instanceof BadRequestError).toBeTruthy();
-      expect(error.message).toContain("Failed to create dmsObject:");
-      expect(error.requestError).toEqual(requestError);
+      params = {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        categoryId: "HiItsMeCategoryId",
+        fileName: "HiItsMeFileName",
+        file: new ArrayBuffer(42)
+      };
     });
 
-    it("should throw UnauthorizesError on status 401", async () => {
+    it("should call storeFileTemprarily correctly", async () => {
 
-      const requestError = {
-        response: {
-          status: 401,
-          data: {
-            reason: "HiItsMeErrorReason"
-          }
-        }
-      } as AxiosError<DmsAppErrorDto>;
-
-      mockedAxios.post.mockRejectedValue(requestError);
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      let error: UnauthorizedError;
-      try {
-        await createDmsObject(context, params, (_) => { });
-      } catch (e) {
-        error = e;
-      }
-
-      expect(error instanceof UnauthorizedError).toBeTruthy();
-      expect(error.message).toContain("Failed to create dmsObject:");
-      expect(error.requestError).toEqual(requestError);
-    });
-
-    it("should throw UnknownErrors on unmapped statusCode", async () => {
-
-      const errorString: string = "HiItsMeError";
-      const requestError: AxiosError = {
-        response: {
-          status: 500,
-        },
-        message: errorString
-      } as AxiosError;
-
-      mockedAxios.post.mockRejectedValue(requestError);
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      let resultError: AxiosError;
-      try {
-        await createDmsObject(context, params, (_) => { });
-      } catch (e) {
-        resultError = e;
-      }
-
-      expect(resultError).toBe(requestError);
-      expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to create dmsObject:");
-    });
-
-    it("should throw UnknownErrors on no Response", async () => {
-
-      const errorString: string = "HiItsMeError";
-      const requestError: AxiosError = {
-        message: errorString
-      } as AxiosError;
-
-      mockedAxios.post.mockRejectedValue(requestError);
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      mockedAxios.post.mockImplementation(() => {
-        throw requestError;
+      await createDmsObject(context, params, mockTransform);
+      expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(1);
+      expect(mockStoryFileTemporarily).toHaveBeenCalledWith(context, {
+        repositoryId: params.repositoryId,
+        file: params.file
       });
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      let resultError: AxiosError;
-      try {
-        await createDmsObject(context, params, (_) => { });
-      } catch (e) {
-        resultError = e;
-      }
-
-      expect(resultError).toBe(requestError);
-      expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to create dmsObject:");
     });
 
-    it("should throw UnknownErrors on non AxiosError", async () => {
+    it("should do POST correctly", async () => {
+      await createDmsObject(context, params, mockTransform);
 
-      const errorString: string = "HiItsMeError";
-      const error: Error = new Error(errorString);
-      mockedAxios.post.mockImplementation(() => {
-        throw error;
+      expect(mockPOST).toHaveBeenCalledTimes(1);
+      expect(mockPOST).toHaveBeenCalledWith("/dms", {
+        sourceId: params.sourceId,
+        sourceCategory: params.categoryId,
+        fileName: params.fileName,
+        contentLocationUri: temporaryFileLocation
+      }, {
+        baseURL: context.systemBaseUri,
+        follows: ["repo", "dmsobjectwithmapping"],
+        templates: { repositoryid: params.repositoryId },
+        headers: {
+          "Authorization": `Bearer ${context.authSessionId}`,
+          "Content-Type": "application/hal+json",
+          "Accept": "application/hal+json"
+        }
       });
-      mockedAxios.isAxiosError.mockReturnValue(false);
+    });
+  });
 
-      let resultError: Error;
+  it("should throw mapped error on request-error", async () => {
+    const requestError: Error = new Error("HiItsMeRequestError");
+    const mappedError: Error = new Error("HiItsMeMappedError");
+    mockPOST.mockRejectedValue(requestError);
+    mockMapRequestError.mockReturnValue(mappedError);
+
+    let expectedError: Error;
+    try {
+      await createDmsObject(context, params, mockTransform);
+    } catch (e) {
+      expectedError = e;
+    }
+
+    expect(mockTransform).toHaveBeenCalledTimes(0);
+    expect(mockMapRequestError).toHaveBeenCalledTimes(1);
+    expect(mockMapRequestError).toHaveBeenCalledWith([400], "Failed to create dmsObject", requestError);
+    expect(expectedError).toEqual(mappedError);
+  });
+
+  it("should return custom transform", async () => {
+
+    const postResponse: AxiosResponse<any> = {
+      data: "HiItsMePostResponseMessage"
+    } as AxiosResponse;
+    mockPOST.mockResolvedValue(postResponse);
+
+    const transformResult = "HiItsMeTransformResult";
+    mockTransform.mockReturnValue(transformResult);
+
+    const result = await createDmsObject(context, params, mockTransform);
+
+    expect(mockTransform).toHaveBeenCalledTimes(1);
+    expect(mockTransform).toHaveBeenCalledWith(postResponse, context, params);
+    expect(result).toEqual(transformResult);
+  });
+
+  describe("default transform", () => {
+
+    [
+      `/${dmsObjectId}`,
+      `/${dmsObjectId}?`,
+      `hi/i/am/an/uri/${dmsObjectId}`,
+      `hi/i/am/an/uri/${dmsObjectId}?withQueryParams`,
+    ].forEach(testCase => {
+      it(`should return parse ${testCase}`, async () => {
+        mockPOST.mockResolvedValue({ headers: { location: testCase } });
+
+        const result = await createDmsObject(context, params);
+
+        expect(result).toHaveProperty("repositoryId", params.repositoryId);
+        expect(result).toHaveProperty("sourceId", params.sourceId);
+        expect(result).toHaveProperty("dmsObjectId", dmsObjectId);
+      });
+    });
+
+    it("should throw on parse error", async () => {
+      mockPOST.mockResolvedValue({ headers: { location: "HiImWrong" } });
+
+      let expectedError: Error;
       try {
-        await createDmsObject(context, params, (_) => { });
+        await createDmsObject(context, params);
       } catch (e) {
-        resultError = e;
+        expectedError = e;
       }
 
-      expect(resultError).toBe(error);
-      expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to create dmsObject:");
+      expect(expectedError instanceof DmsError).toBeTruthy();
+      expect(expectedError.message).toContain("Failed to create dmsObject");
+      expect(expectedError.message).toContain("Failed to parse dmsObjectId from 'HiImWrong'");
     });
   });
 });

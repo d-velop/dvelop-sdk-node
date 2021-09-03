@@ -238,6 +238,56 @@ npx ts-node-dev src/main.ts
 
 </br>
 
+
+## Advanced Topics
+**Attention: Currently only available in @dvelop-sdk/dms**
+### Custom axios instance
+Under the hood this SDK makes extensive use of the axios-framework. All calls made use a fresh axios-instance. It is possible to intercept this instance-creation and provide your own factory method.
+
+```
+TODO
+```
+
+### Transformers
+The methods provided by this SDK run an additionla transformation on API-Responses recieved. This is because:
+1. We provide additional utility-methods (eg. dmsObject.getFile())
+2. Not every property provided by our APIs is considered public. The main difference between public and non-public properties is that non-public properties can appear, change and disappear without notice.
+
+It is recommended that you stick with the default implementation. If you however choose to access additional properties you can do so by providing a transformer to a function. It will have access to the ```AxiosResponse```-object which does not only provide the json response in the ```data```-property but also headers, statuscodes, initial config and the request made. Check out the axios docs for more information.
+
+``` typescript
+import { getRepository, internals } from "@dvelop-sdk/dms";
+
+const raw: internals.GetRepositoryDto = await getRepository<internals.GetRepositoryDto>(
+  { systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud", authSessionId: "dQw4w9WgXcQ" },
+  { repositoryId: repoId },
+  (response: AxiosResponse<internals.GetRepositoryDto>) => response.data
+);
+console.log(raw); //Raw JSON API response
+```
+
+``` typescript
+import { getRepository, internals } from "@dvelop-sdk/dms";
+
+const name: string = await getRepository<string>(
+  { systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud", authSessionId: "dQw4w9WgXcQ" },
+  { repositoryId: repoId },
+ (response: AxiosResponse<internals.GetRepositoryDto>) => response.data.name
+;
+console.log(name); //Booty Bay Document
+```
+
+Under the hood we provide a transformer-type and implement that type with a default transformer.
+```typescript
+export type GetRepositoryTransformer<T> = (response: AxiosResponse<any>, context: Context, params: GetRepositoryParams) => T;
+
+export const getRepositoryDefaultTransformer: GetRepositoryTransformer<Repository> = (response: AxiosResponse<any>, context: Context, params: GetRepositoryParams) => {
+// our way of transforming
+}
+
+const getRepositoryCustomTransformer: GetRepositoryTransformer<string> = (res) => res.data.name
+```
+
 ## Contributing
 This project is maintained by d-velop but is looking for contributers. If you consider contributing to this project please read [CONTRIBUTING](CONTRIBUTING.md) for details on how to get started.
 

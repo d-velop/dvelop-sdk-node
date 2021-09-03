@@ -1,21 +1,51 @@
-import { AxiosError } from "axios";
+import { isAxiosError } from "./http";
 
 export interface DmsAppErrorDto {
-  reason: string;
-  severity: number;
-  errorCode: number
-  requestId: string;
+  reason?: string;
+  severity?: number;
+  errorCode?: number
+  requestId?: string;
+}
+
+function formatErrorMessage(context: string, originalError?: Error, message?: string) {
+  if (message) {
+    return `${context}: ${message}`;
+  } else if (originalError) {
+    if (isAxiosError(originalError) && originalError?.response?.data?.reason) {
+      return `${context}: ${originalError.response.data.reason}`;
+    } else {
+      return `${context}: ${originalError.message}`;
+    }
+  } else {
+    return context;
+  }
 }
 
 /**
-* Indicates invalid method params. See ```e.requestError.response.data.reasone```-property for further infomation.
+* General Error.
 * @category Error
 */
-export class BadRequestError extends Error {
+export class DmsError extends Error {
   // eslint-disable-next-line no-unused-vars
-  constructor(context: string, public requestError: AxiosError<DmsAppErrorDto>) {
-    super(`${context}: ${requestError.response?.data.reason}`);
-    Object.setPrototypeOf(this, BadRequestError.prototype);
+  constructor(context: string, public originalError?: Error, message?: string) {
+    super(formatErrorMessage(context, originalError, message));
+    Object.setPrototypeOf(this, DmsError.prototype);
+  }
+
+  isAxiosError(): boolean {
+    return isAxiosError(this.originalError);
+  }
+}
+
+/**
+*
+* @category Error
+*/
+export class BadInputError extends DmsError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(context: string, originalError?: Error, message?: string) {
+    super(context, originalError, message);
+    Object.setPrototypeOf(this, BadInputError.prototype);
   }
 }
 
@@ -23,11 +53,22 @@ export class BadRequestError extends Error {
  * Invalid authorization.
  * @category Error
  */
-export class UnauthorizedError extends Error {
+export class UnauthorizedError extends DmsError {
   // eslint-disable-next-line no-unused-vars
-  constructor(context: string, public requestError: AxiosError<DmsAppErrorDto>) {
-    super(`${context}: Invalid authorization.`);
+  constructor(context: string, originalError?: Error, message?: string) {
+    super(context, originalError, message);
     Object.setPrototypeOf(this, UnauthorizedError.prototype);
+  }
+}
+/**
+*
+* @category Error
+*/
+export class ForbiddenError extends DmsError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(context: string, originalError?: Error, message?: string) {
+    super(context, originalError, message);
+    Object.setPrototypeOf(this, ForbiddenError.prototype);
   }
 }
 
@@ -35,23 +76,10 @@ export class UnauthorizedError extends Error {
 * Indicates that a resource was not found.
 * @category Error
 */
-export class NotFoundError extends Error {
+export class NotFoundError extends DmsError {
   // eslint-disable-next-line no-unused-vars
-  constructor(context: string, public requestError: AxiosError<DmsAppErrorDto>) {
-    super(`${context}: ${requestError.response?.data}`);
+  constructor(context: string, originalError?: Error, message?: string) {
+    super(context, originalError, message);
     Object.setPrototypeOf(this, NotFoundError.prototype);
-  }
-}
-
-/**
-* Indicates that a request was denied. This could have multiple reasons.
-* Make sure the user has sufficient permissions and no other user is blocking the request.
-* @category Error
-*/
-export class ServiceDeniedError extends Error {
-  // eslint-disable-next-line no-unused-vars
-  constructor(context: string, message: string) {
-    super(`${context}: ${message}`);
-    Object.setPrototypeOf(this, ServiceDeniedError.prototype);
   }
 }
