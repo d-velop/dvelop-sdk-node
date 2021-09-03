@@ -1,5 +1,6 @@
 import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 import { TenantContext } from "../../utils/tenant-context";
+import { requestDmsObjectBlob } from "../get-dms-object-file/get-dms-object-file";
 
 export interface GetDmsObjectParams {
   /** ID of the repository */
@@ -30,19 +31,35 @@ export interface DmsObject {
     values?: any;
     /** Display-Value of the DmsObject-Property */
     displayValue?: string;
-  }[]
+  }[];
+
+  getFile?: ()=> Promise<ArrayBuffer>;
+  getPdf?: ()=> Promise<ArrayBuffer>;
 }
 
 export type GetDmsObjectTransformer<T> = (response: AxiosResponse<any>, context: TenantContext, params: GetDmsObjectParams)=> T;
 
-export const getDmsObjectDefaultTransformer: GetDmsObjectTransformer<DmsObject> = (response: AxiosResponse<any>, _: TenantContext, params: GetDmsObjectParams) => {
-  return {
+export const getDmsObjectDefaultTransformer: GetDmsObjectTransformer<DmsObject> = (response: AxiosResponse<any>, context: TenantContext, params: GetDmsObjectParams) => {
+
+  const dmsObject: DmsObject = {
     repositoryId: params.repositoryId,
     sourceId: params.sourceId,
-    id: response.data.id,
-    categories: response.data.sourceCategories,
-    properties: response.data.sourceProperties
+    id: response.data?.id,
+    categories: response.data?.sourceCategories,
+    properties: response.data?.sourceProperties
   };
+
+  if (response.data?._links?.mainblobcontent) {
+    const url: string = response.data._links.mainblobcontent.href;
+    dmsObject.getFile = async () => (await requestDmsObjectBlob(context, url)).data;
+  }
+
+  if (response.data?._links?.pdfblobcontent) {
+    const url: string = response.data._links.pdfblobcontent.href;
+    dmsObject.getPdf = async () => (await requestDmsObjectBlob(context, url)).data;
+  }
+
+  return dmsObject;
 };
 
 /**

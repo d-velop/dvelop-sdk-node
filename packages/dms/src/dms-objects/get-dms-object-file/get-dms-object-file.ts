@@ -38,7 +38,7 @@ export async function getDmsObjectPdf(context: TenantContext, params: GetDmsObje
   return transform(response, context, params);
 }
 
-async function requestDmsObjectBlob(context: TenantContext, url: string): Promise<AxiosResponse<ArrayBuffer>> {
+export async function requestDmsObjectBlob(context: TenantContext, url: string): Promise<AxiosResponse<ArrayBuffer>> {
 
   try {
     return await getAxiosInstance().get(url, {
