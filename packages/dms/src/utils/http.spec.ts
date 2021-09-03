@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance } from "axios";
-import { BadInputError, DmsError, UnauthorizedError } from "./errors";
+import { BadInputError, DmsError, ForbiddenError, NotFoundError, UnauthorizedError } from "./errors";
 import { getAxiosInstance, mapRequestError, setAxiosFactory } from "./http";
 
 jest.mock("axios");
@@ -8,6 +8,8 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock("./errors");
 const mockUnauthorizedError = UnauthorizedError as jest.MockedClass<typeof UnauthorizedError>;
 const mockBadInputError = BadInputError as jest.MockedClass<typeof BadInputError>;
+const mockForbiddenError = ForbiddenError as jest.MockedClass<typeof ForbiddenError>;
+const mockNotFoundError = NotFoundError as jest.MockedClass<typeof NotFoundError>;
 const mockDmsError = DmsError as jest.MockedClass<typeof DmsError>;
 
 describe("http", () => {
@@ -80,6 +82,39 @@ describe("http", () => {
       expect(mockBadInputError).toHaveBeenCalledTimes(1);
       expect(mockBadInputError).toHaveBeenCalledWith(errorContext, error);
       expect(result instanceof BadInputError).toBeTruthy();
+    });
+
+    it("should map to ForbiddenError on status 403 if mapped", () => {
+      const errorContext = "HiItsMeErrorContext";
+      const error: AxiosError = {
+        response: {
+          status: 403
+        }
+      } as AxiosError;
+      mockedAxios.isAxiosError.mockReturnValue(true);
+
+      const result: Error = mapRequestError([403, 404], errorContext, error);
+
+      expect(mockForbiddenError).toHaveBeenCalledTimes(1);
+      expect(mockForbiddenError).toHaveBeenCalledWith(errorContext, error);
+      expect(result instanceof ForbiddenError).toBeTruthy();
+    });
+
+
+    it("should map to NotFound on status 404 if mapped", () => {
+      const errorContext = "HiItsMeErrorContext";
+      const error: AxiosError = {
+        response: {
+          status: 404
+        }
+      } as AxiosError;
+      mockedAxios.isAxiosError.mockReturnValue(true);
+
+      const result: Error = mapRequestError([403, 404], errorContext, error);
+
+      expect(mockNotFoundError).toHaveBeenCalledTimes(1);
+      expect(mockNotFoundError).toHaveBeenCalledWith(errorContext, error);
+      expect(result instanceof NotFoundError).toBeTruthy();
     });
 
 

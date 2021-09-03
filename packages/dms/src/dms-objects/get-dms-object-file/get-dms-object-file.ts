@@ -14,7 +14,7 @@ export async function getDmsObjectFile(context: Context, params: GetDmsObjectPar
   if (getDmsObjectResponse.data?._links?.mainblobcontent) {
     url = getDmsObjectResponse.data._links.mainblobcontent.href;
   } else {
-    throw new NotFoundError("Failed to get dmsObjectFile", "No href for mainblobcontent indicating there is no file for this dmsObject.");
+    throw new NotFoundError("Failed to get dmsObjectFile", undefined, "No href for mainblobcontent indicating there is no file for this dmsObject.");
   }
 
   const response: AxiosResponse<ArrayBuffer> = await requestDmsObjectBlob(context, url);
@@ -31,7 +31,7 @@ export async function getDmsObjectPdf(context: Context, params: GetDmsObjectPara
   if (getDmsObjectResponse.data?._links?.pdfblobcontent) {
     url = getDmsObjectResponse.data._links.pdfblobcontent.href;
   } else {
-    throw new NotFoundError("Failed to get dmsObjectPdf", "No href for pdfblobcontent indicating there is no pdf for this dmsObject.");
+    throw new NotFoundError("Failed to get dmsObjectPdf", undefined, "No href for pdfblobcontent indicating there is no pdf for this dmsObject.");
   }
 
   const response: AxiosResponse<ArrayBuffer> = await requestDmsObjectBlob(context, url);

@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { followHalJson } from "../../../axios-hal-json/lib";
-import { BadInputError, DmsError, UnauthorizedError } from "./errors";
+import { BadInputError, DmsError, ForbiddenError, NotFoundError, UnauthorizedError } from "./errors";
 
 export { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 export const isAxiosError = axios.isAxiosError;
@@ -37,6 +37,12 @@ export function mapRequestError(expectedStatusCodes: number[], context: string, 
       switch (status) {
       case 400:
         return new BadInputError(context, error);
+
+      case 403:
+        return new ForbiddenError(context, error);
+
+      case 404:
+        return new NotFoundError(context, error);
       }
     }
   }

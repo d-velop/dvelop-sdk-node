@@ -13,6 +13,9 @@ const mockGET = jest.fn();
 const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
 let mockTransform: any;
 
+jest.mock("../../utils/errors");
+const mockNotFoundError = NotFoundError as jest.MockedClass<typeof NotFoundError>;
+
 let context: Context;
 let params: GetDmsObjectParams;
 
@@ -21,12 +24,14 @@ let params: GetDmsObjectParams;
     testContext: "getDmsObjectFile",
     call: async (context: Context, params: GetDmsObjectParams, transform?: GetDmsObjectFileTransformer<any>) => getDmsObjectFile(context, params, transform),
     dmsObejectResponse: { _links: { mainblobcontent: { href: "HiItsMeHref" } } },
-    notFoundErrorMessage: "Failed to get dmsObjectFile: No href for mainblobcontent indicating there is no file for this dmsObject."
+    errorContext: "Failed to get dmsObjectFile",
+    errorMessage: "No href for mainblobcontent indicating there is no file for this dmsObject."
   }, {
     testContext: "getDmsObjectPdf",
     call: async (context: Context, params: GetDmsObjectParams, transform?: GetDmsObjectFileTransformer<any>) => getDmsObjectPdf(context, params, transform),
     dmsObejectResponse: { _links: { pdfblobcontent: { href: "HiItsMeHref" } } },
-    notFoundErrorMessage: "Failed to get dmsObjectPdf: No href for pdfblobcontent indicating there is no pdf for this dmsObject."
+    errorContext: "Failed to get dmsObjectPdf",
+    errorMessage: "No href for pdfblobcontent indicating there is no pdf for this dmsObject."
   }
 ].forEach(testCase => {
   describe(`${testCase.testContext}`, () => {
@@ -96,8 +101,9 @@ let params: GetDmsObjectParams;
           expectedError = e;
         }
 
+        expect(mockNotFoundError).toHaveBeenCalledTimes(1);
+        expect(mockNotFoundError).toHaveBeenCalledWith(testCase.errorContext, undefined, testCase.errorMessage);
         expect(expectedError instanceof NotFoundError).toBeTruthy();
-        expect(expectedError.message).toContain(testCase.notFoundErrorMessage);
       });
     });
 
