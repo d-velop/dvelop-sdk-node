@@ -1,22 +1,24 @@
 import { isAxiosError } from "./http";
 
+export interface DmsAppErrorDto {
+  reason?: string;
+  severity?: number;
+  errorCode?: number
+  requestId?: string;
+}
+
 function formatErrorMessage(context: string, originalError?: Error, message?: string) {
   if (message) {
     return `${context}: ${message}`;
-  } else if (isAxiosError(originalError) && originalError?.response?.data?.reason) {
-    return `${context}: ${originalError.response.data.reason}`;
   } else if (originalError) {
-    return `${context}: ${originalError.message}`;
+    if (isAxiosError(originalError) && originalError?.response?.data?.reason) {
+      return `${context}: ${originalError.response.data.reason}`;
+    } else {
+      return `${context}: ${originalError.message}`;
+    }
   } else {
     return context;
   }
-}
-
-export interface DmsAppErrorDto {
-  reason: string;
-  severity: number;
-  errorCode: number
-  requestId: string;
 }
 
 /**
