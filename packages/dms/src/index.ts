@@ -28,7 +28,7 @@ import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 axios.interceptors.request.use(followHalJson);
 
 // Utils
-export { Context as Context } from "./utils/context";
+export { Context } from "./utils/context";
 export * from "./utils/errors";
 
 // Repositories

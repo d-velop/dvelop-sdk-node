@@ -1,16 +1,40 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { GetRepositoryParams, Repository, getRepository, DmsAppErrorDto, BadRequestError, UnauthorizedError, NotFoundError } from "../../index";
 import { Context } from "../../utils/context";
+import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { getRepository, GetRepositoryParams } from "./get-repository";
 
-jest.mock("axios");
+
+
+jest.mock("../../utils/http");
+const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAxiosInstance>;
+const mockGET = jest.fn();
+const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
+
+let context: Context;
+let params: GetRepositoryParams;
+let mockTransform: any;
 
 describe("getRepository", () => {
 
-  const mockedAxios = axios as jest.Mocked<typeof axios>;
-  let context: Context;
-  let params: GetRepositoryParams;
-
   beforeEach(() => {
+
+    jest.resetAllMocks();
+
+    mockGetAxiosInstace.mockReturnValue({
+      get: mockGET
+    } as unknown as AxiosInstance);
+
+    mockGET.mockResolvedValue({
+      _links: {
+        source: {
+          href: "HiItsMeSourceId"
+        }
+      },
+      id: "HiItsMeRepoId",
+      name: "HiItsMeRepoName"
+    });
+
+    mockTransform = jest.fn();
+
     context = {
       systemBaseUri: "HiItsMeSystemBaseUri",
       authSessionId: "HiItsMeAuthSessionId"
@@ -19,264 +43,80 @@ describe("getRepository", () => {
     params = {
       repositoryId: "HiItsMeRepositoryId"
     };
-
-    mockedAxios.get.mockReset();
-    mockedAxios.isAxiosError.mockReset();
   });
 
-  describe("axios-params", () => {
+  it("should to GET correctly", async () => {
+    await getRepository(context, params, mockTransform);
 
-    beforeEach(() => {
-      mockedAxios.get.mockResolvedValue({
-        data: {
-          id: "HiItsMeRepositoryId",
-          name: "HiItsMeRepsitoryName"
-        }
-      });
-    });
-
-    it("should send GET", async () => {
-      await getRepository(context, params, (_) => { });
-      expect(mockedAxios.get).toHaveBeenCalledTimes(1);
-    });
-
-    it("should send to /dms", async () => {
-      await getRepository(context, params, (_) => { });
-      expect(mockedAxios.get).toHaveBeenCalledWith("/dms", expect.any(Object));
-    });
-
-    it("should send with systemBaseUri as BaseURL", async () => {
-      await getRepository(context, params, (_) => { });
-      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        baseURL: context.systemBaseUri
-      }));
-    });
-
-    it("should send with authSessionId as Authorization-Header", async () => {
-      await getRepository(context, params, (_) => { });
-      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        headers: expect.objectContaining({ "Authorization": `Bearer ${context.authSessionId}` })
-      }));
-    });
-
-    it("should send with follows: repo", async () => {
-      await getRepository(context, params, (_) => { });
-      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        follows: ["repo"]
-      }));
-    });
-
-    it("should send with templates: repositoryid", async () => {
-      await getRepository(context, params, (_) => { });
-      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        templates: { "repositoryid": params.repositoryId }
-      }));
+    expect(mockGET).toHaveBeenCalledTimes(1);
+    expect(mockGET).toHaveBeenCalledWith("/dms", {
+      baseURL: context.systemBaseUri,
+      headers: {
+        "Authorization": `Bearer ${context.authSessionId}`
+      },
+      follows: ["repo"],
+      templates: { "repositoryid": params.repositoryId }
     });
   });
 
-  describe("response", () => {
+  it("should throw mappedError on requestError", async () => {
 
-    describe("default transform", () => {
+    const getError: AxiosError = {
+      message: "HiItsMeErrorMessage"
+    } as AxiosError;
+    mockGET.mockRejectedValue(getError);
 
-      it("should call default transform-function with result and return", async () => {
+    const mappedError: Error = new Error("HiItsMeMappedError");
+    mockMapRequestError.mockReturnValue(mappedError);
 
-        const dto: any = {
-          _links: {
-            source: {
-              href: "HiItsMeSourceHref"
-            },
-            irrelevant: {
-              href: "I'm irrelevant"
-            }
+    let expectedError: Error;
+    try {
+      await getRepository(context, params, mockTransform);
+    } catch (e) {
+      expectedError = e;
+    }
+
+    expect(mockMapRequestError).toHaveBeenCalledTimes(1);
+    expect(mockMapRequestError).toHaveBeenCalledWith([404], "Failed to get repository", getError);
+    expect(expectedError).toEqual(mappedError);
+  });
+
+  it("should return custom transform", async () => {
+
+    const getResponse: AxiosResponse<any> = {
+      data: { test: "HiItsMeTest" }
+    } as AxiosResponse;
+    mockGET.mockResolvedValue(getResponse);
+
+    const transformResult = "HiItsMeTransformResult";
+    mockTransform.mockReturnValue(transformResult);
+
+    await getRepository(context, params, mockTransform);
+
+    expect(mockTransform).toHaveBeenCalledTimes(1);
+    expect(mockTransform).toHaveBeenCalledWith(getResponse, context, params);
+  });
+
+  describe("default transform", () => {
+    it("should map repository correctly", async () => {
+
+      const repository: any = {
+        _links: {
+          source: {
+            href: "HiItsMeSourceId"
           },
-          id: "HiItsMeId",
-          name: "HiItsMe",
-          supportsFulltextSearch: true,
-          serverId: "HiItsMe",
-          available: false,
-          isDefault: true,
-          version: "HiItsMe"
-        };
-
-        mockedAxios.get.mockResolvedValue({ data: dto });
-
-        const result: Repository = await getRepository(context, params);
-
-        expect(result.id).toEqual(dto.id);
-        expect(result.name).toEqual(dto.name);
-        expect(result.sourceId).toEqual(dto._links["source"].href);
-      });
-    });
-
-    it("should call given transform-function with result and return", async () => {
-
-      const response: AxiosResponse<any> = {
-        data: { test: "HiItsMeTest" }
-      } as AxiosResponse;
-      mockedAxios.get.mockResolvedValue(response);
-      const transformResult = "HiItsMeTransformResult";
-      const mockedTransform = jest.fn().mockReturnValue(transformResult);
-
-      const result: Repository = await getRepository(context, params, mockedTransform);
-
-      expect(mockedTransform).toHaveBeenCalledTimes(1);
-      expect(mockedTransform).toHaveBeenCalledWith(response);
-      expect(result).toBe(transformResult);
-    });
-  });
-
-  describe("errors", () => {
-
-    it("should throw BadRequestError on status 400", async () => {
-
-      const requestError = {
-        response: {
-          status: 400,
-          data: {
-            reason: "HiItsMeErrorReason"
-          }
+          id: "HiItsMeRepoId",
+          name: "HiItsMeRepoName"
         }
-      } as AxiosError<DmsAppErrorDto>;
+      };
+      mockGET.mockResolvedValue({ data: repository });
 
-      mockedAxios.get.mockRejectedValue(requestError);
-      mockedAxios.isAxiosError.mockReturnValue(true);
+      const result = await getRepository(context, params);
 
-      let error: BadRequestError;
-      try {
-        await getRepository(context, params, (_) => { });
-      } catch (e) {
-        error = e;
-      }
-
-      expect(error instanceof BadRequestError).toBeTruthy();
-      expect(error.message).toContain("Failed to get repository:");
-      expect(error.requestError).toEqual(requestError);
-    });
-
-    it("should throw UnauthorizesError on status 401", async () => {
-
-      const requestError = {
-        response: {
-          status: 401,
-          data: {
-            reason: "HiItsMeErrorReason"
-          }
-        }
-      } as AxiosError<DmsAppErrorDto>;
-
-      mockedAxios.get.mockRejectedValue(requestError);
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      let error: UnauthorizedError;
-      try {
-        await getRepository(context, params, (_) => { });
-      } catch (e) {
-        error = e;
-      }
-
-      expect(error instanceof UnauthorizedError).toBeTruthy();
-      expect(error.message).toContain("Failed to get repository:");
-      expect(error.requestError).toEqual(requestError);
-    });
-
-    it("should throw RepositoryNotFoundError on status 404", async () => {
-
-      const requestError: AxiosError = {
-        response: {
-          status: 404,
-          data: {
-            reason: "HiItsMeErrorReason"
-          }
-        }
-      } as AxiosError;
-
-      mockedAxios.get.mockRejectedValue(requestError);
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      let error: NotFoundError;
-      try {
-        await getRepository(context, params, (_) => { });
-      } catch (e) {
-        error = e;
-      }
-
-      expect(error instanceof NotFoundError).toBeTruthy();
-      expect(error.message).toContain("Failed to get repository:");
-      expect(error.requestError).toEqual(requestError);
-    });
-
-    it("should throw UnknownErrors on unmapped statusCode", async () => {
-
-      const errorString: string = "HiItsMeError";
-      const requestError: AxiosError = {
-        response: {
-          status: 500,
-        },
-        message: errorString
-      } as AxiosError;
-
-      mockedAxios.get.mockRejectedValue(requestError);
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-
-      let resultError: AxiosError;
-      try {
-        await getRepository(context, params, (_) => { });
-      } catch (e) {
-        resultError = e;
-      }
-
-      expect(resultError).toBe(requestError);
-      expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to get repository:");
-    });
-
-    it("should throw UnknownErrors on no Response", async () => {
-
-      const errorString: string = "HiItsMeError";
-      const requestError: AxiosError = {
-        message: errorString
-      } as AxiosError;
-
-      mockedAxios.get.mockRejectedValue(requestError);
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      mockedAxios.get.mockImplementation(() => {
-        throw requestError;
-      });
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      let resultError: AxiosError;
-      try {
-        await getRepository(context, params, (_) => { });
-      } catch (e) {
-        resultError = e;
-      }
-
-      expect(resultError).toBe(requestError);
-      expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to get repository:");
-    });
-
-    it("should throw UnknownErrors on non AxiosError", async () => {
-
-      const errorString: string = "HiItsMeError";
-      const error: Error = new Error(errorString);
-      mockedAxios.get.mockImplementation(() => {
-        throw error;
-      });
-      mockedAxios.isAxiosError.mockReturnValue(false);
-
-      let resultError: Error;
-      try {
-        await getRepository(context, params, (_) => { });
-      } catch (e) {
-        resultError = e;
-      }
-
-      expect(resultError).toBe(error);
-      expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to get repository:");
+      expect(result).toHaveProperty("id", repository.id);
+      expect(result).toHaveProperty("name", repository.name);
+      expect(result).toHaveProperty("sourceId", repository._links.source.href);
     });
   });
 });
+
