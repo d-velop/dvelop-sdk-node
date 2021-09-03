@@ -1,7 +1,10 @@
-import axios, { AxiosResponse } from "axios";
-import { Context, Repository, UnauthorizedError } from "../../index";
+import { Context } from "../../utils/context";
+import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { Repository } from "../get-repository/get-repository";
 
-export function transformGetRepositoriesResponse(response: AxiosResponse<any>): Repository[] {
+export type GetRepositoriesTransformer<T> = (response: AxiosResponse<any>, context: Context)=> T;
+
+export const getRepositoriesDefaultTransformer: GetRepositoriesTransformer<Repository[]> = (response: AxiosResponse<any>, _: Context) => {
   const dtos: any[] = response.data.repositories;
   return dtos.map(dto => {
     return {
@@ -10,7 +13,7 @@ export function transformGetRepositoriesResponse(response: AxiosResponse<any>): 
       sourceId: dto._links["source"].href
     };
   });
-}
+};
 
 /**
  * Returns all {@link Repository}-objects for the tenant.
@@ -28,11 +31,13 @@ export function transformGetRepositoriesResponse(response: AxiosResponse<any>): 
  * ```
  */
 export async function getRepositories(context: Context): Promise<Repository[]>;
-export async function getRepositories<T>(context: Context, transform: (response: AxiosResponse<any>)=> T): Promise<T>;
-export async function getRepositories(context: Context, transform: (response: AxiosResponse<any>)=> any = transformGetRepositoriesResponse): Promise<any> {
+export async function getRepositories<T>(context: Context, transform: GetRepositoriesTransformer<T>): Promise<T>;
+export async function getRepositories(context: Context, transform: GetRepositoriesTransformer<any> = getRepositoriesDefaultTransformer): Promise<any> {
+
+  let response: AxiosResponse<any>;
 
   try {
-    const response: AxiosResponse<any> = await axios.get("/dms", {
+    response = await getAxiosInstance().get("/dms", {
       baseURL: context.systemBaseUri,
       headers: {
         "Authorization": `Bearer ${context.authSessionId}`
@@ -40,18 +45,9 @@ export async function getRepositories(context: Context, transform: (response: Ax
       follows: ["allrepos"]
     });
 
-    return transform(response);
   } catch (e) {
-
-    const errorContext: string = "Failed to get repositories";
-
-    if (axios.isAxiosError(e)) {
-      switch (e.response?.status) {
-      case 401:
-        throw new UnauthorizedError(errorContext, e);
-      }
-    }
-    e.message = `${errorContext}: ${e.message}`;
-    throw e;
+    throw mapRequestError([], "Failed to get repositories", e);
   }
+
+  return transform(response, context);
 }
