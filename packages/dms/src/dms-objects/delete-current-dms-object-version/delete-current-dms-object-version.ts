@@ -1,5 +1,5 @@
 import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 import { ForbiddenError } from "../../utils/errors";
 import { getDmsObject } from "../get-dms-object/get-dms-object";
 
@@ -15,9 +15,9 @@ export interface DeleteCurrentDmsObjectVersionParams {
   reason: string;
 }
 
-export type DeleteCurrentDmsObjectVersionTransformer<T> = (response: AxiosResponse<any>, context: TenantContext, params: DeleteCurrentDmsObjectVersionParams)=> T;
+export type DeleteCurrentDmsObjectVersionTransformer<T> = (response: AxiosResponse<any>, context: Context, params: DeleteCurrentDmsObjectVersionParams)=> T;
 
-export const deleteCurrentDmsObjectVersionDefaultTransformer: DeleteCurrentDmsObjectVersionTransformer<boolean> = function (response: AxiosResponse<any>, _: TenantContext, __: DeleteCurrentDmsObjectVersionParams): boolean {
+export const deleteCurrentDmsObjectVersionDefaultTransformer: DeleteCurrentDmsObjectVersionTransformer<boolean> = function (response: AxiosResponse<any>, _: Context, __: DeleteCurrentDmsObjectVersionParams): boolean {
   if (response.data?._links?.delete || response.data?._links?.deleteWithReason) {
     return false;
   } else {
@@ -50,9 +50,9 @@ export const deleteCurrentDmsObjectVersionDefaultTransformer: DeleteCurrentDmsOb
  * }
  * ```
  */
-export async function deleteCurrentDmsObjectVersion(context: TenantContext, params: DeleteCurrentDmsObjectVersionParams): Promise<boolean>;
-export async function deleteCurrentDmsObjectVersion<T>(context: TenantContext, params: DeleteCurrentDmsObjectVersionParams, transform: DeleteCurrentDmsObjectVersionTransformer<T>): Promise<T>;
-export async function deleteCurrentDmsObjectVersion(context: TenantContext, params: DeleteCurrentDmsObjectVersionParams, transform: DeleteCurrentDmsObjectVersionTransformer<any> = deleteCurrentDmsObjectVersionDefaultTransformer): Promise<any> {
+export async function deleteCurrentDmsObjectVersion(context: Context, params: DeleteCurrentDmsObjectVersionParams): Promise<boolean>;
+export async function deleteCurrentDmsObjectVersion<T>(context: Context, params: DeleteCurrentDmsObjectVersionParams, transform: DeleteCurrentDmsObjectVersionTransformer<T>): Promise<T>;
+export async function deleteCurrentDmsObjectVersion(context: Context, params: DeleteCurrentDmsObjectVersionParams, transform: DeleteCurrentDmsObjectVersionTransformer<any> = deleteCurrentDmsObjectVersionDefaultTransformer): Promise<any> {
 
   const errorContext: string = "Failed to delete current DmsObjectVersion";
 

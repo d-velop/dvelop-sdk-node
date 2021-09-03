@@ -1,5 +1,5 @@
 import { NotFoundError } from "../../utils/errors";
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 import { GetDmsObjectParams, getDmsObject } from "../get-dms-object/get-dms-object";
 import { GetDmsObjectFileTransformer, getDmsObjectFile, getDmsObjectPdf } from "./get-dms-object-file";
 import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
@@ -13,18 +13,18 @@ const mockGET = jest.fn();
 const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
 let mockTransform: any;
 
-let context: TenantContext;
+let context: Context;
 let params: GetDmsObjectParams;
 
 [
   {
     testContext: "getDmsObjectFile",
-    call: async (context: TenantContext, params: GetDmsObjectParams, transform?: GetDmsObjectFileTransformer<any>) => getDmsObjectFile(context, params, transform),
+    call: async (context: Context, params: GetDmsObjectParams, transform?: GetDmsObjectFileTransformer<any>) => getDmsObjectFile(context, params, transform),
     dmsObejectResponse: { _links: { mainblobcontent: { href: "HiItsMeHref" } } },
     notFoundErrorMessage: "Failed to get dmsObjectFile: No href for mainblobcontent indicating there is no file for this dmsObject."
   }, {
     testContext: "getDmsObjectPdf",
-    call: async (context: TenantContext, params: GetDmsObjectParams, transform?: GetDmsObjectFileTransformer<any>) => getDmsObjectPdf(context, params, transform),
+    call: async (context: Context, params: GetDmsObjectParams, transform?: GetDmsObjectFileTransformer<any>) => getDmsObjectPdf(context, params, transform),
     dmsObejectResponse: { _links: { pdfblobcontent: { href: "HiItsMeHref" } } },
     notFoundErrorMessage: "Failed to get dmsObjectPdf: No href for pdfblobcontent indicating there is no pdf for this dmsObject."
   }

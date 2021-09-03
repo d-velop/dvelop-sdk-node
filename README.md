@@ -279,9 +279,9 @@ console.log(name); //Booty Bay Document
 
 Under the hood we provide a transformer-type and implement that type with a default transformer.
 ```typescript
-export type GetRepositoryTransformer<T> = (response: AxiosResponse<any>, context: TenantContext, params: GetRepositoryParams) => T;
+export type GetRepositoryTransformer<T> = (response: AxiosResponse<any>, context: Context, params: GetRepositoryParams) => T;
 
-export const getRepositoryDefaultTransformer: GetRepositoryTransformer<Repository> = (response: AxiosResponse<any>, context: TenantContext, params: GetRepositoryParams) => {
+export const getRepositoryDefaultTransformer: GetRepositoryTransformer<Repository> = (response: AxiosResponse<any>, context: Context, params: GetRepositoryParams) => {
 // our way of transforming
 }
 

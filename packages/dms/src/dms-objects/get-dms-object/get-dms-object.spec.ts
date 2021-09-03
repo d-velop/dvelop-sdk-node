@@ -1,5 +1,5 @@
 import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 import { requestDmsObjectBlob } from "../get-dms-object-file/get-dms-object-file";
 import { getDmsObject, GetDmsObjectParams } from "./get-dms-object";
 
@@ -11,7 +11,7 @@ const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAx
 const mockGET = jest.fn();
 const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
 
-let context: TenantContext;
+let context: Context;
 let params: GetDmsObjectParams;
 let mockTransform: any;
 

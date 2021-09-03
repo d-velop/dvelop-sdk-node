@@ -1,5 +1,5 @@
 import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 import { requestDmsObjectBlob } from "../get-dms-object-file/get-dms-object-file";
 
 export interface GetDmsObjectParams {
@@ -37,9 +37,9 @@ export interface DmsObject {
   getPdf?: ()=> Promise<ArrayBuffer>;
 }
 
-export type GetDmsObjectTransformer<T> = (response: AxiosResponse<any>, context: TenantContext, params: GetDmsObjectParams)=> T;
+export type GetDmsObjectTransformer<T> = (response: AxiosResponse<any>, context: Context, params: GetDmsObjectParams)=> T;
 
-export const getDmsObjectDefaultTransformer: GetDmsObjectTransformer<DmsObject> = (response: AxiosResponse<any>, context: TenantContext, params: GetDmsObjectParams) => {
+export const getDmsObjectDefaultTransformer: GetDmsObjectTransformer<DmsObject> = (response: AxiosResponse<any>, context: Context, params: GetDmsObjectParams) => {
 
   const dmsObject: DmsObject = {
     repositoryId: params.repositoryId,
@@ -65,7 +65,7 @@ export const getDmsObjectDefaultTransformer: GetDmsObjectTransformer<DmsObject> 
 /**
  * Get a DmsObject from a repository of the DMS-App.
  *
- * @param context {@link TenantContext}-object containing systemBaseUri and a valid authSessionId.
+ * @param context {@link Context}-object containing systemBaseUri and a valid authSessionId.
  * @param params {@link GetDmsObjectParams}-object containing repositoryId, sourceId and dmsObjectId.
  *
  * @category DmsObjects
@@ -74,7 +74,7 @@ export const getDmsObjectDefaultTransformer: GetDmsObjectTransformer<DmsObject> 
  * TODO
  * ```
  */
-export async function getDmsObject(context: TenantContext, params: GetDmsObjectParams): Promise<DmsObject>
+export async function getDmsObject(context: Context, params: GetDmsObjectParams): Promise<DmsObject>
 
 /**
  * An additional transform-function can be supplied. Check out the docs for more information.
@@ -87,8 +87,8 @@ export async function getDmsObject(context: TenantContext, params: GetDmsObjectP
  * TODO
  * ```
  */
-export async function getDmsObject<T>(context: TenantContext, params: GetDmsObjectParams, transform: GetDmsObjectTransformer<T>): Promise<T>
-export async function getDmsObject(context: TenantContext, params: GetDmsObjectParams, transform: GetDmsObjectTransformer<any> = getDmsObjectDefaultTransformer): Promise<any> {
+export async function getDmsObject<T>(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectTransformer<T>): Promise<T>
+export async function getDmsObject(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectTransformer<any> = getDmsObjectDefaultTransformer): Promise<any> {
 
   let response: AxiosResponse<any>;
   try {

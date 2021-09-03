@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { TenantContext, Repository, getRepositories, UnauthorizedError } from "../../index";
+import { Context, Repository, getRepositories, UnauthorizedError } from "../../index";
 import { DmsAppErrorDto } from "../../utils/errors";
 
 jest.mock("axios");
@@ -7,7 +7,7 @@ jest.mock("axios");
 describe("getRepositories", () => {
 
   const mockedAxios = axios as jest.Mocked<typeof axios>;
-  let context: TenantContext;
+  let context: Context;
 
   beforeEach(() => {
     context = {

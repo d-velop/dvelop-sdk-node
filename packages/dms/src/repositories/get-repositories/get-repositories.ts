@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { TenantContext, Repository, UnauthorizedError } from "../../index";
+import { Context, Repository, UnauthorizedError } from "../../index";
 
 export function transformGetRepositoriesResponse(response: AxiosResponse<any>): Repository[] {
   const dtos: any[] = response.data.repositories;
@@ -27,9 +27,9 @@ export function transformGetRepositoriesResponse(response: AxiosResponse<any>): 
  * console.log("Repositories:", repoList); // Booty Bay Documents, Everlook Documents, Ratchet Documents
  * ```
  */
-export async function getRepositories(context: TenantContext): Promise<Repository[]>;
-export async function getRepositories<T>(context: TenantContext, transform: (response: AxiosResponse<any>)=> T): Promise<T>;
-export async function getRepositories(context: TenantContext, transform: (response: AxiosResponse<any>)=> any = transformGetRepositoriesResponse): Promise<any> {
+export async function getRepositories(context: Context): Promise<Repository[]>;
+export async function getRepositories<T>(context: Context, transform: (response: AxiosResponse<any>)=> T): Promise<T>;
+export async function getRepositories(context: Context, transform: (response: AxiosResponse<any>)=> any = transformGetRepositoriesResponse): Promise<any> {
 
   try {
     const response: AxiosResponse<any> = await axios.get("/dms", {

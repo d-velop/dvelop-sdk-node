@@ -1,4 +1,4 @@
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 import { storeFileTemporarily, StoreFileTemporarilyParams, StoreFileTemporarilyTransformer } from "./store-file-femporarily";
 
@@ -7,7 +7,7 @@ const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAx
 const mockPOST = jest.fn();
 const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
 
-let context: TenantContext;
+let context: Context;
 let params: StoreFileTemporarilyParams;
 let mockTransform: StoreFileTemporarilyTransformer<any>;
 

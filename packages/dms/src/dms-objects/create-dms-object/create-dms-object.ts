@@ -1,6 +1,6 @@
 import { DmsError } from "../../utils/errors";
 import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
 import { storeFileTemporarily } from "../store-file-temporarily/store-file-femporarily";
 
@@ -31,9 +31,9 @@ export interface CreateDmsObjectParams {
   file?: ArrayBuffer | string;
 }
 
-export type CreateDmsObjectTransformer<T> = (response: AxiosResponse<any>, context: TenantContext, params: CreateDmsObjectParams)=> T;
+export type CreateDmsObjectTransformer<T> = (response: AxiosResponse<any>, context: Context, params: CreateDmsObjectParams)=> T;
 
-export function createDmsObjectDefaultTransformer(response: AxiosResponse<any>, _: TenantContext, params: CreateDmsObjectParams): GetDmsObjectParams {
+export function createDmsObjectDefaultTransformer(response: AxiosResponse<any>, _: Context, params: CreateDmsObjectParams): GetDmsObjectParams {
 
   const location: string = response.headers["location"];
   const matches: RegExpExecArray | null = /^.*\/(.*?)(\?|$)/.exec(location);
@@ -52,7 +52,7 @@ export function createDmsObjectDefaultTransformer(response: AxiosResponse<any>, 
 /**
  * Create a DmsObject in the DMS-App.
  *
- * @param context {@link TenantContext}-object containing systemBaseUri and a valid authSessionId
+ * @param context {@link Context}-object containing systemBaseUri and a valid authSessionId
  * @param params {@link CreateDmsObjectParams}-object.
  *
  * @throws {@link BadInputError} indicates invalid method params.
@@ -74,7 +74,7 @@ export function createDmsObjectDefaultTransformer(response: AxiosResponse<any>, 
  * });
  * ```
  */
-export async function createDmsObject(context: TenantContext, params: CreateDmsObjectParams): Promise<GetDmsObjectParams>;
+export async function createDmsObject(context: Context, params: CreateDmsObjectParams): Promise<GetDmsObjectParams>;
 
 /**
  * An additional transform-function can be supplied. Check out the docs for more information.
@@ -86,8 +86,8 @@ export async function createDmsObject(context: TenantContext, params: CreateDmsO
  * console.log(rawResponse.headers["location"]);
  * ```
  */
-export async function createDmsObject<T>(context: TenantContext, params: CreateDmsObjectParams, transform: CreateDmsObjectTransformer<T>): Promise<T>;
-export async function createDmsObject(context: TenantContext, params: CreateDmsObjectParams, transform: CreateDmsObjectTransformer<any> = createDmsObjectDefaultTransformer): Promise<any> {
+export async function createDmsObject<T>(context: Context, params: CreateDmsObjectParams, transform: CreateDmsObjectTransformer<T>): Promise<T>;
+export async function createDmsObject(context: Context, params: CreateDmsObjectParams, transform: CreateDmsObjectTransformer<any> = createDmsObjectDefaultTransformer): Promise<any> {
 
   let data: any = {
     sourceId: params.sourceId,

@@ -1,4 +1,4 @@
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 import { getDmsObject } from "../get-dms-object/get-dms-object";
 import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 import { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./delete-current-dms-object-version";
@@ -12,7 +12,7 @@ const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAx
 const mockDELETE = jest.fn();
 const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
 
-let context: TenantContext;
+let context: Context;
 let params: DeleteCurrentDmsObjectVersionParams;
 let mockTransform: any;
 

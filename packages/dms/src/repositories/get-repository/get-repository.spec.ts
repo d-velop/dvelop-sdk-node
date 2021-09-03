@@ -1,13 +1,13 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { GetRepositoryParams, Repository, getRepository, DmsAppErrorDto, BadRequestError, UnauthorizedError, NotFoundError } from "../../index";
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 
 jest.mock("axios");
 
 describe("getRepository", () => {
 
   const mockedAxios = axios as jest.Mocked<typeof axios>;
-  let context: TenantContext;
+  let context: Context;
   let params: GetRepositoryParams;
 
   beforeEach(() => {

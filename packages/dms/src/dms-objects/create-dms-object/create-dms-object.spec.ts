@@ -1,6 +1,6 @@
 import { DmsError } from "../../utils/errors";
 import { AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 import { storeFileTemporarily } from "../store-file-temporarily/store-file-femporarily";
 import { createDmsObject, CreateDmsObjectParams } from "./create-dms-object";
 
@@ -13,7 +13,7 @@ const mockPOST = jest.fn();
 const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
 
 const dmsObjectId = "HiItsMeDmsObjectId";
-let context: TenantContext;
+let context: Context;
 let params: CreateDmsObjectParams;
 let mockTransform: any;
 

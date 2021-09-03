@@ -1,12 +1,12 @@
-import { TenantContext, GetDmsObjectParams, getDmsObject } from "../../index";
+import { Context, GetDmsObjectParams, getDmsObject } from "../../index";
 import { NotFoundError } from "../../utils/errors";
 import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 
-export type GetDmsObjectFileTransformer<T> = (response: AxiosResponse<ArrayBuffer>, context: TenantContext, params: GetDmsObjectParams)=> T;
+export type GetDmsObjectFileTransformer<T> = (response: AxiosResponse<ArrayBuffer>, context: Context, params: GetDmsObjectParams)=> T;
 
-export async function getDmsObjectFile(context: TenantContext, params: GetDmsObjectParams): Promise<ArrayBuffer>;
-export async function getDmsObjectFile<T>(context: TenantContext, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<T>): Promise<T>;
-export async function getDmsObjectFile(context: TenantContext, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<any> = (response) => response.data): Promise<any> {
+export async function getDmsObjectFile(context: Context, params: GetDmsObjectParams): Promise<ArrayBuffer>;
+export async function getDmsObjectFile<T>(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<T>): Promise<T>;
+export async function getDmsObjectFile(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<any> = (response) => response.data): Promise<any> {
 
   const getDmsObjectResponse: AxiosResponse<any> = await getDmsObject(context, params, (response: AxiosResponse) => response);
 
@@ -21,9 +21,9 @@ export async function getDmsObjectFile(context: TenantContext, params: GetDmsObj
   return transform(response, context, params);
 }
 
-export async function getDmsObjectPdf(context: TenantContext, params: GetDmsObjectParams): Promise<ArrayBuffer>;
-export async function getDmsObjectPdf<T>(context: TenantContext, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<T>): Promise<T>;
-export async function getDmsObjectPdf(context: TenantContext, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<any> = (response) => response.data): Promise<any> {
+export async function getDmsObjectPdf(context: Context, params: GetDmsObjectParams): Promise<ArrayBuffer>;
+export async function getDmsObjectPdf<T>(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<T>): Promise<T>;
+export async function getDmsObjectPdf(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<any> = (response) => response.data): Promise<any> {
 
   const getDmsObjectResponse: AxiosResponse<any> = await getDmsObject(context, params, (response: AxiosResponse) => response);
 
@@ -38,7 +38,7 @@ export async function getDmsObjectPdf(context: TenantContext, params: GetDmsObje
   return transform(response, context, params);
 }
 
-export async function requestDmsObjectBlob(context: TenantContext, url: string): Promise<AxiosResponse<ArrayBuffer>> {
+export async function requestDmsObjectBlob(context: Context, url: string): Promise<AxiosResponse<ArrayBuffer>> {
 
   try {
     return await getAxiosInstance().get(url, {

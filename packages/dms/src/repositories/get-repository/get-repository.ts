@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { TenantContext, BadRequestError, UnauthorizedError, NotFoundError } from "../../index";
+import { Context, BadRequestError, UnauthorizedError, NotFoundError } from "../../index";
 
 export interface GetRepositoryParams {
   repositoryId: string;
@@ -23,7 +23,7 @@ export function transformGetRepositoryResponse(response: AxiosResponse<any>): Re
 /**
  * Returns {@link Repository}-object for specified id.
  *
- * @param context A {@link TenantContext} object.
+ * @param context A {@link Context} object.
  * @param params A {@link GetRepositoryParams} containing the repositoryId.
  *
  * @throws {@link BadRequestError} indicates invalid method params.
@@ -41,7 +41,7 @@ export function transformGetRepositoryResponse(response: AxiosResponse<any>): Re
  * console.log(repo.name); //Booty Bay Documents
  * ```
  */
-export async function getRepository(context: TenantContext, params: GetRepositoryParams): Promise<Repository>;
+export async function getRepository(context: Context, params: GetRepositoryParams): Promise<Repository>;
 /**
  * An additional transform-function can be supplied. Check out the docs for more information.
  *
@@ -68,8 +68,8 @@ export async function getRepository(context: TenantContext, params: GetRepositor
  * console.log(name); //Booty Bay Documents
  * ```
  */
-export async function getRepository<T>(context: TenantContext, params: GetRepositoryParams, transform: (response: AxiosResponse<any>)=> T): Promise<T>;
-export async function getRepository(context: TenantContext, params: GetRepositoryParams, transform: (response: AxiosResponse<any>)=> any = transformGetRepositoryResponse): Promise<any> {
+export async function getRepository<T>(context: Context, params: GetRepositoryParams, transform: (response: AxiosResponse<any>)=> T): Promise<T>;
+export async function getRepository(context: Context, params: GetRepositoryParams, transform: (response: AxiosResponse<any>)=> any = transformGetRepositoryResponse): Promise<any> {
 
   try {
     const response: AxiosResponse<any> = await axios.get("/dms", {

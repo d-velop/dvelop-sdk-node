@@ -1,5 +1,5 @@
 import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
-import { TenantContext } from "../../utils/tenant-context";
+import { Context } from "../../utils/context";
 import { storeFileTemporarily } from "../store-file-temporarily/store-file-femporarily";
 
 export interface UpdateDmsObjectParams {
@@ -23,12 +23,12 @@ export interface UpdateDmsObjectParams {
   file?: string | ArrayBuffer;
 }
 
-export type UpdateDmsObjectTransformer<T> = (response: AxiosResponse<void>, context: TenantContext, params: UpdateDmsObjectParams)=> T;
+export type UpdateDmsObjectTransformer<T> = (response: AxiosResponse<void>, context: Context, params: UpdateDmsObjectParams)=> T;
 
 /**
  * Update a DmsObject in the DMS-App.
  *
- * @param context {@link TenantContext}-object containing systemBaseUri and a valid authSessionId
+ * @param context {@link Context}-object containing systemBaseUri and a valid authSessionId
  * @param params {@link UpdateDmsObjectParams}-object.
  *
  * @throws {@link BadRequestError} indicates invalid method params. See the ```err.requestError.response.data```-propterty for more information.
@@ -41,7 +41,7 @@ export type UpdateDmsObjectTransformer<T> = (response: AxiosResponse<void>, cont
  * TODO
  * ```
  */
-export async function updateDmsObject(context: TenantContext, params: UpdateDmsObjectParams): Promise<void>;
+export async function updateDmsObject(context: Context, params: UpdateDmsObjectParams): Promise<void>;
 
 /**
  * An additional transform-function can be supplied. Check out the docs for more information.
@@ -54,8 +54,8 @@ export async function updateDmsObject(context: TenantContext, params: UpdateDmsO
  * TODO
  * ```
  */
-export async function updateDmsObject<T>(context: TenantContext, params: UpdateDmsObjectParams, transform: UpdateDmsObjectTransformer<T>): Promise<T>;
-export async function updateDmsObject(context: TenantContext, params: UpdateDmsObjectParams, transform: UpdateDmsObjectTransformer<any> = () => { }): Promise<any> {
+export async function updateDmsObject<T>(context: Context, params: UpdateDmsObjectParams, transform: UpdateDmsObjectTransformer<T>): Promise<T>;
+export async function updateDmsObject(context: Context, params: UpdateDmsObjectParams, transform: UpdateDmsObjectTransformer<any> = () => { }): Promise<any> {
 
   let data: any = {
     sourceId: params.sourceId,
