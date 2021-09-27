@@ -19,8 +19,17 @@ export interface UpdateDmsObjectParams {
     values: string[];
   }[];
 
+  /** Name of the file including its file-ending */
   fileName?: string;
-  file?: string | ArrayBuffer;
+
+  /** URL from which file can be downloaded. Has to be a relative URL reachable within the tenant */
+  contentUri?: string,
+
+  /** URL at which the file is temporarily stored in the DMS-App. See ... for more information.  */
+  contentLocationUri?: string
+
+  /** File for the DmsObject. This will use the {@link storeFileTemporarily}-function and overwrite ```contentLocationUri```-property. */
+  content?: ArrayBuffer
 }
 
 export type UpdateDmsObjectTransformer<T> = (response: AxiosResponse<void>, context: Context, params: UpdateDmsObjectParams)=> T;
@@ -57,45 +66,40 @@ export async function updateDmsObject(context: Context, params: UpdateDmsObjectP
 export async function updateDmsObject<T>(context: Context, params: UpdateDmsObjectParams, transform: UpdateDmsObjectTransformer<T>): Promise<T>;
 export async function updateDmsObject(context: Context, params: UpdateDmsObjectParams, transform: UpdateDmsObjectTransformer<any> = () => { }): Promise<any> {
 
-  let data: any = {
-    sourceId: params.sourceId,
-    alterationText: params.alterationText
-  };
-
-  if (params.properties && params.properties.length > 0) {
-    data.sourceProperties = {
-      properties: params.properties
-    };
-  }
-
-  if (params.file && params.file instanceof ArrayBuffer) {
-    data.fileName = params.fileName;
-    data.contentLocationUri = await storeFileTemporarily(context, {
+  if (params.content && !params.contentLocationUri) {
+    params.contentLocationUri = await storeFileTemporarily(context, {
       repositoryId: params.repositoryId,
-      file: params.file
+      file: params.content
     });
-  } else if (params.file && typeof params.file === "string") {
-    data.fileName = params.fileName;
-    data.contentLocationUri = params.file;
   }
 
   let response: AxiosResponse<void>;
   try {
-    response = await getAxiosInstance().put<void>("/dms", data, {
-      baseURL: context.systemBaseUri,
-      headers: {
-        "Authorization": `Bearer ${context.authSessionId}`,
-        "Accept": "application/hal+json",
-        "Content-Type": "application/hal+json"
+    response = await getAxiosInstance().put<void>("/dms", {
+      sourceId: params.sourceId,
+      alterationText: params.alterationText,
+      sourceProperties: {
+        properties: params.properties
       },
+      fileName: params.fileName,
+      contentLocationUri: params.contentLocationUri,
+      contentUri: params.contentUri
+    }, {
+      baseURL: context.systemBaseUri,
       follows: ["repo", "dmsobjectwithmapping", "update"],
       templates: {
         "repositoryid": params.repositoryId,
         "dmsobjectid": params.dmsObjectId,
         "sourceid": params.sourceId
+      },
+      headers: {
+        "Authorization": `Bearer ${context.authSessionId}`,
+        "Accept": "application/hal+json",
+        "Content-Type": "application/hal+json"
       }
     });
-  } catch (e) {
+
+  } catch (e: any) {
     throw mapRequestError([400, 404], "Failed to update dmsObject", e);
   }
 

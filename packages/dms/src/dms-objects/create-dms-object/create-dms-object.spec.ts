@@ -84,7 +84,7 @@ describe("createDmsObject", () => {
     });
   });
 
-  describe("on file as contentLocationUri", () => {
+  describe("on contentUri and contentLocationUri", () => {
 
     beforeEach(() => {
       params = {
@@ -92,7 +92,8 @@ describe("createDmsObject", () => {
         sourceId: "HiItsMeSourceId",
         categoryId: "HiItsMeCategoryId",
         fileName: "HiItsMeFileName",
-        file: "HiItsMeFileUrl"
+        contentUri: "HiItsmeContentUri",
+        contentLocationUri: "HiItsmeContentLocationUri",
       };
     });
 
@@ -108,8 +109,12 @@ describe("createDmsObject", () => {
       expect(mockPOST).toHaveBeenCalledWith("/dms", {
         sourceId: params.sourceId,
         sourceCategory: params.categoryId,
+        sourceProperties: {
+          properties: params.properties
+        },
         fileName: params.fileName,
-        contentLocationUri: params.file
+        contentUri: "HiItsmeContentUri",
+        contentLocationUri: "HiItsmeContentLocationUri",
       }, {
         baseURL: context.systemBaseUri,
         follows: ["repo", "dmsobjectwithmapping"],
@@ -136,7 +141,7 @@ describe("createDmsObject", () => {
         sourceId: "HiItsMeSourceId",
         categoryId: "HiItsMeCategoryId",
         fileName: "HiItsMeFileName",
-        file: new ArrayBuffer(42)
+        content: new ArrayBuffer(42)
       };
     });
 
@@ -146,7 +151,7 @@ describe("createDmsObject", () => {
       expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(1);
       expect(mockStoryFileTemporarily).toHaveBeenCalledWith(context, {
         repositoryId: params.repositoryId,
-        file: params.file
+        file: params.content
       });
     });
 
@@ -157,6 +162,9 @@ describe("createDmsObject", () => {
       expect(mockPOST).toHaveBeenCalledWith("/dms", {
         sourceId: params.sourceId,
         sourceCategory: params.categoryId,
+        sourceProperties: {
+          properties: params.properties
+        },
         fileName: params.fileName,
         contentLocationUri: temporaryFileLocation
       }, {
