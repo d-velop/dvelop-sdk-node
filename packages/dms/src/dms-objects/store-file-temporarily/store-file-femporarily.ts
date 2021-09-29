@@ -30,7 +30,7 @@ export async function storeFileTemporarily(context: Context, params: StoreFileTe
         "repositoryid": params.repositoryId
       }
     });
-  } catch (e) {
+  } catch (e: any) {
     throw mapRequestError([400], "Failed to store file temporarily", e);
   }
 

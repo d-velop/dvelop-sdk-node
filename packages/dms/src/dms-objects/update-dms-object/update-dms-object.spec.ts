@@ -87,7 +87,7 @@ describe("updateDmsObject", () => {
     });
   });
 
-  describe("on file as contentLocationUri", () => {
+  describe("on contentUri and contentLocationUri", () => {
 
     beforeEach(() => {
       params = params = {
@@ -96,7 +96,8 @@ describe("updateDmsObject", () => {
         dmsObjectId: "HiItsMeDmsObjectId",
         alterationText: "HiItsMeAlterationText",
         fileName: "HiItsMeFileName",
-        file: "HiItsMeContentLocationUri"
+        contentUri: "HiItsMeContentUri",
+        contentLocationUri: "HiItsMeContentLocationUri"
       };
     });
 
@@ -112,8 +113,12 @@ describe("updateDmsObject", () => {
       expect(mockPUT).toHaveBeenCalledWith("/dms", {
         sourceId: params.sourceId,
         alterationText: params.alterationText,
+        sourceProperties: {
+          properties: params.properties
+        },
         fileName: params.fileName,
-        contentLocationUri: params.file
+        contentUri: params.contentUri,
+        contentLocationUri: params.contentLocationUri
       }, {
         baseURL: context.systemBaseUri,
         headers: {
@@ -140,7 +145,7 @@ describe("updateDmsObject", () => {
         dmsObjectId: "HiItsMeDmsObjectId",
         alterationText: "HiItsMeAlterationText",
         fileName: "HiItsMeFileName",
-        file: new ArrayBuffer(42)
+        content: new ArrayBuffer(42)
       };
     });
 
@@ -150,7 +155,7 @@ describe("updateDmsObject", () => {
       expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(1);
       expect(mockStoryFileTemporarily).toHaveBeenCalledWith(context, {
         repositoryId: params.repositoryId,
-        file: params.file
+        file: params.content
       });
     });
 
@@ -164,7 +169,11 @@ describe("updateDmsObject", () => {
       expect(mockPUT).toHaveBeenCalledWith("/dms", {
         sourceId: params.sourceId,
         alterationText: params.alterationText,
+        sourceProperties: {
+          properties: params.properties
+        },
         fileName: params.fileName,
+        constentUri: params.contentUri,
         contentLocationUri: contentLocationUri
       }, {
         baseURL: context.systemBaseUri,

@@ -27,8 +27,14 @@ export interface CreateDmsObjectParams {
   /** Name of the file including its file-ending */
   fileName?: string;
 
-  /** File can be provided as ArrayBuffer or as URL for download */
-  file?: ArrayBuffer | string;
+  /** URL from which file can be downloaded. Has to be a relative URL reachable within the tenant */
+  contentUri?: string,
+
+  /** URL at which the file is temporarily stored in the DMS-App. See ... for more information.  */
+  contentLocationUri?: string
+
+  /** File for the DmsObject. This will use the {@link storeFileTemporarily}-function and overwrite ```contentLocationUri```-property. */
+  content?: ArrayBuffer,
 }
 
 export type CreateDmsObjectTransformer<T> = (response: AxiosResponse<any>, context: Context, params: CreateDmsObjectParams)=> T;
@@ -89,32 +95,25 @@ export async function createDmsObject(context: Context, params: CreateDmsObjectP
 export async function createDmsObject<T>(context: Context, params: CreateDmsObjectParams, transform: CreateDmsObjectTransformer<T>): Promise<T>;
 export async function createDmsObject(context: Context, params: CreateDmsObjectParams, transform: CreateDmsObjectTransformer<any> = createDmsObjectDefaultTransformer): Promise<any> {
 
-  let data: any = {
-    sourceId: params.sourceId,
-    sourceCategory: params.categoryId,
-
-  };
-
-  if (params.properties && params.properties.length > 0) {
-    data.sourceProperties = {
-      properties: params.properties
-    };
-  }
-
-  if (params.file && params.file instanceof ArrayBuffer) {
-    data.fileName = params.fileName;
-    data.contentLocationUri = await storeFileTemporarily(context, {
+  if (params.content && !params.contentLocationUri) {
+    params.contentLocationUri = await storeFileTemporarily(context, {
       repositoryId: params.repositoryId,
-      file: params.file
+      file: params.content
     });
-  } else if (params.file && typeof params.file === "string") {
-    data.fileName = params.fileName;
-    data.contentLocationUri = params.file;
   }
 
   let response: AxiosResponse<void>;
   try {
-    response = await getAxiosInstance().post<void>("/dms", data, {
+    response = await getAxiosInstance().post<void>("/dms", {
+      sourceId: params.sourceId,
+      sourceCategory: params.categoryId,
+      sourceProperties: {
+        properties: params.properties
+      },
+      fileName: params.fileName,
+      contentLocationUri: params.contentLocationUri,
+      contentUri: params.contentUri
+    }, {
       baseURL: context.systemBaseUri,
       follows: ["repo", "dmsobjectwithmapping"],
       templates: { "repositoryid": params.repositoryId },
@@ -125,7 +124,7 @@ export async function createDmsObject(context: Context, params: CreateDmsObjectP
       }
     });
 
-  } catch (e) {
+  } catch (e: any) {
     throw mapRequestError([400], errorContext, e);
   }
 
