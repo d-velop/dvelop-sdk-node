@@ -1,8 +1,8 @@
 import { DmsError } from "../../utils/errors";
-import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { AxiosResponse, HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
 import { Context } from "../../utils/context";
 import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
-import { storeFileTemporarily } from "../store-file-temporarily/store-file-femporarily";
+import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
 
 const errorContext = "Failed to create dmsObject";
 
@@ -37,9 +37,7 @@ export interface CreateDmsObjectParams {
   content?: ArrayBuffer,
 }
 
-export type CreateDmsObjectTransformer<T> = (response: AxiosResponse<any>, context: Context, params: CreateDmsObjectParams)=> T;
-
-export function createDmsObjectDefaultTransformer(response: AxiosResponse<any>, _: Context, params: CreateDmsObjectParams): GetDmsObjectParams {
+export function createDmsObjectDefaultTransformFunction(response: AxiosResponse<any>, _: Context, params: CreateDmsObjectParams): GetDmsObjectParams {
 
   const location: string = response.headers["location"];
   const matches: RegExpExecArray | null = /^.*\/(.*?)(\?|$)/.exec(location);
@@ -55,22 +53,60 @@ export function createDmsObjectDefaultTransformer(response: AxiosResponse<any>, 
   }
 }
 
+export async function createDmsObjectDefaultStoreFileFunction(context: Context, params: CreateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
+  const uri: string = await storeFileTemporarily(context, params as StoreFileTemporarilyParams);
+  return {
+    setAs: "contentLocationUri",
+    uri: uri
+  };
+}
+
 /**
- * Create a DmsObject in the DMS-App.
+ * Factory for the {@link createDmsObject}-function. See internals for more information.
+ * @typeparam T Return type of the {@link createDmsObject}-function. A corresponding transformFuntion has to be supplied.
+ * @category DmsObject
+ */
+export function createDmsObjectFactory<T>(httpRequestFunction: (context: Context, config: HttpConfig)=> Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: Context, params: CreateDmsObjectParams)=> T,
+  storeFileFunction: (context: Context, params: CreateDmsObjectParams)=> Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>): (context: Context, params: CreateDmsObjectParams)=> Promise<T> {
+
+  return async (context: Context, params: CreateDmsObjectParams) => {
+
+    if (!params.contentUri && !params.contentLocationUri && params.content) {
+      const storedFileInfo: { setAs: "contentUri" | "contentLocationUri", uri: string } = await storeFileFunction(context, params);
+      params[storedFileInfo.setAs] = storedFileInfo.uri;
+    }
+
+    const response: HttpResponse = await httpRequestFunction(context, {
+      method: "POST",
+      url: "/dms",
+      follows: ["repo", "dmsobjectwithmapping"],
+      templates: { "repositoryid": params.repositoryId },
+      data: {
+        "sourceId": params.sourceId,
+        "sourceCategory": params.categoryId,
+        "sourceProperties": {
+          "properties": params.properties
+        },
+        "fileName": params.fileName,
+        "contentLocationUri": params.contentLocationUri,
+        "contentUri": params.contentUri
+      }
+    });
+
+    return transformFunction(response, context, params);
+  };
+}
+
+/**
+ * Create a DmsObject.
  *
- * @param context {@link Context}-object containing systemBaseUri and a valid authSessionId
- * @param params {@link CreateDmsObjectParams}-object.
- *
- * @throws {@link BadInputError} indicates invalid method params.
- * @throws {@link UnauthorizedError} indicates an invalid authSessionId or no authSessionId was sent.
- *
- * @category DmsObjects
- *
- * @example ```typescript
+ * ```typescript
  * // nodejs
  * import { readFileSync } from "fs";
  *
- * const file: ArrayBuffer = readFileSync(`${__dirname}/chicken.pdf`).buffer;
+ * const file: ArrayBuffer = readFileSync(`${ __dirname } /chicken.pdf`).buffer;
+ *
  * const dmsObject: GetDmsObjectParams = await createDmsObject(context, {
  *   repositoryId: repoId,
  *   categoryId: "3ed080ff-ca5f-4248-a0e9-8234ba3abe11",
@@ -79,54 +115,9 @@ export function createDmsObjectDefaultTransformer(response: AxiosResponse<any>, 
  *   file: file
  * });
  * ```
+ * @category DmsObject
  */
-export async function createDmsObject(context: Context, params: CreateDmsObjectParams): Promise<GetDmsObjectParams>;
-
-/**
- * An additional transform-function can be supplied. Check out the docs for more information.
- * @param transform {@link CreateDmsObjectTransformer} Transformer for the {@link AxiosResponse}
- * @category DmsObjects
- *
- * @example ```typescript
- * const rawResponse: any = await createDmsObject(context, params, (res: AxiosResponse<any>) => res);
- * console.log(rawResponse.headers["location"]);
- * ```
- */
-export async function createDmsObject<T>(context: Context, params: CreateDmsObjectParams, transform: CreateDmsObjectTransformer<T>): Promise<T>;
-export async function createDmsObject(context: Context, params: CreateDmsObjectParams, transform: CreateDmsObjectTransformer<any> = createDmsObjectDefaultTransformer): Promise<any> {
-
-  if (params.content && !params.contentLocationUri) {
-    params.contentLocationUri = await storeFileTemporarily(context, {
-      repositoryId: params.repositoryId,
-      file: params.content
-    });
-  }
-
-  let response: AxiosResponse<void>;
-  try {
-    response = await getAxiosInstance().post<void>("/dms", {
-      sourceId: params.sourceId,
-      sourceCategory: params.categoryId,
-      sourceProperties: {
-        properties: params.properties
-      },
-      fileName: params.fileName,
-      contentLocationUri: params.contentLocationUri,
-      contentUri: params.contentUri
-    }, {
-      baseURL: context.systemBaseUri,
-      follows: ["repo", "dmsobjectwithmapping"],
-      templates: { "repositoryid": params.repositoryId },
-      headers: {
-        "Authorization": `Bearer ${context.authSessionId}`,
-        "Accept": "application/hal+json",
-        "Content-Type": "application/hal+json"
-      }
-    });
-
-  } catch (e: any) {
-    throw mapRequestError([400], errorContext, e);
-  }
-
-  return transform(response, context, params);
+/* istanbul ignore next */
+export async function createDmsObject(context: Context, params: CreateDmsObjectParams): Promise<GetDmsObjectParams> {
+  return await createDmsObjectFactory(defaultHttpRequestFunction, createDmsObjectDefaultTransformFunction, createDmsObjectDefaultStoreFileFunction)(context, params);
 }
