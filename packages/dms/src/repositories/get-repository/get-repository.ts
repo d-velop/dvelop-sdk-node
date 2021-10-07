@@ -64,7 +64,7 @@ export function getRepositoryFactory<T>(httpRequestFunction: HttpRequestFunction
  *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
  *   authSessionId: "dQw4w9WgXcQ"
  * }, {
- *   repositoryId: "21"
+ *   repositoryId: "169",
  * });
  * console.log(repo.name); // Booty Bay Documents
  * ```

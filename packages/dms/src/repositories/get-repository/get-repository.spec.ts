@@ -52,7 +52,7 @@ describe("getRepositoryFactory", () => {
     expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
   });
 
-  describe("getRepositoriesDefaultTransformFunction", () => {
+  describe("getRepositoryDefaultTransformFunction", () => {
 
     it("should map correctly", async () => {
 

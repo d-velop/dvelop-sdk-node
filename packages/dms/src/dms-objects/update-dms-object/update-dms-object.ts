@@ -1,6 +1,6 @@
 import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 import { Context } from "../../utils/context";
-import { storeFileTemporarily } from "../store-file-temporarily/store-file-femporarily";
+import { storeFileTemporarily } from "../store-file-temporarily/store-file-temporarily";
 
 export interface UpdateDmsObjectParams {
   /** ID of the repository */
@@ -69,7 +69,7 @@ export async function updateDmsObject(context: Context, params: UpdateDmsObjectP
   if (params.content && !params.contentLocationUri) {
     params.contentLocationUri = await storeFileTemporarily(context, {
       repositoryId: params.repositoryId,
-      file: params.content
+      content: params.content
     });
   }
 

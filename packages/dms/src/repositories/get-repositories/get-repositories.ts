@@ -43,7 +43,7 @@ export function getRepositoriesFactory<T>(httpRequestFunction: HttpRequestFuncti
  *   authSessionId: "dQw4w9WgXcQ"
  * });
  * const repoList: string = repos.map(r => r.name).join(", ");
- * console.log("Repositories:", repoList); // Booty Bay Documents, Everlook Documents, Ratchet Documents
+ * console.log("Repositories:", repoList); // Booty Bay, Everlook, Gadgetzan, Ratchet
  * ```
  *
  * @category Repository

@@ -59,7 +59,8 @@ export async function defaultHttpRequestFunction(context: Context, config: HttpC
 
   const defaultConfig: HttpConfig = {
     headers: {
-      "Accept": "application/hal+json, application/json"
+      "ContentType": "application/json",
+      "Accept": "application/hal+json, application/json",
     }
   };
 
@@ -71,7 +72,7 @@ export async function defaultHttpRequestFunction(context: Context, config: HttpC
     defaultConfig.headers["Authorization"] = `Bearer ${context.authSessionId}`;
   }
 
-  return await defaultAxiosInstanceFactory().request({ ...defaultConfig, ...config });
+  return await defaultAxiosInstanceFactory().request({ ...defaultConfig, ...config, ...{ headers: { ...defaultConfig.headers, ...config.headers } } });
 }
 
 export function mapRequestError(expectedStatusCodes: number[], context: string, error: Error): Error {
