@@ -1,8 +1,9 @@
 export * from "./utils/http";
 
-// Repositories
+// Repository
 export { getRepositoryFactory, getRepositoryDefaultTransformFunction } from "./repositories/get-repository/get-repository";
-export { GetRepositoriesTransformer, getRepositoriesDefaultTransformer } from "./repositories/get-repositories/get-repositories";
+export { getRepositoriesFactory, getRepositoriesDefaultTransformFunction } from "./repositories/get-repositories/get-repositories";
+
 
 // DmsObjects
 export { CreateDmsObjectTransformer, createDmsObjectDefaultTransformer } from "./dms-objects/create-dms-object/create-dms-object";

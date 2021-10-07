@@ -32,9 +32,9 @@ export { Context } from "./utils/context";
 export * from "./utils/errors";
 export * as internal from "./internals";
 
-// Repositories
-export { getRepositories } from "./repositories/get-repositories/get-repositories";
+// Repository
 export { GetRepositoryParams, Repository, getRepository } from "./repositories/get-repository/get-repository";
+export { getRepositories } from "./repositories/get-repositories/get-repositories";
 
 // DmsObjects
 export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
