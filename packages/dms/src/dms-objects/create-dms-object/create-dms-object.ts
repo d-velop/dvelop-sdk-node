@@ -66,9 +66,11 @@ export async function createDmsObjectDefaultStoreFileFunction(context: Context, 
  * @typeparam T Return type of the {@link createDmsObject}-function. A corresponding transformFuntion has to be supplied.
  * @category DmsObject
  */
-export function createDmsObjectFactory<T>(httpRequestFunction: (context: Context, config: HttpConfig)=> Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context, params: CreateDmsObjectParams)=> T,
-  storeFileFunction: (context: Context, params: CreateDmsObjectParams)=> Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>): (context: Context, params: CreateDmsObjectParams)=> Promise<T> {
+export function createDmsObjectFactory<T>(
+  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: Context, params: CreateDmsObjectParams) => T,
+  storeFileFunction: (context: Context, params: CreateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
+): (context: Context, params: CreateDmsObjectParams) => Promise<T> {
 
   return async (context: Context, params: CreateDmsObjectParams) => {
 

@@ -1,6 +1,5 @@
 import { Context } from "../../utils/context";
-import { defaultHttpRequestFunction, HttpRequestFunction, HttpResponse } from "../../utils/http";
-import { ApiCallFunction, HttpResponseTransformFunction } from "../../utils/types";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
 
 /**
  * Parameters for the {@link getRepository}-function.
@@ -42,7 +41,10 @@ export function getRepositoryDefaultTransformFunction(response: HttpResponse, _:
  * @typeparam T Return type of the {@link getRepository}-function. A corresponding transformFuntion has to be supplied.
  * @category Repository
  */
-export function getRepositoryFactory<T>(httpRequestFunction: HttpRequestFunction, transformFunction: HttpResponseTransformFunction<GetRepositoryParams, T>): ApiCallFunction<GetRepositoryParams, T> {
+export function getRepositoryFactory<T>(
+  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: Context, params: GetRepositoryParams) => T,
+): (context: Context, params: GetRepositoryParams) => Promise<T> {
   return async (context: Context, params: GetRepositoryParams) => {
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "GET",

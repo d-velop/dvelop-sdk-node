@@ -35,19 +35,12 @@
     ],
     "function-paren-newline": [
       "error",
-      "never"
+      "multiline"
     ],
     "no-console": [
       "error"
     ],
     "no-var": "error",
-    "@typescript-eslint/type-annotation-spacing": [
-      "error",
-      {
-        "before": false,
-        "after": true
-      }
-    ],
     "no-redeclare": "off",
     "@typescript-eslint/no-redeclare": [
       "error"

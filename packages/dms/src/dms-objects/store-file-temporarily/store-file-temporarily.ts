@@ -21,8 +21,10 @@ export function storeFileTemporarilyDefaultTransformFunction(response: HttpRespo
  * @typeparam T Return type of the {@link storeFileTemporarily}-function. A corresponding transformFuntion has to be supplied.
  * @category DmsObject
  */
-export function storeFileTemporarilyFactory<T>(httpRequestFunction: (context: Context, config: HttpConfig)=> Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context, params: StoreFileTemporarilyParams)=> T) {
+export function storeFileTemporarilyFactory<T>(
+  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: Context, params: StoreFileTemporarilyParams) => T
+): (context: Context, params: StoreFileTemporarilyParams) => Promise<T> {
   return async (context: Context, params: StoreFileTemporarilyParams) => {
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "POST",
