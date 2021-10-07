@@ -1,9 +1,14 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { Context } from "./context";
 import { followHalJson } from "../../../axios-hal-json/lib";
 import { BadInputError, DmsError, ForbiddenError, NotFoundError, UnauthorizedError } from "./errors";
 
 export { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 export const isAxiosError = axios.isAxiosError;
+
+export interface HttpConfig extends AxiosRequestConfig { }
+export interface HttpResponse extends AxiosResponse { }
+export type HttpRequestFunction = (context: Context, config: HttpConfig)=> Promise<HttpResponse>;
 
 let _axiosFactory: ()=> AxiosInstance;
 
@@ -22,6 +27,51 @@ export function defaultAxiosFactory(): AxiosInstance {
   const axiosInstance: AxiosInstance = axios.create();
   axiosInstance.interceptors.request.use(followHalJson);
   return axiosInstance;
+}
+
+function axiosErrorInterceptor(err: Error) {
+  if (isAxiosError(err)) {
+    if (err.response?.status) {
+      switch (err.response.status) {
+      case 400:
+        throw new BadInputError("", err);
+
+      case 401:
+        throw new UnauthorizedError("", err);
+      default:
+        break;
+      }
+    }
+    throw new Error("ErrorMerror");
+  } else {
+    throw err;
+  }
+}
+
+export function defaultAxiosInstanceFactory(config?: AxiosRequestConfig): AxiosInstance {
+  const axiosInstance: AxiosInstance = axios.create(config);
+  axiosInstance.interceptors.request.use(followHalJson);
+  axiosInstance.interceptors.response.use(undefined, axiosErrorInterceptor);
+  return axiosInstance;
+}
+
+export async function defaultHttpRequestFunction(context: Context, config: HttpConfig): Promise<HttpResponse> {
+
+  const defaultConfig: HttpConfig = {
+    headers: {
+      "Accept": "application/hal+json, application/json"
+    }
+  };
+
+  if (context.systemBaseUri) {
+    defaultConfig.baseURL = context.systemBaseUri;
+  }
+
+  if (context.authSessionId) {
+    defaultConfig.headers["Authorization"] = `Bearer ${context.authSessionId}`;
+  }
+
+  return await defaultAxiosInstanceFactory().request({ ...defaultConfig, ...config });
 }
 
 export function mapRequestError(expectedStatusCodes: number[], context: string, error: Error): Error {

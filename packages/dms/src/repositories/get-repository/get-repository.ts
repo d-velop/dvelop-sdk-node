@@ -1,93 +1,77 @@
 import { Context } from "../../utils/context";
-import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { defaultHttpRequestFunction, HttpRequestFunction, HttpResponse } from "../../utils/http";
+import { ApiCallFunction, HttpResponseTransformFunction } from "../../utils/types";
 
+/**
+ * Parameters for the {@link getRepository}-function.
+ * @category Repository
+ */
 export interface GetRepositoryParams {
+  /** Id of the repository */
   repositoryId: string;
 }
 
+/**
+ * A d.velop cloud repository.
+ * @category Repository
+ */
 export interface Repository {
+  /** Id of the repository */
   id: string;
+  /** Name of the repository */
   name: string;
+  /** Id of the default-source of the repository */
   sourceId: string;
 }
 
-export type GetRepositoryTransformer<T> = (response: AxiosResponse<any>, context: Context, params: GetRepositoryParams)=> T;
-
-export const getRepositoryDefaultTransformer: GetRepositoryTransformer<Repository> = (response: AxiosResponse<any>, _: Context, __: GetRepositoryParams) => {
-  const dto: any = response.data;
+/**
+ * Default transform-function provided to the {@link getRepository}-function.
+ * @category Repository
+ */
+export function getRepositoryDefaultTransformFunction(response: HttpResponse, _: Context, __: GetRepositoryParams): Repository {
+  const data: any = response.data;
   return {
-    id: dto.id,
-    name: dto.name,
-    sourceId: dto._links["source"].href
+    id: data.id,
+    name: data.name,
+    sourceId: data._links["source"].href
   };
-};
+}
 
 /**
- * Returns {@link Repository}-object for specified id.
- *
- * @param context A {@link Context} object.
- * @param params A {@link GetRepositoryParams} containing the repositoryId.
- *
- * @throws {@link BadRequestError} indicates invalid method params.
- * @throws {@link UnauthorizedError} indicates an invalid authSessionId or no authSessionId was sent.
- * @throws {@link NotFoundError} indicates that no repository with the specified id exists.
- *
+ * Factory for the {@link getRepository}-function. See internals for more information.
+ * @typeparam T Return type of the {@link getRepository}-function. A corresponding transformFuntion has to be supplied.
  * @category Repository
- *
- * @example ```typescript
- * import { Repository, getRepository } from "@dvelop-sdk/dms";
- *
- * const repo: Repository = await getRepository({ systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud", authSessionId: "dQw4w9WgXcQ" }, {
- *   repositoryId: "21"
- * });
- * console.log(repo.name); //Booty Bay Documents
- * ```
  */
-export async function getRepository(context: Context, params: GetRepositoryParams): Promise<Repository>;
-/**
- * An additional transform-function can be supplied. Check out the docs for more information.
- *
- * @param transform Transform-function for the {@link AxiosResponse}.
- *
- * @category Repository
- *
- * @example ```typescript
- * import { getRepository, internals } from "@dvelop-sdk/dms";
- *
- * const raw: internals.GetRepositoryDto = await getRepository<internals.GetRepositoryDto>(
- *   { systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud", authSessionId: "dQw4w9WgXcQ" },
- *   { repositoryId: repoId },
- *   (dto: AxiosResponse<internals.GetRepositoryDto>) => dto.data
- * );
- * console.log(raw.name); //Booty Bay Documents
- *
- *
- * const name: string = await getRepository<string>(
- *   { systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud", authSessionId: "dQw4w9WgXcQ" },
- *   { repositoryId: repoId },
- *   (dto: AxiosResponse<internals.GetRepositoryDto>) => dto.data.name
- * );
- * console.log(name); //Booty Bay Documents
- * ```
- */
-export async function getRepository<T>(context: Context, params: GetRepositoryParams, transform: GetRepositoryTransformer<T>): Promise<T>;
-export async function getRepository(context: Context, params: GetRepositoryParams, transform: GetRepositoryTransformer<any> = getRepositoryDefaultTransformer): Promise<any> {
-
-  let response: AxiosResponse<any>;
-  try {
-    response = await getAxiosInstance().get("/dms", {
-      baseURL: context.systemBaseUri,
-      headers: {
-        "Authorization": `Bearer ${context.authSessionId}`
-      },
+export function getRepositoryFactory<T>(httpRequestFunction: HttpRequestFunction, transformFunction: HttpResponseTransformFunction<GetRepositoryParams, T>): ApiCallFunction<GetRepositoryParams, T> {
+  return async (context: Context, params: GetRepositoryParams) => {
+    const response: HttpResponse = await httpRequestFunction(context, {
+      method: "GET",
+      url: "/dms",
       follows: ["repo"],
       templates: { "repositoryid": params.repositoryId }
     });
-  } catch (e) {
-    throw mapRequestError([404], "Failed to get repository", e);
-  }
-
-  return transform(response, context, params);
+    return transformFunction(response, context, params);
+  };
 }
 
-
+/**
+ * Returns the {@link Repository}-object with the specified id.
+ *
+ * ```typescript
+ * import { Repository, getRepository } from "@dvelop-sdk/dms";
+ *
+ * const repo: Repository = await getRepository({
+ *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * }, {
+ *   repositoryId: "21"
+ * });
+ * console.log(repo.name); // Booty Bay Documents
+ * ```
+ *
+ * @category Repository
+ */
+/* istanbul ignore next */
+export async function getRepository(context: Context, params: GetRepositoryParams): Promise<Repository> {
+  return getRepositoryFactory(defaultHttpRequestFunction, getRepositoryDefaultTransformFunction)(context, params);
+}

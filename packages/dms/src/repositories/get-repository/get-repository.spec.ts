@@ -1,43 +1,22 @@
 import { Context } from "../../utils/context";
-import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
-import { getRepository, GetRepositoryParams } from "./get-repository";
+import { HttpResponse } from "../../utils/http";
+import { GetRepositoryParams, Repository, getRepositoryDefaultTransformFunction, getRepositoryFactory } from "./get-repository";
 
 
+describe("getRepositoryFactory", () => {
 
-jest.mock("../../utils/http");
-const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAxiosInstance>;
-const mockGET = jest.fn();
-const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
+  let mockHttpRequestFunction = jest.fn();
+  let mockTransformFunction = jest.fn();
 
-let context: Context;
-let params: GetRepositoryParams;
-let mockTransform: any;
-
-describe("getRepository", () => {
+  let context: Context;
+  let params: GetRepositoryParams;
 
   beforeEach(() => {
 
     jest.resetAllMocks();
 
-    mockGetAxiosInstace.mockReturnValue({
-      get: mockGET
-    } as unknown as AxiosInstance);
-
-    mockGET.mockResolvedValue({
-      _links: {
-        source: {
-          href: "HiItsMeSourceId"
-        }
-      },
-      id: "HiItsMeRepoId",
-      name: "HiItsMeRepoName"
-    });
-
-    mockTransform = jest.fn();
-
     context = {
-      systemBaseUri: "HiItsMeSystemBaseUri",
-      authSessionId: "HiItsMeAuthSessionId"
+      systemBaseUri: "HiItsMeSystemBaseUri"
     };
 
     params = {
@@ -45,78 +24,65 @@ describe("getRepository", () => {
     };
   });
 
-  it("should to GET correctly", async () => {
-    await getRepository(context, params, mockTransform);
+  it("should make correct request", async () => {
 
-    expect(mockGET).toHaveBeenCalledTimes(1);
-    expect(mockGET).toHaveBeenCalledWith("/dms", {
-      baseURL: context.systemBaseUri,
-      headers: {
-        "Authorization": `Bearer ${context.authSessionId}`
-      },
+    const getRepository = getRepositoryFactory(mockHttpRequestFunction, mockTransformFunction);
+    await getRepository(context, params);
+
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+      method: "GET",
+      url: "/dms",
       follows: ["repo"],
       templates: { "repositoryid": params.repositoryId }
     });
   });
 
-  it("should throw mappedError on requestError", async () => {
+  it("should pass response to transform and return transform-result", async () => {
 
-    const getError: AxiosError = {
-      message: "HiItsMeErrorMessage"
-    } as AxiosError;
-    mockGET.mockRejectedValue(getError);
+    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
+    const transformResult: any = { result: "HiItsMeResult" };
+    mockHttpRequestFunction.mockResolvedValue(response);
+    mockTransformFunction.mockReturnValue(transformResult);
 
-    const mappedError: Error = new Error("HiItsMeMappedError");
-    mockMapRequestError.mockReturnValue(mappedError);
+    const getRepository = getRepositoryFactory(mockHttpRequestFunction, mockTransformFunction);
+    await getRepository(context, params);
 
-    let expectedError: Error;
-    try {
-      await getRepository(context, params, mockTransform);
-    } catch (e) {
-      expectedError = e;
-    }
-
-    expect(mockMapRequestError).toHaveBeenCalledTimes(1);
-    expect(mockMapRequestError).toHaveBeenCalledWith([404], "Failed to get repository", getError);
-    expect(expectedError).toEqual(mappedError);
+    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
+    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
   });
 
-  it("should return custom transform", async () => {
+  describe("getRepositoriesDefaultTransformFunction", () => {
 
-    const getResponse: AxiosResponse<any> = {
-      data: { test: "HiItsMeTest" }
-    } as AxiosResponse;
-    mockGET.mockResolvedValue(getResponse);
+    it("should map correctly", async () => {
 
-    const transformResult = "HiItsMeTransformResult";
-    mockTransform.mockReturnValue(transformResult);
-
-    await getRepository(context, params, mockTransform);
-
-    expect(mockTransform).toHaveBeenCalledTimes(1);
-    expect(mockTransform).toHaveBeenCalledWith(getResponse, context, params);
-  });
-
-  describe("default transform", () => {
-    it("should map repository correctly", async () => {
-
-      const repository: any = {
-        _links: {
-          source: {
-            href: "HiItsMeSourceId"
+      const data: any = {
+        "_links": {
+          "HiItsMeLink": {
+            "href": "HiItsMeHref",
+            "templated": true
           },
-          id: "HiItsMeRepoId",
-          name: "HiItsMeRepoName"
-        }
+          "source": {
+            "href": "HiItsMeSource",
+          }
+        },
+        "id": "HiItsMeRepoId",
+        "name": "HiItsMeName",
+        "supportsFulltextSearch": true,
+        "serverId": "HiItsMeServerId",
+        "available": true,
+        "isDefault": false,
+        "version": "HiItsMeVersion"
       };
-      mockGET.mockResolvedValue({ data: repository });
 
-      const result = await getRepository(context, params);
+      mockHttpRequestFunction.mockResolvedValue({ data: data } as HttpResponse);
 
-      expect(result).toHaveProperty("id", repository.id);
-      expect(result).toHaveProperty("name", repository.name);
-      expect(result).toHaveProperty("sourceId", repository._links.source.href);
+      const getRepository = getRepositoryFactory(mockHttpRequestFunction, getRepositoryDefaultTransformFunction);
+      const result: Repository = await getRepository(context, params);
+
+      expect(result).toHaveProperty("id", data.id);
+      expect(result).toHaveProperty("name", data.name);
+      expect(result).toHaveProperty("sourceId", data._links.source.href);
     });
   });
 });
-

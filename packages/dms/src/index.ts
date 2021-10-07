@@ -30,6 +30,7 @@ axios.interceptors.request.use(followHalJson);
 // Utils
 export { Context } from "./utils/context";
 export * from "./utils/errors";
+export * as internal from "./internals";
 
 // Repositories
 export { getRepositories } from "./repositories/get-repositories/get-repositories";
