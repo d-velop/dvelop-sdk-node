@@ -6,9 +6,9 @@ export { getRepositoriesFactory, getRepositoriesDefaultTransformFunction } from 
 
 
 // DmsObjects
-export { createDmsObjectFactory, createDmsObjectDefaultTransformer } from "./dms-objects/create-dms-object/create-dms-object";
 export { DeleteCurrentDmsObjectVersionTransformer, deleteCurrentDmsObjectVersionDefaultTransformer } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
 export { GetDmsObjectTransformer, getDmsObjectDefaultTransformer } from "./dms-objects/get-dms-object/get-dms-object";
 export { GetDmsObjectFileTransformer, requestDmsObjectBlob } from "./dms-objects/get-dms-object-file/get-dms-object-file";
 export { storeFileTemporarilyFactory, storeFileTemporarilyDefaultTransformFunction } from "./dms-objects/store-file-temporarily/store-file-temporarily";
-export { UpdateDmsObjectTransformer } from "./dms-objects/update-dms-object/update-dms-object";
+export { createDmsObjectFactory, createDmsObjectDefaultTransformFunction, createDmsObjectDefaultStoreFileFunction } from "./dms-objects/create-dms-object/create-dms-object";
+export { updateDmsObjectFactory, updateDmsObjectDefaultTransformFunction, updateDmsObjectDefaultStoreFileFunction } from "./dms-objects/update-dms-object/update-dms-object";
