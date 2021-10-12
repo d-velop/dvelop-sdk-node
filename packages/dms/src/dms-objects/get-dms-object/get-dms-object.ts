@@ -1,6 +1,6 @@
-import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { AxiosResponse, HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
 import { Context } from "../../utils/context";
-import { requestDmsObjectBlob } from "../get-dms-object-file/get-dms-object-file";
+import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
 
 export interface GetDmsObjectParams {
   /** ID of the repository */
@@ -33,82 +33,62 @@ export interface DmsObject {
     displayValue?: string;
   }[];
 
-  getFile?: ()=> Promise<ArrayBuffer>;
-  getPdf?: ()=> Promise<ArrayBuffer>;
+  getMainFile?: () => Promise<ArrayBuffer>;
+  getPdfFile?: () => Promise<ArrayBuffer>;
 }
 
-export type GetDmsObjectTransformer<T> = (response: AxiosResponse<any>, context: Context, params: GetDmsObjectParams)=> T;
+export function getDmsObjectDefaultTransformFunctionFactory(
+  getDmsObjectMainFileFunction: (context: Context, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
+  getDmsObjectPdfFileFunction: (context: Context, params: GetDmsObjectParams) => Promise<ArrayBuffer>
+) {
+  return (response: AxiosResponse<any>, context: Context, params: GetDmsObjectParams) => {
 
-export const getDmsObjectDefaultTransformer: GetDmsObjectTransformer<DmsObject> = (response: AxiosResponse<any>, context: Context, params: GetDmsObjectParams) => {
+    const dmsObject: DmsObject = {
+      repositoryId: params.repositoryId,
+      sourceId: params.sourceId,
+      id: params.dmsObjectId,
+      categories: response.data.sourceCategories,
+      properties: response.data.sourceProperties
+    };
 
-  const dmsObject: DmsObject = {
-    repositoryId: params.repositoryId,
-    sourceId: params.sourceId,
-    id: response.data?.id,
-    categories: response.data?.sourceCategories,
-    properties: response.data?.sourceProperties
+    if (response.data._links.mainblobcontent) {
+      dmsObject.getMainFile = async () => (await getDmsObjectMainFileFunction(context, params));
+    }
+
+    if (response.data._links.pdfblobcontent) {
+      dmsObject.getPdfFile = async () => (await getDmsObjectPdfFileFunction(context, params));
+    }
+
+    return dmsObject;
   };
+}
 
-  if (response.data?._links?.mainblobcontent) {
-    const url: string = response.data._links.mainblobcontent.href;
-    dmsObject.getFile = async () => (await requestDmsObjectBlob(context, url)).data;
-  }
+export function getDmsObjectFactory<T>(
+  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: Context, params: GetDmsObjectParams) => T
+): (context: Context, params: GetDmsObjectParams) => Promise<T> {
+  return async (context: Context, params: GetDmsObjectParams) => {
 
-  if (response.data?._links?.pdfblobcontent) {
-    const url: string = response.data._links.pdfblobcontent.href;
-    dmsObject.getPdf = async () => (await requestDmsObjectBlob(context, url)).data;
-  }
-
-  return dmsObject;
-};
-
-/**
- * Get a DmsObject from a repository of the DMS-App.
- *
- * @param context {@link Context}-object containing systemBaseUri and a valid authSessionId.
- * @param params {@link GetDmsObjectParams}-object containing repositoryId, sourceId and dmsObjectId.
- *
- * @category DmsObjects
- *
- * @example ```typescript
- * TODO
- * ```
- */
-export async function getDmsObject(context: Context, params: GetDmsObjectParams): Promise<DmsObject>
-
-/**
- * An additional transform-function can be supplied. Check out the docs for more information.
- *
- * @param transform Transformer for the {@link AxiosResponse}.
- *
- * @category DmsObjects
- *
- * @example ```typescript
- * TODO
- * ```
- */
-export async function getDmsObject<T>(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectTransformer<T>): Promise<T>
-export async function getDmsObject(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectTransformer<any> = getDmsObjectDefaultTransformer): Promise<any> {
-
-  let response: AxiosResponse<any>;
-  try {
-    response = await getAxiosInstance().get("/dms", {
-      baseURL: context.systemBaseUri,
-      headers: {
-        "Authorization": `Bearer ${context.authSessionId}`,
-        "Accept": "application/hal+json"
-      },
+    const response: HttpResponse = await httpRequestFunction(context, {
+      method: "GET",
+      url: "/dms",
       follows: ["repo", "dmsobjectwithmapping"],
       templates: {
         "repositoryid": params.repositoryId,
-        "dmsobjectid": params.dmsObjectId,
-        "sourceid": params.sourceId
+        "sourceid": params.sourceId,
+        "dmsobjectid": params.dmsObjectId
       }
     });
+    return transformFunction(response, context, params);
+  };
+}
 
-  } catch (e) {
-    throw mapRequestError([400, 404], "Failed to get dmsObject", e);
-  }
+/* istanbul ignore next */
+export async function getDmsObjectDefaultTransformFunction(response: AxiosResponse<any>, context: Context, params: GetDmsObjectParams) {
+  return getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile)(response, context, params);
+}
 
-  return transform(response, context, params);
+/* istanbul ignore next */
+export async function getDmsObject(context: Context, params: GetDmsObjectParams) {
+  return getDmsObjectFactory(defaultHttpRequestFunction, getDmsObjectDefaultTransformFunction)(context, params);
 }

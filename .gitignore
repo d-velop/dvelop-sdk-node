@@ -4,4 +4,4 @@ docs
 *.tsbuildinfo
 tmp-*
 lerna-debug.log
-chicken.pdf
+chicken.*

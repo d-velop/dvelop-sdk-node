@@ -7,10 +7,10 @@ export { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 export const isAxiosError = axios.isAxiosError;
 
 export interface HttpConfig extends AxiosRequestConfig { }
-export interface HttpResponse extends AxiosResponse { }
-export type HttpRequestFunction = (context: Context, config: HttpConfig)=> Promise<HttpResponse>;
+export interface HttpResponse<T = any> extends AxiosResponse<T> { }
+export type HttpRequestFunction = (context: Context, config: HttpConfig) => Promise<HttpResponse>;
 
-let _axiosFactory: ()=> AxiosInstance;
+let _axiosFactory: () => AxiosInstance;
 
 export function getAxiosInstance(): AxiosInstance {
   if (!_axiosFactory) {
@@ -19,7 +19,7 @@ export function getAxiosInstance(): AxiosInstance {
   return _axiosFactory();
 }
 
-export function setAxiosFactory(axiosFactory: ()=> AxiosInstance): void {
+export function setAxiosFactory(axiosFactory: () => AxiosInstance): void {
   _axiosFactory = axiosFactory;
 }
 

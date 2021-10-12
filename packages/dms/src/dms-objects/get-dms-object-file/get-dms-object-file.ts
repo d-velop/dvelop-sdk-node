@@ -1,56 +1,67 @@
-import { Context, GetDmsObjectParams, getDmsObject } from "../../index";
-import { NotFoundError } from "../../utils/errors";
-import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { NoHalJsonLinksInResponseError } from "@dvelop-sdk/axios-hal-json";
+import { Context, GetDmsObjectParams, NotFoundError } from "../../index";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
 
-export type GetDmsObjectFileTransformer<T> = (response: AxiosResponse<ArrayBuffer>, context: Context, params: GetDmsObjectParams)=> T;
-
-export async function getDmsObjectFile(context: Context, params: GetDmsObjectParams): Promise<ArrayBuffer>;
-export async function getDmsObjectFile<T>(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<T>): Promise<T>;
-export async function getDmsObjectFile(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<any> = (response) => response.data): Promise<any> {
-
-  const getDmsObjectResponse: AxiosResponse<any> = await getDmsObject(context, params, (response: AxiosResponse) => response);
-
-  let url: string;
-  if (getDmsObjectResponse.data?._links?.mainblobcontent) {
-    url = getDmsObjectResponse.data._links.mainblobcontent.href;
-  } else {
-    throw new NotFoundError("Failed to get dmsObjectFile", undefined, "No href for mainblobcontent indicating there is no file for this dmsObject.");
-  }
-
-  const response: AxiosResponse<ArrayBuffer> = await requestDmsObjectBlob(context, url);
-  return transform(response, context, params);
+export async function getDmsObjectFileDefaultTransformFunction(response: HttpResponse<ArrayBuffer>, _: Context, __: GetDmsObjectParams) {
+  return response.data;
 }
 
-export async function getDmsObjectPdf(context: Context, params: GetDmsObjectParams): Promise<ArrayBuffer>;
-export async function getDmsObjectPdf<T>(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<T>): Promise<T>;
-export async function getDmsObjectPdf(context: Context, params: GetDmsObjectParams, transform: GetDmsObjectFileTransformer<any> = (response) => response.data): Promise<any> {
-
-  const getDmsObjectResponse: AxiosResponse<any> = await getDmsObject(context, params, (response: AxiosResponse) => response);
-
-  let url: string;
-  if (getDmsObjectResponse.data?._links?.pdfblobcontent) {
-    url = getDmsObjectResponse.data._links.pdfblobcontent.href;
-  } else {
-    throw new NotFoundError("Failed to get dmsObjectPdf", undefined, "No href for pdfblobcontent indicating there is no pdf for this dmsObject.");
-  }
-
-  const response: AxiosResponse<ArrayBuffer> = await requestDmsObjectBlob(context, url);
-  return transform(response, context, params);
-}
-
-export async function requestDmsObjectBlob(context: Context, url: string): Promise<AxiosResponse<ArrayBuffer>> {
-
+async function getDmsObjectBlobContentRespone(
+  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse<ArrayBuffer>>,
+  follow: string,
+  context: Context,
+  params: GetDmsObjectParams
+): Promise<HttpResponse<ArrayBuffer>> {
   try {
-    return await getAxiosInstance().get(url, {
-      baseURL: context.systemBaseUri,
+    return await httpRequestFunction(context, {
+      method: "GET",
+      url: "/dms",
       headers: {
-        "Authorization": `Bearer ${context.authSessionId}`,
         "Accept": "application/octet-stream"
       },
-      responseType: "arraybuffer"
+      responseType: "arraybuffer",
+      follows: ["repo", "dmsobjectwithmapping", follow],
+      templates: {
+        "repositoryid": params.repositoryId,
+        "sourceid": params.sourceId,
+        "dmsobjectid": params.dmsObjectId
+      }
     });
-  } catch (e) {
-    throw mapRequestError([400, 404],  "Failed to download dmsObjectFile", e);
+  } catch(e: any) {
+    if(e instanceof NoHalJsonLinksInResponseError) {
+      throw new NotFoundError("");
+    } else {
+      throw e;
+    }
   }
 }
 
+export function getDmsObjectMainFileFactory<T>(
+  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse<ArrayBuffer>, context: Context, params: GetDmsObjectParams) => T
+): (context: Context, params: GetDmsObjectParams) => Promise<T> {
+  return async (context: Context, params: GetDmsObjectParams) => {
+    const response: HttpResponse<ArrayBuffer> = await getDmsObjectBlobContentRespone(httpRequestFunction, "mainblobcontent", context, params);
+    return transformFunction(response, context, params);
+  };
+}
+
+export function getDmsObjectPdfFileFactory<T>(
+  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse<ArrayBuffer>, context: Context, params: GetDmsObjectParams) => T
+): (context: Context, params: GetDmsObjectParams) => Promise<T> {
+  return async (context: Context, params: GetDmsObjectParams) => {
+    const response: HttpResponse<ArrayBuffer> = await getDmsObjectBlobContentRespone(httpRequestFunction, "pdfblobcontent", context, params);
+    return transformFunction(response, context, params);
+  };
+}
+
+/* istanbul ignore next */
+export async function getDmsObjectMainFile(context: Context, params: GetDmsObjectParams): Promise<ArrayBuffer> {
+  return getDmsObjectMainFileFactory(defaultHttpRequestFunction, getDmsObjectFileDefaultTransformFunction)(context, params);
+}
+
+/* istanbul ignore next */
+export async function getDmsObjectPdfFile(context: Context, params: GetDmsObjectParams): Promise<ArrayBuffer> {
+  return getDmsObjectPdfFileFactory(defaultHttpRequestFunction, getDmsObjectFileDefaultTransformFunction)(context, params);
+}
