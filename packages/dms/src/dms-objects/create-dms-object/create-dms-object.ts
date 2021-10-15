@@ -1,10 +1,7 @@
-import { DmsError } from "../../utils/errors";
-import { AxiosResponse, HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
+import { AxiosResponse, HttpConfig, HttpResponse, defaultHttpRequestFunction, DmsError } from "../../utils/http";
 import { Context } from "../../utils/context";
 import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
 import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
-
-const errorContext = "Failed to create dmsObject";
 
 export interface CreateDmsObjectParams {
   /** ID of the repository */
@@ -49,7 +46,7 @@ export function createDmsObjectDefaultTransformFunction(response: AxiosResponse<
       dmsObjectId: matches[1]
     };
   } else {
-    throw new DmsError(errorContext, undefined, `Failed to parse dmsObjectId from '${location}'`);
+    throw new DmsError(`Failed to parse dmsObjectId from '${location}'`);
   }
 }
 

@@ -1,8 +1,7 @@
 import { Context } from "../../utils/context";
 import { getDmsObjectFactory } from "../get-dms-object/get-dms-object";
-import { HttpResponse } from "../../utils/http";
+import { HttpResponse, ForbiddenError} from "../../utils/http";
 import { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersionFactory, deleteCurrentDmsObjectVersionDefaultTransformFunction } from "./delete-current-dms-object-version";
-import { ForbiddenError } from "../..";
 
 jest.mock("../get-dms-object/get-dms-object");
 const mockGetDmsObjectFactory = getDmsObjectFactory as jest.MockedFunction<typeof getDmsObjectFactory>;
@@ -20,7 +19,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
 
     jest.resetAllMocks();
     mockGetDmsObjectFactory.mockReturnValue(mockGetDmsObject);
-    
+
 
     context = {
       systemBaseUri: "HiItsMeSystemBaseUri"

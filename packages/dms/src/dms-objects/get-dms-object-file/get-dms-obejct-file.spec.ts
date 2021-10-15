@@ -1,9 +1,8 @@
 import { Context } from "../../utils/context";
 import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
 import { getDmsObjectFileDefaultTransformFunction, getDmsObjectMainFileFactory, getDmsObjectPdfFileFactory } from "./get-dms-object-file";
-import { HttpResponse } from "../../utils/http";
+import { HttpResponse, NotFoundError } from "../../utils/http";
 import { NoHalJsonLinksInResponseError } from "@dvelop-sdk/axios-hal-json";
-import { NotFoundError } from "../../utils/errors";
 
 [
   {

@@ -1,6 +1,5 @@
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction, ForbiddenError } from "../../utils/http";
 import { Context } from "../../utils/context";
-import { ForbiddenError } from "../../utils/errors";
 import { getDmsObjectFactory } from "../get-dms-object/get-dms-object";
 
 
@@ -46,7 +45,7 @@ export function deleteCurrentDmsObjectVersionFactory<T>(
     } else if (getDmsObjectResponse.data._links.delete) {
       url = getDmsObjectResponse.data._links.delete.href;
     } else {
-      throw new ForbiddenError("", undefined, "Deletion denied for user.");
+      throw new ForbiddenError("Deletion denied for user.");
     }
 
     const response: HttpResponse = await httpRequestFunction(context, {

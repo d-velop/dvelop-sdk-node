@@ -1,6 +1,7 @@
 import { NoHalJsonLinksInResponseError } from "@dvelop-sdk/axios-hal-json";
-import { Context, GetDmsObjectParams, NotFoundError } from "../../index";
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
+import { GetDmsObjectParams } from "../../dms-objects/get-dms-object/get-dms-object";
+import { Context } from "../../utils/context";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction, NotFoundError } from "../../utils/http";
 
 export async function getDmsObjectFileDefaultTransformFunction(response: HttpResponse<ArrayBuffer>, _: Context, __: GetDmsObjectParams) {
   return response.data;
@@ -27,9 +28,9 @@ async function getDmsObjectBlobContentRespone(
         "dmsobjectid": params.dmsObjectId
       }
     });
-  } catch(e: any) {
-    if(e instanceof NoHalJsonLinksInResponseError) {
-      throw new NotFoundError("");
+  } catch (e: any) {
+    if (e instanceof NoHalJsonLinksInResponseError) {
+      throw new NotFoundError(`No File found for dmsObject '${params.dmsObjectId} in repository ${params.repositoryId}.`);
     } else {
       throw e;
     }
