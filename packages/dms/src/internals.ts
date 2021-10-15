@@ -6,7 +6,7 @@ export { getRepositoriesFactory, getRepositoriesDefaultTransformFunction } from 
 
 
 // DmsObjects
-export { DeleteCurrentDmsObjectVersionTransformer, deleteCurrentDmsObjectVersionDefaultTransformer } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
+export { deleteCurrentDmsObjectVersionFactory, deleteCurrentDmsObjectVersionDefaultTransformFunction } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
 export { getDmsObjectFactory, getDmsObjectDefaultTransformFunction } from "./dms-objects/get-dms-object/get-dms-object";
 export { getDmsObjectMainFileFactory, getDmsObjectPdfFileFactory, getDmsObjectFileDefaultTransformFunction } from "./dms-objects/get-dms-object-file/get-dms-object-file";
 export { storeFileTemporarilyFactory, storeFileTemporarilyDefaultTransformFunction } from "./dms-objects/store-file-temporarily/store-file-temporarily";
