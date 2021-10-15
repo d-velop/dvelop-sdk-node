@@ -1,102 +1,141 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { followHalJson } from "@dvelop-sdk/axios-hal-json";
 import { Context } from "./context";
-import { followHalJson } from "../../../axios-hal-json/lib";
-import { BadInputError, DmsError, ForbiddenError, NotFoundError, UnauthorizedError } from "./errors";
 
 export { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 export const isAxiosError = axios.isAxiosError;
 
 export interface HttpConfig extends AxiosRequestConfig { }
 export interface HttpResponse<T = any> extends AxiosResponse<T> { }
+export interface HttpError extends AxiosError { }
 export type HttpRequestFunction = (context: Context, config: HttpConfig) => Promise<HttpResponse>;
 
-let _axiosFactory: () => AxiosInstance;
+export interface DmsErrorDto {
+  reason: string
+}
 
-export function getAxiosInstance(): AxiosInstance {
-  if (!_axiosFactory) {
-    _axiosFactory = defaultAxiosFactory;
+/**
+*
+* @category Error
+*/
+/* istanbul ignore next */
+export class DmsError extends Error {
+  // eslint-disable-next-line no-unused-vars
+  constructor(public message: string, public originalError?: Error) {
+    super(message);
+    Object.setPrototypeOf(this, DmsError.prototype);
   }
-  return _axiosFactory();
 }
 
-export function setAxiosFactory(axiosFactory: () => AxiosInstance): void {
-  _axiosFactory = axiosFactory;
+/**
+*
+* @category Error
+*/
+/* istanbul ignore next */
+export class BadInputError extends DmsError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(public message: string, public originalError?: Error) {
+    super(message);
+    Object.setPrototypeOf(this, BadInputError.prototype);
+  }
 }
 
-export function defaultAxiosFactory(): AxiosInstance {
-  const axiosInstance: AxiosInstance = axios.create();
-  axiosInstance.interceptors.request.use(followHalJson);
-  return axiosInstance;
+/**
+*
+* @category Error
+*/
+/* istanbul ignore next */
+export class UnauthorizedError extends DmsError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(public message: string, public originalError?: Error) {
+    super(message);
+    Object.setPrototypeOf(this, UnauthorizedError.prototype);
+  }
 }
 
-function axiosErrorInterceptor(err: Error) {
-  if (isAxiosError(err)) {
-    if (err.response?.status) {
-      switch (err.response.status) {
-      case 400:
-        throw new BadInputError("", err);
+/**
+*
+* @category Error
+*/
+/* istanbul ignore next */
+export class ForbiddenError extends DmsError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(public message: string, public originalError?: Error) {
+    super(message);
+    Object.setPrototypeOf(this, ForbiddenError.prototype);
+  }
+}
 
-      case 401:
-        throw new UnauthorizedError("", err);
-      default:
-        break;
-      }
+/**
+*
+* @category Error
+*/
+/* istanbul ignore next */
+export class NotFoundError extends DmsError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(public message: string, public originalError?: Error) {
+    super(message);
+    Object.setPrototypeOf(this, NotFoundError.prototype);
+  }
+}
+
+export function axiosErrorInterceptor(error: Error) {
+
+  if (axios.isAxiosError(error) && error.response) {
+
+    <AxiosError<DmsErrorDto>>error;
+    switch (error.response.status) {
+    case 400:
+      throw new BadInputError(error.response.data?.reason || "DMS-App responded with Status 400 indicating bad Request-Parameters. See 'originalError'-property for details.", error);
+
+    case 401:
+      throw new UnauthorizedError(error.response.data?.reason || "DMS-App responded with Status 401 indicating bad authSessionId.", error);
+
+    case 403:
+      throw new ForbiddenError(error.response.data?.reason || "DMS-App responded with Status 403 indicating a forbidden action. See 'originalError'-property for details.", error);
+
+    case 404:
+      throw new NotFoundError(error.response.data?.reason || "DMS-App responded with Status 404 indicating a requested resource does not exist. See 'originalError'-property for details.", error);
+
+    default:
+      throw new DmsError(error.response.data?.reason || `DMS-App responded with status ${error.response.status}. See 'originalError'-property for details.`, error);
     }
-    throw new Error("ErrorMerror");
   } else {
-    throw err;
+    throw new DmsError(`Request to DMS-App failed: ${error.message}. See 'originalError'-property for details.`, error);
   }
 }
 
-export function defaultAxiosInstanceFactory(config?: AxiosRequestConfig): AxiosInstance {
-  const axiosInstance: AxiosInstance = axios.create(config);
+export function defaultAxiosInstanceFactory(): AxiosInstance {
+  const axiosInstance: AxiosInstance = axios.create();
   axiosInstance.interceptors.request.use(followHalJson);
   axiosInstance.interceptors.response.use(undefined, axiosErrorInterceptor);
   return axiosInstance;
 }
 
-export async function defaultHttpRequestFunction(context: Context, config: HttpConfig): Promise<HttpResponse> {
+export function httpRequestFunctionFactory(httpClient: { request: (config: HttpConfig) => Promise<HttpResponse> }): (context: Context, config: HttpConfig) => Promise<HttpResponse> {
+  return (context: Context, config: HttpConfig) => {
 
-  const defaultConfig: HttpConfig = {
-    headers: {
-      "ContentType": "application/json",
-      "Accept": "application/hal+json, application/json",
+
+    const defaultConfig: HttpConfig = {
+      headers: {
+        "ContentType": "application/json",
+        "Accept": "application/hal+json, application/json",
+      }
+    };
+
+    if (context.systemBaseUri) {
+      defaultConfig.baseURL = context.systemBaseUri;
     }
+
+    if (context.authSessionId) {
+      defaultConfig.headers["Authorization"] = `Bearer ${context.authSessionId}`;
+    }
+
+    return httpClient.request({ ...defaultConfig, ...config, ...{ headers: { ...defaultConfig.headers, ...config.headers } } });
   };
-
-  if (context.systemBaseUri) {
-    defaultConfig.baseURL = context.systemBaseUri;
-  }
-
-  if (context.authSessionId) {
-    defaultConfig.headers["Authorization"] = `Bearer ${context.authSessionId}`;
-  }
-
-  return await defaultAxiosInstanceFactory().request({ ...defaultConfig, ...config, ...{ headers: { ...defaultConfig.headers, ...config.headers } } });
 }
 
-export function mapRequestError(expectedStatusCodes: number[], context: string, error: Error): Error {
-
-  if (isAxiosError(error) && error.response?.status) {
-
-    const status: number = error.response.status;
-
-    if (status === 401) {
-      return new UnauthorizedError(context, error);
-    } else if (expectedStatusCodes.includes(status)) {
-
-      switch (status) {
-      case 400:
-        return new BadInputError(context, error);
-
-      case 403:
-        return new ForbiddenError(context, error);
-
-      case 404:
-        return new NotFoundError(context, error);
-      }
-    }
-  }
-
-  return new DmsError(context, error);
+/* istanbul ignore next */
+export async function defaultHttpRequestFunction(context: Context, config: HttpConfig): Promise<HttpResponse> {
+  return httpRequestFunctionFactory(defaultAxiosInstanceFactory())(context, config);
 }

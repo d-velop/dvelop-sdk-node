@@ -1,16 +1,14 @@
-import axios, { AxiosError, AxiosInstance } from "axios";
-import { BadInputError, DmsError, ForbiddenError, NotFoundError, UnauthorizedError } from "./errors";
-import { getAxiosInstance, mapRequestError, setAxiosFactory } from "./http";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import { followHalJson } from "@dvelop-sdk/axios-hal-json";
+import { Context } from "./context";
+import { axiosErrorInterceptor, BadInputError, defaultAxiosInstanceFactory, DmsError, ForbiddenError, HttpConfig, httpRequestFunctionFactory, NotFoundError, UnauthorizedError } from "./http";
 
 jest.mock("axios");
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockAxios = axios as jest.Mocked<typeof axios>;
 
-jest.mock("./errors");
-const mockUnauthorizedError = UnauthorizedError as jest.MockedClass<typeof UnauthorizedError>;
-const mockBadInputError = BadInputError as jest.MockedClass<typeof BadInputError>;
-const mockForbiddenError = ForbiddenError as jest.MockedClass<typeof ForbiddenError>;
-const mockNotFoundError = NotFoundError as jest.MockedClass<typeof NotFoundError>;
-const mockDmsError = DmsError as jest.MockedClass<typeof DmsError>;
+jest.mock("@dvelop-sdk/axios-hal-json");
+const mockFollowHalJson = followHalJson as jest.Mocked<typeof followHalJson>;
+
 
 describe("http", () => {
 
@@ -18,172 +16,198 @@ describe("http", () => {
     jest.resetAllMocks();
   });
 
-  describe("axiosInstance", () => {
+  describe("axiosErrorInterceptor", () => {
 
-    beforeEach(() => {
-      setAxiosFactory(null);
+    it("should wrap error in DmsError if not an AxiosError", () => {
+
+
+      const errorMessage: string = "HiItsMeError";
+      mockAxios.isAxiosError.mockReturnValue(false);
+
+      let expectedError: any;
+      try {
+        axiosErrorInterceptor(new Error(errorMessage));
+      } catch (e: any) {
+        expectedError = e;
+      }
+
+      expect(expectedError instanceof DmsError).toBeTruthy();
+      expect(expectedError.message).toEqual(`Request to DMS-App failed: ${errorMessage}. See 'originalError'-property for details.`);
     });
 
-    it("should initialize axiosFactory with default factory", () => {
 
-      const mockedAxiosInstance: AxiosInstance = {
-        interceptors: {
-          request: {
-            use: jest.fn()
+    describe("on AxiosError", () => {
+
+      beforeEach(() => {
+        mockAxios.isAxiosError.mockReturnValue(true);
+      });
+
+      [
+        { status: 400, type: BadInputError, defaultMessage: "DMS-App responded with Status 400 indicating bad Request-Parameters. See 'originalError'-property for details." },
+        { status: 401, type: UnauthorizedError, defaultMessage: "DMS-App responded with Status 401 indicating bad authSessionId." },
+        { status: 403, type: ForbiddenError, defaultMessage: "DMS-App responded with Status 403 indicating a forbidden action. See 'originalError'-property for details." },
+        { status: 404, type: NotFoundError, defaultMessage: "DMS-App responded with Status 404 indicating a requested resource does not exist. See 'originalError'-property for details." },
+        { status: 500, type: DmsError, defaultMessage: "DMS-App responded with status 500. See 'originalError'-property for details." }
+      ].forEach(testCase => {
+
+        it(`should wrap default message on status ${testCase.status} and no reason`, () => {
+
+          const error: AxiosError = {
+            response: {
+              status: testCase.status
+            } as AxiosResponse
+          } as AxiosError;
+
+          let expectedError: any;
+          try {
+            axiosErrorInterceptor(error);
+          } catch (e: any) {
+            expectedError = e;
           }
-        }
-      } as unknown as AxiosInstance;
 
-      mockedAxios.create.mockReturnValue(mockedAxiosInstance);
+          expect(expectedError instanceof testCase.type).toBeTruthy();
+          expect(expectedError.message).toEqual(testCase.defaultMessage);
+          expect(expectedError.originalError).toEqual(error);
+        });
 
-      const result = getAxiosInstance();
-      expect(result).toBe(mockedAxiosInstance);
-      expect(mockedAxiosInstance.interceptors.request.use).toHaveBeenLastCalledWith(expect.any(Function));
-    });
+        it(`should wrap message on statis ${testCase.status} if there is a reason`, () => {
 
-    it("should use custom axiosFactory", () => {
-      const factory = (() => "axios") as unknown as ()=> AxiosInstance;
-      setAxiosFactory(factory);
-      expect(getAxiosInstance()).toEqual("axios");
+          const error: AxiosError = {
+            response: {
+              status: testCase.status,
+              data: {
+                reason: "HiItsMeReason"
+              }
+            } as AxiosResponse
+          } as AxiosError;
+
+          let expectedError: any;
+          try {
+            axiosErrorInterceptor(error);
+          } catch (e: any) {
+            expectedError = e;
+          }
+
+          expect(expectedError instanceof testCase.type).toBeTruthy();
+          expect(expectedError.message).toEqual(error.response.data.reason);
+          expect(expectedError.originalError).toEqual(error);
+        });
+      });
+
     });
   });
 
-  describe("mapRequestError", () => {
+  it("should correctly create AxiosInstance", () => {
 
-    [[], [401], [400, 404]].forEach(testCase => {
-      it("should map to UnauthorizesError on status 401 regardless of expected", () => {
-        const errorContext = "HiItsMeErrorContext";
-        const error: AxiosError = {
-          response: {
-            status: 401
-          }
-        } as AxiosError;
-        mockedAxios.isAxiosError.mockReturnValue(true);
+    const mockAxiosInstance: AxiosInstance = {
+      interceptors: {
+        request: {
+          use: jest.fn()
+        },
+        response: {
+          use: jest.fn()
+        }
+      }
+    } as unknown as AxiosInstance;
 
-        const result: Error = mapRequestError(testCase, errorContext, error);
+    mockAxios.create.mockReturnValue(mockAxiosInstance);
 
-        expect(mockUnauthorizedError).toHaveBeenCalledTimes(1);
-        expect(mockUnauthorizedError).toHaveBeenCalledWith(errorContext, error);
-        expect(result instanceof UnauthorizedError).toBeTruthy();
+    defaultAxiosInstanceFactory();
+
+    expect(mockAxios.create).toHaveBeenCalledTimes(1);
+    expect(mockAxiosInstance.interceptors.request.use).toHaveBeenCalledWith(mockFollowHalJson);
+    expect(mockAxiosInstance.interceptors.response.use).toHaveBeenCalledWith(undefined, expect.any(Function));
+  });
+
+  describe("httpRequestFunctionFactory", () => {
+
+    const mockHttpClient = {
+      request: jest.fn()
+    };
+
+    let context: Context;
+    let config: HttpConfig;
+
+    it("should have default config on empty context", async () => {
+
+      context = {};
+
+      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
+      await httpRequestFunction(context, {});
+
+      expect(mockHttpClient.request).toHaveBeenCalledWith({
+        headers: {
+          "ContentType": "application/json",
+          "Accept": "application/hal+json, application/json"
+        }
       });
     });
 
-    it("should map to BadInputError on status 400 if mapped", () => {
-      const errorContext = "HiItsMeErrorContext";
-      const error: AxiosError = {
-        response: {
-          status: 400
+    it("should set systemBaseUri as baseURL", async () => {
+
+      context = {
+        systemBaseUri: "HiItsMeSystemBaseUri"
+      };
+
+      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
+      await httpRequestFunction(context, {});
+
+      expect(mockHttpClient.request).toHaveBeenCalledWith(expect.objectContaining({
+        baseURL: context.systemBaseUri
+      }));
+    });
+
+    it("should set authSessionId as Bearer-Token", async () => {
+
+      context = {
+        authSessionId: "HiItsMeAuthSessionId"
+      };
+
+      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
+      await httpRequestFunction(context, {});
+
+      expect(mockHttpClient.request).toHaveBeenCalledWith(expect.objectContaining({
+        headers: expect.objectContaining({
+          "Authorization": `Bearer ${context.authSessionId}`
+        })
+      }));
+    });
+
+    it("should add config", async () => {
+
+      config = {
+        method: "GET",
+        data: "HiItsMeData"
+      };
+
+      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
+      await httpRequestFunction({}, config);
+
+      expect(mockHttpClient.request).toHaveBeenCalledWith(expect.objectContaining({
+        method: config.method,
+        data: config.data
+      }));
+    });
+
+    it("should add and overwrite config-headers", async () => {
+
+      config = {
+        headers: {
+          "Accept": "HiItsMeAcceptHeader",
+          "ContentType": "application/json",
+          "test": "HiItsMeTestHeader"
         }
-      } as AxiosError;
-      mockedAxios.isAxiosError.mockReturnValue(true);
+      };
 
-      const result: Error = mapRequestError([400, 404], errorContext, error);
+      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
+      await httpRequestFunction({}, config);
 
-      expect(mockBadInputError).toHaveBeenCalledTimes(1);
-      expect(mockBadInputError).toHaveBeenCalledWith(errorContext, error);
-      expect(result instanceof BadInputError).toBeTruthy();
-    });
-
-    it("should map to ForbiddenError on status 403 if mapped", () => {
-      const errorContext = "HiItsMeErrorContext";
-      const error: AxiosError = {
-        response: {
-          status: 403
-        }
-      } as AxiosError;
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      const result: Error = mapRequestError([403, 404], errorContext, error);
-
-      expect(mockForbiddenError).toHaveBeenCalledTimes(1);
-      expect(mockForbiddenError).toHaveBeenCalledWith(errorContext, error);
-      expect(result instanceof ForbiddenError).toBeTruthy();
-    });
-
-
-    it("should map to NotFound on status 404 if mapped", () => {
-      const errorContext = "HiItsMeErrorContext";
-      const error: AxiosError = {
-        response: {
-          status: 404
-        }
-      } as AxiosError;
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      const result: Error = mapRequestError([403, 404], errorContext, error);
-
-      expect(mockNotFoundError).toHaveBeenCalledTimes(1);
-      expect(mockNotFoundError).toHaveBeenCalledWith(errorContext, error);
-      expect(result instanceof NotFoundError).toBeTruthy();
-    });
-
-
-    it("should transform to DmsError on unmapped status", () => {
-      const errorContext = "HiItsMeErrorContext";
-      const error: AxiosError = {
-        response: {
-          status: 500
-        }
-      } as AxiosError;
-      mockedAxios.isAxiosError.mockReturnValue(true);
-
-      const result: Error = mapRequestError([500], errorContext, error);
-
-      expect(mockDmsError).toHaveBeenCalledTimes(1);
-      expect(mockDmsError).toHaveBeenCalledWith(errorContext, error);
-      expect(result instanceof DmsError).toBeTruthy();
-    });
-
-    [
-      { status: 400, expectedStatusCodes: [] },
-      { status: 400, expectedStatusCodes: [404] },
-      { status: 400, expectedStatusCodes: [402, 403, 404] }
-    ].forEach(testCase => {
-
-      it("should transform to DmsError on unexpected status", () => {
-        const errorContext = "HiItsMeErrorContext";
-        const error: AxiosError = {
-          response: {
-            status: testCase.status
-          }
-        } as AxiosError;
-        mockedAxios.isAxiosError.mockReturnValue(true);
-
-        const result: Error = mapRequestError(testCase.expectedStatusCodes, errorContext, error);
-
-        expect(mockDmsError).toHaveBeenCalledTimes(1);
-        expect(mockDmsError).toHaveBeenCalledWith(errorContext, error);
-        expect(result instanceof DmsError).toBeTruthy();
-      });
-    });
-
-    [null, undefined, {}].forEach(testCase => {
-      it("should transform to DmsError on no response", () => {
-        const errorContext = "HiItsMeErrorContext";
-        const error: AxiosError = {
-          response: testCase
-        } as AxiosError;
-        mockedAxios.isAxiosError.mockReturnValue(true);
-
-        const result: Error = mapRequestError([], errorContext, error);
-
-        expect(mockDmsError).toHaveBeenCalledTimes(1);
-        expect(mockDmsError).toHaveBeenCalledWith(errorContext, error);
-        expect(result instanceof DmsError).toBeTruthy();
-      });
-    });
-
-
-    it("should transform to DmsError on non-AxiosError", () => {
-      const errorContext = "HiItsMeErrorContext";
-      const error: Error = new Error("HIItsMeError");
-      mockedAxios.isAxiosError.mockReturnValue(false);
-
-      const result: Error = mapRequestError([], errorContext, error);
-
-      expect(mockDmsError).toHaveBeenCalledTimes(1);
-      expect(mockDmsError).toHaveBeenCalledWith(errorContext, error);
-      expect(result instanceof DmsError).toBeTruthy();
+      expect(mockHttpClient.request).toHaveBeenCalledWith(expect.objectContaining({
+        headers: expect.objectContaining({
+          "Accept": config.headers["Accept"],
+          "test": config.headers["test"]
+        })
+      }));
     });
   });
 });
