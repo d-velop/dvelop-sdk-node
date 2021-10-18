@@ -26,7 +26,6 @@
 
 // Utils
 export { Context } from "./utils/context";
-export * from "./utils/errors";
 export * as internal from "./internals";
 
 // Repository
@@ -39,4 +38,5 @@ export { getDmsObjectMainFile, getDmsObjectPdfFile } from "./dms-objects/get-dms
 export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms-object/create-dms-object";
 export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms-object/update-dms-object";
 export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
+export { SearchDmsObjectsParams, SearchDmsObjectsResultPage, ListedDmsObject, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
 

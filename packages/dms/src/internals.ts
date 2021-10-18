@@ -12,3 +12,4 @@ export { getDmsObjectMainFileFactory, getDmsObjectPdfFileFactory, getDmsObjectFi
 export { storeFileTemporarilyFactory, storeFileTemporarilyDefaultTransformFunction } from "./dms-objects/store-file-temporarily/store-file-temporarily";
 export { createDmsObjectFactory, createDmsObjectDefaultTransformFunction, createDmsObjectDefaultStoreFileFunction } from "./dms-objects/create-dms-object/create-dms-object";
 export { updateDmsObjectFactory, updateDmsObjectDefaultTransformFunction, updateDmsObjectDefaultStoreFileFunction } from "./dms-objects/update-dms-object/update-dms-object";
+export { searchDmsObjectsFactory, searchDmsObjectsDefaultTransformFunctionFactory } from "./dms-objects/search-dms-objects/search-dms-objects";
