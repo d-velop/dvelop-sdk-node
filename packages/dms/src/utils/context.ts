@@ -1,6 +1,6 @@
 export interface Context {
   /** SystemBaseUri for the tenant */
-  systemBaseUri: string;
+  systemBaseUri?: string;
   /** Valid authSessionId */
-  authSessionId: string;
+  authSessionId?: string;
 }

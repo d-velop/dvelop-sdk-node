@@ -23,22 +23,20 @@
 </div>
  * @module dms
  */
-import axios from "axios";
-import { followHalJson } from "@dvelop-sdk/axios-hal-json";
-axios.interceptors.request.use(followHalJson);
 
 // Utils
 export { Context } from "./utils/context";
-export * from "./utils/errors";
+export * as internal from "./internals";
 
-// Repositories
-export { getRepositories } from "./repositories/get-repositories/get-repositories";
+// Repository
 export { GetRepositoryParams, Repository, getRepository } from "./repositories/get-repository/get-repository";
+export { getRepositories } from "./repositories/get-repositories/get-repositories";
 
 // DmsObjects
 export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
-export { GetDmsObjectFileTransformer, getDmsObjectFile, getDmsObjectPdf } from "./dms-objects/get-dms-object-file/get-dms-object-file";
+export { getDmsObjectMainFile, getDmsObjectPdfFile } from "./dms-objects/get-dms-object-file/get-dms-object-file";
 export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms-object/create-dms-object";
 export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms-object/update-dms-object";
 export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
+export { SearchDmsObjectsParams, SearchDmsObjectsResultPage, ListedDmsObject, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
 

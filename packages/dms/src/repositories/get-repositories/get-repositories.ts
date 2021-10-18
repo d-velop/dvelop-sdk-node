@@ -1,53 +1,57 @@
 import { Context } from "../../utils/context";
-import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
 import { Repository } from "../get-repository/get-repository";
-
-export type GetRepositoriesTransformer<T> = (response: AxiosResponse<any>, context: Context)=> T;
-
-export const getRepositoriesDefaultTransformer: GetRepositoriesTransformer<Repository[]> = (response: AxiosResponse<any>, _: Context) => {
-  const dtos: any[] = response.data.repositories;
-  return dtos.map(dto => {
-    return {
-      id: dto.id,
-      name: dto.name,
-      sourceId: dto._links["source"].href
-    };
-  });
-};
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
 
 /**
- * Returns all {@link Repository}-objects for the tenant.
- *
- * @param systemBaseUri SystemBaseUri for the tenant
- * @param authSessionId Valid AuthSessionId
- * @throws {@link UnauthorizedError} indicates an invalid authSessionId or no authSessionId was sent.
- *
+ * Default transform-function provided to the {@link getRepositories}-function.
  * @category Repository
- *
- * @example ```typescript
- * const repos: Repository[] = await getRepositories("https://steamwheedle-cartel.d-velop.cloud", "dQw4w9WgXcQ");
- * const repoList: string = repos.map(r => r.name).join(", ");
- * console.log("Repositories:", repoList); // Booty Bay Documents, Everlook Documents, Ratchet Documents
- * ```
  */
-export async function getRepositories(context: Context): Promise<Repository[]>;
-export async function getRepositories<T>(context: Context, transform: GetRepositoriesTransformer<T>): Promise<T>;
-export async function getRepositories(context: Context, transform: GetRepositoriesTransformer<any> = getRepositoriesDefaultTransformer): Promise<any> {
+export function getRepositoriesDefaultTransformFunction(response: HttpResponse, _: Context): Repository[] {
+  return response.data.repositories.map((repositoryDto: any) => {
+    return {
+      id: repositoryDto.id,
+      name: repositoryDto.name,
+      sourceId: repositoryDto._links["source"].href
+    };
+  });
+}
 
-  let response: AxiosResponse<any>;
-
-  try {
-    response = await getAxiosInstance().get("/dms", {
-      baseURL: context.systemBaseUri,
-      headers: {
-        "Authorization": `Bearer ${context.authSessionId}`
-      },
+/**
+ * Factory for {@link getRepositories}-function. See internals for more information.
+ * @typeparam T Return type of the getRepositories-function. A corresponding transformFuntion has to be supplied.
+ * @category Repository
+ */
+export function getRepositoriesFactory<T>(
+  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: Context) => T
+): (context: Context) => Promise<T> {
+  return async (context: Context) => {
+    const response: HttpResponse = await httpRequestFunction(context, {
+      method: "GET",
+      url: "/dms",
       follows: ["allrepos"]
     });
+    return transformFunction(response, context);
+  };
+}
 
-  } catch (e) {
-    throw mapRequestError([], "Failed to get repositories", e);
-  }
-
-  return transform(response, context);
+/**
+ * Returns an array of all {@link Repository}-objects for a tenant.
+ *
+ * ```typescript
+ * import { Repository, getRepositories } from "@dvelop-sdk/dms";
+ *
+ * const repos: Repository[] = await getRepositories({
+ *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * });
+ * const repoList: string = repos.map(r => r.name).join(", ");
+ * console.log("Repositories:", repoList); // Booty Bay, Everlook, Gadgetzan, Ratchet
+ * ```
+ *
+ * @category Repository
+ */
+/* istanbul ignore next */
+export async function getRepositories(context: Context): Promise<Repository[]> {
+  return await getRepositoriesFactory(defaultHttpRequestFunction, getRepositoriesDefaultTransformFunction)(context);
 }

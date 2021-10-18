@@ -1,35 +1,27 @@
-import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { DmsObject } from "../..";
 import { Context } from "../../utils/context";
-import { requestDmsObjectBlob } from "../get-dms-object-file/get-dms-object-file";
-import { getDmsObject, GetDmsObjectParams } from "./get-dms-object";
+import { HttpResponse } from "../../utils/http";
+import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
+import { GetDmsObjectParams, getDmsObjectFactory, getDmsObjectDefaultTransformFunction } from "../get-dms-object/get-dms-object";
 
 jest.mock("../get-dms-object-file/get-dms-object-file");
-const mockRequestDmsObjectBlob = requestDmsObjectBlob as jest.MockedFunction<typeof requestDmsObjectBlob>;
-
-jest.mock("../../utils/http");
-const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAxiosInstance>;
-const mockGET = jest.fn();
-const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
-
-let context: Context;
-let params: GetDmsObjectParams;
-let mockTransform: any;
+const mockGetDmsObjectMainFile = getDmsObjectMainFile as jest.MockedFunction<typeof getDmsObjectMainFile>;
+const mockGetDmsObjectPdfFile = getDmsObjectPdfFile as jest.MockedFunction<typeof getDmsObjectPdfFile>;
 
 describe("getDmsObject", () => {
+
+  let mockHttpRequestFunction = jest.fn();
+  let mockTransformFunction = jest.fn();
+
+  let context: Context;
+  let params: GetDmsObjectParams;
 
   beforeEach(() => {
 
     jest.resetAllMocks();
 
-    mockGetAxiosInstace.mockReturnValue({
-      get: mockGET
-    } as unknown as AxiosInstance);
-    mockGET.mockResolvedValue({ data: {} });
-    mockTransform = jest.fn();
-
     context = {
-      systemBaseUri: "HiItsMeSystemBaseUri",
-      authSessionId: "HiItsMeAuthSessionId"
+      systemBaseUri: "HiItsMeSystemBaseUri"
     };
 
     params = {
@@ -37,176 +29,141 @@ describe("getDmsObject", () => {
       sourceId: "HiItsMeSourceId",
       dmsObjectId: "HiItsMeDmsObjectId"
     };
-
   });
 
-  it("should do GET correctly", async () => {
-    await getDmsObject(context, params, mockTransform);
+  it("should make correct request", async () => {
 
-    expect(mockGET).toHaveBeenCalledTimes(1);
-    expect(mockGET).toHaveBeenCalledWith("/dms", {
-      baseURL: context.systemBaseUri,
-      headers: {
-        "Authorization": `Bearer ${context.authSessionId}`,
-        "Accept": "application/hal+json"
-      },
+    const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
+    await getDmsObject(context, params);
+
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+      method: "GET",
+      url: "/dms",
       follows: ["repo", "dmsobjectwithmapping"],
       templates: {
         "repositoryid": params.repositoryId,
-        "dmsobjectid": params.dmsObjectId,
-        "sourceid": params.sourceId
+        "sourceid": params.sourceId,
+        "dmsobjectid": params.dmsObjectId
       }
     });
   });
 
-  it("should throw mappedError on requestError", async () => {
+  it("should pass response to transform and return transform-result", async () => {
 
-    const getError: AxiosError = {
-      message: "HiItsMeErrorMessage"
-    } as AxiosError;
-    mockGET.mockRejectedValue(getError);
+    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
+    const transformResult: any = { result: "HiItsMeResult" };
+    mockHttpRequestFunction.mockResolvedValue(response);
+    mockTransformFunction.mockReturnValue(transformResult);
 
-    const mappedError: Error = new Error("HiItsMeMappedError");
-    mockMapRequestError.mockReturnValue(mappedError);
+    const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
+    await getDmsObject(context, params);
 
-    let expectedError: Error;
-    try {
-      await getDmsObject(context, params, mockTransform);
-    } catch (e) {
-      expectedError = e;
-    }
-
-    expect(mockMapRequestError).toHaveBeenCalledTimes(1);
-    expect(mockMapRequestError).toHaveBeenCalledWith([400, 404], "Failed to get dmsObject", getError);
-    expect(expectedError).toEqual(mappedError);
+    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
+    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
   });
 
-  it("should return custom transform", async () => {
+  describe("getDmsObjectDefaultTransformFunction", () => {
 
-    const getResponse: AxiosResponse<any> = {
-      data: { test: "HiItsMeTest" }
-    } as AxiosResponse;
-    mockGET.mockResolvedValue(getResponse);
-
-    const transformResult = "HiItsMeTransformResult";
-    mockTransform.mockReturnValue(transformResult);
-
-    await getDmsObject(context, params, mockTransform);
-
-    expect(mockTransform).toHaveBeenCalledTimes(1);
-    expect(mockTransform).toHaveBeenCalledWith(getResponse, context, params);
-  });
-
-
-
-  describe("default transform", () => {
-
-    it("should parse properties correctly", async () => {
+    it("should map correctly on no file links", async () => {
 
       const data: any = {
+        "_links": {
+          "HiItsMeLink": {
+            "href": "HiItsMeLinkHref"
+          },
+
+        },
         "id": "HiItsMeId",
         "sourceProperties": [
           {
-            "key": "myprop1_ID",
-            "value": "value of property 1"
+            "key": "HiItsMeSourcePropertyId1",
+            "value": "HiItsMeSourcePropertyValue1"
           },
           {
-            "key": "myprop2_ID",
-            "value": "value of property 2 in row 2",
-            "values": {
-              "2": "value of property 2 in row 2",
-              "4": "value of property 2 in row 4"
-            }
+            "key": "HiItsMeSourcePropertyId2",
+            "value": "HiItsMeSourcePropertyValue2"
           }
         ],
-        "sourceCategories": ["mycategory2_ID"]
+        "sourceCategories": [
+          "HiItsMeSourceCategoriyId1",
+          "HiItsMeSourceCategoriyId2"
+        ]
       };
 
-      mockGET.mockResolvedValue({ data: data });
+      const response: HttpResponse = { data: data } as HttpResponse;
+      mockHttpRequestFunction.mockResolvedValue(response);
 
-      const result = await getDmsObject(context, params);
+      const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, getDmsObjectDefaultTransformFunction);
+      const result: DmsObject = await getDmsObject(context, params);
+
       expect(result).toHaveProperty("repositoryId", params.repositoryId);
       expect(result).toHaveProperty("sourceId", params.sourceId);
-      expect(result).toHaveProperty("id", data["id"]);
-      expect(result).toHaveProperty("categories", data["sourceCategories"]);
+      expect(result).toHaveProperty("id", params.dmsObjectId);
       expect(result).toHaveProperty("properties", data["sourceProperties"]);
+      expect(result).toHaveProperty("categories", data["sourceCategories"]);
+
+
+      expect(result).not.toHaveProperty("getMainFile");
+      expect(result).not.toHaveProperty("getPdfFile");
     });
 
-    [
-      { "_links": {} },
-      { "_links": { "irrelevant": { "href": "HiImIrrelevant" } } },
-      { "_links": { "pdfblobcontent": { "href": "HiItsMePdfBlobContentHref" } } },
-    ].forEach(testCase => {
-      it("should not provide getFile", async () => {
-        mockGET.mockResolvedValue({ data: testCase });
-        const result = await getDmsObject(context, params);
-        expect(result.getFile).toBeUndefined();
-        expect(mockRequestDmsObjectBlob).toHaveBeenCalledTimes(0);
-      });
+    it("should set getMainFile correctly", async () => {
+
+      const data: any = {
+        "_links": {
+          "mainblobcontent": {
+            "href": "HiItsMeMainBlobContentHref"
+          },
+        },
+        "id": "HiItsMeId",
+        "sourceProperties": [],
+        "sourceCategories": [ ]
+      };
+
+      const response: HttpResponse = { data: data } as HttpResponse;
+      mockHttpRequestFunction.mockResolvedValue(response);
+      const mainFile: ArrayBuffer = new ArrayBuffer(42);
+      mockGetDmsObjectMainFile.mockResolvedValue(mainFile);
+
+      const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, getDmsObjectDefaultTransformFunction);
+      const result: DmsObject = await getDmsObject(context, params);
+
+      expect(result.getMainFile).toEqual(expect.any(Function));
+
+      const resultFile: ArrayBuffer = await result.getMainFile();
+      expect(mockGetDmsObjectMainFile).toHaveBeenCalledTimes(1);
+      expect(mockGetDmsObjectMainFile).toHaveBeenCalledWith(context, params);
+      expect(resultFile).toBe(mainFile);
     });
 
-    [
-      null,
-      undefined,
-      {},
-      { "_links": null },
-      { "_links": undefined },
-      { "_links": {} },
-      { "_links": { "irrelevant": { "href": "HiImIrrelevant" } } },
-      { "_links": { "mainblobcontent": { "href": "HiItsMeMainBlobContentHref" } } },
-    ].forEach(testCase => {
-      it("should not provide getPdf", async () => {
-        mockGET.mockResolvedValue({ data: testCase });
-        const result = await getDmsObject(context, params);
-        expect(result.getPdf).toBeUndefined();
-        expect(mockRequestDmsObjectBlob).toHaveBeenCalledTimes(0);
-      });
-    });
+    it("should set getPdfFile correctly", async () => {
 
-    [
-      { "_links": { "mainblobcontent": { "href": "HiItsMeMainBlobContentHref" } } },
-      { "_links": { "mainblobcontent": { "href": "HiItsMeMainBlobContentHref" }, "pdfblobcontent": { "href": "HiItsMePdfBlobContentHref" } } },
-      { "_links": { "irrelevant": { "href": "HiImIrrelevant" }, "mainblobcontent": { "href": "HiItsMeMainBlobContentHref" }, "pdfblobcontent": { "href": "HiItsMePdfBlobContentHref" } } },
-    ].forEach(testCase => {
-      it("should provide correct function for getFile", async () => {
+      const data: any = {
+        "_links": {
+          "pdfblobcontent": {
+            "href": "HiItsMePdfBlobContentHref"
+          },
+        },
+        "id": "HiItsMeId",
+        "sourceProperties": [],
+        "sourceCategories": [ ]
+      };
 
-        mockGET.mockResolvedValue({ data: testCase });
+      const response: HttpResponse = { data: data } as HttpResponse;
+      mockHttpRequestFunction.mockResolvedValue(response);
+      const pdfFile: ArrayBuffer = new ArrayBuffer(42);
+      mockGetDmsObjectPdfFile.mockResolvedValue(pdfFile);
 
-        const fileResponse: AxiosResponse<ArrayBuffer> = { data: new ArrayBuffer(42) } as AxiosResponse;
-        mockRequestDmsObjectBlob.mockResolvedValue(fileResponse);
+      const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, getDmsObjectDefaultTransformFunction);
+      const result: DmsObject = await getDmsObject(context, params);
 
-        const result = await getDmsObject(context, params);
-        const file = await result.getFile();
+      expect(result.getPdfFile).toEqual(expect.any(Function));
 
-        expect(mockRequestDmsObjectBlob).toHaveBeenCalledTimes(1);
-        expect(mockRequestDmsObjectBlob).toHaveBeenCalledWith(context, testCase._links.mainblobcontent.href);
-        expect(file).toEqual(fileResponse.data);
-      });
-
-    });
-
-    [
-      { "_links": { "pdfblobcontent": { "href": "HiItsMePdfBlobContentHref" } } },
-      { "_links": { "mainblobcontent": { "href": "HiItsMeMainBlobContentHref" }, "pdfblobcontent": { "href": "HiItsMePdfBlobContentHref" } } },
-      { "_links": { "irrelevant": { "href": "HiImIrrelevant" }, "mainblobcontent": { "href": "HiItsMeMainBlobContentHref" }, "pdfblobcontent": { "href": "HiItsMePdfBlobContentHref" } } },
-    ].forEach(testCase => {
-
-      it("should provide correct function for getPdf", async () => {
-
-        mockGET.mockResolvedValue({ data: testCase });
-
-        const fileResponse: AxiosResponse<ArrayBuffer> = { data: new ArrayBuffer(42) } as AxiosResponse;
-        mockRequestDmsObjectBlob.mockResolvedValue(fileResponse);
-
-        const result = await getDmsObject(context, params);
-        const file = await result.getPdf();
-
-        expect(mockRequestDmsObjectBlob).toHaveBeenCalledTimes(1);
-        expect(mockRequestDmsObjectBlob).toHaveBeenCalledWith(context, testCase._links.pdfblobcontent.href);
-        expect(file).toEqual(fileResponse.data);
-      });
+      const resultFile: ArrayBuffer = await result.getPdfFile();
+      expect(mockGetDmsObjectPdfFile).toHaveBeenCalledTimes(1);
+      expect(mockGetDmsObjectPdfFile).toHaveBeenCalledWith(context, params);
+      expect(resultFile).toBe(pdfFile);
     });
   });
-
-
 });

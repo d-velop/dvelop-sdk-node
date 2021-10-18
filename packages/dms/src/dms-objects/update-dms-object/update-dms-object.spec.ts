@@ -1,239 +1,155 @@
-import { AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { HttpResponse } from "../../utils/http";
 import { Context } from "../../utils/context";
-import { storeFileTemporarily } from "../store-file-temporarily/store-file-femporarily";
-import { updateDmsObject, UpdateDmsObjectParams } from "./update-dms-object";
+import { storeFileTemporarily } from "../store-file-temporarily/store-file-temporarily";
+import { updateDmsObjectDefaultStoreFileFunction, updateDmsObjectDefaultTransformFunction, updateDmsObjectFactory, UpdateDmsObjectParams } from "./update-dms-object";
 
-jest.mock("../store-file-temporarily/store-file-femporarily");
+jest.mock("../store-file-temporarily/store-file-temporarily");
 const mockStoryFileTemporarily = storeFileTemporarily as jest.MockedFunction<typeof storeFileTemporarily>;
 
-jest.mock("../../utils/http");
-const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAxiosInstance>;
-const mockPUT = jest.fn();
-const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
-
-let context: Context;
-let params: UpdateDmsObjectParams;
-let mockTransform: any;
-
 describe("updateDmsObject", () => {
+
+  let mockHttpRequestFunction = jest.fn();
+  let mockTransformFunction = jest.fn();
+  let mockStoreFileFunction = jest.fn();
+
+  let context: Context;
+  let params: UpdateDmsObjectParams;
 
   beforeEach(() => {
 
     jest.resetAllMocks();
 
-    mockGetAxiosInstace.mockReturnValueOnce({
-      put: mockPUT
-    } as unknown as AxiosInstance);
-    mockPUT.mockResolvedValue({});
-    mockTransform = jest.fn();
-
     context = {
-      systemBaseUri: "HiItsMeSystemBaseUri",
-      authSessionId: "HiItsMeAuthSessionId"
+      systemBaseUri: "HiItsMeSystemBaseUri"
+    };
+
+    params = {
+      repositoryId: "HiItsMeRepositoryId",
+      sourceId: "HiItsMeSourceId",
+      dmsObjectId: "HiItsMeDmsObjectId",
+      alterationText: "HiItsMeAlterationText",
+      categoryId: "HiItsMeCategoryId",
+      properties: [
+        {
+          key: "HiItsMeProperty1Key",
+          values: ["HiItsMeProperty1Value"]
+        },
+        {
+          key: "HiItsMeProperty2Key",
+          values: ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"]
+        }
+      ]
     };
   });
 
-  describe("on no file", () => {
+  it("should not call storeFileFunction if contentUri is given", async () => {
 
-    beforeEach(() => {
+    params.contentUri = "HiItsMeContentUri";
+    params.content = new ArrayBuffer(42);
 
-      params = {
-        repositoryId: "HiItsMeRepositoryId",
-        sourceId: "HiItsMeSourceId",
-        dmsObjectId: "HiItsMeDmsObjectId",
-        alterationText: "HiItsMeAlterationText",
-        properties: [
-          {
-            key: "HiItsMePropertyKey2",
-            values: ["HiItsMePropertyValue1_1", "HiItsMePropertyValue1_2"]
-          }, {
-            key: "HiItsMePropertyKey2",
-            values: ["HiItsMePropertyValue2_1"]
-          }, {
-            key: "HiItsMePropertyKey2",
-            values: []
-          }
-        ]
-      };
-    });
+    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    await updateDmsObject(context, params);
 
-    it("should not call storeFileTemprarily", async () => {
-      await updateDmsObject(context, params, mockTransform);
-      expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(0);
-    });
+    expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
+  });
 
-    it("should do PUT correctly", async () => {
-      await updateDmsObject(context, params, mockTransform);
+  it("should not call storeFileFunction if contentLocationUri is given", async () => {
 
-      expect(mockPUT).toHaveBeenCalledTimes(1);
-      expect(mockPUT).toHaveBeenCalledWith("/dms", {
-        sourceId: params.sourceId,
-        alterationText: params.alterationText,
-        sourceProperties: { properties: params.properties }
-      }, {
-        baseURL: context.systemBaseUri,
-        headers: {
-          "Authorization": `Bearer ${context.authSessionId}`,
-          "Accept": "application/hal+json",
-          "Content-Type": "application/hal+json"
+    params.contentLocationUri = "HiItsMeContentUri";
+    params.content = new ArrayBuffer(42);
+
+    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    await updateDmsObject(context, params);
+
+    expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
+  });
+
+  it("should call storeFileFunction if content is given", async () => {
+
+    params.content = new ArrayBuffer(42);
+    mockStoreFileFunction.mockReturnValue({ setAs: "contentUri", uri: "HiItsMeUri" });
+
+    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    await updateDmsObject(context, params);
+
+    expect(mockStoreFileFunction).toHaveBeenCalledTimes(1);
+    expect(mockStoreFileFunction).toHaveBeenCalledWith(context, params);
+  });
+
+  it("should make correct request", async () => {
+
+    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    await updateDmsObject(context, params);
+
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+      method: "PUT",
+      url: "/dms",
+      follows: ["repo", "dmsobjectwithmapping", "update"],
+      templates: {
+        "repositoryid": params.repositoryId,
+        "sourceid": params.sourceId,
+        "dmsobjectid": params.dmsObjectId
+      },
+      data: {
+        "sourceId": params.sourceId,
+        "alterationText": params.alterationText,
+        "sourceProperties": {
+          "properties": params.properties
         },
-        follows: ["repo", "dmsobjectwithmapping", "update"],
-        templates: {
-          "repositoryid": params.repositoryId,
-          "dmsobjectid": params.dmsObjectId,
-          "sourceid": params.sourceId
-        }
-      });
+        "fileName": params.fileName,
+        "contentLocationUri": params.contentLocationUri,
+        "contentUri": params.contentUri
+      }
     });
   });
 
-  describe("on contentUri and contentLocationUri", () => {
+  it("should pass response to transform and return transform-result", async () => {
 
-    beforeEach(() => {
-      params = params = {
-        repositoryId: "HiItsMeRepositoryId",
-        sourceId: "HiItsMeSourceId",
-        dmsObjectId: "HiItsMeDmsObjectId",
-        alterationText: "HiItsMeAlterationText",
-        fileName: "HiItsMeFileName",
-        contentUri: "HiItsMeContentUri",
-        contentLocationUri: "HiItsMeContentLocationUri"
-      };
-    });
+    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
+    const transformResult: any = { result: "HiItsMeResult" };
+    mockHttpRequestFunction.mockResolvedValue(response);
+    mockTransformFunction.mockReturnValue(transformResult);
 
-    it("should not call storeFileTemprarily", async () => {
-      await updateDmsObject(context, params, mockTransform);
-      expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(0);
-    });
+    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    await updateDmsObject(context, params);
 
-    it("should do POST correctly", async () => {
-      await updateDmsObject(context, params, mockTransform);
-
-      expect(mockPUT).toHaveBeenCalledTimes(1);
-      expect(mockPUT).toHaveBeenCalledWith("/dms", {
-        sourceId: params.sourceId,
-        alterationText: params.alterationText,
-        sourceProperties: {
-          properties: params.properties
-        },
-        fileName: params.fileName,
-        contentUri: params.contentUri,
-        contentLocationUri: params.contentLocationUri
-      }, {
-        baseURL: context.systemBaseUri,
-        headers: {
-          "Authorization": `Bearer ${context.authSessionId}`,
-          "Accept": "application/hal+json",
-          "Content-Type": "application/hal+json"
-        },
-        follows: ["repo", "dmsobjectwithmapping", "update"],
-        templates: {
-          "repositoryid": params.repositoryId,
-          "dmsobjectid": params.dmsObjectId,
-          "sourceid": params.sourceId
-        }
-      });
-    });
+    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
+    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
   });
 
-  describe("on file as ArrayBuffer", () => {
+  describe("updateDmsObjectDefaultTransformer", () => {
 
-    beforeEach(() => {
-      params = params = {
-        repositoryId: "HiItsMeRepositoryId",
-        sourceId: "HiItsMeSourceId",
-        dmsObjectId: "HiItsMeDmsObjectId",
-        alterationText: "HiItsMeAlterationText",
-        fileName: "HiItsMeFileName",
-        content: new ArrayBuffer(42)
-      };
-    });
+    it("should return void", async () => {
+      const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
+      mockHttpRequestFunction.mockResolvedValue(response);
 
-    it("should call storeFileTemprarily correctly", async () => {
-
-      await updateDmsObject(context, params, mockTransform);
-      expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(1);
-      expect(mockStoryFileTemporarily).toHaveBeenCalledWith(context, {
-        repositoryId: params.repositoryId,
-        file: params.content
-      });
-    });
-
-    it("should do POST correctly", async () => {
-      const contentLocationUri = "HiItsMeContentLocationUri";
-      mockStoryFileTemporarily.mockResolvedValue(contentLocationUri);
-
-      await updateDmsObject(context, params, mockTransform);
-
-      expect(mockPUT).toHaveBeenCalledTimes(1);
-      expect(mockPUT).toHaveBeenCalledWith("/dms", {
-        sourceId: params.sourceId,
-        alterationText: params.alterationText,
-        sourceProperties: {
-          properties: params.properties
-        },
-        fileName: params.fileName,
-        constentUri: params.contentUri,
-        contentLocationUri: contentLocationUri
-      }, {
-        baseURL: context.systemBaseUri,
-        headers: {
-          "Authorization": `Bearer ${context.authSessionId}`,
-          "Accept": "application/hal+json",
-          "Content-Type": "application/hal+json"
-        },
-        follows: ["repo", "dmsobjectwithmapping", "update"],
-        templates: {
-          "repositoryid": params.repositoryId,
-          "dmsobjectid": params.dmsObjectId,
-          "sourceid": params.sourceId
-        }
-      });
-    });
-  });
-
-  it("should throw mapped error on request-error", async () => {
-    const requestError: Error = new Error("HiItsMeRequestError");
-    mockPUT.mockRejectedValue(requestError);
-
-    const mappedError: Error = new Error("HiItsMeMappedError");
-    mockMapRequestError.mockReturnValue(mappedError);
-
-    let expectedError: Error;
-    try {
-      await updateDmsObject(context, params, mockTransform);
-    } catch (e) {
-      expectedError = e;
-    }
-
-    expect(mockTransform).toHaveBeenCalledTimes(0);
-    expect(mockMapRequestError).toHaveBeenCalledTimes(1);
-    expect(mockMapRequestError).toHaveBeenCalledWith([400, 404], "Failed to update dmsObject", requestError);
-    expect(expectedError).toEqual(mappedError);
-  });
-
-  it("should return custom transform", async () => {
-
-    const putResponse: AxiosResponse<any> = {
-      data: "HiItsMePostResponseMessage"
-    } as AxiosResponse;
-    mockPUT.mockResolvedValue(putResponse);
-
-    const transformResult = "HiItsMeTransformResult";
-    mockTransform.mockReturnValue(transformResult);
-
-    const result = await updateDmsObject(context, params, mockTransform);
-
-    expect(mockTransform).toHaveBeenCalledTimes(1);
-    expect(mockTransform).toHaveBeenCalledWith(putResponse, context, params);
-    expect(result).toEqual(transformResult);
-  });
-
-
-  describe("default transform", () => {
-    it("should not transform", async () => {
+      const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, updateDmsObjectDefaultTransformFunction, mockStoreFileFunction);
       const result = await updateDmsObject(context, params);
-      expect(result).toBeUndefined();
+
+      expect(result).toBe(undefined);
+    });
+  });
+
+  describe("updateDmsObjectDefaultStoreFileFunction", () => {
+
+    it("should call storeFileTemporarily correctly", async () => {
+
+      const temporaryFileUrl = "HiItsMeTemporaryFileUrl";
+      mockStoryFileTemporarily.mockResolvedValue(temporaryFileUrl);
+      params.content = new ArrayBuffer(42);
+
+      const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, updateDmsObjectDefaultStoreFileFunction);
+      await updateDmsObject(context, params);
+
+      expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(1);
+      expect(mockStoryFileTemporarily).toHaveBeenCalledWith(context, params);
+
+      expect(mockHttpRequestFunction).toHaveBeenCalledWith(expect.any(Object), expect.objectContaining({
+        data: expect.objectContaining({
+          contentLocationUri: temporaryFileUrl
+        })
+      }));
     });
   });
 });

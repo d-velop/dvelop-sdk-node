@@ -1,103 +1,74 @@
 import { Context } from "../../utils/context";
-import { AxiosError, AxiosInstance, AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
-import { storeFileTemporarily, StoreFileTemporarilyParams, StoreFileTemporarilyTransformer } from "./store-file-femporarily";
+import { HttpResponse } from "../../utils/http";
+import { storeFileTemporarilyDefaultTransformFunction, storeFileTemporarilyFactory, StoreFileTemporarilyParams } from "./store-file-temporarily";
 
-jest.mock("../../utils/http");
-const mockGetAxiosInstace = getAxiosInstance as jest.MockedFunction<typeof getAxiosInstance>;
-const mockPOST = jest.fn();
-const mockMapRequestError = mapRequestError as jest.MockedFunction<typeof mapRequestError>;
+describe("storeFileTemporarilyFactory", () => {
 
-let context: Context;
-let params: StoreFileTemporarilyParams;
-let mockTransform: StoreFileTemporarilyTransformer<any>;
+  let mockHttpRequestFunction = jest.fn();
+  let mockTransformFunction = jest.fn();
 
-describe("storeFileTemporarily", () => {
+  let context: Context;
+  let params: StoreFileTemporarilyParams;
 
   beforeEach(() => {
 
     jest.resetAllMocks();
 
-    mockGetAxiosInstace.mockReturnValueOnce({
-      post: mockPOST
-    } as unknown as AxiosInstance);
-
-    mockPOST.mockResolvedValue({ headers: { "location": "HiItsMeLocation" } });
-    mockTransform = jest.fn();
-
     context = {
-      systemBaseUri: "HiItsMeSystemBaseUri",
-      authSessionId: "HiItsMeAuthSessionId"
+      systemBaseUri: "HiItsMeSystemBaseUri"
     };
 
     params = {
       repositoryId: "HiItsMeRepositoryId",
-      file: new ArrayBuffer(42)
+      content: new ArrayBuffer(42)
     };
   });
 
+  it("should make correct request", async () => {
 
-  it("should do POST correctly", async () => {
-    await storeFileTemporarily(context, params, mockTransform);
+    const storeFileTemporarily = storeFileTemporarilyFactory(mockHttpRequestFunction, mockTransformFunction);
+    await storeFileTemporarily(context, params);
 
-    expect(mockPOST).toHaveBeenCalledTimes(1);
-    expect(mockPOST).toHaveBeenCalledWith("/dms", params.file, expect.objectContaining({
-      baseURL: context.systemBaseUri,
-      headers: expect.objectContaining({
-        "Authorization": `Bearer ${context.authSessionId}`,
-        "Content-Type": "application/octet-stream"
-      }),
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+      method: "POST",
+      url: "/dms",
       follows: ["repo", "chunkedupload"],
-      templates: expect.objectContaining({
-        "repositoryid": params.repositoryId
-      })
-    }));
+      templates: { "repositoryid": params.repositoryId },
+      headers: { "Content-Type": "application/octet-stream" },
+      data: params.content
+    });
   });
 
-  it("should throw mappedError on requestError", async () => {
+  it("should pass response to transform and return transform-result", async () => {
 
-    const postError: AxiosError = {
-      message: "HiItsMeErrorMessage"
-    } as AxiosError;
-    mockPOST.mockRejectedValue(postError);
+    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
+    const transformResult: any = { result: "HiItsMeResult" };
+    mockHttpRequestFunction.mockResolvedValue(response);
+    mockTransformFunction.mockReturnValue(transformResult);
 
-    const mappedError: Error = new Error("HiItsMeMappedError");
-    mockMapRequestError.mockReturnValue(mappedError);
+    const storeFileTemporarily = storeFileTemporarilyFactory(mockHttpRequestFunction, mockTransformFunction);
+    await storeFileTemporarily(context, params);
 
-    let expectedError: Error;
-    try {
-      await storeFileTemporarily(context, params, mockTransform);
-    } catch (e) {
-      expectedError = e;
-    }
-
-    expect(mockMapRequestError).toHaveBeenCalledTimes(1);
-    expect(mockMapRequestError).toHaveBeenCalledWith([400], "Failed to store file temporarily", postError);
-    expect(expectedError).toEqual(mappedError);
+    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
+    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
   });
 
-  it("should return custom transform", async () => {
-    const postResponse: AxiosResponse<any> = {
-      data: { test: "HiItsMeTest" }
-    } as AxiosResponse;
-    mockPOST.mockResolvedValue(postResponse);
+  describe("storeFileTemporarilyDefaultTransformFunction", () => {
 
-    await storeFileTemporarily(context, params, mockTransform);
+    it("should map correctly", async () => {
 
-    expect(mockTransform).toHaveBeenCalledTimes(1);
-    expect(mockTransform).toHaveBeenCalledWith(postResponse, context, params);
-  });
+      const headers: any = {
+        "location": "HiItsmeLocation",
+        "some-header": "HiItsMeSomeHeader"
+      };
 
-  describe("default transform", () => {
-    it("should return location-header", async () => {
+      mockHttpRequestFunction.mockResolvedValue({ headers: headers } as HttpResponse);
 
-      const location = "HiItsMeLocation";
-      const postResponse: AxiosResponse<any> = {
-        headers: { "location": location }
-      } as AxiosResponse;
-      mockPOST.mockResolvedValue(postResponse);
+      const storeFileTemporarily = storeFileTemporarilyFactory(mockHttpRequestFunction, storeFileTemporarilyDefaultTransformFunction);
+      const result: string = await storeFileTemporarily(context, params);
 
-      const result = await storeFileTemporarily(context, params);
-      expect(result).toEqual(location);
+      expect(result).toEqual(headers["location"]);
     });
   });
 });

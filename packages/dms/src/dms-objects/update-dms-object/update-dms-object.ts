@@ -1,6 +1,6 @@
-import { AxiosResponse, getAxiosInstance, mapRequestError } from "../../utils/http";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
 import { Context } from "../../utils/context";
-import { storeFileTemporarily } from "../store-file-temporarily/store-file-femporarily";
+import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
 
 export interface UpdateDmsObjectParams {
   /** ID of the repository */
@@ -9,8 +9,10 @@ export interface UpdateDmsObjectParams {
   sourceId: string;
   /** ID of the DmsObject */
   dmsObjectId: string;
-  /** Short description of changes */
+  /** Description of changes */
   alterationText: string;
+  /** Id of a category to which the dmsObject should be moved */
+  categoryId?: string;
   /** Property-Updates - Only listed properties will be changed */
   properties?: {
     /** Id of the property */
@@ -32,76 +34,62 @@ export interface UpdateDmsObjectParams {
   content?: ArrayBuffer
 }
 
-export type UpdateDmsObjectTransformer<T> = (response: AxiosResponse<void>, context: Context, params: UpdateDmsObjectParams)=> T;
+export function updateDmsObjectDefaultTransformFunction(_: HttpResponse, __: Context, ___: UpdateDmsObjectParams): void { } // no error indicates success. Returning void
 
-/**
- * Update a DmsObject in the DMS-App.
- *
- * @param context {@link Context}-object containing systemBaseUri and a valid authSessionId
- * @param params {@link UpdateDmsObjectParams}-object.
- *
- * @throws {@link BadRequestError} indicates invalid method params. See the ```err.requestError.response.data```-propterty for more information.
- * @throws {@link UnauthorizedError} indicates an invalid authSessionId or no authSessionId was sent.
- * @throws {@link NotFOundError} indicates an invalid combination of repositoryId, sourceId and dmsObjectId
- *
- * @category DmsObjects
- *
- * @example ```typescript
- * TODO
- * ```
- */
-export async function updateDmsObject(context: Context, params: UpdateDmsObjectParams): Promise<void>;
+export async function updateDmsObjectDefaultStoreFileFunction(context: Context, params: UpdateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
+  const uri: string = await storeFileTemporarily(context, params as StoreFileTemporarilyParams);
+  return {
+    setAs: "contentLocationUri",
+    uri: uri
+  };
+}
 
-/**
- * An additional transform-function can be supplied. Check out the docs for more information.
- *
- * @param transform Transformer for the {@link AxiosResponse}.
- *
- * @category DmsObjects
- *
- * @example ```typescript
- * TODO
- * ```
- */
-export async function updateDmsObject<T>(context: Context, params: UpdateDmsObjectParams, transform: UpdateDmsObjectTransformer<T>): Promise<T>;
-export async function updateDmsObject(context: Context, params: UpdateDmsObjectParams, transform: UpdateDmsObjectTransformer<any> = () => { }): Promise<any> {
+export function updateDmsObjectFactory<T>(
+  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: Context, params: UpdateDmsObjectParams) => T,
+  storeFileFunction: (context: Context, params: UpdateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
+): (context: Context, params: UpdateDmsObjectParams) => Promise<T> {
+  return async (context: Context, params: UpdateDmsObjectParams) => {
 
-  if (params.content && !params.contentLocationUri) {
-    params.contentLocationUri = await storeFileTemporarily(context, {
-      repositoryId: params.repositoryId,
-      file: params.content
-    });
-  }
+    if (!params.contentUri && !params.contentLocationUri && params.content) {
+      const storedFileInfo: { setAs: "contentUri" | "contentLocationUri", uri: string } = await storeFileFunction(context, params);
+      params[storedFileInfo.setAs] = storedFileInfo.uri;
+    }
 
-  let response: AxiosResponse<void>;
-  try {
-    response = await getAxiosInstance().put<void>("/dms", {
-      sourceId: params.sourceId,
-      alterationText: params.alterationText,
-      sourceProperties: {
-        properties: params.properties
-      },
-      fileName: params.fileName,
-      contentLocationUri: params.contentLocationUri,
-      contentUri: params.contentUri
-    }, {
-      baseURL: context.systemBaseUri,
+    const response: HttpResponse = await httpRequestFunction(context, {
+      method: "PUT",
+      url: "/dms",
       follows: ["repo", "dmsobjectwithmapping", "update"],
       templates: {
         "repositoryid": params.repositoryId,
-        "dmsobjectid": params.dmsObjectId,
-        "sourceid": params.sourceId
+        "sourceid": params.sourceId,
+        "dmsobjectid": params.dmsObjectId
       },
-      headers: {
-        "Authorization": `Bearer ${context.authSessionId}`,
-        "Accept": "application/hal+json",
-        "Content-Type": "application/hal+json"
+      data: {
+        "sourceId": params.sourceId,
+        "alterationText": params.alterationText,
+        "sourceProperties": {
+          "properties": params.properties
+        },
+        "fileName": params.fileName,
+        "contentLocationUri": params.contentLocationUri,
+        "contentUri": params.contentUri
       }
     });
+    return transformFunction(response, context, params);
+  };
+}
 
-  } catch (e: any) {
-    throw mapRequestError([400, 404], "Failed to update dmsObject", e);
-  }
-
-  return transform(response, context, params);
+/**
+ * Update a DmsObject.
+ *
+ * ```typescript
+ * TODO
+ * ```
+ *
+ * @category DmsObject
+ */
+/* istanbul ignore next */
+export function updateDmsObject(context: Context, params: UpdateDmsObjectParams): Promise<void> {
+  return updateDmsObjectFactory<void>(defaultHttpRequestFunction, updateDmsObjectDefaultTransformFunction, updateDmsObjectDefaultStoreFileFunction)(context, params);
 }

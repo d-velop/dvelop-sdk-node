@@ -1,13 +1,15 @@
 export * from "./utils/http";
 
-// Repositories
-export { GetRepositoriesTransformer, getRepositoriesDefaultTransformer } from "./repositories/get-repositories/get-repositories";
-export { GetRepositoryTransformer, getRepositoryDefaultTransformer } from "./repositories/get-repository/get-repository";
+// Repository
+export { getRepositoryFactory, getRepositoryDefaultTransformFunction } from "./repositories/get-repository/get-repository";
+export { getRepositoriesFactory, getRepositoriesDefaultTransformFunction } from "./repositories/get-repositories/get-repositories";
+
 
 // DmsObjects
-export { CreateDmsObjectTransformer, createDmsObjectDefaultTransformer } from "./dms-objects/create-dms-object/create-dms-object";
-export { DeleteCurrentDmsObjectVersionTransformer, deleteCurrentDmsObjectVersionDefaultTransformer } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
-export { GetDmsObjectTransformer, getDmsObjectDefaultTransformer } from "./dms-objects/get-dms-object/get-dms-object";
-export { GetDmsObjectFileTransformer, requestDmsObjectBlob } from "./dms-objects/get-dms-object-file/get-dms-object-file";
-export { StoreFileTemporarilyTransformer, storeFileTemporarilyDefaultTransform } from "./dms-objects/store-file-temporarily/store-file-femporarily";
-export { UpdateDmsObjectTransformer } from "./dms-objects/update-dms-object/update-dms-object";
+export { deleteCurrentDmsObjectVersionFactory, deleteCurrentDmsObjectVersionDefaultTransformFunction } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
+export { getDmsObjectFactory, getDmsObjectDefaultTransformFunction } from "./dms-objects/get-dms-object/get-dms-object";
+export { getDmsObjectMainFileFactory, getDmsObjectPdfFileFactory, getDmsObjectFileDefaultTransformFunction } from "./dms-objects/get-dms-object-file/get-dms-object-file";
+export { storeFileTemporarilyFactory, storeFileTemporarilyDefaultTransformFunction } from "./dms-objects/store-file-temporarily/store-file-temporarily";
+export { createDmsObjectFactory, createDmsObjectDefaultTransformFunction, createDmsObjectDefaultStoreFileFunction } from "./dms-objects/create-dms-object/create-dms-object";
+export { updateDmsObjectFactory, updateDmsObjectDefaultTransformFunction, updateDmsObjectDefaultStoreFileFunction } from "./dms-objects/update-dms-object/update-dms-object";
+export { searchDmsObjectsFactory, searchDmsObjectsDefaultTransformFunctionFactory } from "./dms-objects/search-dms-objects/search-dms-objects";
