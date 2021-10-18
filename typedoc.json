@@ -2,6 +2,7 @@
     "out": "docs",
     "name": "@dvelop-sdk",
     "entryPoints": [
+        "packages/core/src/index.ts",
         "packages/app-router/src/index.ts",
         "packages/axios-hal-json/src/index.ts",
         "packages/identityprovider/src/index.ts",
