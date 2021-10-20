@@ -1,5 +1,5 @@
-import { HttpResponse } from "../../utils/http";
-import { Context } from "../../utils/context";
+import { DvelopContext } from "../../index";
+import { HttpResponse } from "../../internals";
 import { storeFileTemporarily } from "../store-file-temporarily/store-file-temporarily";
 import { updateDmsObjectDefaultStoreFileFunction, updateDmsObjectDefaultTransformFunction, updateDmsObjectFactory, UpdateDmsObjectParams } from "./update-dms-object";
 
@@ -12,7 +12,7 @@ describe("updateDmsObject", () => {
   let mockTransformFunction = jest.fn();
   let mockStoreFileFunction = jest.fn();
 
-  let context: Context;
+  let context: DvelopContext;
   let params: UpdateDmsObjectParams;
 
   beforeEach(() => {

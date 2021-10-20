@@ -1,12 +1,12 @@
-import { Context } from "../../utils/context";
+import { DvelopContext } from "../../index";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 import { Repository } from "../get-repository/get-repository";
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
 
 /**
  * Default transform-function provided to the {@link getRepositories}-function.
  * @category Repository
  */
-export function getRepositoriesDefaultTransformFunction(response: HttpResponse, _: Context): Repository[] {
+export function getRepositoriesDefaultTransformFunction(response: HttpResponse, _: DvelopContext): Repository[] {
   return response.data.repositories.map((repositoryDto: any) => {
     return {
       id: repositoryDto.id,
@@ -22,10 +22,10 @@ export function getRepositoriesDefaultTransformFunction(response: HttpResponse, 
  * @category Repository
  */
 export function getRepositoriesFactory<T>(
-  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context) => T
-): (context: Context) => Promise<T> {
-  return async (context: Context) => {
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext) => T
+): (context: DvelopContext) => Promise<T> {
+  return async (context: DvelopContext) => {
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "GET",
       url: "/dms",
@@ -52,6 +52,6 @@ export function getRepositoriesFactory<T>(
  * @category Repository
  */
 /* istanbul ignore next */
-export async function getRepositories(context: Context): Promise<Repository[]> {
+export async function getRepositories(context: DvelopContext): Promise<Repository[]> {
   return await getRepositoriesFactory(defaultHttpRequestFunction, getRepositoriesDefaultTransformFunction)(context);
 }

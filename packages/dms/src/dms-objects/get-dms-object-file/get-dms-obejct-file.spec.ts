@@ -1,8 +1,7 @@
-import { Context } from "../../utils/context";
+import { DvelopContext, NotFoundError } from "../../index";
+import { HttpResponse } from "../../internals";
 import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
 import { getDmsObjectFileDefaultTransformFunction, getDmsObjectMainFileFactory, getDmsObjectPdfFileFactory } from "./get-dms-object-file";
-import { HttpResponse, NotFoundError } from "../../utils/http";
-import { NoHalJsonLinksInResponseError } from "@dvelop-sdk/axios-hal-json";
 
 [
   {
@@ -17,7 +16,7 @@ import { NoHalJsonLinksInResponseError } from "@dvelop-sdk/axios-hal-json";
     let mockHttpRequestFunction = jest.fn();
     let mockTransformFunction = jest.fn();
 
-    let context: Context;
+    let context: DvelopContext;
     let params: GetDmsObjectParams;
 
     beforeEach(() => {
@@ -59,7 +58,7 @@ import { NoHalJsonLinksInResponseError } from "@dvelop-sdk/axios-hal-json";
 
     it("should map NoHalJsonLinksError to NotFoundError", async () => {
 
-      const noLinksError: NoHalJsonLinksInResponseError = new NoHalJsonLinksInResponseError("HiItsMeFollow", {} as any);
+      const noLinksError: NotFoundError = new NotFoundError("HiItsMeFollow", {} as any);
       mockHttpRequestFunction.mockRejectedValue(noLinksError);
 
       const functionImplementation = testCase.factory(mockHttpRequestFunction, mockTransformFunction);

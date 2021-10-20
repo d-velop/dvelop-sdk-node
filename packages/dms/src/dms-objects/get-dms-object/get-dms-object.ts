@@ -1,5 +1,5 @@
-import { AxiosResponse, HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
-import { Context } from "../../utils/context";
+import { DvelopContext } from "../../index";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
 
 export interface GetDmsObjectParams {
@@ -38,10 +38,10 @@ export interface DmsObject {
 }
 
 export function getDmsObjectDefaultTransformFunctionFactory(
-  getDmsObjectMainFileFunction: (context: Context, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
-  getDmsObjectPdfFileFunction: (context: Context, params: GetDmsObjectParams) => Promise<ArrayBuffer>
+  getDmsObjectMainFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
+  getDmsObjectPdfFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>
 ) {
-  return (response: AxiosResponse<any>, context: Context, params: GetDmsObjectParams) => {
+  return (response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) => {
 
     const dmsObject: DmsObject = {
       repositoryId: params.repositoryId,
@@ -64,10 +64,10 @@ export function getDmsObjectDefaultTransformFunctionFactory(
 }
 
 export function getDmsObjectFactory<T>(
-  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context, params: GetDmsObjectParams) => T
-): (context: Context, params: GetDmsObjectParams) => Promise<T> {
-  return async (context: Context, params: GetDmsObjectParams) => {
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetDmsObjectParams) => T
+): (context: DvelopContext, params: GetDmsObjectParams) => Promise<T> {
+  return async (context: DvelopContext, params: GetDmsObjectParams) => {
 
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "GET",
@@ -84,11 +84,11 @@ export function getDmsObjectFactory<T>(
 }
 
 /* istanbul ignore next */
-export async function getDmsObjectDefaultTransformFunction(response: AxiosResponse<any>, context: Context, params: GetDmsObjectParams) {
+export async function getDmsObjectDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) {
   return getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile)(response, context, params);
 }
 
 /* istanbul ignore next */
-export async function getDmsObject(context: Context, params: GetDmsObjectParams) {
+export async function getDmsObject(context: DvelopContext, params: GetDmsObjectParams) {
   return getDmsObjectFactory(defaultHttpRequestFunction, getDmsObjectDefaultTransformFunction)(context, params);
 }

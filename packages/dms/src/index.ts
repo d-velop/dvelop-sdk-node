@@ -25,7 +25,8 @@
  */
 
 // Utils
-export { Context } from "./utils/context";
+export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
+export { DmsError } from "./utils/http";
 export * as internal from "./internals";
 
 // Repository

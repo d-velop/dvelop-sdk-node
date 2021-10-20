@@ -1,6 +1,6 @@
-import { Context } from "../../utils/context";
+import { DvelopContext, ForbiddenError } from "../../index";
+import { HttpResponse } from "../../internals";
 import { getDmsObjectFactory } from "../get-dms-object/get-dms-object";
-import { HttpResponse, ForbiddenError} from "../../utils/http";
 import { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersionFactory, deleteCurrentDmsObjectVersionDefaultTransformFunction } from "./delete-current-dms-object-version";
 
 jest.mock("../get-dms-object/get-dms-object");
@@ -12,7 +12,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
   let mockHttpRequestFunction = jest.fn();
   let mockTransformFunction = jest.fn();
 
-  let context: Context;
+  let context: DvelopContext;
   let params: DeleteCurrentDmsObjectVersionParams;
 
   beforeEach(() => {

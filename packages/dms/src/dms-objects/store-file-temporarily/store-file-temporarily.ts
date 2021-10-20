@@ -1,5 +1,5 @@
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
-import { Context } from "../../utils/context";
+import { DvelopContext } from "../../index";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 
 export interface StoreFileTemporarilyParams {
   /** Id of the repository */
@@ -12,7 +12,7 @@ export interface StoreFileTemporarilyParams {
  * Default transform-function provided to the {@link storeFileTemporarily}-function.
  * @category DmsObject
  */
-export function storeFileTemporarilyDefaultTransformFunction(response: HttpResponse, _: Context, __: StoreFileTemporarilyParams): string {
+export function storeFileTemporarilyDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: StoreFileTemporarilyParams): string {
   return response.headers["location"];
 }
 
@@ -22,10 +22,10 @@ export function storeFileTemporarilyDefaultTransformFunction(response: HttpRespo
  * @category DmsObject
  */
 export function storeFileTemporarilyFactory<T>(
-  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context, params: StoreFileTemporarilyParams) => T
-): (context: Context, params: StoreFileTemporarilyParams) => Promise<T> {
-  return async (context: Context, params: StoreFileTemporarilyParams) => {
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: StoreFileTemporarilyParams) => T
+): (context: DvelopContext, params: StoreFileTemporarilyParams) => Promise<T> {
+  return async (context: DvelopContext, params: StoreFileTemporarilyParams) => {
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "POST",
       url: "/dms",
@@ -60,6 +60,6 @@ export function storeFileTemporarilyFactory<T>(
  * @category DmsObject
  */
 /* istanbul ignore next */
-export async function storeFileTemporarily(context: Context, params: StoreFileTemporarilyParams): Promise<string> {
+export async function storeFileTemporarily(context: DvelopContext, params: StoreFileTemporarilyParams): Promise<string> {
   return storeFileTemporarilyFactory(defaultHttpRequestFunction, storeFileTemporarilyDefaultTransformFunction)(context, params);
 }

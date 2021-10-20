@@ -1,6 +1,5 @@
-import { DmsObject } from "../..";
-import { Context } from "../../utils/context";
-import { HttpResponse } from "../../utils/http";
+import { DvelopContext, DmsObject } from "../../index";
+import { HttpResponse } from "../../internals";
 import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
 import { GetDmsObjectParams, getDmsObjectFactory, getDmsObjectDefaultTransformFunction } from "../get-dms-object/get-dms-object";
 
@@ -13,7 +12,7 @@ describe("getDmsObject", () => {
   let mockHttpRequestFunction = jest.fn();
   let mockTransformFunction = jest.fn();
 
-  let context: Context;
+  let context: DvelopContext;
   let params: GetDmsObjectParams;
 
   beforeEach(() => {

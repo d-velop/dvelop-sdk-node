@@ -1,5 +1,5 @@
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
-import { Context } from "../../utils/context";
+import { DvelopContext } from "../../index";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
 
 export interface UpdateDmsObjectParams {
@@ -34,9 +34,9 @@ export interface UpdateDmsObjectParams {
   content?: ArrayBuffer
 }
 
-export function updateDmsObjectDefaultTransformFunction(_: HttpResponse, __: Context, ___: UpdateDmsObjectParams): void { } // no error indicates success. Returning void
+export function updateDmsObjectDefaultTransformFunction(_: HttpResponse, __: DvelopContext, ___: UpdateDmsObjectParams): void { } // no error indicates success. Returning void
 
-export async function updateDmsObjectDefaultStoreFileFunction(context: Context, params: UpdateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
+export async function updateDmsObjectDefaultStoreFileFunction(context: DvelopContext, params: UpdateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
   const uri: string = await storeFileTemporarily(context, params as StoreFileTemporarilyParams);
   return {
     setAs: "contentLocationUri",
@@ -45,11 +45,11 @@ export async function updateDmsObjectDefaultStoreFileFunction(context: Context, 
 }
 
 export function updateDmsObjectFactory<T>(
-  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context, params: UpdateDmsObjectParams) => T,
-  storeFileFunction: (context: Context, params: UpdateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
-): (context: Context, params: UpdateDmsObjectParams) => Promise<T> {
-  return async (context: Context, params: UpdateDmsObjectParams) => {
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: UpdateDmsObjectParams) => T,
+  storeFileFunction: (context: DvelopContext, params: UpdateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
+): (context: DvelopContext, params: UpdateDmsObjectParams) => Promise<T> {
+  return async (context: DvelopContext, params: UpdateDmsObjectParams) => {
 
     if (!params.contentUri && !params.contentLocationUri && params.content) {
       const storedFileInfo: { setAs: "contentUri" | "contentLocationUri", uri: string } = await storeFileFunction(context, params);
@@ -90,6 +90,6 @@ export function updateDmsObjectFactory<T>(
  * @category DmsObject
  */
 /* istanbul ignore next */
-export function updateDmsObject(context: Context, params: UpdateDmsObjectParams): Promise<void> {
+export function updateDmsObject(context: DvelopContext, params: UpdateDmsObjectParams): Promise<void> {
   return updateDmsObjectFactory<void>(defaultHttpRequestFunction, updateDmsObjectDefaultTransformFunction, updateDmsObjectDefaultStoreFileFunction)(context, params);
 }

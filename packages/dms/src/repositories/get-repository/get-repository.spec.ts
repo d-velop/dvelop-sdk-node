@@ -1,5 +1,5 @@
-import { Context } from "../../utils/context";
-import { HttpResponse } from "../../utils/http";
+import { DvelopContext } from "../../index";
+import { HttpResponse } from "../../internals";
 import { GetRepositoryParams, Repository, getRepositoryDefaultTransformFunction, getRepositoryFactory } from "./get-repository";
 
 
@@ -8,7 +8,7 @@ describe("getRepositoryFactory", () => {
   let mockHttpRequestFunction = jest.fn();
   let mockTransformFunction = jest.fn();
 
-  let context: Context;
+  let context: DvelopContext;
   let params: GetRepositoryParams;
 
   beforeEach(() => {

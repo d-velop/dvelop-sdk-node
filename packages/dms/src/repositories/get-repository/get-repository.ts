@@ -1,5 +1,5 @@
-import { Context } from "../../utils/context";
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext } from "../../index";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 
 /**
  * Parameters for the {@link getRepository}-function.
@@ -27,7 +27,7 @@ export interface Repository {
  * Default transform-function provided to the {@link getRepository}-function.
  * @category Repository
  */
-export function getRepositoryDefaultTransformFunction(response: HttpResponse, _: Context, __: GetRepositoryParams): Repository {
+export function getRepositoryDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: GetRepositoryParams): Repository {
   const data: any = response.data;
   return {
     id: data.id,
@@ -42,10 +42,10 @@ export function getRepositoryDefaultTransformFunction(response: HttpResponse, _:
  * @category Repository
  */
 export function getRepositoryFactory<T>(
-  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context, params: GetRepositoryParams) => T,
-): (context: Context, params: GetRepositoryParams) => Promise<T> {
-  return async (context: Context, params: GetRepositoryParams) => {
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetRepositoryParams) => T,
+): (context: DvelopContext, params: GetRepositoryParams) => Promise<T> {
+  return async (context: DvelopContext, params: GetRepositoryParams) => {
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "GET",
       url: "/dms",
@@ -74,6 +74,6 @@ export function getRepositoryFactory<T>(
  * @category Repository
  */
 /* istanbul ignore next */
-export async function getRepository(context: Context, params: GetRepositoryParams): Promise<Repository> {
+export async function getRepository(context: DvelopContext, params: GetRepositoryParams): Promise<Repository> {
   return getRepositoryFactory(defaultHttpRequestFunction, getRepositoryDefaultTransformFunction)(context, params);
 }
