@@ -24,3 +24,5 @@
  * @module core
  */
 export { DvelopContext } from "./context/context";
+export * from "./errors/errors";
+export { DvelopHttpRequestConfig, HttpResponse as DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
