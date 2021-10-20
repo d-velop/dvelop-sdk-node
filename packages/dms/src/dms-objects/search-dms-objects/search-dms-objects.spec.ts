@@ -1,5 +1,5 @@
+import { DvelopContext } from "../../index";
 import { HttpResponse } from "../../internals";
-import { Context } from "../../utils/context";
 import { searchDmsObjectsDefaultTransformFunctionFactory, searchDmsObjectsFactory, SearchDmsObjectsParams, SearchDmsObjectsResultPage } from "./search-dms-objects";
 
 describe("searchDmsObjects", () => {
@@ -7,7 +7,7 @@ describe("searchDmsObjects", () => {
   let mockHttpRequestFunction = jest.fn();
   let mockTransformFunction = jest.fn();
 
-  let context: Context;
+  let context: DvelopContext;
   let params: SearchDmsObjectsParams;
 
   beforeEach(() => {

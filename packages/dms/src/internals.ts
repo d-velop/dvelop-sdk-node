@@ -1,4 +1,4 @@
-export * from "./utils/http";
+export { HttpConfig, HttpResponse, defaultHttpRequestFunctionFactory, defaultHttpRequestFunction } from "./utils/http";
 
 // Repository
 export { getRepositoryFactory, getRepositoryDefaultTransformFunction } from "./repositories/get-repository/get-repository";

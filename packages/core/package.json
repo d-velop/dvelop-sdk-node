@@ -1,11 +1,11 @@
 {
-  "name": "@dvelop-sdk/dms",
-  "description": "This package contains functionality for the DMS-App in the d.velop cloud.",
-  "version": "1.0.0-beta.3",
+  "name": "@dvelop-sdk/core",
+  "description": "This package contains shared functionality for the @dvelop-sdk packages.",
+  "version": "1.0.0-beta.2",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "author": "Lennart <lennart.klose@d-velop.de>",
+  "author": "Lennart Klose <lennart.klose@d-velop.de>",
   "files": [
     "lib"
   ],
@@ -19,10 +19,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
-  },
   "dependencies": {
-    "@dvelop-sdk/core": "^1.0.0-beta.2"
+    "axios": "^0.23.0"
   }
 }

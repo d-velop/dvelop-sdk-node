@@ -1,5 +1,5 @@
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction, ForbiddenError } from "../../utils/http";
-import { Context } from "../../utils/context";
+import { DvelopContext, ForbiddenError } from "../../index";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 import { getDmsObjectFactory } from "../get-dms-object/get-dms-object";
 
 
@@ -18,7 +18,7 @@ export interface DeleteCurrentDmsObjectVersionParams {
  * Default transform-function provided to the {@link deleteCurrentDmsObjectVersion}-function.
  * @category DmsObject
  */
-export function deleteCurrentDmsObjectVersionDefaultTransformFunction(response: HttpResponse, _: Context, __: DeleteCurrentDmsObjectVersionParams): boolean {
+export function deleteCurrentDmsObjectVersionDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: DeleteCurrentDmsObjectVersionParams): boolean {
   if (response.data._links.deleteWithReason || response.data._links.delete) {
     return false;
   } else {
@@ -32,10 +32,10 @@ export function deleteCurrentDmsObjectVersionDefaultTransformFunction(response: 
  * @category DmsObject
  */
 export function deleteCurrentDmsObjectVersionFactory<T>(
-  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context, params: DeleteCurrentDmsObjectVersionParams) => T,
-): (context: Context, params: DeleteCurrentDmsObjectVersionParams) => Promise<T> {
-  return async (context: Context, params: DeleteCurrentDmsObjectVersionParams) => {
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams) => T,
+): (context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams) => Promise<T> {
+  return async (context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams) => {
 
     const getDmsObjectResponse: HttpResponse = await getDmsObjectFactory(httpRequestFunction, (response: HttpResponse) => response)(context, params);
 
@@ -82,6 +82,6 @@ export function deleteCurrentDmsObjectVersionFactory<T>(
  * @category DmsObject
  */
 /* istanbul ignore next */
-export async function deleteCurrentDmsObjectVersion(context: Context, params: DeleteCurrentDmsObjectVersionParams): Promise<boolean> {
+export async function deleteCurrentDmsObjectVersion(context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams): Promise<boolean> {
   return deleteCurrentDmsObjectVersionFactory(defaultHttpRequestFunction, deleteCurrentDmsObjectVersionDefaultTransformFunction)(context, params);
 }

@@ -1,213 +1,392 @@
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-import { followHalJson } from "@dvelop-sdk/axios-hal-json";
-import { Context } from "./context";
-import { axiosErrorInterceptor, BadInputError, defaultAxiosInstanceFactory, DmsError, ForbiddenError, HttpConfig, httpRequestFunctionFactory, NotFoundError, UnauthorizedError } from "./http";
+import { BadInputError, DvelopContext, DvelopHttpClient, DvelopHttpError, DvelopHttpRequestConfig, DvelopHttpResponse, DvelopSdkError, ForbiddenError, NotFoundError, UnauthorizedError } from "@dvelop-sdk/core";
+import { defaultHttpRequestFunctionFactory, DmsError } from "./http";
 
-jest.mock("axios");
-const mockAxios = axios as jest.Mocked<typeof axios>;
+describe("defaultHttpRequestFunctionFactory", () => {
 
-jest.mock("@dvelop-sdk/axios-hal-json");
-const mockFollowHalJson = followHalJson as jest.Mocked<typeof followHalJson>;
+  let mockRequestFunction = jest.fn();
+  let mockHttpClient: DvelopHttpClient = {
+    request: mockRequestFunction
+  };
 
-
-describe("http", () => {
+  let context: DvelopContext;
+  let config: DvelopHttpRequestConfig;
 
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  describe("axiosErrorInterceptor", () => {
+  it("should call request", async () => {
 
-    it("should wrap error in DmsError if not an AxiosError", () => {
+    const response: DvelopHttpResponse = {
+      data: "HiItsMeResponse"
+    } as DvelopHttpResponse;
+    mockRequestFunction.mockResolvedValue(response);
+
+    const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+    const result = await requestFunction(context, config);
+
+    expect(mockRequestFunction).toHaveBeenCalledTimes(1);
+    expect(result).toBe(response);
+  });
+
+  describe("error-handling", () => {
+
+    describe("on statusCode 400", () => {
+
+      it("should throw BadInputError on DmsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 400,
+            data: {
+              reason: "HiItsMeErrorReason"
+            }
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
 
 
-      const errorMessage: string = "HiItsMeError";
-      mockAxios.isAxiosError.mockReturnValue(false);
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
 
-      let expectedError: any;
+        expect(expectedError instanceof BadInputError).toBeTruthy();
+        expect(expectedError.message).toEqual((error.response.data as any).reason);
+        expect(expectedError.originalError).toBe(error);
+      });
+
+      it("should throw generic BadInputError on missing DmsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 400
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof BadInputError).toBeTruthy();
+        expect(expectedError.message).toEqual("DMS-App responded with Status 400 indicating bad Request-Parameters. See 'originalError'-property for details.");
+        expect(expectedError.originalError).toBe(error);
+      });
+    });
+
+    describe("on statusCode 401", () => {
+
+      it("should throw Unauthorized on DmsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 401,
+            data: {
+              reason: "HiItsMeErrorReason"
+            }
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof UnauthorizedError).toBeTruthy();
+        expect(expectedError.message).toEqual((error.response.data as any).reason);
+        expect(expectedError.originalError).toBe(error);
+      });
+
+      it("should throw Unauthorized on body", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 401,
+            data: "HiItsMeErrorReason"
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: UnauthorizedError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof DvelopSdkError).toBeTruthy();
+        expect(expectedError.message).toEqual((error.response.data as any));
+        expect(expectedError.originalError).toBe(error);
+      });
+
+      it("should throw generic DMSError on missing Body", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 401
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof UnauthorizedError).toBeTruthy();
+        expect(expectedError.message).toEqual("DMS-App responded with Status 401 indicating bad authSessionId.");
+        expect(expectedError.originalError).toBe(error);
+      });
+    });
+
+    describe("on statusCode 403", () => {
+
+      it("should throw ForbiddenError on DmsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 403,
+            data: {
+              reason: "HiItsMeErrorReason"
+            }
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof ForbiddenError).toBeTruthy();
+        expect(expectedError.message).toEqual((error.response.data as any).reason);
+        expect(expectedError.originalError).toBe(error);
+      });
+
+      it("should throw generic ForbiddenError on missing DmsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 403
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof ForbiddenError).toBeTruthy();
+        expect(expectedError.message).toEqual("DMS-App responded with Status 403 indicating a forbidden action. See 'originalError'-property for details.");
+        expect(expectedError.originalError).toBe(error);
+      });
+    });
+
+    describe("on statusCode 404", () => {
+
+      it("should throw NotFoundError on DmsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 404,
+            data: {
+              reason: "HiItsMeErrorReason"
+            }
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof NotFoundError).toBeTruthy();
+        expect(expectedError.message).toEqual((error.response.data as any).reason);
+        expect(expectedError.originalError).toBe(error);
+      });
+
+      it("should throw NotFoundError on LocalizedMessage", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 404,
+            data: {
+              LocalizedMessage: "HiItsMeErrorReason"
+            }
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof NotFoundError).toBeTruthy();
+        expect(expectedError.message).toEqual((error.response.data as any).LocalizedMessage);
+        expect(expectedError.originalError).toBe(error);
+      });
+
+      it("should throw generic BadInputError on missing DmsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 404
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof NotFoundError).toBeTruthy();
+        expect(expectedError.message).toEqual("DMS-App responded with Status 404 indicating a requested resource does not exist. See 'originalError'-property for details.");
+        expect(expectedError.originalError).toBe(error);
+      });
+    });
+
+    describe("on unknown statusCode", () => {
+
+      it("should throw DMSError on DmsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 500,
+            data: {
+              reason: "HiItsMeErrorReason"
+            }
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof DmsError).toBeTruthy();
+        expect(expectedError.message).toEqual((error.response.data as any).reason);
+        expect(expectedError.originalError).toBe(error);
+      });
+
+      it("should throw generic DMSError on missing DmsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 500
+          } as DvelopHttpResponse,
+          message: "HiItsMeHttpError"
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof DmsError).toBeTruthy();
+        expect(expectedError.message).toEqual(`DMS-App responded with status ${error.response.status}. See 'originalError'-property for details.`);
+        expect(expectedError.originalError).toBe(error);
+      });
+    });
+
+
+
+
+    it("should throw generic DMSError on no response", async () => {
+      const error = new Error("HiItsMeError");
+      mockRequestFunction.mockRejectedValue(error);
+
+
+      const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+      let expectedError: DvelopSdkError;
       try {
-        axiosErrorInterceptor(new Error(errorMessage));
+        await requestFunction(context, config);
       } catch (e: any) {
         expectedError = e;
       }
 
       expect(expectedError instanceof DmsError).toBeTruthy();
-      expect(expectedError.message).toEqual(`Request to DMS-App failed: ${errorMessage}. See 'originalError'-property for details.`);
+      expect(expectedError.message).toEqual(`Request to DMS-App failed: ${error.message}. See 'originalError'-property for details.`);
+      expect(expectedError.originalError).toBe(error);
     });
 
 
-    describe("on AxiosError", () => {
-
-      beforeEach(() => {
-        mockAxios.isAxiosError.mockReturnValue(true);
-      });
-
-      [
-        { status: 400, type: BadInputError, defaultMessage: "DMS-App responded with Status 400 indicating bad Request-Parameters. See 'originalError'-property for details." },
-        { status: 401, type: UnauthorizedError, defaultMessage: "DMS-App responded with Status 401 indicating bad authSessionId." },
-        { status: 403, type: ForbiddenError, defaultMessage: "DMS-App responded with Status 403 indicating a forbidden action. See 'originalError'-property for details." },
-        { status: 404, type: NotFoundError, defaultMessage: "DMS-App responded with Status 404 indicating a requested resource does not exist. See 'originalError'-property for details." },
-        { status: 500, type: DmsError, defaultMessage: "DMS-App responded with status 500. See 'originalError'-property for details." }
-      ].forEach(testCase => {
-
-        it(`should wrap default message on status ${testCase.status} and no reason`, () => {
-
-          const error: AxiosError = {
-            response: {
-              status: testCase.status
-            } as AxiosResponse
-          } as AxiosError;
-
-          let expectedError: any;
-          try {
-            axiosErrorInterceptor(error);
-          } catch (e: any) {
-            expectedError = e;
-          }
-
-          expect(expectedError instanceof testCase.type).toBeTruthy();
-          expect(expectedError.message).toEqual(testCase.defaultMessage);
-          expect(expectedError.originalError).toEqual(error);
-        });
-
-        it(`should wrap message on statis ${testCase.status} if there is a reason`, () => {
-
-          const error: AxiosError = {
-            response: {
-              status: testCase.status,
-              data: {
-                reason: "HiItsMeReason"
-              }
-            } as AxiosResponse
-          } as AxiosError;
-
-          let expectedError: any;
-          try {
-            axiosErrorInterceptor(error);
-          } catch (e: any) {
-            expectedError = e;
-          }
-
-          expect(expectedError instanceof testCase.type).toBeTruthy();
-          expect(expectedError.message).toEqual(error.response.data.reason);
-          expect(expectedError.originalError).toEqual(error);
-        });
-      });
-
-    });
   });
 
-  it("should correctly create AxiosInstance", () => {
-
-    const mockAxiosInstance: AxiosInstance = {
-      interceptors: {
-        request: {
-          use: jest.fn()
-        },
-        response: {
-          use: jest.fn()
-        }
-      }
-    } as unknown as AxiosInstance;
-
-    mockAxios.create.mockReturnValue(mockAxiosInstance);
-
-    defaultAxiosInstanceFactory();
-
-    expect(mockAxios.create).toHaveBeenCalledTimes(1);
-    expect(mockAxiosInstance.interceptors.request.use).toHaveBeenCalledWith(mockFollowHalJson);
-    expect(mockAxiosInstance.interceptors.response.use).toHaveBeenCalledWith(undefined, expect.any(Function));
-  });
-
-  describe("httpRequestFunctionFactory", () => {
-
-    const mockHttpClient = {
-      request: jest.fn()
-    };
-
-    let context: Context;
-    let config: HttpConfig;
-
-    it("should have default config on empty context", async () => {
-
-      context = {};
-
-      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
-      await httpRequestFunction(context, {});
-
-      expect(mockHttpClient.request).toHaveBeenCalledWith({
-        headers: {
-          "ContentType": "application/json",
-          "Accept": "application/hal+json, application/json"
-        }
-      });
-    });
-
-    it("should set systemBaseUri as baseURL", async () => {
-
-      context = {
-        systemBaseUri: "HiItsMeSystemBaseUri"
-      };
-
-      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
-      await httpRequestFunction(context, {});
-
-      expect(mockHttpClient.request).toHaveBeenCalledWith(expect.objectContaining({
-        baseURL: context.systemBaseUri
-      }));
-    });
-
-    it("should set authSessionId as Bearer-Token", async () => {
-
-      context = {
-        authSessionId: "HiItsMeAuthSessionId"
-      };
-
-      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
-      await httpRequestFunction(context, {});
-
-      expect(mockHttpClient.request).toHaveBeenCalledWith(expect.objectContaining({
-        headers: expect.objectContaining({
-          "Authorization": `Bearer ${context.authSessionId}`
-        })
-      }));
-    });
-
-    it("should add config", async () => {
-
-      config = {
-        method: "GET",
-        data: "HiItsMeData"
-      };
-
-      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
-      await httpRequestFunction({}, config);
-
-      expect(mockHttpClient.request).toHaveBeenCalledWith(expect.objectContaining({
-        method: config.method,
-        data: config.data
-      }));
-    });
-
-    it("should add and overwrite config-headers", async () => {
-
-      config = {
-        headers: {
-          "Accept": "HiItsMeAcceptHeader",
-          "ContentType": "application/json",
-          "test": "HiItsMeTestHeader"
-        }
-      };
-
-      const httpRequestFunction = httpRequestFunctionFactory(mockHttpClient);
-      await httpRequestFunction({}, config);
-
-      expect(mockHttpClient.request).toHaveBeenCalledWith(expect.objectContaining({
-        headers: expect.objectContaining({
-          "Accept": config.headers["Accept"],
-          "test": config.headers["test"]
-        })
-      }));
-    });
-  });
 });

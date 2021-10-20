@@ -1,5 +1,5 @@
-import { Context } from "../../utils/context";
-import { defaultHttpRequestFunction, HttpConfig, HttpResponse } from "../../utils/http";
+import { DvelopContext } from "../../index";
+import { defaultHttpRequestFunction, HttpConfig, HttpResponse } from "../../internals";
 
 export interface SearchDmsObjectsParams {
   repositoryId: string,
@@ -45,8 +45,8 @@ export interface SearchDmsObjectsResultPage {
   getNextPage?: () => Promise<SearchDmsObjectsResultPage>;
 }
 
-function listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>): (dto: any, context: Context, params: SearchDmsObjectsParams) => ListedDmsObject {
-  return (dto: any, context: Context, params: SearchDmsObjectsParams) => {
+function listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (dto: any, context: DvelopContext, params: SearchDmsObjectsParams) => ListedDmsObject {
+  return (dto: any, context: DvelopContext, params: SearchDmsObjectsParams) => {
 
     const result: ListedDmsObject = {
       repositoryId: params.repositoryId,
@@ -72,8 +72,8 @@ function listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction: (co
   };
 }
 
-export function searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: Context, params: SearchDmsObjectsParams) => SearchDmsObjectsResultPage {
-  return (response: HttpResponse, context: Context, params: SearchDmsObjectsParams) => {
+export function searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => SearchDmsObjectsResultPage {
+  return (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => {
 
     const result: SearchDmsObjectsResultPage = {
       page: response.data.page,
@@ -105,10 +105,10 @@ export function searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunct
 }
 
 export function searchDmsObjectsFactory<T>(
-  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context, params: SearchDmsObjectsParams) => T
-): (context: Context, params: SearchDmsObjectsParams) => Promise<T> {
-  return async (context: Context, params: SearchDmsObjectsParams) => {
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => T
+): (context: DvelopContext, params: SearchDmsObjectsParams) => Promise<T> {
+  return async (context: DvelopContext, params: SearchDmsObjectsParams) => {
 
     const templates: { [key: string]: string } = {
       "repositoryid": params.repositoryId,
@@ -148,6 +148,6 @@ export function searchDmsObjectsFactory<T>(
 }
 
 /* istanbul ignore next */
-export function searchDmsObjects(context: Context, params: SearchDmsObjectsParams): Promise<SearchDmsObjectsResultPage> {
+export function searchDmsObjects(context: DvelopContext, params: SearchDmsObjectsParams): Promise<SearchDmsObjectsResultPage> {
   return searchDmsObjectsFactory(defaultHttpRequestFunction, searchDmsObjectsDefaultTransformFunctionFactory(defaultHttpRequestFunction))(context, params);
 }

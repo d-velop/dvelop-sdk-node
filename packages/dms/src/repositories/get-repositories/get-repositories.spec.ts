@@ -1,5 +1,5 @@
-import { Context } from "../../utils/context";
-import { AxiosResponse, HttpResponse } from "../../utils/http";
+import { DvelopContext } from "../../index";
+import { HttpResponse } from "../../internals";
 import { Repository } from "../get-repository/get-repository";
 import { getRepositoriesDefaultTransformFunction, getRepositoriesFactory } from "./get-repositories";
 
@@ -8,7 +8,7 @@ describe("getRepositoriesFactory", () => {
   let mockHttpRequestFunction = jest.fn();
   let mockTransformFunction = jest.fn();
 
-  let context: Context;
+  let context: DvelopContext;
 
   beforeEach(() => {
 
@@ -34,7 +34,7 @@ describe("getRepositoriesFactory", () => {
 
   it("should pass response to transform and return transform-result", async () => {
 
-    const response: AxiosResponse = { data: { test: "HiItsMeTest" } } as AxiosResponse;
+    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
     const transformResult: any = { result: "HiItsMeResult" };
     mockHttpRequestFunction.mockResolvedValue(response);
     mockTransformFunction.mockReturnValue(transformResult);

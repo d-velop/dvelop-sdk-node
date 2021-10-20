@@ -1,5 +1,5 @@
-import { AxiosResponse, HttpConfig, HttpResponse, defaultHttpRequestFunction, DmsError } from "../../utils/http";
-import { Context } from "../../utils/context";
+import { DvelopContext, DmsError } from "../../index";
+import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
 import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
 
@@ -34,7 +34,7 @@ export interface CreateDmsObjectParams {
   content?: ArrayBuffer,
 }
 
-export function createDmsObjectDefaultTransformFunction(response: AxiosResponse<any>, _: Context, params: CreateDmsObjectParams): GetDmsObjectParams {
+export function createDmsObjectDefaultTransformFunction(response: HttpResponse<any>, _: DvelopContext, params: CreateDmsObjectParams): GetDmsObjectParams {
 
   const location: string = response.headers["location"];
   const matches: RegExpExecArray | null = /^.*\/(.*?)(\?|$)/.exec(location);
@@ -50,7 +50,7 @@ export function createDmsObjectDefaultTransformFunction(response: AxiosResponse<
   }
 }
 
-export async function createDmsObjectDefaultStoreFileFunction(context: Context, params: CreateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
+export async function createDmsObjectDefaultStoreFileFunction(context: DvelopContext, params: CreateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
   const uri: string = await storeFileTemporarily(context, params as StoreFileTemporarilyParams);
   return {
     setAs: "contentLocationUri",
@@ -64,12 +64,12 @@ export async function createDmsObjectDefaultStoreFileFunction(context: Context, 
  * @category DmsObject
  */
 export function createDmsObjectFactory<T>(
-  httpRequestFunction: (context: Context, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: Context, params: CreateDmsObjectParams) => T,
-  storeFileFunction: (context: Context, params: CreateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
-): (context: Context, params: CreateDmsObjectParams) => Promise<T> {
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: CreateDmsObjectParams) => T,
+  storeFileFunction: (context: DvelopContext, params: CreateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
+): (context: DvelopContext, params: CreateDmsObjectParams) => Promise<T> {
 
-  return async (context: Context, params: CreateDmsObjectParams) => {
+  return async (context: DvelopContext, params: CreateDmsObjectParams) => {
 
     if (!params.contentUri && !params.contentLocationUri && params.content) {
       const storedFileInfo: { setAs: "contentUri" | "contentLocationUri", uri: string } = await storeFileFunction(context, params);
@@ -117,6 +117,6 @@ export function createDmsObjectFactory<T>(
  * @category DmsObject
  */
 /* istanbul ignore next */
-export async function createDmsObject(context: Context, params: CreateDmsObjectParams): Promise<GetDmsObjectParams> {
+export async function createDmsObject(context: DvelopContext, params: CreateDmsObjectParams): Promise<GetDmsObjectParams> {
   return await createDmsObjectFactory(defaultHttpRequestFunction, createDmsObjectDefaultTransformFunction, createDmsObjectDefaultStoreFileFunction)(context, params);
 }

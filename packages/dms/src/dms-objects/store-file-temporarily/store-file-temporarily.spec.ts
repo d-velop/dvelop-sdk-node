@@ -1,5 +1,5 @@
-import { Context } from "../../utils/context";
-import { HttpResponse } from "../../utils/http";
+import { DvelopContext } from "../../index";
+import { HttpResponse } from "../../internals";
 import { storeFileTemporarilyDefaultTransformFunction, storeFileTemporarilyFactory, StoreFileTemporarilyParams } from "./store-file-temporarily";
 
 describe("storeFileTemporarilyFactory", () => {
@@ -7,7 +7,7 @@ describe("storeFileTemporarilyFactory", () => {
   let mockHttpRequestFunction = jest.fn();
   let mockTransformFunction = jest.fn();
 
-  let context: Context;
+  let context: DvelopContext;
   let params: StoreFileTemporarilyParams;
 
   beforeEach(() => {
