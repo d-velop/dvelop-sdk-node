@@ -5,7 +5,13 @@ export interface SearchDmsObjectsParams {
   repositoryId: string,
   sourceId: string;
   categories?: string[];
-  properties?: { [key: string]: string[] };
+  /** Properties */
+  properties?: {
+    /** Id of the property */
+    key: string,
+    /** Value(s) - Single values must be given as an array of length 1 */
+    values: string[];
+  }[]
   sortProperty?: string;
   ascending?: boolean;
   fulltext?: string;
@@ -104,36 +110,49 @@ export function searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunct
   };
 }
 
+function formatProperties(properties: { key: string, values: string[] }[]): { [key: string]: string[] } {
+
+  const sourceProperties: { [key: string]: string[] } = {};
+  properties.forEach(p => {
+    if (sourceProperties[p.key]) {
+      sourceProperties[p.key] = sourceProperties[p.key].concat(p.values);
+    } else {
+      sourceProperties[p.key] = p.values;
+    }
+  });
+  return sourceProperties;
+}
+
 export function searchDmsObjectsFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => T
 ): (context: DvelopContext, params: SearchDmsObjectsParams) => Promise<T> {
   return async (context: DvelopContext, params: SearchDmsObjectsParams) => {
 
-    const templates: { [key: string]: string } = {
+    const templates: { [key: string]: any } = {
       "repositoryid": params.repositoryId,
       "sourceid": params.sourceId,
     };
     if (params.categories) {
-      templates["sourcecategories"] = encodeURIComponent(JSON.stringify(params.categories));
+      templates["sourcecategories"] = params.categories;
     }
     if (params.properties) {
-      templates["sourceproperties"] = encodeURIComponent(JSON.stringify(params.properties));
+      templates["sourceproperties"] = formatProperties(params.properties);
     }
     if (params.sortProperty) {
       templates["sourcepropertysort"] = params.sortProperty;
     }
     if (params.ascending) {
-      templates["ascending"] = encodeURIComponent(params.ascending);
+      templates["ascending"] = params.ascending;
     }
     if (params.fulltext) {
       templates["fulltext"] = params.fulltext;
     }
     if (params.page) {
-      templates["page"] = encodeURIComponent(params.page);
+      templates["page"] = params.page;
     }
     if (params.pageSize) {
-      templates["pagesize"] = encodeURIComponent(params.pageSize);
+      templates["pagesize"] = params.pageSize;
     }
 
     const response: HttpResponse = await httpRequestFunction(context, {
