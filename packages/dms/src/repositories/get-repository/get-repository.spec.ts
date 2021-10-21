@@ -80,7 +80,7 @@ describe("getRepositoryFactory", () => {
       const getRepository = getRepositoryFactory(mockHttpRequestFunction, getRepositoryDefaultTransformFunction);
       const result: Repository = await getRepository(context, params);
 
-      expect(result).toHaveProperty("id", data.id);
+      expect(result).toHaveProperty("repositoryId", data.id);
       expect(result).toHaveProperty("name", data.name);
       expect(result).toHaveProperty("sourceId", data._links.source.href);
     });

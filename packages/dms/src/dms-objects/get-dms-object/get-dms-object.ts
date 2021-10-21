@@ -18,7 +18,7 @@ export interface DmsObject {
   /** ID of the source */
   sourceId: string;
   /** ID of the DmsObject */
-  id: string;
+  dmsObjectId: string;
   /** Category of the DmsObject */
   categories: string[];
   /** Properties of the DmsObject */
@@ -26,9 +26,9 @@ export interface DmsObject {
     /** Key of the DmsObject-Property */
     key: string;
     /** Value of the DmsObject-Property */
-    value: string;
+    value?: string;
     /** Values of the DmsObject-Property */
-    values?: any;
+    values?: { [key: string]: string };
     /** Display-Value of the DmsObject-Property */
     displayValue?: string;
   }[];
@@ -37,6 +37,14 @@ export interface DmsObject {
   getPdfFile?: () => Promise<ArrayBuffer>;
 }
 
+/**
+ *
+ * @param getDmsObjectMainFileFunction
+ * @param getDmsObjectPdfFileFunction
+ * @returns
+ *
+ * @inner
+ */
 export function getDmsObjectDefaultTransformFunctionFactory(
   getDmsObjectMainFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
   getDmsObjectPdfFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>
@@ -46,7 +54,7 @@ export function getDmsObjectDefaultTransformFunctionFactory(
     const dmsObject: DmsObject = {
       repositoryId: params.repositoryId,
       sourceId: params.sourceId,
-      id: params.dmsObjectId,
+      dmsObjectId: params.dmsObjectId,
       categories: response.data.sourceCategories,
       properties: response.data.sourceProperties
     };
@@ -62,7 +70,14 @@ export function getDmsObjectDefaultTransformFunctionFactory(
     return dmsObject;
   };
 }
-
+/**
+ *
+ * @param getDmsObjectMainFileFunction
+ * @param getDmsObjectPdfFileFunction
+ * @returns
+ *
+ * @inner
+ */
 export function getDmsObjectFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: GetDmsObjectParams) => T
@@ -82,7 +97,12 @@ export function getDmsObjectFactory<T>(
     return transformFunction(response, context, params);
   };
 }
-
+/**
+ *
+ * @param getDmsObjectMainFileFunction
+ * @param getDmsObjectPdfFileFunction
+ * @returns
+ */
 /* istanbul ignore next */
 export async function getDmsObjectDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) {
   return getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile)(response, context, params);
