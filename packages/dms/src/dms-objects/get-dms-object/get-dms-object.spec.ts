@@ -98,7 +98,7 @@ describe("getDmsObject", () => {
 
       expect(result).toHaveProperty("repositoryId", params.repositoryId);
       expect(result).toHaveProperty("sourceId", params.sourceId);
-      expect(result).toHaveProperty("id", params.dmsObjectId);
+      expect(result).toHaveProperty("dmsObjectId", params.dmsObjectId);
       expect(result).toHaveProperty("properties", data["sourceProperties"]);
       expect(result).toHaveProperty("categories", data["sourceCategories"]);
 

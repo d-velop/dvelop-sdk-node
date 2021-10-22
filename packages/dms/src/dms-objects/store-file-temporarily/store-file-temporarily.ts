@@ -1,6 +1,10 @@
 import { DvelopContext } from "../../index";
 import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 
+/**
+ * Parameters for the {@link storeFileTemporarily}-function.
+ * @category DmsObject
+ */
 export interface StoreFileTemporarilyParams {
   /** Id of the repository */
   repositoryId: string;
@@ -10,6 +14,7 @@ export interface StoreFileTemporarilyParams {
 
 /**
  * Default transform-function provided to the {@link storeFileTemporarily}-function.
+ * @internal
  * @category DmsObject
  */
 export function storeFileTemporarilyDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: StoreFileTemporarilyParams): string {
@@ -17,8 +22,9 @@ export function storeFileTemporarilyDefaultTransformFunction(response: HttpRespo
 }
 
 /**
- * Factory for the {@link storeFileTemporarily}-function. See internals for more information.
- * @typeparam T Return type of the {@link storeFileTemporarily}-function. A corresponding transformFuntion has to be supplied.
+ * Factory for the {@link storeFileFunction}-function. See internals for more information.
+ * @typeparam T Return type of the {@link storeFileFunction}-function. A corresponding transformFuntion has to be supplied.
+ * @internal
  * @category DmsObject
  */
 export function storeFileTemporarilyFactory<T>(
@@ -43,17 +49,19 @@ export function storeFileTemporarilyFactory<T>(
  *
  * ```typescript
  * import { storeFileTemporarily } from "@dvelop-sdk/dms";
- * import { readFileSync } from "fs"; // Node.js
+ * import { readFileSync } from "fs";
  *
- * const file: ArrayBuffer = readFileSync(`${__dirname}/our-profits.kaching`).buffer; // Node.js
+ * //only node.js
+ * const file: ArrayBuffer = readFileSync(`${ __dirname }/our-profits.kaching`).buffer;
  *
  * const temporaryUri: string = await storeFileTemporarily({
  *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
  *   authSessionId: "dQw4w9WgXcQ"
  * }, {
- *  repositoryId: "169",
-    content: file
+ *   repositoryId: "qnydFmqHuVo",
+ *   content: file
  * });
+ *
  * console.log(temporaryUri); // /dms/some-random-blob-url
  * ```
  *

@@ -42,18 +42,52 @@ describe("searchDmsObjects", () => {
       }, expectedTemplates: {
         "repositoryid": "HiItsMeRepositoryId",
         "sourceid": "HiItsMeSourceId",
-        "sourcecategories": "%5B%22HiItsMeCategory1%22%2C%22HiItsMeCategory2%22%5D",
+        "sourcecategories": ["HiItsMeCategory1", "HiItsMeCategory2"],
       }
     },
     {
       params: {
         repositoryId: "HiItsMeRepositoryId",
         sourceId: "HiItsMeSourceId",
-        properties: { "HiItsMeProperty1": ["HiItsMeProperty1Value1"], "HiItsMeProperty2": ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"] }
+        properties: [
+
+          {
+            key: "HiItsMeProperty1",
+            values: ["HiItsMeProperty1Value1"]
+          }, {
+            key: "HiItsMeProperty2",
+            values: ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"]
+          }
+        ]
       }, expectedTemplates: {
         "repositoryid": "HiItsMeRepositoryId",
         "sourceid": "HiItsMeSourceId",
-        "sourceproperties": "%7B%22HiItsMeProperty1%22%3A%5B%22HiItsMeProperty1Value1%22%5D%2C%22HiItsMeProperty2%22%3A%5B%22HiItsMeProperty2Value1%22%2C%22HiItsMeProperty2Value2%22%5D%7D",
+        "sourceproperties": {
+          "HiItsMeProperty1": ["HiItsMeProperty1Value1"],
+          "HiItsMeProperty2": ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"]
+        }
+      }
+    },
+    {
+      params: {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        properties: [
+
+          {
+            key: "HiItsMeProperty1",
+            values: ["HiItsMeProperty1Value1"]
+          }, {
+            key: "HiItsMeProperty1",
+            values: ["HiItsMeProperty1Value2", "HiItsMeProperty1Value3"]
+          }
+        ]
+      }, expectedTemplates: {
+        "repositoryid": "HiItsMeRepositoryId",
+        "sourceid": "HiItsMeSourceId",
+        "sourceproperties": {
+          "HiItsMeProperty1": ["HiItsMeProperty1Value1", "HiItsMeProperty1Value2", "HiItsMeProperty1Value3"]
+        }
       }
     },
     {
@@ -75,7 +109,7 @@ describe("searchDmsObjects", () => {
       }, expectedTemplates: {
         "repositoryid": "HiItsMeRepositoryId",
         "sourceid": "HiItsMeSourceId",
-        "ascending": "true",
+        "ascending": true,
       }
     },
     {
@@ -97,7 +131,7 @@ describe("searchDmsObjects", () => {
       }, expectedTemplates: {
         "repositoryid": "HiItsMeRepositoryId",
         "sourceid": "HiItsMeSourceId",
-        "page": "42",
+        "page": 42,
       }
     },
     {
@@ -108,7 +142,7 @@ describe("searchDmsObjects", () => {
       }, expectedTemplates: {
         "repositoryid": "HiItsMeRepositoryId",
         "sourceid": "HiItsMeSourceId",
-        "pagesize": "42",
+        "pagesize": 42,
       }
     }
   ].forEach(testCase => {

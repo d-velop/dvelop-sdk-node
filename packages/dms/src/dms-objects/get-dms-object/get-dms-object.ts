@@ -2,6 +2,10 @@ import { DvelopContext } from "../../index";
 import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
 
+/**
+ * Parameters for the {@link getDmsObject}-function.
+ * @category DmsObject
+ */
 export interface GetDmsObjectParams {
   /** ID of the repository */
   repositoryId: string;
@@ -12,13 +16,17 @@ export interface GetDmsObjectParams {
   /** Short description of changes */
 }
 
+/**
+ * A d.velop cloud dmsObject.
+ * @category DmsObject
+ */
 export interface DmsObject {
   /** ID of the repository */
   repositoryId: string;
   /** ID of the source */
   sourceId: string;
   /** ID of the DmsObject */
-  id: string;
+  dmsObjectId: string;
   /** Category of the DmsObject */
   categories: string[];
   /** Properties of the DmsObject */
@@ -26,17 +34,24 @@ export interface DmsObject {
     /** Key of the DmsObject-Property */
     key: string;
     /** Value of the DmsObject-Property */
-    value: string;
+    value?: string;
     /** Values of the DmsObject-Property */
-    values?: any;
+    values?: { [key: string]: string };
     /** Display-Value of the DmsObject-Property */
     displayValue?: string;
   }[];
 
+  /** Function that returns the DmsObject-file. */
   getMainFile?: () => Promise<ArrayBuffer>;
+  /** Function that returns the DmsObject-pdf. */
   getPdfFile?: () => Promise<ArrayBuffer>;
 }
 
+/**
+ * Factory for the default-transform-function for the {@link getDmsObject}-function. See internals for more information.
+ * @internal
+ * @category DmsObject
+ */
 export function getDmsObjectDefaultTransformFunctionFactory(
   getDmsObjectMainFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
   getDmsObjectPdfFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>
@@ -46,7 +61,7 @@ export function getDmsObjectDefaultTransformFunctionFactory(
     const dmsObject: DmsObject = {
       repositoryId: params.repositoryId,
       sourceId: params.sourceId,
-      id: params.dmsObjectId,
+      dmsObjectId: params.dmsObjectId,
       categories: response.data.sourceCategories,
       properties: response.data.sourceProperties
     };
@@ -63,6 +78,12 @@ export function getDmsObjectDefaultTransformFunctionFactory(
   };
 }
 
+/**
+ * Factory for {@link getDmsObject}-function. See internals for more information.
+ * @typeparam T Return type of the getRepositories-function. A corresponding transformFuntion has to be supplied.
+ * @internal
+ * @category DmsObject
+ */
 export function getDmsObjectFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: GetDmsObjectParams) => T
@@ -83,11 +104,35 @@ export function getDmsObjectFactory<T>(
   };
 }
 
+/**
+ * Factory for the default-transform-function for the {@link searchDmsObjects}-function. See internals for more information.
+ * @internal
+ * @category DmsObject
+ */
 /* istanbul ignore next */
 export async function getDmsObjectDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) {
   return getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile)(response, context, params);
 }
 
+/**
+ * Get a DmsObject.
+ *
+ * ```typescript
+ * import { getDmsObject } from "@dvelop-sdk/dms";
+ *
+ * const dmsObject: DmsObject = await getDmsObjec({
+ *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * },{
+ *   repositoryId: "qnydFmqHuVo",
+ *   sourceId: "/dms/r/qnydFmqHuVo/source",
+ *   dmsObjectId: "GDYQ3PJKrT8",
+ * });
+ *
+ * console.log(dmsObject);
+ * ```
+ * @category DmsObject
+ */
 /* istanbul ignore next */
 export async function getDmsObject(context: DvelopContext, params: GetDmsObjectParams) {
   return getDmsObjectFactory(defaultHttpRequestFunction, getDmsObjectDefaultTransformFunction)(context, params);

@@ -3,6 +3,10 @@ import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../inte
 import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
 import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
 
+/**
+ * Parameters for the {@link createDmsObject}-function.
+ * @category DmsObject
+ */
 export interface CreateDmsObjectParams {
   /** ID of the repository */
   repositoryId: string;
@@ -34,6 +38,11 @@ export interface CreateDmsObjectParams {
   content?: ArrayBuffer,
 }
 
+/**
+ * Default transform-function provided to the {@link createDmsObject}-function.
+ * @internal
+ * @category DmsObject
+ */
 export function createDmsObjectDefaultTransformFunction(response: HttpResponse<any>, _: DvelopContext, params: CreateDmsObjectParams): GetDmsObjectParams {
 
   const location: string = response.headers["location"];
@@ -50,6 +59,11 @@ export function createDmsObjectDefaultTransformFunction(response: HttpResponse<a
   }
 }
 
+/**
+ * Default store-file-function provided to the {@link createDmsObject}-function.
+ * @internal
+ * @category DmsObject
+ */
 export async function createDmsObjectDefaultStoreFileFunction(context: DvelopContext, params: CreateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
   const uri: string = await storeFileTemporarily(context, params as StoreFileTemporarilyParams);
   return {
@@ -101,17 +115,27 @@ export function createDmsObjectFactory<T>(
  * Create a DmsObject.
  *
  * ```typescript
- * // nodejs
+ * import { createDmsObject } from "@dvelop-sdk/dms";
  * import { readFileSync } from "fs";
  *
- * const file: ArrayBuffer = readFileSync(`${ __dirname } /chicken.pdf`).buffer;
+ * //only node.js
+ * const file: ArrayBuffer = readFileSync(`${ __dirname }/our-profits.kaching`).buffer;
  *
- * const dmsObject: GetDmsObjectParams = await createDmsObject(context, {
- *   repositoryId: repoId,
- *   categoryId: "3ed080ff-ca5f-4248-a0e9-8234ba3abe11",
- *   sourceId: `/dms/r/${repoId}/source`,
- *   fileName: 'chicken.pdf',
- *   file: file
+ * const dmsObject: GetDmsObjectParams = await createDmsObject({
+ *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * }, {
+ *   repositoryId: "qnydFmqHuVo",
+ *   sourceId: "/dms/r/qnydFmqHuVo/source",
+ *   dmsObjectId: "GDYQ3PJKrT8",
+ *   properties: [
+ *     {
+ *       key: "AaGK-fj-BAM",
+ *       values: ["unpaid"]
+ *     }
+ *   ],
+ *   fileName: "our-profits.kaching",
+ *   content: file,
  * });
  * ```
  * @category DmsObject

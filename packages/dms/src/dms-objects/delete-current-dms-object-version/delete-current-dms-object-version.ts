@@ -2,7 +2,10 @@ import { DvelopContext, ForbiddenError } from "../../index";
 import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 import { getDmsObjectFactory } from "../get-dms-object/get-dms-object";
 
-
+/**
+ * Parameters for the {@link deleteCurrentDmsObjectVersion}-function.
+ * @category DmsObject
+ */
 export interface DeleteCurrentDmsObjectVersionParams {
   /** ID of the repository */
   repositoryId: string;
@@ -16,6 +19,7 @@ export interface DeleteCurrentDmsObjectVersionParams {
 
 /**
  * Default transform-function provided to the {@link deleteCurrentDmsObjectVersion}-function.
+ * @internal
  * @category DmsObject
  */
 export function deleteCurrentDmsObjectVersionDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: DeleteCurrentDmsObjectVersionParams): boolean {
@@ -29,6 +33,7 @@ export function deleteCurrentDmsObjectVersionDefaultTransformFunction(response: 
 /**
  * Factory for the {@link deleteCurrentDmsObjectVersion}-function. See internals for more information.
  * @typeparam T Return type of the {@link deleteCurrentDmsObjectVersion}-function. A corresponding transformFuntion has to be supplied.
+ * @internal
  * @category DmsObject
  */
 export function deleteCurrentDmsObjectVersionFactory<T>(
@@ -64,17 +69,31 @@ export function deleteCurrentDmsObjectVersionFactory<T>(
  * Deletes the current (last) version of a DmsObject. The version before that automatically becomes the current version.
  * @returns Boolean value indicating if the dmsObject was completly deleted (aka: You just deleted the first version)
  *
- ```typescript
+ * ```typescript
+ * import { deleteCurrentDmsObjectVersion } from "@dvelop-sdk/dms";
+ *
+ * await deleteCurrentDmsObjectVersion({
+ *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * }, {
+ *     repositoryId: "qnydFmqHuVo",
+ *     sourceId: "/dms/r/qnydFmqHuVo/source",
+ *     dmsObjectId: "GDYQ3PJKrT8",
+ *     reason: "This shall be gone! Tout de suite!"
+ *   });
  *
  * // Delete the whole DmsObject
- * // * Attention: As this method wraps an HTTP-Call this snippet can significantly slow down your code *
+ * // * Attention: As this method wraps an HTTP-Call and can significantly slow down your code *
  * let deletedAllVersions: boolean = false;
  * while (!deletedAllVersions) {
- *   deletedAllVersions = await deleteCurrentDmsObjectVersionDefaultTransformer(context, {
- *     repositoryId: "",
- *     sourceId: "",
- *     dmsObjectId: "",
- *     reason: ""
+ *   deletedAllVersions = await deleteCurrentDmsObjectVersion({
+ *     systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+ *     authSessionId: "dQw4w9WgXcQ"
+ *   }, {
+ *     repositoryId: "qnydFmqHuVo",
+ *     sourceId: "/dms/r/qnydFmqHuVo/source",
+ *     dmsObjectId: "GDYQ3PJKrT8",
+ *     reason: "This shall be gone! Tout de suite!"
  *   });
  * }
  * ```
