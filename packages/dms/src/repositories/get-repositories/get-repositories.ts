@@ -4,6 +4,7 @@ import { Repository } from "../get-repository/get-repository";
 
 /**
  * Default transform-function provided to the {@link getRepositories}-function.
+ * @internal
  * @category Repository
  */
 export function getRepositoriesDefaultTransformFunction(response: HttpResponse, _: DvelopContext): Repository[] {
@@ -19,6 +20,7 @@ export function getRepositoriesDefaultTransformFunction(response: HttpResponse, 
 /**
  * Factory for {@link getRepositories}-function. See internals for more information.
  * @typeparam T Return type of the getRepositories-function. A corresponding transformFuntion has to be supplied.
+ * @internal
  * @category Repository
  */
 export function getRepositoriesFactory<T>(

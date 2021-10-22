@@ -3,7 +3,7 @@ import { DvelopContext, DvelopHttpRequestConfig, DvelopHttpResponse, DvelopHttpC
 export { DvelopHttpRequestConfig as HttpConfig, DvelopHttpResponse as HttpResponse } from "@dvelop-sdk/core";
 
 /**
-*
+* Generic Error for dms-package.
 * @category Error
 */
 /* istanbul ignore next */
@@ -15,6 +15,11 @@ export class DmsError extends DvelopSdkError {
   }
 }
 
+/**
+ * Factory used to create the default httpRequestFunction. Mostly used for HTTP-Error handling.
+ * @internal
+ * @category Http
+ */
 export function defaultHttpRequestFunctionFactory(httpClient: DvelopHttpClient): (context: DvelopContext, config: DvelopHttpRequestConfig) => Promise<DvelopHttpResponse> {
   return async (context: DvelopContext, config: DvelopHttpRequestConfig) => {
 
@@ -47,6 +52,11 @@ export function defaultHttpRequestFunctionFactory(httpClient: DvelopHttpClient):
   };
 }
 
+/**
+ * Default httpRequestFunction used in dms-package.
+ * @internal
+ * @category Http
+ */
 /* istanbul ignore next */
 export async function defaultHttpRequestFunction(context: DvelopContext, config: DvelopHttpRequestConfig): Promise<DvelopHttpResponse> {
   return defaultHttpRequestFunctionFactory(defaultDvelopHttpClientFactory())(context, config);

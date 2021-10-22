@@ -1,6 +1,10 @@
 import { DvelopContext } from "../../index";
 import { defaultHttpRequestFunction, HttpConfig, HttpResponse } from "../../internals";
 
+/**
+ * Parameters for the {@link searchDmsObjects}-function.
+ * @category DmsObject
+ */
 export interface SearchDmsObjectsParams {
   repositoryId: string,
   sourceId: string;
@@ -19,6 +23,10 @@ export interface SearchDmsObjectsParams {
   pageSize?: number;
 }
 
+/**
+ * A listed version of d.velop cloud dmsObject. There might be more information available via the {@link getDmsObject}-funciton.
+ * @category DmsObject
+ */
 export interface ListedDmsObject {
 
   /** ID of the repository */
@@ -44,13 +52,26 @@ export interface ListedDmsObject {
   getMainFile?: () => Promise<ArrayBuffer>;
 }
 
+/**
+ * Page of a searchResult. There might be more than one page.
+ * @category DmsObject
+ */
 export interface SearchDmsObjectsResultPage {
+  /** Current page-number */
   page: number;
+  /** Array of {@link ListedDmsObject}s found */
   dmsObjects: ListedDmsObject[]
+  /** Function that returns the previous page. Undefined if there is none. */
   getPreviousPage?: () => Promise<SearchDmsObjectsResultPage>;
+  /** Function that returns the next page. Undefined if there is none. */
   getNextPage?: () => Promise<SearchDmsObjectsResultPage>;
 }
 
+/**
+ * Factory for the default-transform-function for the {@link searchDmsObjects}-function. See internals for more information.
+ * @internal
+ * @category DmsObject
+ */
 function listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (dto: any, context: DvelopContext, params: SearchDmsObjectsParams) => ListedDmsObject {
   return (dto: any, context: DvelopContext, params: SearchDmsObjectsParams) => {
 
@@ -78,6 +99,11 @@ function listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction: (co
   };
 }
 
+/**
+ * Factory for the default-transform-function for the {@link searchDmsObjects}-function. See internals for more information.
+ * @internal
+ * @category DmsObject
+ */
 export function searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => SearchDmsObjectsResultPage {
   return (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => {
 
@@ -123,6 +149,12 @@ function formatProperties(properties: { key: string, values: string[] }[]): { [k
   return sourceProperties;
 }
 
+/**
+ * Factory for the {@link searchDmsObjects}-function. See internals for more information.
+ * @typeparam T Return type of the {@link storeFileFunction}-function. A corresponding transformFuntion has to be supplied.
+ * @internal
+ * @category DmsObject
+ */
 export function searchDmsObjectsFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => T
@@ -166,6 +198,31 @@ export function searchDmsObjectsFactory<T>(
   };
 }
 
+/**
+ * Execute a search and returns the search-result. This result might be partial due to the defined ```pageSize```-property.
+ * You can navigate pages with the ```getPreviousPage```- and ```getNextPage```-functions. If functions are undefined the page does not exist.
+ *
+ * ```typescript
+ * import { searchDmsObjects } from "@dvelop-sdk/dms";
+ *
+ * const searchResult: SearchDmsObjectsResultPage = await searchDmsObjects({
+ *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * },{
+ *   repositoryId: "qnydFmqHuVo",
+ *   sourceId: "/dms/r/qnydFmqHuVo/source",
+ *   categories: ["TIfAkOBMf5A"]
+ *   fulltext: "Ashenvale",
+ *   properties: [{
+ *     key: "AaGK-fj-BAM",
+ *     values: ["unpaid"]
+ *   }]
+ * });
+ *
+ * console.log(searchResult.dmsObjects.length);
+ * ```
+ * @category DmsObject
+ */
 /* istanbul ignore next */
 export function searchDmsObjects(context: DvelopContext, params: SearchDmsObjectsParams): Promise<SearchDmsObjectsResultPage> {
   return searchDmsObjectsFactory(defaultHttpRequestFunction, searchDmsObjectsDefaultTransformFunctionFactory(defaultHttpRequestFunction))(context, params);

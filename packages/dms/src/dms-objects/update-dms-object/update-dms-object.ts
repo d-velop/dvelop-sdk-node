@@ -2,6 +2,10 @@ import { DvelopContext } from "../../index";
 import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
 import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
 
+/**
+ * Parameters for the {@link updateDmsObject}-function.
+ * @category DmsObject
+ */
 export interface UpdateDmsObjectParams {
   /** ID of the repository */
   repositoryId: string;
@@ -34,8 +38,18 @@ export interface UpdateDmsObjectParams {
   content?: ArrayBuffer
 }
 
+/**
+ * Default transform-function provided to the {@link updateDmsObject}-function.
+ * @internal
+ * @category DmsObject
+ */
 export function updateDmsObjectDefaultTransformFunction(_: HttpResponse, __: DvelopContext, ___: UpdateDmsObjectParams): void { } // no error indicates success. Returning void
 
+/**
+ * Default storeFile-function provided to the {@link updateDmsObject}-function. This will get called when content is provided.
+ * @internal
+ * @category DmsObject
+ */
 export async function updateDmsObjectDefaultStoreFileFunction(context: DvelopContext, params: UpdateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
   const uri: string = await storeFileTemporarily(context, params as StoreFileTemporarilyParams);
   return {
@@ -44,6 +58,12 @@ export async function updateDmsObjectDefaultStoreFileFunction(context: DvelopCon
   };
 }
 
+/**
+ * Factory for the {@link updateDmsObject}-function. See internals for more information.
+ * @typeparam T Return type of the {@link updateDmsObject}-function. A corresponding transformFuntion has to be supplied.
+ * @internal
+ * @category DmsObject
+ */
 export function updateDmsObjectFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: UpdateDmsObjectParams) => T,
@@ -84,7 +104,29 @@ export function updateDmsObjectFactory<T>(
  * Update a DmsObject.
  *
  * ```typescript
- * TODO
+ * import { updateDmsObject } from "@dvelop-sdk/dms";
+ * import { readFileSync } from "fs";
+ *
+ * //only node.js
+ * const file: ArrayBuffer = readFileSync(`${ __dirname }/our-profits.kaching`).buffer;
+ *
+ * await updateDmsObject({
+ *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * }, {
+ *   repositoryId: "qnydFmqHuVo",
+ *   sourceId: "/dms/r/qnydFmqHuVo/source",
+ *   dmsObjectId: "GDYQ3PJKrT8",
+ *   alterationText: "Updated by SDK",
+ *   properties: [
+ *     {
+ *       key: "AaGK-fj-BAM",
+ *       values: ["paid"]
+ *     }
+ *   ],
+ *   fileName: "our-profits.kaching",
+ *   content: file,
+ * });
  * ```
  *
  * @category DmsObject

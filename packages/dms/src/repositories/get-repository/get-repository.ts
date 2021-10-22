@@ -25,6 +25,7 @@ export interface Repository {
 
 /**
  * Default transform-function provided to the {@link getRepository}-function.
+ * @internal
  * @category Repository
  */
 export function getRepositoryDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: GetRepositoryParams): Repository {
@@ -39,6 +40,7 @@ export function getRepositoryDefaultTransformFunction(response: HttpResponse, _:
 /**
  * Factory for the {@link getRepository}-function. See internals for more information.
  * @typeparam T Return type of the {@link getRepository}-function. A corresponding transformFuntion has to be supplied.
+ * @internal
  * @category Repository
  */
 export function getRepositoryFactory<T>(
@@ -66,8 +68,9 @@ export function getRepositoryFactory<T>(
  *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
  *   authSessionId: "dQw4w9WgXcQ"
  * }, {
- *   repositoryId: "169",
+ *   repositoryId: "qnydFmqHuVo",
  * });
+ *
  * console.log(repo.name); // Booty Bay Documents
  * ```
  *
