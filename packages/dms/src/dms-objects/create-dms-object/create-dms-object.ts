@@ -80,14 +80,18 @@ export async function createDmsObjectDefaultStoreFileFunction(context: DvelopCon
 export function createDmsObjectFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: CreateDmsObjectParams) => T,
-  storeFileFunction: (context: DvelopContext, params: CreateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
+  storeFileFunction?: (context: DvelopContext, params: CreateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
 ): (context: DvelopContext, params: CreateDmsObjectParams) => Promise<T> {
 
   return async (context: DvelopContext, params: CreateDmsObjectParams) => {
 
     if (!params.contentUri && !params.contentLocationUri && params.content) {
-      const storedFileInfo: { setAs: "contentUri" | "contentLocationUri", uri: string } = await storeFileFunction(context, params);
-      params[storedFileInfo.setAs] = storedFileInfo.uri;
+      if (storeFileFunction) {
+        const storedFileInfo: { setAs: "contentUri" | "contentLocationUri", uri: string } = await storeFileFunction(context, params);
+        params[storedFileInfo.setAs] = storedFileInfo.uri;
+      } else {
+        throw new DmsError("DmsObject cannot be created with content. No storeFile-function has been supplied.");
+      }
     }
 
     const response: HttpResponse = await httpRequestFunction(context, {

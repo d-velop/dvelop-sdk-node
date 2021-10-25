@@ -40,39 +40,100 @@ describe("createDmsObject", () => {
     };
   });
 
-  it("should not call storeFileFunction if contentUri is given", async () => {
+  [
+    { param: "contentUri", expectStoreFileCall: false },
+    { param: "contentLocationUri", expectStoreFileCall: false }
+  ].forEach(testCase => {
 
-    params.contentUri = "HiItsMeContentUri";
-    params.content = new ArrayBuffer(42);
+    it(`should ${testCase.expectStoreFileCall ? "" : "not"} throw on content`, async () => {
 
-    const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
-    await createDmsObject(context, params);
+      params.contentUri = "HiItsMeContentUri";
+      params.content = new ArrayBuffer(42);
 
-    expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
+      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
+      expect(async () => await createDmsObject(context, params)).not.toThrow();
+    });
+
   });
 
-  it("should not call storeFileFunction if contentLocationUri is given", async () => {
+  describe("on contentUri", () => {
 
-    params.contentLocationUri = "HiItsMeContentUri";
-    params.content = new ArrayBuffer(42);
+    it("should pass without storeFileFunction", async () => {
 
-    const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
-    await createDmsObject(context, params);
+      params.contentUri = "HiItsMeContentUri";
+      params.content = new ArrayBuffer(42);
 
-    expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
+      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
+      expect(async () => await createDmsObject(context, params)).not.toThrow();
+    });
+
+    it("should not call storeFileFunction", async () => {
+
+      params.contentUri = "HiItsMeContentUri";
+      params.content = new ArrayBuffer(42);
+
+      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+      await createDmsObject(context, params);
+
+      expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
+    });
   });
 
-  it("should call storeFileFunction if content is given", async () => {
+  describe("on contentLocationUri", () => {
 
-    params.content = new ArrayBuffer(42);
-    mockStoreFileFunction.mockReturnValue({ setAs: "contentUri", uri: "HiItsMeUri" });
+    it("should pass without storeFileFunction", async () => {
 
-    const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
-    await createDmsObject(context, params);
+      params.contentLocationUri = "HiItsMeContenLocationtUri";
+      params.content = new ArrayBuffer(42);
 
-    expect(mockStoreFileFunction).toHaveBeenCalledTimes(1);
-    expect(mockStoreFileFunction).toHaveBeenCalledWith(context, params);
+      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
+      expect(async () => await createDmsObject(context, params)).not.toThrow();
+    });
+
+    it("should not call storeFileFunction if contentLocationUri is given", async () => {
+
+      params.contentLocationUri = "HiItsMeContentLocationUri";
+      params.content = new ArrayBuffer(42);
+
+      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+      await createDmsObject(context, params);
+
+      expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
+    });
   });
+
+  describe("on content", () => {
+    it("should call storeFileFunction if content is given", async () => {
+
+      params.content = new ArrayBuffer(42);
+      mockStoreFileFunction.mockReturnValue({ setAs: "contentUri", uri: "HiItsMeUri" });
+
+      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+      await createDmsObject(context, params);
+
+      expect(mockStoreFileFunction).toHaveBeenCalledTimes(1);
+      expect(mockStoreFileFunction).toHaveBeenCalledWith(context, params);
+    });
+
+    it("should throw on no storeFileFunction", async () => {
+
+      params.content = new ArrayBuffer(42);
+      mockStoreFileFunction.mockReturnValue({ setAs: "contentUri", uri: "HiItsMeUri" });
+
+      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
+      let expectedError: DmsError;
+      try {
+        await createDmsObject(context, params);
+      } catch (e: any) {
+        expectedError = e;
+      }
+
+      expect(expectedError instanceof DmsError).toBeTruthy();
+      expect(expectedError.message).toEqual("DmsObject cannot be created with content. No storeFile-function has been supplied.");
+    });
+  });
+
+
 
   it("should make correct request", async () => {
 
