@@ -25,4 +25,6 @@
  */
 export { DvelopContext } from "./context/context";
 export * from "./errors/errors";
+export * from "./http/http-headers";
 export { DvelopHttpRequestConfig, HttpResponse as DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
+export { generateRequestId } from "./generate-request-id/generate-request-id";

@@ -8,4 +8,6 @@ export interface DvelopContext {
   authSessionId?: string;
   /** RequestId used to track coherent requests over multiple apps */
   requestId?: string;
+  /** RequestSignature assignet by the App-Router */
+  requestSignature?: string;
 }

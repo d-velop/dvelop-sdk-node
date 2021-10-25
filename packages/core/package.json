@@ -20,6 +20,10 @@
     "access": "public"
   },
   "dependencies": {
-    "axios": "^0.23.0"
+    "axios": "^0.23.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.1"
   }
 }
