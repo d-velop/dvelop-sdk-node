@@ -24,5 +24,5 @@
  * @module app-router
  */
 
-export { InvalidRequestSignatureError } from "./errors";
-export { validateRequestSignature } from "./validate-request-signature/validate-request-signature";
+export { DvelopContext } from "@dvelop-sdk/core";
+export { validateRequestSignature, InvalidRequestSignatureError } from "./validate-request-signature/validate-request-signature";
