@@ -83,7 +83,7 @@ export function _deleteCurrentDmsObjectVersionFactory<T>(
  *   });
  *
  * // Delete the whole DmsObject
- * // * Attention: As this method wraps an HTTP-Call and can significantly slow down your code *
+ * // * Attention: This method wraps a HTTP-Call in a loop and can significantly slow down your code *
  * let deletedAllVersions: boolean = false;
  * while (!deletedAllVersions) {
  *   deletedAllVersions = await deleteCurrentDmsObjectVersion({
