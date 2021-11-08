@@ -26,18 +26,17 @@
 
 // Utils
 export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
-export { DmsError } from "./utils/http";
-export * as internal from "./internals";
+export { DmsError, _defaultHttpRequestFunctionFactory, _defaultHttpRequestFunction } from "./utils/http";
 
 // Repository
-export { GetRepositoryParams, Repository, getRepository } from "./repositories/get-repository/get-repository";
-export { getRepositories } from "./repositories/get-repositories/get-repositories";
+export { GetRepositoryParams, Repository, getRepository, _getRepositoryFactory, _getRepositoryDefaultTransformFunction } from "./repositories/get-repository/get-repository";
+export { getRepositories, _getRepositoriesFactory, _getRepositoriesDefaultTransformFunction } from "./repositories/get-repositories/get-repositories";
 
 // DmsObjects
-export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
-export { getDmsObjectMainFile, getDmsObjectPdfFile } from "./dms-objects/get-dms-object-file/get-dms-object-file";
-export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms-object/create-dms-object";
-export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms-object/update-dms-object";
-export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
-export { SearchDmsObjectsParams, SearchDmsObjectsResultPage, ListedDmsObject, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
-
+export { GetDmsObjectParams, DmsObject, getDmsObject, _getDmsObjectFactory, _getDmsObjectDefaultTransformFunction, _getDmsObjectDefaultTransformFunctionFactory } from "./dms-objects/get-dms-object/get-dms-object";
+export { getDmsObjectMainFile, getDmsObjectPdfFile, _getDmsObjectMainFileFactory, _getDmsObjectPdfFileFactory } from "./dms-objects/get-dms-object-file/get-dms-object-file";
+export { CreateDmsObjectParams, createDmsObject, _createDmsObjectDefaultStoreFileFunction, _createDmsObjectDefaultTransformFunction } from "./dms-objects/create-dms-object/create-dms-object";
+export { StoreFileTemporarilyParams, storeFileTemporarily, _storeFileTemporarilyFactory, _storeFileTemporarilyDefaultTransformFunction } from "./dms-objects/store-file-temporarily/store-file-temporarily";
+export { UpdateDmsObjectParams, updateDmsObject, _updateDmsObjectFactory, _updateDmsObjectDefaultTransformFunction } from "./dms-objects/update-dms-object/update-dms-object";
+export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion, _deleteCurrentDmsObjectVersionFactory, _deleteCurrentDmsObjectVersionDefaultTransformFunction } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
+export { SearchDmsObjectsParams, SearchDmsObjectsResultPage, ListedDmsObject, searchDmsObjects, _searchDmsObjectsDefaultTransformFunctionFactory } from "./dms-objects/search-dms-objects/search-dms-objects";

@@ -1,5 +1,5 @@
 import { DvelopContext, NotFoundError } from "../../index";
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 import { GetDmsObjectParams } from "../../dms-objects/get-dms-object/get-dms-object";
 
 /**
@@ -47,7 +47,7 @@ async function getDmsObjectBlobContentRespone(
  * @internal
  * @category DmsObject
  */
-export function getDmsObjectMainFileFactory<T>(
+export function _getDmsObjectMainFileFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse<ArrayBuffer>, context: DvelopContext, params: GetDmsObjectParams) => T
 ): (context: DvelopContext, params: GetDmsObjectParams) => Promise<T> {
@@ -63,7 +63,7 @@ export function getDmsObjectMainFileFactory<T>(
  * @internal
  * @category DmsObject
  */
-export function getDmsObjectPdfFileFactory<T>(
+export function _getDmsObjectPdfFileFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse<ArrayBuffer>, context: DvelopContext, params: GetDmsObjectParams) => T
 ): (context: DvelopContext, params: GetDmsObjectParams) => Promise<T> {
@@ -94,7 +94,7 @@ export function getDmsObjectPdfFileFactory<T>(
  */
 /* istanbul ignore next */
 export async function getDmsObjectMainFile(context: DvelopContext, params: GetDmsObjectParams): Promise<ArrayBuffer> {
-  return getDmsObjectMainFileFactory(defaultHttpRequestFunction, getDmsObjectFileDefaultTransformFunction)(context, params);
+  return _getDmsObjectMainFileFactory(_defaultHttpRequestFunction, getDmsObjectFileDefaultTransformFunction)(context, params);
 }
 
 /**
@@ -119,5 +119,5 @@ export async function getDmsObjectMainFile(context: DvelopContext, params: GetDm
  */
 /* istanbul ignore next */
 export async function getDmsObjectPdfFile(context: DvelopContext, params: GetDmsObjectParams): Promise<ArrayBuffer> {
-  return getDmsObjectPdfFileFactory(defaultHttpRequestFunction, getDmsObjectFileDefaultTransformFunction)(context, params);
+  return _getDmsObjectPdfFileFactory(_defaultHttpRequestFunction, getDmsObjectFileDefaultTransformFunction)(context, params);
 }

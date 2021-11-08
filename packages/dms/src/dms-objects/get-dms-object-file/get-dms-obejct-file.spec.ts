@@ -1,14 +1,14 @@
 import { DvelopContext, NotFoundError } from "../../index";
-import { HttpResponse } from "../../internals";
+import { HttpResponse } from "../../utils/http";
 import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
-import { getDmsObjectFileDefaultTransformFunction, getDmsObjectMainFileFactory, getDmsObjectPdfFileFactory } from "./get-dms-object-file";
+import { getDmsObjectFileDefaultTransformFunction, _getDmsObjectMainFileFactory, _getDmsObjectPdfFileFactory } from "./get-dms-object-file";
 
 [
   {
-    name: "getDmsObjectMainFile", factory: getDmsObjectMainFileFactory, follow: "mainblobcontent"
+    name: "getDmsObjectMainFile", factory: _getDmsObjectMainFileFactory, follow: "mainblobcontent"
   },
   {
-    name: "getDmsObjectPdfFile", factory: getDmsObjectPdfFileFactory, follow: "pdfblobcontent"
+    name: "getDmsObjectPdfFile", factory: _getDmsObjectPdfFileFactory, follow: "pdfblobcontent"
   }
 ].forEach(testCase => {
   describe(`${testCase.name}`, () => {

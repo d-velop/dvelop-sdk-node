@@ -1,5 +1,5 @@
 import { DvelopContext } from "../../index";
-import { defaultHttpRequestFunction, HttpConfig, HttpResponse } from "../../internals";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
 /**
  * Parameters for the {@link searchDmsObjects}-function.
@@ -72,7 +72,7 @@ export interface SearchDmsObjectsResultPage {
  * @internal
  * @category DmsObject
  */
-function listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (dto: any, context: DvelopContext, params: SearchDmsObjectsParams) => ListedDmsObject {
+function _listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (dto: any, context: DvelopContext, params: SearchDmsObjectsParams) => ListedDmsObject {
   return (dto: any, context: DvelopContext, params: SearchDmsObjectsParams) => {
 
     const result: ListedDmsObject = {
@@ -104,12 +104,12 @@ function listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction: (co
  * @internal
  * @category DmsObject
  */
-export function searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => SearchDmsObjectsResultPage {
+export function _searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => SearchDmsObjectsResultPage {
   return (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => {
 
     const result: SearchDmsObjectsResultPage = {
       page: response.data.page,
-      dmsObjects: response.data.items.map((item: any) => listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction)(item, context, params))
+      dmsObjects: response.data.items.map((item: any) => _listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction)(item, context, params))
     };
 
     if (response.data._links?.prev) {
@@ -118,7 +118,7 @@ export function searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunct
           method: "GET",
           url: response.data._links.prev.href
         });
-        return searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction)(prevResponse, context, params);
+        return _searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction)(prevResponse, context, params);
       };
     }
 
@@ -128,7 +128,7 @@ export function searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunct
           method: "GET",
           url: response.data._links.next.href
         });
-        return searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction)(nextResponse, context, params);
+        return _searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction)(nextResponse, context, params);
       };
     }
 
@@ -225,5 +225,5 @@ export function searchDmsObjectsFactory<T>(
  */
 /* istanbul ignore next */
 export function searchDmsObjects(context: DvelopContext, params: SearchDmsObjectsParams): Promise<SearchDmsObjectsResultPage> {
-  return searchDmsObjectsFactory(defaultHttpRequestFunction, searchDmsObjectsDefaultTransformFunctionFactory(defaultHttpRequestFunction))(context, params);
+  return searchDmsObjectsFactory(_defaultHttpRequestFunction, _searchDmsObjectsDefaultTransformFunctionFactory(_defaultHttpRequestFunction))(context, params);
 }

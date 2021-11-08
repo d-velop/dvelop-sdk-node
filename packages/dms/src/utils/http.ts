@@ -20,7 +20,7 @@ export class DmsError extends DvelopSdkError {
  * @internal
  * @category Http
  */
-export function defaultHttpRequestFunctionFactory(httpClient: DvelopHttpClient): (context: DvelopContext, config: DvelopHttpRequestConfig) => Promise<DvelopHttpResponse> {
+export function _defaultHttpRequestFunctionFactory(httpClient: DvelopHttpClient): (context: DvelopContext, config: DvelopHttpRequestConfig) => Promise<DvelopHttpResponse> {
   return async (context: DvelopContext, config: DvelopHttpRequestConfig) => {
 
     try {
@@ -58,6 +58,6 @@ export function defaultHttpRequestFunctionFactory(httpClient: DvelopHttpClient):
  * @category Http
  */
 /* istanbul ignore next */
-export async function defaultHttpRequestFunction(context: DvelopContext, config: DvelopHttpRequestConfig): Promise<DvelopHttpResponse> {
-  return defaultHttpRequestFunctionFactory(defaultDvelopHttpClientFactory())(context, config);
+export async function _defaultHttpRequestFunction(context: DvelopContext, config: DvelopHttpRequestConfig): Promise<DvelopHttpResponse> {
+  return _defaultHttpRequestFunctionFactory(defaultDvelopHttpClientFactory())(context, config);
 }

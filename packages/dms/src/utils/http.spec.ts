@@ -1,5 +1,5 @@
 import { BadInputError, DvelopContext, DvelopHttpClient, DvelopHttpError, DvelopHttpRequestConfig, DvelopHttpResponse, DvelopSdkError, ForbiddenError, NotFoundError, UnauthorizedError } from "@dvelop-sdk/core";
-import { defaultHttpRequestFunctionFactory, DmsError } from "./http";
+import { _defaultHttpRequestFunctionFactory, DmsError } from "./http";
 
 describe("defaultHttpRequestFunctionFactory", () => {
 
@@ -22,7 +22,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
     } as DvelopHttpResponse;
     mockRequestFunction.mockResolvedValue(response);
 
-    const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+    const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
     const result = await requestFunction(context, config);
 
     expect(mockRequestFunction).toHaveBeenCalledTimes(1);
@@ -48,7 +48,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -73,7 +73,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -104,7 +104,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -130,7 +130,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: UnauthorizedError;
         try {
           await requestFunction(context, config);
@@ -155,7 +155,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -186,7 +186,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -211,7 +211,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -242,7 +242,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -270,7 +270,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -295,7 +295,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -326,7 +326,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -351,7 +351,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         mockRequestFunction.mockRejectedValue(error);
 
 
-        const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
         let expectedError: DvelopSdkError;
         try {
           await requestFunction(context, config);
@@ -373,7 +373,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
       mockRequestFunction.mockRejectedValue(error);
 
 
-      const requestFunction = defaultHttpRequestFunctionFactory(mockHttpClient);
+      const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
       let expectedError: DvelopSdkError;
       try {
         await requestFunction(context, config);

@@ -1,10 +1,10 @@
 import { DvelopContext, ForbiddenError } from "../../index";
-import { HttpResponse } from "../../internals";
-import { getDmsObjectFactory } from "../get-dms-object/get-dms-object";
-import { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersionFactory, deleteCurrentDmsObjectVersionDefaultTransformFunction } from "./delete-current-dms-object-version";
+import { HttpResponse } from "../../utils/http";
+import { _getDmsObjectFactory } from "../get-dms-object/get-dms-object";
+import { DeleteCurrentDmsObjectVersionParams, _deleteCurrentDmsObjectVersionFactory, _deleteCurrentDmsObjectVersionDefaultTransformFunction } from "./delete-current-dms-object-version";
 
 jest.mock("../get-dms-object/get-dms-object");
-const mockGetDmsObjectFactory = getDmsObjectFactory as jest.MockedFunction<typeof getDmsObjectFactory>;
+const mockGetDmsObjectFactory = _getDmsObjectFactory as jest.MockedFunction<typeof _getDmsObjectFactory>;
 
 describe("deleteCurrentDmsObjectVersion", () => {
 
@@ -36,7 +36,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
   it("should handle getDmsObject correctly", async () => {
     mockGetDmsObject.mockResolvedValue({ data: { _links: { delete: { href: "HiItsMeHref" } } } });
 
-    const deleteCurrentDmsObjectVersion = deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, mockTransformFunction);
+    const deleteCurrentDmsObjectVersion = _deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, mockTransformFunction);
     await deleteCurrentDmsObjectVersion(context, params);
 
     expect(mockGetDmsObjectFactory).toHaveBeenCalledTimes(1);
@@ -57,7 +57,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
         }
       });
 
-      const deleteCurrentDmsObjectVersion = deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, mockTransformFunction);
+      const deleteCurrentDmsObjectVersion = _deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, mockTransformFunction);
       await deleteCurrentDmsObjectVersion(context, params);
 
       expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
@@ -79,7 +79,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
       }
     });
 
-    const deleteCurrentDmsObjectVersion = deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, mockTransformFunction);
+    const deleteCurrentDmsObjectVersion = _deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, mockTransformFunction);
 
     let expectedError: any;
     try { await deleteCurrentDmsObjectVersion(context, params); }
@@ -101,7 +101,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
     mockHttpRequestFunction.mockResolvedValue(response);
     mockTransformFunction.mockReturnValue(transformResult);
 
-    const deleteCurrentDmsObjectVersion = deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, mockTransformFunction);
+    const deleteCurrentDmsObjectVersion = _deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, mockTransformFunction);
     const result: boolean = await deleteCurrentDmsObjectVersion(context, params);
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
@@ -128,7 +128,7 @@ describe("deleteCurrentDmsObjectVersion", () => {
         mockGetDmsObject.mockResolvedValue({ data: { _links: { delete: { href: "HiItsMeDeleteHref" } } } });
         mockHttpRequestFunction.mockResolvedValue(response);
 
-        const deleteCurrentDmsObjectVersion = deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, deleteCurrentDmsObjectVersionDefaultTransformFunction);
+        const deleteCurrentDmsObjectVersion = _deleteCurrentDmsObjectVersionFactory(mockHttpRequestFunction, _deleteCurrentDmsObjectVersionDefaultTransformFunction);
         const result = await deleteCurrentDmsObjectVersion(context, params);
 
         expect(result).toBe(testCase.expected);

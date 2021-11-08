@@ -1,6 +1,6 @@
 import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../internals";
-import { storeFileTemporarilyDefaultTransformFunction, storeFileTemporarilyFactory, StoreFileTemporarilyParams } from "./store-file-temporarily";
+import { HttpResponse } from "../../utils/http";
+import { _storeFileTemporarilyDefaultTransformFunction, _storeFileTemporarilyFactory, StoreFileTemporarilyParams } from "./store-file-temporarily";
 
 describe("storeFileTemporarilyFactory", () => {
 
@@ -26,7 +26,7 @@ describe("storeFileTemporarilyFactory", () => {
 
   it("should make correct request", async () => {
 
-    const storeFileTemporarily = storeFileTemporarilyFactory(mockHttpRequestFunction, mockTransformFunction);
+    const storeFileTemporarily = _storeFileTemporarilyFactory(mockHttpRequestFunction, mockTransformFunction);
     await storeFileTemporarily(context, params);
 
     expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
@@ -47,7 +47,7 @@ describe("storeFileTemporarilyFactory", () => {
     mockHttpRequestFunction.mockResolvedValue(response);
     mockTransformFunction.mockReturnValue(transformResult);
 
-    const storeFileTemporarily = storeFileTemporarilyFactory(mockHttpRequestFunction, mockTransformFunction);
+    const storeFileTemporarily = _storeFileTemporarilyFactory(mockHttpRequestFunction, mockTransformFunction);
     await storeFileTemporarily(context, params);
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
@@ -65,7 +65,7 @@ describe("storeFileTemporarilyFactory", () => {
 
       mockHttpRequestFunction.mockResolvedValue({ headers: headers } as HttpResponse);
 
-      const storeFileTemporarily = storeFileTemporarilyFactory(mockHttpRequestFunction, storeFileTemporarilyDefaultTransformFunction);
+      const storeFileTemporarily = _storeFileTemporarilyFactory(mockHttpRequestFunction, _storeFileTemporarilyDefaultTransformFunction);
       const result: string = await storeFileTemporarily(context, params);
 
       expect(result).toEqual(headers["location"]);

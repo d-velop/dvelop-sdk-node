@@ -1,6 +1,6 @@
 import { DvelopContext, DmsError } from "../../index";
-import { HttpResponse } from "../../internals";
-import { createDmsObjectDefaultStoreFileFunction, createDmsObjectDefaultTransformFunction, createDmsObjectFactory, CreateDmsObjectParams } from "./create-dms-object";
+import { HttpResponse } from "../../utils/http";
+import { _createDmsObjectDefaultStoreFileFunction, _createDmsObjectDefaultTransformFunction, createDmsObjectFactory, CreateDmsObjectParams } from "./create-dms-object";
 import { storeFileTemporarily } from "../store-file-temporarily/store-file-temporarily";
 
 jest.mock("../store-file-temporarily/store-file-temporarily");
@@ -187,7 +187,7 @@ describe("createDmsObject", () => {
 
         mockHttpRequestFunction.mockResolvedValue({ headers: { location: testCase } });
 
-        const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, createDmsObjectDefaultTransformFunction, mockStoreFileFunction);
+        const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, _createDmsObjectDefaultTransformFunction, mockStoreFileFunction);
         const result = await createDmsObject(context, params);
 
         expect(result).toHaveProperty("repositoryId", params.repositoryId);
@@ -201,7 +201,7 @@ describe("createDmsObject", () => {
       const location: string = "HiImWrong";
       mockHttpRequestFunction.mockResolvedValue({ headers: { location: location } });
 
-      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, createDmsObjectDefaultTransformFunction, mockStoreFileFunction);
+      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, _createDmsObjectDefaultTransformFunction, mockStoreFileFunction);
       let expectedError: Error;
       try {
         await createDmsObject(context, params);
@@ -223,7 +223,7 @@ describe("createDmsObject", () => {
       mockStoryFileTemporarily.mockResolvedValue(temporaryFileUrl);
       params.content = new ArrayBuffer(42);
 
-      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, createDmsObjectDefaultStoreFileFunction);
+      const createDmsObject = createDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, _createDmsObjectDefaultStoreFileFunction);
       await createDmsObject(context, params);
 
       expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(1);

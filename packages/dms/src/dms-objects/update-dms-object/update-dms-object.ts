@@ -1,5 +1,5 @@
 import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
 
 /**
@@ -43,7 +43,7 @@ export interface UpdateDmsObjectParams {
  * @internal
  * @category DmsObject
  */
-export function updateDmsObjectDefaultTransformFunction(_: HttpResponse, __: DvelopContext, ___: UpdateDmsObjectParams): void { } // no error indicates success. Returning void
+export function _updateDmsObjectDefaultTransformFunction(_: HttpResponse, __: DvelopContext, ___: UpdateDmsObjectParams): void { } // no error indicates success. Returning void
 
 /**
  * Default storeFile-function provided to the {@link updateDmsObject}-function. This will get called when content is provided.
@@ -64,7 +64,7 @@ export async function updateDmsObjectDefaultStoreFileFunction(context: DvelopCon
  * @internal
  * @category DmsObject
  */
-export function updateDmsObjectFactory<T>(
+export function _updateDmsObjectFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: UpdateDmsObjectParams) => T,
   storeFileFunction: (context: DvelopContext, params: UpdateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
@@ -133,5 +133,5 @@ export function updateDmsObjectFactory<T>(
  */
 /* istanbul ignore next */
 export function updateDmsObject(context: DvelopContext, params: UpdateDmsObjectParams): Promise<void> {
-  return updateDmsObjectFactory<void>(defaultHttpRequestFunction, updateDmsObjectDefaultTransformFunction, updateDmsObjectDefaultStoreFileFunction)(context, params);
+  return _updateDmsObjectFactory<void>(_defaultHttpRequestFunction, _updateDmsObjectDefaultTransformFunction, updateDmsObjectDefaultStoreFileFunction)(context, params);
 }

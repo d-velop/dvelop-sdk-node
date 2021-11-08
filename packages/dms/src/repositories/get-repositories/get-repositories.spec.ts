@@ -1,7 +1,7 @@
 import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../internals";
+import { HttpResponse } from "../../utils/http";
 import { Repository } from "../get-repository/get-repository";
-import { getRepositoriesDefaultTransformFunction, getRepositoriesFactory } from "./get-repositories";
+import { _getRepositoriesDefaultTransformFunction, _getRepositoriesFactory } from "./get-repositories";
 
 describe("getRepositoriesFactory", () => {
 
@@ -21,7 +21,7 @@ describe("getRepositoriesFactory", () => {
 
   it("should make correct request", async () => {
 
-    const getRepositories = getRepositoriesFactory(mockHttpRequestFunction, mockTransformFunction);
+    const getRepositories = _getRepositoriesFactory(mockHttpRequestFunction, mockTransformFunction);
     await getRepositories(context);
 
     expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
@@ -39,7 +39,7 @@ describe("getRepositoriesFactory", () => {
     mockHttpRequestFunction.mockResolvedValue(response);
     mockTransformFunction.mockReturnValue(transformResult);
 
-    const getRepositories = getRepositoriesFactory(mockHttpRequestFunction, mockTransformFunction);
+    const getRepositories = _getRepositoriesFactory(mockHttpRequestFunction, mockTransformFunction);
     await getRepositories(context);
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
@@ -99,7 +99,7 @@ describe("getRepositoriesFactory", () => {
 
       mockHttpRequestFunction.mockResolvedValue({ data: data } as HttpResponse);
 
-      const getRepositories = getRepositoriesFactory(mockHttpRequestFunction, getRepositoriesDefaultTransformFunction);
+      const getRepositories = _getRepositoriesFactory(mockHttpRequestFunction, _getRepositoriesDefaultTransformFunction);
       const result: Repository[] = await getRepositories(context);
 
       data.repositories.forEach((repoDto: any, i: number) => {
