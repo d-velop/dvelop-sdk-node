@@ -24,7 +24,7 @@ export interface SearchDmsObjectsParams {
 }
 
 /**
- * A listed version of d.velop cloud dmsObject. There might be more information available via the {@link getDmsObject}-funciton.
+ * A listed version of d.velop cloud dmsObject. There might be more information available via the {@link getDmsObject}-function.
  * @category DmsObject
  */
 export interface ListedDmsObject {

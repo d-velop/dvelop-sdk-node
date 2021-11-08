@@ -29,13 +29,13 @@ export interface CreateDmsObjectParams {
   fileName?: string;
 
   /** URL from which file can be downloaded. Has to be a relative URL reachable within the tenant */
-  contentUri?: string,
+  contentUri?: string;
 
   /** URL at which the file is temporarily stored in the DMS-App. See ... for more information.  */
-  contentLocationUri?: string
+  contentLocationUri?: string;
 
   /** File for the DmsObject. This will use the {@link storeFileTemporarily}-function and overwrite ```contentLocationUri```-property. */
-  content?: ArrayBuffer,
+  content?: ArrayBuffer;
 }
 
 /**
