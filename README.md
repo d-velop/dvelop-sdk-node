@@ -8,12 +8,7 @@
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/app-router?label=app-router&style=for-the-badge">
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/identityprovider?label=identityprovider&style=for-the-badge">
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/task?label=task&style=for-the-badge">
-</div>
-
-</br>
-
-<div align="center">
-  <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/2?style=for-the-badge">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/dms?label=app-router&style=for-the-badge">
 </div>
 
 </br>
@@ -35,26 +30,21 @@ This is the official SDK to build apps for [d.velop cloud](https://www.d-velop.d
 
 This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop app you want to use.
 ```
-npm i @dvelop-sdk/task
+npm i @dvelop-sdk/dms
 ```
 ``` typescript
-import { createTask, InvalidTaskError } from "@dvelop-sdk/task";
+import { Repository, getRepository } from "@dvelop-sdk/dms";
 
-(async () => {
+(async function main() {
 
-  try {
-    const task = await createTask(systemBaseUri, apiKey, {
-      subject: "Remember to be awesome!",
-      assignees: ["1'm-74lk1n6-70-y0u"]
-    });
-    console.log("Task was created:", task);
-  } catch (e) {
-    if (e instanceof InvalidTaskError) {
-      console.error(e.validation);
-    } else {
-      console.error(e.message)
-    }
-  }
+  const repo: Repository = await getRepository({
+    systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+    authSessionId: "dQw4w9WgXcQ"
+  }, {
+    repositoryId: "qnydFmqHuVo",
+  });
+
+  console.log(repo.name); // Booty Bay Documents
 })();
 ```
 
@@ -71,20 +61,18 @@ npm i @dvelop-sdk/task
 ```javascript
 //main.js
 
+import { Repository, getRepository } from "@dvelop-sdk/dms";
+
 async function main() {
-  try {
-    const task = await createTask(systemBaseUri, apiKey, {
-      subject: "Remember to be awesome!",
-      assignees: ["1'm-74lk1n6-70-y0u"]
-    });
-    console.log("Task was created:", task);
-  } catch (e) {
-    if (e instanceof InvalidTaskError) {
-      console.error(e.validation);
-    } else {
-      console.error(e.message)
-    }
-  }
+
+  const repo = await getRepository({
+    systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+    authSessionId: "dQw4w9WgXcQ"
+  }, {
+    repositoryId: "qnydFmqHuVo",
+  });
+
+  console.log(repo.name); // Booty Bay Documents
 }
 
 await main();
