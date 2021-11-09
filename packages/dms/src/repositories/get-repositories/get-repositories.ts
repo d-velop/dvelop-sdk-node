@@ -1,5 +1,5 @@
 import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 import { Repository } from "../get-repository/get-repository";
 
 /**
@@ -7,7 +7,7 @@ import { Repository } from "../get-repository/get-repository";
  * @internal
  * @category Repository
  */
-export function getRepositoriesDefaultTransformFunction(response: HttpResponse, _: DvelopContext): Repository[] {
+export function _getRepositoriesDefaultTransformFunction(response: HttpResponse, _: DvelopContext): Repository[] {
   return response.data.repositories.map((repositoryDto: any) => {
     return {
       id: repositoryDto.id,
@@ -23,7 +23,7 @@ export function getRepositoriesDefaultTransformFunction(response: HttpResponse, 
  * @internal
  * @category Repository
  */
-export function getRepositoriesFactory<T>(
+export function _getRepositoriesFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext) => T
 ): (context: DvelopContext) => Promise<T> {
@@ -55,5 +55,5 @@ export function getRepositoriesFactory<T>(
  */
 /* istanbul ignore next */
 export async function getRepositories(context: DvelopContext): Promise<Repository[]> {
-  return await getRepositoriesFactory(defaultHttpRequestFunction, getRepositoriesDefaultTransformFunction)(context);
+  return await _getRepositoriesFactory(_defaultHttpRequestFunction, _getRepositoriesDefaultTransformFunction)(context);
 }

@@ -1,7 +1,7 @@
 import { DvelopContext, DmsObject } from "../../index";
-import { HttpResponse } from "../../internals";
+import { HttpResponse } from "../../utils/http";
 import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
-import { GetDmsObjectParams, getDmsObjectFactory, getDmsObjectDefaultTransformFunction } from "../get-dms-object/get-dms-object";
+import { GetDmsObjectParams, _getDmsObjectFactory, _getDmsObjectDefaultTransformFunction } from "../get-dms-object/get-dms-object";
 
 jest.mock("../get-dms-object-file/get-dms-object-file");
 const mockGetDmsObjectMainFile = getDmsObjectMainFile as jest.MockedFunction<typeof getDmsObjectMainFile>;
@@ -32,7 +32,7 @@ describe("getDmsObject", () => {
 
   it("should make correct request", async () => {
 
-    const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
+    const getDmsObject = _getDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
     await getDmsObject(context, params);
 
     expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
@@ -55,7 +55,7 @@ describe("getDmsObject", () => {
     mockHttpRequestFunction.mockResolvedValue(response);
     mockTransformFunction.mockReturnValue(transformResult);
 
-    const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
+    const getDmsObject = _getDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction);
     await getDmsObject(context, params);
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
@@ -93,7 +93,7 @@ describe("getDmsObject", () => {
       const response: HttpResponse = { data: data } as HttpResponse;
       mockHttpRequestFunction.mockResolvedValue(response);
 
-      const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, getDmsObjectDefaultTransformFunction);
+      const getDmsObject = _getDmsObjectFactory(mockHttpRequestFunction, _getDmsObjectDefaultTransformFunction);
       const result: DmsObject = await getDmsObject(context, params);
 
       expect(result).toHaveProperty("repositoryId", params.repositoryId);
@@ -125,7 +125,7 @@ describe("getDmsObject", () => {
       const mainFile: ArrayBuffer = new ArrayBuffer(42);
       mockGetDmsObjectMainFile.mockResolvedValue(mainFile);
 
-      const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, getDmsObjectDefaultTransformFunction);
+      const getDmsObject = _getDmsObjectFactory(mockHttpRequestFunction, _getDmsObjectDefaultTransformFunction);
       const result: DmsObject = await getDmsObject(context, params);
 
       expect(result.getMainFile).toEqual(expect.any(Function));
@@ -154,7 +154,7 @@ describe("getDmsObject", () => {
       const pdfFile: ArrayBuffer = new ArrayBuffer(42);
       mockGetDmsObjectPdfFile.mockResolvedValue(pdfFile);
 
-      const getDmsObject = getDmsObjectFactory(mockHttpRequestFunction, getDmsObjectDefaultTransformFunction);
+      const getDmsObject = _getDmsObjectFactory(mockHttpRequestFunction, _getDmsObjectDefaultTransformFunction);
       const result: DmsObject = await getDmsObject(context, params);
 
       expect(result.getPdfFile).toEqual(expect.any(Function));

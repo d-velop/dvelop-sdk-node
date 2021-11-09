@@ -1,6 +1,6 @@
 import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../internals";
-import { searchDmsObjectsDefaultTransformFunctionFactory, searchDmsObjectsFactory, SearchDmsObjectsParams, SearchDmsObjectsResultPage } from "./search-dms-objects";
+import { HttpResponse } from "../../utils/http";
+import { _searchDmsObjectsDefaultTransformFunctionFactory, searchDmsObjectsFactory, SearchDmsObjectsParams, SearchDmsObjectsResultPage } from "./search-dms-objects";
 
 describe("searchDmsObjects", () => {
 
@@ -187,7 +187,7 @@ describe("searchDmsObjects", () => {
       const response: HttpResponse = { data: data } as HttpResponse;
       mockHttpRequestFunction.mockResolvedValue(response);
 
-      const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
+      const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, _searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
       const result: SearchDmsObjectsResultPage = await searchDmsObjects(context, params);
 
       expect(result).toHaveProperty("page", 3);
@@ -235,7 +235,7 @@ describe("searchDmsObjects", () => {
         const response: HttpResponse = { data: data } as HttpResponse;
         mockHttpRequestFunction.mockResolvedValue(response);
 
-        const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
+        const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, _searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
         const result: SearchDmsObjectsResultPage = await searchDmsObjects(context, params);
 
         expect(result.dmsObjects.length).toBe(2);
@@ -275,7 +275,7 @@ describe("searchDmsObjects", () => {
         const response: HttpResponse = { data: data } as HttpResponse;
         mockHttpRequestFunction.mockResolvedValue(response);
 
-        const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
+        const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, _searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
         const result: SearchDmsObjectsResultPage = await searchDmsObjects(context, params);
 
         expect(result.dmsObjects[0]).toHaveProperty("getMainFile");
@@ -309,7 +309,7 @@ describe("searchDmsObjects", () => {
       const response: HttpResponse = { data: data } as HttpResponse;
       mockHttpRequestFunction.mockResolvedValue(response);
 
-      const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
+      const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, _searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
       const result: SearchDmsObjectsResultPage = await searchDmsObjects(context, params);
 
       expect(result).toHaveProperty("getPreviousPage");
@@ -347,7 +347,7 @@ describe("searchDmsObjects", () => {
       const response: HttpResponse = { data: data } as HttpResponse;
       mockHttpRequestFunction.mockResolvedValue(response);
 
-      const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
+      const searchDmsObjects = searchDmsObjectsFactory(mockHttpRequestFunction, _searchDmsObjectsDefaultTransformFunctionFactory(mockHttpRequestFunction));
       const result: SearchDmsObjectsResultPage = await searchDmsObjects(context, params);
 
       expect(result).toHaveProperty("getNextPage");

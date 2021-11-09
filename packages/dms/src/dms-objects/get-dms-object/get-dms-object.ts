@@ -1,5 +1,5 @@
 import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
 
 /**
@@ -52,7 +52,7 @@ export interface DmsObject {
  * @internal
  * @category DmsObject
  */
-export function getDmsObjectDefaultTransformFunctionFactory(
+export function _getDmsObjectDefaultTransformFunctionFactory(
   getDmsObjectMainFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
   getDmsObjectPdfFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>
 ) {
@@ -84,7 +84,7 @@ export function getDmsObjectDefaultTransformFunctionFactory(
  * @internal
  * @category DmsObject
  */
-export function getDmsObjectFactory<T>(
+export function _getDmsObjectFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: GetDmsObjectParams) => T
 ): (context: DvelopContext, params: GetDmsObjectParams) => Promise<T> {
@@ -110,8 +110,8 @@ export function getDmsObjectFactory<T>(
  * @category DmsObject
  */
 /* istanbul ignore next */
-export async function getDmsObjectDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) {
-  return getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile)(response, context, params);
+export async function _getDmsObjectDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) {
+  return _getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile)(response, context, params);
 }
 
 /**
@@ -135,5 +135,5 @@ export async function getDmsObjectDefaultTransformFunction(response: HttpRespons
  */
 /* istanbul ignore next */
 export async function getDmsObject(context: DvelopContext, params: GetDmsObjectParams) {
-  return getDmsObjectFactory(defaultHttpRequestFunction, getDmsObjectDefaultTransformFunction)(context, params);
+  return _getDmsObjectFactory(_defaultHttpRequestFunction, _getDmsObjectDefaultTransformFunction)(context, params);
 }

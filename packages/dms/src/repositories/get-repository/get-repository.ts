@@ -1,5 +1,5 @@
 import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
 /**
  * Parameters for the {@link getRepository}-function.
@@ -28,7 +28,7 @@ export interface Repository {
  * @internal
  * @category Repository
  */
-export function getRepositoryDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: GetRepositoryParams): Repository {
+export function _getRepositoryDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: GetRepositoryParams): Repository {
   const data: any = response.data;
   return {
     repositoryId: data.id,
@@ -43,7 +43,7 @@ export function getRepositoryDefaultTransformFunction(response: HttpResponse, _:
  * @internal
  * @category Repository
  */
-export function getRepositoryFactory<T>(
+export function _getRepositoryFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: GetRepositoryParams) => T,
 ): (context: DvelopContext, params: GetRepositoryParams) => Promise<T> {
@@ -78,5 +78,5 @@ export function getRepositoryFactory<T>(
  */
 /* istanbul ignore next */
 export async function getRepository(context: DvelopContext, params: GetRepositoryParams): Promise<Repository> {
-  return getRepositoryFactory(defaultHttpRequestFunction, getRepositoryDefaultTransformFunction)(context, params);
+  return _getRepositoryFactory(_defaultHttpRequestFunction, _getRepositoryDefaultTransformFunction)(context, params);
 }

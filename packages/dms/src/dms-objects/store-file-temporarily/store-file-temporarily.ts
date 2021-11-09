@@ -1,5 +1,5 @@
 import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, defaultHttpRequestFunction } from "../../internals";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
 /**
  * Parameters for the {@link storeFileTemporarily}-function.
@@ -17,7 +17,7 @@ export interface StoreFileTemporarilyParams {
  * @internal
  * @category DmsObject
  */
-export function storeFileTemporarilyDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: StoreFileTemporarilyParams): string {
+export function _storeFileTemporarilyDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: StoreFileTemporarilyParams): string {
   return response.headers["location"];
 }
 
@@ -27,7 +27,7 @@ export function storeFileTemporarilyDefaultTransformFunction(response: HttpRespo
  * @internal
  * @category DmsObject
  */
-export function storeFileTemporarilyFactory<T>(
+export function _storeFileTemporarilyFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
   transformFunction: (response: HttpResponse, context: DvelopContext, params: StoreFileTemporarilyParams) => T
 ): (context: DvelopContext, params: StoreFileTemporarilyParams) => Promise<T> {
@@ -69,5 +69,5 @@ export function storeFileTemporarilyFactory<T>(
  */
 /* istanbul ignore next */
 export async function storeFileTemporarily(context: DvelopContext, params: StoreFileTemporarilyParams): Promise<string> {
-  return storeFileTemporarilyFactory(defaultHttpRequestFunction, storeFileTemporarilyDefaultTransformFunction)(context, params);
+  return _storeFileTemporarilyFactory(_defaultHttpRequestFunction, _storeFileTemporarilyDefaultTransformFunction)(context, params);
 }

@@ -1,7 +1,7 @@
 import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../internals";
+import { HttpResponse } from "../../utils/http";
 import { storeFileTemporarily } from "../store-file-temporarily/store-file-temporarily";
-import { updateDmsObjectDefaultStoreFileFunction, updateDmsObjectDefaultTransformFunction, updateDmsObjectFactory, UpdateDmsObjectParams } from "./update-dms-object";
+import { updateDmsObjectDefaultStoreFileFunction, _updateDmsObjectDefaultTransformFunction, _updateDmsObjectFactory, UpdateDmsObjectParams } from "./update-dms-object";
 
 jest.mock("../store-file-temporarily/store-file-temporarily");
 const mockStoryFileTemporarily = storeFileTemporarily as jest.MockedFunction<typeof storeFileTemporarily>;
@@ -47,7 +47,7 @@ describe("updateDmsObject", () => {
     params.contentUri = "HiItsMeContentUri";
     params.content = new ArrayBuffer(42);
 
-    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
     await updateDmsObject(context, params);
 
     expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
@@ -58,7 +58,7 @@ describe("updateDmsObject", () => {
     params.contentLocationUri = "HiItsMeContentUri";
     params.content = new ArrayBuffer(42);
 
-    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
     await updateDmsObject(context, params);
 
     expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
@@ -69,7 +69,7 @@ describe("updateDmsObject", () => {
     params.content = new ArrayBuffer(42);
     mockStoreFileFunction.mockReturnValue({ setAs: "contentUri", uri: "HiItsMeUri" });
 
-    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
     await updateDmsObject(context, params);
 
     expect(mockStoreFileFunction).toHaveBeenCalledTimes(1);
@@ -78,7 +78,7 @@ describe("updateDmsObject", () => {
 
   it("should make correct request", async () => {
 
-    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
     await updateDmsObject(context, params);
 
     expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
@@ -111,7 +111,7 @@ describe("updateDmsObject", () => {
     mockHttpRequestFunction.mockResolvedValue(response);
     mockTransformFunction.mockReturnValue(transformResult);
 
-    const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
+    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
     await updateDmsObject(context, params);
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
@@ -124,7 +124,7 @@ describe("updateDmsObject", () => {
       const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
       mockHttpRequestFunction.mockResolvedValue(response);
 
-      const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, updateDmsObjectDefaultTransformFunction, mockStoreFileFunction);
+      const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, _updateDmsObjectDefaultTransformFunction, mockStoreFileFunction);
       const result = await updateDmsObject(context, params);
 
       expect(result).toBe(undefined);
@@ -139,7 +139,7 @@ describe("updateDmsObject", () => {
       mockStoryFileTemporarily.mockResolvedValue(temporaryFileUrl);
       params.content = new ArrayBuffer(42);
 
-      const updateDmsObject = updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, updateDmsObjectDefaultStoreFileFunction);
+      const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, updateDmsObjectDefaultStoreFileFunction);
       await updateDmsObject(context, params);
 
       expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(1);

@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { DVELOP_REQUEST_ID_HEADER } from "..";
 import { DvelopContext } from "../context/context";
 import { axiosFollowHalJsonFunctionFactory } from "./axios-follow-hal-json";
 import { DvelopHttpClient, DvelopHttpRequestConfig, axiosHttpClientFactory, axiosInstanceFactory } from "./http-client";
@@ -38,6 +39,7 @@ describe("axiosInstanceFactory", () => {
 describe("axiosHttpClientFactory", () => {
 
   let mockAxiosInstance: AxiosInstance;
+  let mockGenerateRequestId = jest.fn();
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -53,7 +55,7 @@ describe("axiosHttpClientFactory", () => {
   let axiosClient: DvelopHttpClient;
 
   beforeEach(() => {
-    axiosClient = axiosHttpClientFactory(mockAxiosInstance);
+    axiosClient = axiosHttpClientFactory(mockAxiosInstance, mockGenerateRequestId);
   });
 
   it("should have default config on empty context", async () => {
@@ -94,6 +96,37 @@ describe("axiosHttpClientFactory", () => {
     expect(mockAxiosInstance.request).toHaveBeenCalledWith(expect.objectContaining({
       headers: expect.objectContaining({
         "Authorization": `Bearer ${context.authSessionId}`
+      })
+    }));
+  });
+
+  it("should set requestId as header", async () => {
+
+    context = {
+      requestId: "HiItsMeRequestId"
+    };
+
+    await axiosClient.request(context, {});
+
+    expect(mockAxiosInstance.request).toHaveBeenCalledWith(expect.objectContaining({
+      headers: expect.objectContaining({
+        [DVELOP_REQUEST_ID_HEADER]: context.requestId
+      })
+    }));
+  });
+
+  it("should generate requestId if non given", async () => {
+
+    context = { };
+    const requestId: string = "HiItsMeRequestId";
+    mockGenerateRequestId.mockReturnValue(requestId);
+
+    await axiosClient.request(context, {});
+
+    expect(mockGenerateRequestId).toHaveBeenCalledTimes(1);
+    expect(mockAxiosInstance.request).toHaveBeenCalledWith(expect.objectContaining({
+      headers: expect.objectContaining({
+        [DVELOP_REQUEST_ID_HEADER]: requestId
       })
     }));
   });
