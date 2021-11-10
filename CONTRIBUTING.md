@@ -52,7 +52,7 @@ When filing an issue, make sure to answer the following questions:
 
 # How to submit a feature request
 
-You can submit feature requests on the [issues page](https://github.com/d-velop/dvelop-sdk-node/issues). Please name this issue ``Feature: <SHORT_DESCRIPTION>``.
+You can submit feature requests on the [issues page](https://github.com/d-velop/dvelop-sdk-node/issues).
 
 # Contribute to the project
 

@@ -8,12 +8,7 @@
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/app-router?label=app-router&style=for-the-badge">
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/identityprovider?label=identityprovider&style=for-the-badge">
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/task?label=task&style=for-the-badge">
-</div>
-
-</br>
-
-<div align="center">
-  <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/2?style=for-the-badge">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/dms?label=app-router&style=for-the-badge">
 </div>
 
 </br>
@@ -35,26 +30,21 @@ This is the official SDK to build apps for [d.velop cloud](https://www.d-velop.d
 
 This SDK is diveded into [apps](https://developer.d-velop.de/dev/de/explore-the-apps). Install individual packages per d-velop app you want to use.
 ```
-npm i @dvelop-sdk/task
+npm i @dvelop-sdk/dms
 ```
 ``` typescript
-import { createTask, InvalidTaskError } from "@dvelop-sdk/task";
+import { Repository, getRepository } from "@dvelop-sdk/dms";
 
-(async () => {
+(async function main() {
 
-  try {
-    const task = await createTask(systemBaseUri, apiKey, {
-      subject: "Remember to be awesome!",
-      assignees: ["1'm-74lk1n6-70-y0u"]
-    });
-    console.log("Task was created:", task);
-  } catch (e) {
-    if (e instanceof InvalidTaskError) {
-      console.error(e.validation);
-    } else {
-      console.error(e.message)
-    }
-  }
+  const repo: Repository = await getRepository({
+    systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+    authSessionId: "dQw4w9WgXcQ"
+  }, {
+    repositoryId: "qnydFmqHuVo",
+  });
+
+  console.log(repo.name); // Booty Bay Documents
 })();
 ```
 
@@ -71,20 +61,18 @@ npm i @dvelop-sdk/task
 ```javascript
 //main.js
 
+import { Repository, getRepository } from "@dvelop-sdk/dms";
+
 async function main() {
-  try {
-    const task = await createTask(systemBaseUri, apiKey, {
-      subject: "Remember to be awesome!",
-      assignees: ["1'm-74lk1n6-70-y0u"]
-    });
-    console.log("Task was created:", task);
-  } catch (e) {
-    if (e instanceof InvalidTaskError) {
-      console.error(e.validation);
-    } else {
-      console.error(e.message)
-    }
-  }
+
+  const repo = await getRepository({
+    systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+    authSessionId: "dQw4w9WgXcQ"
+  }, {
+    repositoryId: "qnydFmqHuVo",
+  });
+
+  console.log(repo.name); // Booty Bay Documents
 }
 
 await main();
@@ -241,52 +229,79 @@ npx ts-node-dev src/main.ts
 
 ## Advanced Topics
 **Attention: Currently only available in @dvelop-sdk/dms**
-### Custom axios instance
-Under the hood this SDK makes extensive use of the axios-framework. All calls made use a fresh axios-instance. It is possible to intercept this instance-creation and provide your own factory method.
 
-```
-TODO
-```
+Under the hood this SDK uses a functional programming approach. Generally all top-level SDK methods are created by factory-methods. This allows to inject default implementations and at the same time give consumers next-to-full control over steps taken.
 
-### Transformers
-The methods provided by this SDK run an additionla transformation on API-Responses recieved. This is because:
-1. We provide additional utility-methods (eg. dmsObject.getFile())
-2. Not every property provided by our APIs is considered public. The main difference between public and non-public properties is that non-public properties can appear, change and disappear without notice.
+SDK-functions usually have at two seperate steps:
+- A HTTP-Call to the corresponding app
+- A transform-function which handles the JSON-response
 
-It is recommended that you stick with the default implementation. If you however choose to access additional properties you can do so by providing a transformer to a function. It will have access to the ```AxiosResponse```-object which does not only provide the json response in the ```data```-property but also headers, statuscodes, initial config and the request made. Check out the axios docs for more information.
-
-``` typescript
-import { getRepository, internals } from "@dvelop-sdk/dms";
-
-const raw: internals.GetRepositoryDto = await getRepository<internals.GetRepositoryDto>(
-  { systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud", authSessionId: "dQw4w9WgXcQ" },
-  { repositoryId: repoId },
-  (response: AxiosResponse<internals.GetRepositoryDto>) => response.data
-);
-console.log(raw); //Raw JSON API response
-```
-
-``` typescript
-import { getRepository, internals } from "@dvelop-sdk/dms";
-
-const name: string = await getRepository<string>(
-  { systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud", authSessionId: "dQw4w9WgXcQ" },
-  { repositoryId: repoId },
- (response: AxiosResponse<internals.GetRepositoryDto>) => response.data.name
-;
-console.log(name); //Booty Bay Document
-```
-
-Under the hood we provide a transformer-type and implement that type with a default transformer.
+Let's look at the getRepository-factoryFunction:
 ```typescript
-export type GetRepositoryTransformer<T> = (response: AxiosResponse<any>, context: Context, params: GetRepositoryParams) => T;
-
-export const getRepositoryDefaultTransformer: GetRepositoryTransformer<Repository> = (response: AxiosResponse<any>, context: Context, params: GetRepositoryParams) => {
-// our way of transforming
+export function getRepositoryFactory<T>(
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetRepositoryParams) => T,
+): (context: DvelopContext, params: GetRepositoryParams) => Promise<T> {
+  return async (context: DvelopContext, params: GetRepositoryParams) => {
+    const response: HttpResponse = await httpRequestFunction(context, {
+      method: "GET",
+      url: "/dms",
+      follows: ["repo"],
+      templates: { "repositoryid": params.repositoryId }
+    });
+    return transformFunction(response, context, params);
+  };
 }
 
-const getRepositoryCustomTransformer: GetRepositoryTransformer<string> = (res) => res.data.name
+export async function getRepository(context: DvelopContext, params: GetRepositoryParams): Promise<Repository> {
+  return getRepositoryFactory(defaultHttpRequestFunction, getRepositoryDefaultTransformFunction)(context, params);
+}
 ```
+
+The getRepository-function itself is a function in the form of
+```typescript
+(context: DvelopContext, params: GetRepositoryParams) => Promise<Repository>
+```
+
+The getRepository-factoryFunction is a function that returns this function. As input it requires two functions itself that are used:
+- A HTTP-Function which accepts a DvelopContext and a DvelopHttpConfig to make the Http-Request
+  ```typescript
+  (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>
+  ```
+
+- A transform-function which accepts a DvelopHttpResponse, the initial context and the initial paramters. It returns a generic type.
+  ```typescript
+  (response: HttpResponse, context: DvelopContext, params: GetRepositoryParams) => T
+  ```
+
+The exported getRepository-function itself is created by this factory with default implementations. This gives you control over the individual tasks done by the method.
+
+- You can access the original response and transform it in any way you want:
+  ```typescript
+    const myGetRepositoryFunction = getRepositoryFactory(
+      // inject the default httpRequestFunction
+      defaultHttpRequestFunction,
+
+      // inject a custom transform-function
+      (response: HttpResponse, context: DvelopContext, params: GetRepositoryParams) => {
+        return `The name of a repository in '${context.systemBaseUri}' is '${response.data.name}.'`;
+      }
+    );
+
+    const info: string = myGetRepositoryFunction({
+      systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+      authSessionId: "dQw4w9WgXcQ"
+    }, {
+      repositoryId: "qnydFmqHuVo"
+    });
+
+    console.log(info); // The name of a repository in 'https://steamwheedle-cartel.d-velop.cloud' is 'Booty Bay Documents'.
+  ```
+
+- You can supply a different httpRequestFunction
+- Some methods have additional steps (eg. the createDmsObject-function needs a storeFile-function which uploads a file and provides a download-url).
+
+All DvelopHttp-stuff is provided by the ```@dvelop-sdk/core``` package. At the moment it mostly wraps ```axios``` as its main http-framework.
 
 ## Contributing
 This project is maintained by d-velop but is looking for contributers. If you consider contributing to this project please read [CONTRIBUTING](CONTRIBUTING.md) for details on how to get started.
