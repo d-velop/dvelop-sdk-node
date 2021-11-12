@@ -1,4 +1,5 @@
 import { validateRequestSignature, InvalidRequestSignatureError } from "../index";
+import { validateDvelopContext } from "./validate-request-signature";
 
 describe("validateRequestSignature", () => {
   [
@@ -18,7 +19,25 @@ describe("validateRequestSignature", () => {
     it(`should pass on: ${JSON.stringify(testCase)})`, () => {
       expect(() => validateRequestSignature(testCase.appSecret, testCase.systemBaseUri, testCase.tenantId, testCase.signature)).not.toThrowError();
     });
+
+    it(`should pass on: ${JSON.stringify(testCase)})`, () => {
+      expect(() => validateDvelopContext(testCase.appSecret, { systemBaseUri: testCase.systemBaseUri, tenantId: testCase.tenantId, requestSignature: testCase.signature })).not.toThrowError();
+    });
   });
+
+  it("should throw InvalidRequestSignatureError on empty context", () => {
+
+    let error: InvalidRequestSignatureError;
+    try {
+      validateDvelopContext("someSecret", {});
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error instanceof InvalidRequestSignatureError).toBeTruthy();
+    expect(error.message).toContain("Invalid request-signature.");
+  });
+
 
   [
     {
@@ -68,10 +87,20 @@ describe("validateRequestSignature", () => {
       }
 
       expect(error instanceof InvalidRequestSignatureError).toBeTruthy();
-      expect(error.message).toContain("Failed to validate requestSignature:");
-      expect(error.systemBaseUri).toEqual(testCase.systemBaseUri);
-      expect(error.tenantId).toEqual(testCase.tenantId);
-      expect(error.requestSignature).toEqual(testCase.signature);
+      expect(error.message).toContain("Invalid request-signature.");
+    });
+
+    it(`should throw InvalidRequestSignatureError on: ${JSON.stringify(testCase)})`, () => {
+
+      let error: InvalidRequestSignatureError;
+      try {
+        validateDvelopContext(testCase.appSecret, { systemBaseUri: testCase.systemBaseUri, tenantId: testCase.tenantId, requestSignature: testCase.signature });
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error instanceof InvalidRequestSignatureError).toBeTruthy();
+      expect(error.message).toContain("Invalid request-signature.");
     });
   });
 });

@@ -58,6 +58,7 @@ async function getFollowUrl(config: AxiosRequestConfig, follow: string): Promise
 
   config.method = "GET";
   config.headers["Accept"] = "application/hal+json, application/json";
+  config.responseType = "json";
   config.follows = [];
 
   let response: AxiosResponse;

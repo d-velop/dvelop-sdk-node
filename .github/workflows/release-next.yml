@@ -1,12 +1,13 @@
-name: pre-release
+name: release-next
 
 on:
   push:
     branches:
       - develop
+      - feature/*
 
 jobs:
-  publish-prerelease:
+  publish-next:
     if: "github.repository == 'd-velop/dvelop-sdk-node'"
     name: Publish to npm as next
     runs-on: ubuntu-latest
