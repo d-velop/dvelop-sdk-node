@@ -8,7 +8,7 @@
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/app-router?label=app-router&style=for-the-badge">
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/identityprovider?label=identityprovider&style=for-the-badge">
   <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/task?label=task&style=for-the-badge">
-  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/dms?label=app-router&style=for-the-badge">
+  <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/dms?label=dms&style=for-the-badge">
 </div>
 
 </br>
