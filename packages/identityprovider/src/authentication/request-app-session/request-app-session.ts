@@ -1,37 +1,46 @@
-import axios from "axios";
+import { DvelopContext } from "../../../../core/lib";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+
+export interface RequestAppSessionParams {
+  appName: string;
+  callback: string;
+}
 
 /**
- * Request an appSession to be posted to the specified callback. For further information on this process refer to the [documentation](https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#IdentityproviderApp-Inter-appcommunicationwithappsessions).
- *
- * @param {string} systemBaseUri SystemBaseUri for the tenant
- * @param {string} appName AppName of the requesting app
- * @param {string} callback CallbackUri with leading slash and appName
- * @param {string} requestId Unique requestId
- *
- * @category Authentication
- *
- * @example ```typescript
- * await requestAppSession("https://monster-ag.d-velop.cloud", "monster-hello", "/monster-hello/give/me/my/appsession", "UUID")
- * ```
+ * Factory for the {@link requestAppSession}-function. See internals for more information.
+ * @typeparam T Return type of the {@link requestAppSession}-function. A corresponding transformFuntion has to be supplied.
+ * @category DmsObject
  */
-export async function requestAppSession(systemBaseUri: string, appName: string, callback: string, requestId: string): Promise<void> {
+export function _requestAppSessionFactory<T>(
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: RequestAppSessionParams) => T,
+): (context: DvelopContext, params: RequestAppSessionParams) => Promise<T> {
 
-  const errorContext: string = "Failed to request appSession";
+  return async (context: DvelopContext, params: RequestAppSessionParams) => {
 
-  try {
-    await axios.post("/identityprovider/appsession", {
-      appname: appName,
-      callback: callback,
-      requestid: requestId
-    }, {
-      baseURL: systemBaseUri,
-      headers: {
-        "Content-Type": "application/json",
-        "Origin": systemBaseUri
+    const response = await httpRequestFunction(context, {
+      method: "POST",
+      url: "/identityprovider/appsession",
+      data: {
+        appname: params.appName,
+        callback: params.callback,
+        requestid: context.requestId
       }
     });
-  } catch (e) {
-    e.message = `${errorContext}: ${e.message}`;
-    throw e;
-  }
+
+    return transformFunction(response, context, params);
+  };
+}
+
+/**
+ * Request an AppSessionId a DmsObject.
+ *
+ * ```typescript
+ * //TODO
+ * ```
+ * @category DmsObject
+ */
+/* istanbul ignore next */
+export async function requestAppSession(context: DvelopContext, params: RequestAppSessionParams): Promise<void> {
+  return await _requestAppSessionFactory(_defaultHttpRequestFunction, () => { })(context, params);
 }

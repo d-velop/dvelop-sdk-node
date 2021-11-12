@@ -1,116 +1,71 @@
-import axios, { AxiosResponse } from "axios";
-import { getImpersonatedAuthSessionId, UnauthorizedError } from "../../index";
+import { DvelopContext } from "@dvelop-sdk/core";
+import { HttpResponse } from "../../utils/http";
+import { GetImpersonatedAuthSessionIdParams, _getImpersonatedAuthSessionIdDefaultTransformFunction, _getImpersonatedAuthSessionIdFactory } from "./get-impersonated-auth-session-id";
 
-jest.mock("axios");
+describe("getImpersonatedAuthSessionIdFactory", () => {
 
-describe("getImpersonatedAuthSessionId", () => {
+  let mockHttpRequestFunction = jest.fn();
+  let mockTransformFunction = jest.fn();
 
-  const mockedAxios = axios as jest.Mocked<typeof axios>;
+  let context: DvelopContext;
+  let params: GetImpersonatedAuthSessionIdParams;
 
   beforeEach(() => {
-    mockedAxios.get.mockReset();
+
+    jest.resetAllMocks();
+
+    context = {
+      systemBaseUri: "HiItsMeSystemBaseUri"
+    };
+
+    params = {
+      userId: "HiItsMeUserId"
+    };
   });
 
-  describe("axios-params", () => {
+  it("should make correct request", async () => {
 
-    beforeEach(() => {
-      mockedAxios.get.mockResolvedValue({
-        data: { authSessionId: "HiItsMeAuthSessionId" }
-      });
-    });
+    const getImpersonatedAuthSessionId = _getImpersonatedAuthSessionIdFactory(mockHttpRequestFunction, mockTransformFunction);
+    await getImpersonatedAuthSessionId(context, params);
 
-    it("should send GET", async () => {
-      await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
-      expect(mockedAxios.get).toHaveBeenCalledTimes(1);
-    });
-
-    it("should send to /identityprovider", async () => {
-      await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
-      expect(mockedAxios.get).toHaveBeenCalledWith("/identityprovider/impersonatesession", expect.any(Object));
-    });
-
-    it("should send with systemBaseUri as BaseURL", async () => {
-      const systemBaseUri: string = "HiItsMeSystemBaseUri";
-      await getImpersonatedAuthSessionId(systemBaseUri, "HiItsMeAppSession", "HiItsMeUserId");
-      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        baseURL: systemBaseUri
-      }));
-    });
-
-    it("should send with authSessionId as Authorization-Header", async () => {
-      const appSession: string = "HiItsMeAppSession";
-      await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", appSession, "HiItsMeUserId");
-      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        headers: expect.objectContaining({ "Authorization": `Bearer ${appSession}` })
-      }));
-    });
-
-    it("should send with userId as param", async () => {
-      const userId: string = "HiItsMeUserId";
-      await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", userId);
-      expect(mockedAxios.get).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
-        params: expect.objectContaining({ userId: userId })
-      }));
-    });
-  });
-
-  describe("response", () => {
-
-    it("should return user", async () => {
-
-      const authSessionId: string = "HiItsMeAuthSessionId";
-
-      mockedAxios.get.mockResolvedValue({
-        data: {
-          authSessionId: authSessionId
-        }
-      });
-
-      const result: string = await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
-      expect(result).toEqual(authSessionId);
-    });
-  });
-
-  describe("errors", () => {
-
-    it("should throw UnauthorizesError on status 401", async () => {
-
-      const response: AxiosResponse = {
-        status: 401,
-      } as AxiosResponse;
-
-      mockedAxios.get.mockRejectedValue({ response });
-
-      let error: UnauthorizedError;
-      try {
-        await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
-      } catch (e) {
-        error = e;
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+      method: "GET",
+      url: "/identityprovider/impersonatesession",
+      params: {
+        userId: params.userId
       }
-
-      expect(error instanceof UnauthorizedError).toBeTruthy();
-      expect(error.message).toContain("Failed to impersonate user:");
-      expect(error.response).toEqual(response);
     });
+  });
 
-    it("should throw UnknownErrors", async () => {
+  it("should pass response to transform and return transform-result", async () => {
 
-      const errorString: string = "HiItsMeError";
-      const error: Error = new Error(errorString);
-      mockedAxios.get.mockImplementation(() => {
-        throw error;
-      });
+    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
+    const transformResult: any = { result: "HiItsMeResult" };
+    mockHttpRequestFunction.mockResolvedValue(response);
+    mockTransformFunction.mockReturnValue(transformResult);
 
-      let resultError: Error;
-      try {
-        await getImpersonatedAuthSessionId("HiItsMeSystemBaseUri", "HiItsMeAppSession", "HiItsMeUserId");
-      } catch (e) {
-        resultError = e;
-      }
+    const getImpersonatedAuthSessionId = _getImpersonatedAuthSessionIdFactory(mockHttpRequestFunction, mockTransformFunction);
+    await getImpersonatedAuthSessionId(context, params);
 
-      expect(resultError).toBe(error);
-      expect(resultError.message).toContain(errorString);
-      expect(resultError.message).toContain("Failed to impersonate user:");
+    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
+    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+  });
+
+  describe("getImpersonatedAuthSessionIdDefaultTransformFunction", () => {
+
+    it("should map correctly", async () => {
+
+      const data: any = {
+        authSessionId: "HiItsMeAuthSessionId"
+      };
+
+      mockHttpRequestFunction.mockResolvedValue({ data: data } as HttpResponse);
+
+      const getImpersonatedAuthSessionId = _getImpersonatedAuthSessionIdFactory(mockHttpRequestFunction, _getImpersonatedAuthSessionIdDefaultTransformFunction);
+      const result: string = await getImpersonatedAuthSessionId(context, params);
+
+      expect(result).toEqual(data.authSessionId);
     });
   });
 });
