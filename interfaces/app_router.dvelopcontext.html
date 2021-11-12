@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TaskContext | @dvelop-sdk</title>
+	<title>DvelopContext | @dvelop-sdk</title>
 	<meta name="description" content="Documentation for @dvelop-sdk">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,13 +55,13 @@
 					<a href="../modules.html">@dvelop-sdk</a>
 				</li>
 				<li>
-					<a href="../modules/task.html">task</a>
+					<a href="../modules/app_router.html">app-router</a>
 				</li>
 				<li>
-					<a href="task.taskcontext.html">TaskContext</a>
+					<a href="app_router.dvelopcontext.html">DvelopContext</a>
 				</li>
 			</ul>
-			<h1>Interface TaskContext</h1>
+			<h1>Interface DvelopContext</h1>
 		</div>
 	</div>
 </header>
@@ -71,28 +71,15 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>The context of a task.</p>
+						<p>Defines a common d.velop context used across all requests.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><pre><code class="language-typescript"><span style="color: #000000">{</span>
-<span style="color: #000000">  ...</span>
-<span style="color: #000000">  </span><span style="color: #A31515">&quot;context&quot;</span><span style="color: #000000"> : {</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;key&quot;</span><span style="color: #001080"> :</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;myContextKey&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080"> :</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;bpm&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;name&quot;</span><span style="color: #001080"> :</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;my context name&quot;</span>
-<span style="color: #000000">  }</span>
-<span style="color: #000000">}</span>
-</code></pre>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">TaskContext</span>
+						<span class="target">DvelopContext</span>
 					</li>
 				</ul>
 			</section>
@@ -103,9 +90,12 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.taskcontext.html#key" class="tsd-kind-icon">key</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.taskcontext.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.taskcontext.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="app_router.dvelopcontext.html#authsessionid" class="tsd-kind-icon">auth<wbr>Session<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="app_router.dvelopcontext.html#requestid" class="tsd-kind-icon">request<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="app_router.dvelopcontext.html#requestsignature" class="tsd-kind-icon">request<wbr>Signature</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="app_router.dvelopcontext.html#systembaseuri" class="tsd-kind-icon">system<wbr>Base<wbr>Uri</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="app_router.dvelopcontext.html#tenantid" class="tsd-kind-icon">tenant<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="app_router.dvelopcontext.html#user" class="tsd-kind-icon">user</a></li>
 							</ul>
 						</section>
 					</div>
@@ -114,49 +104,91 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="key" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> key</h3>
-					<div class="tsd-signature tsd-kind-icon">key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="authsessionid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> auth<wbr>Session<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">auth<wbr>Session<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/92f0962/packages/task/src/task.ts#L18">packages/task/src/task.ts:18</a></li>
+							<li>Defined in packages/core/lib/context/context.d.ts:6</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Technical identifier for this context.</p>
+							<p>AuthSessionId used for authorization</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="requestid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> request<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">request<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/92f0962/packages/task/src/task.ts#L24">packages/task/src/task.ts:24</a></li>
+							<li>Defined in packages/core/lib/context/context.d.ts:8</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Display name for this context.</p>
+							<p>RequestId used to track coherent requests over multiple apps</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="type" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> type</h3>
-					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="requestsignature" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> request<wbr>Signature</h3>
+					<div class="tsd-signature tsd-kind-icon">request<wbr>Signature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/92f0962/packages/task/src/task.ts#L21">packages/task/src/task.ts:21</a></li>
+							<li>Defined in packages/core/lib/context/context.d.ts:15</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Technical identifier for the type of this context.</p>
+							<p>Signature assigned by the app-router.
+								<strong>The requestSignature should be validated for every request when recieving calls from the d.velop cloud.
+							Refer to the <a href="https://developer.d-velop.de/dev/en/basics#tenant-header">d.velop basics tenant header section</a> for more information.</strong></p>
 						</div>
 					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="systembaseuri" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> system<wbr>Base<wbr>Uri</h3>
+					<div class="tsd-signature tsd-kind-icon">system<wbr>Base<wbr>Uri<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in packages/core/lib/context/context.d.ts:4</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>SystemBaseUri of a tenant</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="tenantid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> tenant<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">tenant<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in packages/core/lib/context/context.d.ts:10</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Id of a tenant</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="user" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> user</h3>
+					<div class="tsd-signature tsd-kind-icon">user<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in packages/core/lib/context/context.d.ts:16</li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -166,7 +198,7 @@
 					<li class=" ">
 						<a href="../modules.html">Modules</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/app_router.html">app-<wbr>router</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -181,7 +213,7 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/identityprovider.html">identityprovider</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/task.html">task</a>
 					</li>
 				</ul>
@@ -189,61 +221,37 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.invalidtaskerror.html" class="tsd-kind-icon">Invalid<wbr>Task<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.notasklocationerror.html" class="tsd-kind-icon">No<wbr>Task<wbr>Location<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.taskalreadycompletederror.html" class="tsd-kind-icon">Task<wbr>Already<wbr>Completed<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.tasknotfounderror.html" class="tsd-kind-icon">Task<wbr>Not<wbr>Found<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.unauthenticatederror.html" class="tsd-kind-icon">Unauthenticated<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="task.task-1.html" class="tsd-kind-icon">Task</a>
+						<a href="../classes/app_router.invalidrequestsignatureerror.html" class="tsd-kind-icon">Invalid<wbr>Request<wbr>Signature<wbr>Error</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="task.taskcontext.html" class="tsd-kind-icon">Task<wbr>Context</a>
+						<a href="app_router.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="task.taskcontext.html#key" class="tsd-kind-icon">key</a>
+								<a href="app_router.dvelopcontext.html#authsessionid" class="tsd-kind-icon">auth<wbr>Session<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="task.taskcontext.html#name" class="tsd-kind-icon">name</a>
+								<a href="app_router.dvelopcontext.html#requestid" class="tsd-kind-icon">request<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="task.taskcontext.html#type" class="tsd-kind-icon">type</a>
+								<a href="app_router.dvelopcontext.html#requestsignature" class="tsd-kind-icon">request<wbr>Signature</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="app_router.dvelopcontext.html#systembaseuri" class="tsd-kind-icon">system<wbr>Base<wbr>Uri</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="app_router.dvelopcontext.html#tenantid" class="tsd-kind-icon">tenant<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="app_router.dvelopcontext.html#user" class="tsd-kind-icon">user</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="task.tasklinks.html" class="tsd-kind-icon">Task<wbr>Links</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="task.taskmetadata.html" class="tsd-kind-icon">Task<wbr>Meta<wbr>Data</a>
-					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/task.html#completetask" class="tsd-kind-icon">complete<wbr>Task</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/task.html#createtask" class="tsd-kind-icon">create<wbr>Task</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/task.html#deletetask" class="tsd-kind-icon">delete<wbr>Task</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/task.html#updatetask" class="tsd-kind-icon">update<wbr>Task</a>
+						<a href="../modules/app_router.html#validaterequestsignature" class="tsd-kind-icon">validate<wbr>Request<wbr>Signature</a>
 					</li>
 				</ul>
 			</nav>
