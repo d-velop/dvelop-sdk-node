@@ -23,13 +23,11 @@
 </div>
  * @module task
  */
-import axios from "axios";
-import { followHalJson } from "@dvelop-sdk/axios-hal-json";
-axios.interceptors.request.use(followHalJson);
+export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
+export { TaskError } from "./utils/http";
+export * as internals from "./internal";
 
-export { Task, TaskContext, TaskMetaData, TaskLinks } from "./task";
-export { InvalidTaskError, UnauthenticatedError, UnauthorizedError, NoTaskLocationError, TaskNotFoundError, TaskAlreadyCompletedError } from "./errors";
-export { createTask } from "./create-task/create-task";
-export { completeTask } from "./complete-task/complete-task";
-export { deleteTask } from "./delete-task/delete-task";
-export { updateTask } from "./update-task/update-task";
+export { CreateTaskParams, createTask } from "./tasks/create-task/create-task";
+export { CompleteTaskParams, completeTask } from "./tasks/complete-task/complete-task";
+export { DeleteTaskParams, deleteTask } from "./tasks/delete-task/delete-task";
+export { UpdateTaskParams, updateTask } from "./tasks/update-task/update-task";
