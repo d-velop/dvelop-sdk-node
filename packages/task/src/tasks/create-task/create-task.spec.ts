@@ -120,6 +120,26 @@ describe("createTaskFactory", () => {
     }));
   });
 
+  it("should parse dmsObject", async () => {
+
+    const dmsObject: any = {
+      repositoryId: "HiItsMeRepoId",
+      dmsObjectId: "HiItsMeDmsObjectId"
+    };
+
+    const createTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+    await createTask(context, { ...params, ...{ dmsObject: dmsObject } });
+
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, expect.objectContaining({
+      data: expect.objectContaining({
+        dmsReferences: [{
+          repoId: dmsObject.repositoryId,
+          objectId: dmsObject.dmsObjectId
+        }]
+      })
+    }));
+  });
 
   it("should pass response to transform and return transform-result", async () => {
 

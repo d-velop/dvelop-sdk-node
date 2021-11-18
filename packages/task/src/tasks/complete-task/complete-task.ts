@@ -2,6 +2,7 @@ import { DvelopContext } from "@dvelop-sdk/core";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
 export interface CompleteTaskParams {
+  /** Location-URI of the task. */
   location: string;
 }
 
