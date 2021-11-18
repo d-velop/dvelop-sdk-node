@@ -13,7 +13,7 @@ export interface StoreFileTemporarilyParams {
 }
 
 /**
- * Default transform-function provided to the {@link storeFileTemporarily}-function.
+ * Default transform-function provided to the {@link storeFileTemporarily}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
@@ -22,7 +22,7 @@ export function _storeFileTemporarilyDefaultTransformFunction(response: HttpResp
 }
 
 /**
- * Factory for the {@link storeFileFunction}-function. See internals for more information.
+ * Factory for the {@link storeFileFunction}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link storeFileFunction}-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category DmsObject

@@ -3,7 +3,7 @@ import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../uti
 import { Repository } from "../get-repository/get-repository";
 
 /**
- * Default transform-function provided to the {@link getRepositories}-function.
+ * Default transform-function provided to the {@link getRepositories}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Repository
  */
@@ -18,7 +18,7 @@ export function _getRepositoriesDefaultTransformFunction(response: HttpResponse,
 }
 
 /**
- * Factory for {@link getRepositories}-function. See internals for more information.
+ * Factory for {@link getRepositories}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the getRepositories-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category Repository

@@ -39,14 +39,14 @@ export interface UpdateDmsObjectParams {
 }
 
 /**
- * Default transform-function provided to the {@link updateDmsObject}-function.
+ * Default transform-function provided to the {@link updateDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
 export function _updateDmsObjectDefaultTransformFunction(_: HttpResponse, __: DvelopContext, ___: UpdateDmsObjectParams): void { } // no error indicates success. Returning void
 
 /**
- * Default storeFile-function provided to the {@link updateDmsObject}-function. This will get called when content is provided.
+ * Default storeFile-function provided to the {@link updateDmsObject}-function. This will get called when content is provided. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
@@ -59,7 +59,7 @@ export async function updateDmsObjectDefaultStoreFileFunction(context: DvelopCon
 }
 
 /**
- * Factory for the {@link updateDmsObject}-function. See internals for more information.
+ * Factory for the {@link updateDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link updateDmsObject}-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category DmsObject
