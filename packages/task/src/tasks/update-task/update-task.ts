@@ -1,6 +1,10 @@
 import { DvelopContext } from "@dvelop-sdk/core";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
+/**
+ * Parameters for the {@link updateTask}-function.
+ * @category Task
+ */
 export interface UpdateTaskParams {
   /** Location-URI of the task */
   location: string;
@@ -43,9 +47,8 @@ export interface UpdateTaskParams {
     type?: "String" | "Number" | "Money" | "Date";
     /** Value of the metadata field. Currently, only one value is allowed per metadata-field. */
     values?: string;
-    /** The subject of the task. */
   }[];
-  /** ID of the DmsObject and it's Repository that references the task. A maximum of one reference is possible here. */
+  /** DmsObject that references the task */
   dmsObject?: {
     /** ID of the repository */
     repositoryId: string;
@@ -74,7 +77,7 @@ export interface UpdateTaskParams {
 }
 
 /**
- * Factory for the {@link updateTask}-function. See internals for more information.
+ * Factory for the {@link updateTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link updateTask}-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category Task

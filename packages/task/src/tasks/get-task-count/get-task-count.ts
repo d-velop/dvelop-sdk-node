@@ -2,7 +2,7 @@ import { DvelopContext } from "@dvelop-sdk/core";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
 /**
- * Default transform-function provided to the {@link getTaskCount}-function.
+ * Default transform-function provided to the {@link getTaskCount}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Task
  */
@@ -11,7 +11,7 @@ export function _getTaskCountDefaultTransformFunction(response: HttpResponse, _:
 }
 
 /**
- * Factory for the {@link getTaskCount}-function. See internals for more information.
+ * Factory for the {@link getTaskCount}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link getTaskCount}-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category Task

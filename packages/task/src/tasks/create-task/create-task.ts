@@ -1,7 +1,10 @@
-import { DvelopContext } from "@dvelop-sdk/core";
+import { DvelopContext, generateRequestId } from "@dvelop-sdk/core";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
-import { v4 } from "uuid";
 
+/**
+ * Parameters for the {@link createTask}-function.
+ * @category Task
+ */
 export interface CreateTaskParams {
   /** The subject of the task */
   subject: string;
@@ -42,9 +45,8 @@ export interface CreateTaskParams {
     type?: "String" | "Number" | "Money" | "Date";
     /** Value of the metadata field. Currently, only one value is allowed per metadata-field. */
     values?: string;
-    /** The subject of the task. */
   }[];
-  /** ID of the DmsObject and it's Repository that references the task. A maximum of one reference is possible here. */
+  /** DmsObject that references the task. */
   dmsObject?: {
     /** ID of the repository */
     repositoryId: string;
@@ -73,7 +75,7 @@ export interface CreateTaskParams {
 }
 
 /**
- * Default transform-function provided to the {@link createTask}-function.
+ * Default transform-function provided to the {@link createTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Task
  */
@@ -82,7 +84,7 @@ export function _createTaskDefaultTransformFunction(response: HttpResponse, _: D
 }
 
 /**
- * Factory for the {@link createTask}-function. See internals for more information.
+ * Factory for the {@link createTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link createTask}-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category Task
@@ -148,5 +150,5 @@ export function _createTaskFactory<T>(
  */
 /* istanbul ignore next */
 export function createTask(context: DvelopContext, params: CreateTaskParams): Promise<string> {
-  return _createTaskFactory(_defaultHttpRequestFunction, _createTaskDefaultTransformFunction, v4)(context, params);
+  return _createTaskFactory(_defaultHttpRequestFunction, _createTaskDefaultTransformFunction, generateRequestId)(context, params);
 }

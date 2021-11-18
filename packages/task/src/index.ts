@@ -14,7 +14,7 @@
     <img alt="license" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
   </a>
   </br>
-  <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/taskapp/en">Task-App</a> in the d.velop cloud.</p>
+  <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/taskapi/en">Task-App</a> in the d.velop cloud.</p>
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules/task.html"><strong>Explore the docs »</strong></a>
   </br>
   <a href="https://www.npmjs.com/package/@dvelop-sdk/task"><strong>Install via npm »</strong></a>
@@ -24,7 +24,7 @@
  * @module task
  */
 export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
-export { TaskError } from "./utils/http";
+export { TaskValidation, InvalidTaskDefinitionError, TaskError } from "./utils/http";
 export * as internals from "./internal";
 
 export { CreateTaskParams, createTask } from "./tasks/create-task/create-task";

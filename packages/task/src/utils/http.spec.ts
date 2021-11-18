@@ -33,7 +33,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
 
     describe("on statusCode 400", () => {
 
-      it("should throw InvalidTaskDefinitionError on InvalidTaskDefinitionError", async () => {
+      it("should throw InvalidTaskDefinitionError on errorDto", async () => {
 
         const error: DvelopHttpError = {
           response: {
@@ -60,7 +60,7 @@ describe("defaultHttpRequestFunctionFactory", () => {
         expect(expectedError.originalError).toBe(error);
       });
 
-      it("should throw generic BadInputError on missing InvalidTaskDefinitionError", async () => {
+      it("should throw generic BadInputError on missing errorDto", async () => {
 
         const error: DvelopHttpError = {
           response: {
@@ -232,8 +232,5 @@ describe("defaultHttpRequestFunctionFactory", () => {
       expect(expectedError.message).toEqual(`Request to Task-App failed: ${error.message}. See 'originalError'-property for details.`);
       expect(expectedError.originalError).toBe(error);
     });
-
-
   });
-
 });

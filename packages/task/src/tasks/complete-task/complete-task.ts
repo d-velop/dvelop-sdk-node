@@ -1,13 +1,17 @@
 import { DvelopContext } from "@dvelop-sdk/core";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
+/**
+ * Parameters for the {@link completeTask}-function.
+ * @category Task
+ */
 export interface CompleteTaskParams {
   /** Location-URI of the task. */
   location: string;
 }
 
 /**
- * Factory for the {@link completeTask}-function. See internals for more information.
+ * Factory for the {@link completeTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link completeTask}-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category Task

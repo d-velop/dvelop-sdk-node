@@ -20,12 +20,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@dvelop-sdk/axios-hal-json": "^2.0.6",
-    "@dvelop-sdk/core": "^1.1.0",
-    "axios": "^0.21.4",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "@types/uuid": "^8.3.0"
+    "@dvelop-sdk/core": "^1.1.0"
   }
 }
