@@ -1,44 +1,42 @@
 import { DvelopContext } from "@dvelop-sdk/core";
 import { HttpResponse } from "../../utils/http";
-import { RequestAppSessionParams, _requestAppSessionFactory } from "./request-app-session";
+import { UpdateTaskParams, _updateTaskFactory } from "./update-task";
 
-describe("requestAppSessionFactory", () => {
+describe("updateTaskFactory", () => {
 
   let mockHttpRequestFunction = jest.fn();
   let mockTransformFunction = jest.fn();
 
   let context: DvelopContext;
-  let params: RequestAppSessionParams;
+  let params: UpdateTaskParams;
 
   beforeEach(() => {
 
     jest.resetAllMocks();
 
     context = {
-      systemBaseUri: "HiItsMeSystemBaseUri",
-      requestId: "HiItsMeRequestId"
+      systemBaseUri: "HiItsMeSystemBaseUri"
     };
 
     params = {
-      appName: "HiItsMeAppName",
-      callback: "HiItsMeCallBack"
+      location: "HiItsMeLocation",
+      subject: "HiItsMeSubject",
+      assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"]
     };
   });
 
   it("should make correct request", async () => {
 
-    const requestAppSession = _requestAppSessionFactory(mockHttpRequestFunction, mockTransformFunction);
-    await requestAppSession(context, params);
+    const updateTask = _updateTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+    await updateTask(context, params);
+
+    const expectedData: any = { ...params, ...{ location: null } };
 
     expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
     expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "POST",
-      url: "/identityprovider/appsession",
-      data: {
-        appname: params.appName,
-        callback: params.callback,
-        requestid: context.requestId
-      }
+      method: "PATCH",
+      url: params.location,
+      data: expectedData
     });
   });
 
@@ -49,8 +47,8 @@ describe("requestAppSessionFactory", () => {
     mockHttpRequestFunction.mockResolvedValue(response);
     mockTransformFunction.mockReturnValue(transformResult);
 
-    const requestAppSession = _requestAppSessionFactory(mockHttpRequestFunction, mockTransformFunction);
-    await requestAppSession(context, params);
+    const updateTask = _updateTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+    await updateTask(context, params);
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
     expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);

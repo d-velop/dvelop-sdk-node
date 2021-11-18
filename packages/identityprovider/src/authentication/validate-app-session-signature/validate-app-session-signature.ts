@@ -1,5 +1,16 @@
 import { createHash } from "crypto";
-import { InvalidAppSessionSignatureError } from "../../index";
+
+/**
+*
+* @category Error
+*/
+export class InvalidAppSessionSignatureError extends Error {
+  // eslint-disable-next-line no-unused-vars
+  constructor() {
+    super("Invalid AppSessionSingature: An AppSession was sent that contains no valid signature.");
+    Object.setPrototypeOf(this, InvalidAppSessionSignatureError.prototype);
+  }
+}
 
 /**
  * Validate the sign value which is provided when an appSession is sent. For further information on this process refer to the [documentation](https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#IdentityproviderApp-Inter-appcommunicationwithappsessions).
