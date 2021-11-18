@@ -30,4 +30,5 @@ export * as internals from "./internal";
 export { CreateTaskParams, createTask } from "./tasks/create-task/create-task";
 export { CompleteTaskParams, completeTask } from "./tasks/complete-task/complete-task";
 export { DeleteTaskParams, deleteTask } from "./tasks/delete-task/delete-task";
+export { getTaskCount } from "./tasks/get-task-count/get-task-count";
 export { UpdateTaskParams, updateTask } from "./tasks/update-task/update-task";
