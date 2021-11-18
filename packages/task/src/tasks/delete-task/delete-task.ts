@@ -26,9 +26,17 @@ export function _deleteTaskFactory<T>(
 }
 
 /**
- * Complete a task.
+ * Mark task as completed.
  *
  * ```typescript
+ * import { deleteTask } from "@dvelop-sdk/task";
+ *
+ * await deleteTask({
+ *   systemBaseUri: "https://umbrella-corp.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * }, {
+ *   location: "some/task/location"
+ * });
  * ```
  *
  * @category Task

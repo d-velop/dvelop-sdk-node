@@ -61,16 +61,27 @@ export function _createTaskFactory<T>(
 
   return async (context: DvelopContext, params: CreateTaskParams) => {
 
+    const task: any = { ...params };
+
     if (uuidGeneratorFunction && !params.correlationKey) {
-      params.correlationKey = uuidGeneratorFunction();
+      task.correlationKey = uuidGeneratorFunction();
+    }
+
+    if (params.dueDate) {
+      task.dueDate = params.dueDate.toISOString();
+    }
+
+    if (params.reminderDate) {
+      task.reminderDate = params.reminderDate.toISOString();
     }
 
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "POST",
       url: "/task",
       follows: ["tasks"],
-      data: params
+      data: task
     });
+
     return transformFunction(response, context, params);
   };
 }
@@ -79,6 +90,17 @@ export function _createTaskFactory<T>(
  * Create a task.
  *
  * ```typescript
+ * import { createTask } from "@dvelop-sdk/task";
+ *
+ * const taskLocation = await createTask({
+ *   systemBaseUri: "https://umbrella-corp.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * }, {
+ *   subject: "Cover up lab accident",
+ *   assignees: ["XiFkyR35v2Y"]
+ * });
+ *
+ * console.log(taskLocation); // some/task/location
  * ```
  *
  * @category Task

@@ -53,6 +53,14 @@ export function _updateTaskFactory<T>(
 
     const task: any = { ...params, ...{ location: null } };
 
+    if (params.dueDate) {
+      task.dueDate = params.dueDate.toISOString();
+    }
+
+    if (params.reminderDate) {
+      task.reminderDate = params.reminderDate.toISOString();
+    }
+
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "PATCH",
       url: params.location,
@@ -66,6 +74,16 @@ export function _updateTaskFactory<T>(
  * Update a task.
  *
  * ```typescript
+ * import { updateTask } from "@dvelop-sdk/task";
+ *
+ * await updateTask({
+ *   systemBaseUri: "https://umbrella-corp.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * }, {
+ *   location: "some/task/location",
+ *   description: "Try harder! Bribe some people if you must.",
+ *   dueDate: new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 5)) // due in 5 days
+ * });
  * ```
  *
  * @category Task

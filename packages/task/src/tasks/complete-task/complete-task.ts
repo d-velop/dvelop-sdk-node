@@ -33,6 +33,14 @@ export function _completeTaskFactory<T>(
  * Complete a task.
  *
  * ```typescript
+ * import { completeTask } from "@dvelop-sdk/task";
+ *
+ * await completeTask({
+ *   systemBaseUri: "https://umbrella-corp.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * }, {
+ *   location: "some/task/location"
+ * });
  * ```
  *
  * @category Task
