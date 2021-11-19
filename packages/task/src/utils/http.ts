@@ -4,7 +4,7 @@ export { DvelopHttpRequestConfig as HttpConfig, DvelopHttpResponse as HttpRespon
 
 
 /**
-* Generic Error for dms-package.
+* Generic Error for task-package.
 * @category Error
 */
 /* istanbul ignore next */
@@ -16,7 +16,11 @@ export class TaskError extends DvelopSdkError {
   }
 }
 
-interface TaskValidation {
+/**
+* Validation for task
+* @category Error
+*/
+export interface TaskValidation {
   invalidTaskDefinition: boolean;
   missingSubject: boolean;
   invalidSubject: boolean;
@@ -38,9 +42,9 @@ interface TaskValidation {
 }
 
 /**
-*
-* @category Error
-*/
+ * Indicates an invalid task-definition. See ```validation```-property for more information.
+ * @category Error
+ */
 export class InvalidTaskDefinitionError extends BadInputError {
   // eslint-disable-next-line no-unused-vars
   constructor(public validation: TaskValidation, public originalError?: Error) {
@@ -50,7 +54,7 @@ export class InvalidTaskDefinitionError extends BadInputError {
 }
 
 /**
- * Factory used to create the default httpRequestFunction. Mostly used for HTTP-Error handling.
+ * Factory used to create the default httpRequestFunction. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Http
  */
@@ -91,7 +95,7 @@ export function _defaultHttpRequestFunctionFactory(httpClient: DvelopHttpClient)
 }
 
 /**
- * Default httpRequestFunction used in dms-package.
+ * Default httpRequestFunction used in task-package.
  * @internal
  * @category Http
  */

@@ -90,6 +90,56 @@ describe("createTaskFactory", () => {
     });
   });
 
+  it("should parse dueDate", async () => {
+
+    const date: Date = new Date();
+
+    const updateTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+    await updateTask(context, { ...params, ...{ dueDate: date } });
+
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, expect.objectContaining({
+      data: expect.objectContaining({
+        dueDate: date.toISOString()
+      })
+    }));
+  });
+
+  it("should parse reminderDate", async () => {
+
+    const date: Date = new Date();
+
+    const updateTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+    await updateTask(context, { ...params, ...{ reminderDate: date } });
+
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, expect.objectContaining({
+      data: expect.objectContaining({
+        reminderDate: date.toISOString()
+      })
+    }));
+  });
+
+  it("should parse dmsObject", async () => {
+
+    const dmsObject: any = {
+      repositoryId: "HiItsMeRepoId",
+      dmsObjectId: "HiItsMeDmsObjectId"
+    };
+
+    const createTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+    await createTask(context, { ...params, ...{ dmsObject: dmsObject } });
+
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, expect.objectContaining({
+      data: expect.objectContaining({
+        dmsReferences: [{
+          repoId: dmsObject.repositoryId,
+          objectId: dmsObject.dmsObjectId
+        }]
+      })
+    }));
+  });
 
   it("should pass response to transform and return transform-result", async () => {
 

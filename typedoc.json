@@ -1,13 +1,16 @@
 {
-    "out": "docs",
-    "name": "@dvelop-sdk",
-    "entryPoints": [
-        "packages/core/src/index.ts",
-        "packages/app-router/src/index.ts",
-        "packages/axios-hal-json/src/index.ts",
-        "packages/identityprovider/src/index.ts",
-        "packages/task/src/index.ts",
-        "packages/dms/src/index.ts"
-    ],
-    "categoryOrder": ["Authentication", "Error", "*"]
+  "out": "docs",
+  "name": "@dvelop-sdk",
+  "entryPoints": [
+    "packages/core/src/index.ts",
+    "packages/app-router/src/index.ts",
+    "packages/identityprovider/src/index.ts",
+    "packages/task/src/index.ts",
+    "packages/dms/src/index.ts"
+  ],
+  "categoryOrder": [
+    "*",
+    "Http",
+    "Other"
+  ]
 }

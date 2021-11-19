@@ -48,7 +48,7 @@ export interface DmsObject {
 }
 
 /**
- * Factory for the default-transform-function for the {@link getDmsObject}-function. See internals for more information.
+ * Factory for the default-transform-function for the {@link getDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
@@ -79,7 +79,7 @@ export function _getDmsObjectDefaultTransformFunctionFactory(
 }
 
 /**
- * Factory for {@link getDmsObject}-function. See internals for more information.
+ * Factory for {@link getDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the getRepositories-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category DmsObject
@@ -105,7 +105,7 @@ export function _getDmsObjectFactory<T>(
 }
 
 /**
- * Factory for the default-transform-function for the {@link searchDmsObjects}-function. See internals for more information.
+ * Factory for the default-transform-function for the {@link searchDmsObjects}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */

@@ -16,7 +16,7 @@ export class DmsError extends DvelopSdkError {
 }
 
 /**
- * Factory used to create the default httpRequestFunction. Mostly used for HTTP-Error handling.
+ * Factory used to create the default httpRequestFunction. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Http
  */
@@ -53,7 +53,7 @@ export function _defaultHttpRequestFunctionFactory(httpClient: DvelopHttpClient)
 }
 
 /**
- * Default httpRequestFunction used in dms-package.
+ * Default httpRequestFunction used in dms-package. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Http
  */

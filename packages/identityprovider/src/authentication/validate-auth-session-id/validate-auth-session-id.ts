@@ -41,7 +41,7 @@ export interface DvelopUser {
 }
 
 /**
- * Default transform-function provided to the {@link validateAuthSessionId}-function.
+ * Default transform-function provided to the {@link validateAuthSessionId}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Authentication
  */
@@ -50,9 +50,9 @@ export function _validateAuthSessionIdDefaultTransformFunction(response: HttpRes
 }
 
 /**
- * Factory for the {@link validateAuthSessionId}-function. See internals for more information.
+ * Factory for the {@link validateAuthSessionId}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link validateAuthSessionId}-function. A corresponding transformFuntion has to be supplied.
- * @category DmsObject
+ * @category Authentication
  */
 export function _validateAuthSessionIdFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
@@ -71,9 +71,17 @@ export function _validateAuthSessionIdFactory<T>(
 /**
  * Validates an AuthSessionId and returns a {@link DvelopUser}.
  *
- * @example ```typescript
- * TODO
+ * ```typescript
+ * import { validateAuthSessionId } from "@dvelop-sdk/identityprovider";
+ *
+ * const user: DvelopUser = await validateAuthSessionId({
+ *   systemBaseUri: "https://monster-ag.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * });
+ *
+ * console.log(user.displayName) //Mike Glotzkowski
  * ```
+ * @category Authentication
  */
 /* istanbul ignore next */
 export async function validateAuthSessionId(context: DvelopContext): Promise<DvelopUser> {

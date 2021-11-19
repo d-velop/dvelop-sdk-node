@@ -1,15 +1,31 @@
 import { DvelopContext } from "../../../../core/lib";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
+/**
+ * Parameters for the {@link requestAppSession}-function.
+ * @category Authentication
+ */
 export interface RequestAppSessionParams {
+  /** Name of the app requesting the appSession */
   appName: string;
+  /** Relative URI to which the appSession will be sent via POST */
   callback: string;
 }
 
 /**
- * Factory for the {@link requestAppSession}-function. See internals for more information.
+ * AppSession which will be postet to your app after using the {@link requestAppSession}-function.
+ * @category Authentication
+ */
+export interface AppSession {
+  appSessionId: string;
+  expire: string;
+  sign: string;
+}
+
+/**
+ * Factory for the {@link requestAppSession}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link requestAppSession}-function. A corresponding transformFuntion has to be supplied.
- * @category DmsObject
+ * @category Authentication
  */
 export function _requestAppSessionFactory<T>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
@@ -33,12 +49,21 @@ export function _requestAppSessionFactory<T>(
 }
 
 /**
- * Request an AppSessionId a DmsObject.
+ * Request an appSession for your app. The appSession will be sent via POST to your defined callback.
+ * **Do not forget to validate the appSessionId via the {@link validateAppSessionSignature}-function**
  *
  * ```typescript
- * //TODO
+ * import { requestAppSession } from "@dvelop-sdk/identityprovider";
+ *
+ * await requestAppSession({
+ *   systemBaseUri: "https://monster-ag.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * }, {
+ *   appName: "cda-compliance",
+ *   callback: "/cda-compliance/appsession"
+ * });
  * ```
- * @category DmsObject
+ * @category Authentication
  */
 /* istanbul ignore next */
 export async function requestAppSession(context: DvelopContext, params: RequestAppSessionParams): Promise<void> {
