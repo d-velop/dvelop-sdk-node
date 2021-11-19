@@ -236,7 +236,6 @@ npx ts-node-dev src/main.ts
 
 
 ## Advanced Topics
-**Attention: Currently only available in @dvelop-sdk/dms**
 
 Under the hood this SDK uses a functional programming approach. Generally all top-level SDK methods are created by factory-methods. This allows to inject default implementations and at the same time give consumers next-to-full control over steps taken.
 
