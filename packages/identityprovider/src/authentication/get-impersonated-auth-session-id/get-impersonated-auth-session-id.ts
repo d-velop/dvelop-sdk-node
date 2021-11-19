@@ -41,7 +41,7 @@ export function _getImpersonatedAuthSessionIdFactory<T>(
 }
 
 /**
- * Returns an {@link AuthSessionId} for the given user. All requests with this authSessionId will be in that users name.
+ * Returns an authSessionId for the given user. All requests with this authSessionId will be in that users name.
  * **The AuthSessionId should be kept secret and never be publicly available.**
  *
  * ```typescript

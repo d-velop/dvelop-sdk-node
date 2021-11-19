@@ -174,10 +174,9 @@ As mentioned we are using [typedoc](https://typedoc.org/) to document code. A do
   - Should be annotated above function definition
   - must contain
     - A general description of what the function achieves
-    - ```@param {<TYPE>} <NAME> <DESCRIPTION>``` for every parameter
+    - a short example
     - ```@throws {@link <ERROR_CLASS>} <DESCRIPTION>``` for every expected error
     - ```@category``` if a module provides multiple distict functionalities
-    - ```@example``` a short example
   - Example:
      ```
       /**
@@ -187,12 +186,12 @@ As mentioned we are using [typedoc](https://typedoc.org/) to document code. A do
        *
        * @throws {@link UnknownPersonError} indicated that the person to be greeted was not found.
        *
-       * @category Social
-       *
-       * @example ```typescript
+       * ```typescript
        * const greeting: string = sayHi("Emma Watson");
        * console.log(greeting) //print "Moin moin Emma Watson!"
        * ```
+       *
+       * @category Social
        */
        export function sayHi(to: string): string {
          ...
