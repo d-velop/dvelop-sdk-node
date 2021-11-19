@@ -111,6 +111,7 @@ Set up your app:
 // src/middleware/dvelop.ts
 
 import { Request, Response, NextFunction } from "express";
+import { DVELOP_SYSTEM_BASE_URI_HEADER, DVELOP_TENANT_ID_HEADER, DVELOP_REQUEST_ID_HEADER, DVELOP_REQUEST_SIGNATURE_HEADER } from "@dvelop-sdk/core";
 import * as appRouter from "@dvelop-sdk/app-router";
 import * as idp from "@dvelop-sdk/identityprovider";
 
@@ -119,12 +120,16 @@ const APP_SECRET = process.env.APP_SECRET;
 
 export function validateSignatureAndSetDvelopContext(req: Request, res: Response, next: NextFunction) {
 
-  const systemBaseUri: string = req.header(appRouter.DVELOP_SYSTEM_BASE_URI_HEADER);
-  const tenantId: string = req.header(appRouter.DVELOP_TENANT_ID_HEADER);
-  const requestSignature: string = req.header(appRouter.DVELOP_REQUEST_SIGNATURE_HEADER);
+  const systemBaseUri: string = req.header(DVELOP_SYSTEM_BASE_URI_HEADER);
+  const tenantId: string = req.header(DVELOP_TENANT_ID_HEADER);
+  const requestSignature: string = req.header(DVELOP_REQUEST_SIGNATURE_HEADER);
 
   try {
-    appRouter.validateRequestSignature(APP_SECRET, systemBaseUri, tenantId, requestSignature);
+    appRouter.validateDvelopContext(APP_SECRET, {
+      systemBaseUri: systemBaseUri,
+      tenantId: tenantId,
+      requestSignature: requestSignature
+    });
   } catch (e) {
     if (e instanceof appRouter.InvalidRequestSignatureError) {
       console.log(e);
@@ -134,7 +139,7 @@ export function validateSignatureAndSetDvelopContext(req: Request, res: Response
 
   req.systemBaseUri = systemBaseUri;
   req.tenantId = tenantId
-  req.requestId = req.header(appRouter.DVELOP_REQUEST_ID_HEADER);
+  req.requestId = req.header(DVELOP_REQUEST_ID_HEADER);
   next();
 }
 
@@ -151,7 +156,10 @@ export async function validateUser(req: Request, res: Response, next: NextFuncti
   }
 
   try {
-    const user: idp.ScimUser = await idp.validateAuthSessionId(req.systemBaseUri, authSessionId);
+    const user: idp.DvelopUser = await idp.validateAuthSessionId({
+      systemBaseUri: req.systemBaseUri,
+      authSessionId: authSessionId
+    });
     req.user = user;
     next();
   } catch (e) {
