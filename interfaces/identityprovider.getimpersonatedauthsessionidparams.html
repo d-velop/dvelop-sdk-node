@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>GetRepositoryParams | @dvelop-sdk</title>
+	<title>GetImpersonatedAuthSessionIdParams | @dvelop-sdk</title>
 	<meta name="description" content="Documentation for @dvelop-sdk">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,13 +55,13 @@
 					<a href="../modules.html">@dvelop-sdk</a>
 				</li>
 				<li>
-					<a href="../modules/dms.html">dms</a>
+					<a href="../modules/identityprovider.html">identityprovider</a>
 				</li>
 				<li>
-					<a href="dms.getrepositoryparams.html">GetRepositoryParams</a>
+					<a href="identityprovider.getimpersonatedauthsessionidparams.html">GetImpersonatedAuthSessionIdParams</a>
 				</li>
 			</ul>
-			<h1>Interface GetRepositoryParams</h1>
+			<h1>Interface GetImpersonatedAuthSessionIdParams</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Parameters for the <a href="../modules/dms.html#getrepository">getRepository</a>-function.</p>
+						<p>Parameters for the <a href="../modules/identityprovider.html#getimpersonatedauthsessionid">getImpersonatedAuthSessionId</a>-function.</p>
 					</div>
 				</div>
 			</section>
@@ -79,7 +79,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">GetRepositoryParams</span>
+						<span class="target">GetImpersonatedAuthSessionIdParams</span>
 					</li>
 				</ul>
 			</section>
@@ -90,7 +90,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="dms.getrepositoryparams.html#repositoryid" class="tsd-kind-icon">repository<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="identityprovider.getimpersonatedauthsessionidparams.html#userid" class="tsd-kind-icon">user<wbr>Id</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,19 +99,14 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="repositoryid" class="tsd-anchor"></a>
-					<h3>repository<wbr>Id</h3>
-					<div class="tsd-signature tsd-kind-icon">repository<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="userid" class="tsd-anchor"></a>
+					<h3>user<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">user<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/dms/src/repositories/get-repository/get-repository.ts#L10">packages/dms/src/repositories/get-repository/get-repository.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/identityprovider/src/authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id.ts#L9">packages/identityprovider/src/authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id.ts:9</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Id of the repository</p>
-						</div>
-					</div>
 				</section>
 			</section>
 		</div>
@@ -127,10 +122,10 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/core.html">core</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/dms.html">dms</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/identityprovider.html">identityprovider</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -141,94 +136,64 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/dms.badinputerror.html" class="tsd-kind-icon">Bad<wbr>Input<wbr>Error</a>
+						<a href="../classes/identityprovider.badinputerror.html" class="tsd-kind-icon">Bad<wbr>Input<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/dms.dmserror.html" class="tsd-kind-icon">Dms<wbr>Error</a>
+						<a href="../classes/identityprovider.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/dms.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
+						<a href="../classes/identityprovider.identityprovidererror.html" class="tsd-kind-icon">Identityprovider<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/dms.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a>
+						<a href="../classes/identityprovider.invalidappsessionsignatureerror.html" class="tsd-kind-icon">Invalid<wbr>App<wbr>Session<wbr>Signature<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/dms.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a>
+						<a href="../classes/identityprovider.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.createdmsobjectparams.html" class="tsd-kind-icon">Create<wbr>Dms<wbr>Object<wbr>Params</a>
+						<a href="identityprovider.appsession.html" class="tsd-kind-icon">App<wbr>Session</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.deletecurrentdmsobjectversionparams.html" class="tsd-kind-icon">Delete<wbr>Current<wbr>Dms<wbr>Object<wbr>Version<wbr>Params</a>
+						<a href="identityprovider.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.dmsobject.html" class="tsd-kind-icon">Dms<wbr>Object</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.getdmsobjectparams.html" class="tsd-kind-icon">Get<wbr>Dms<wbr>Object<wbr>Params</a>
+						<a href="identityprovider.dvelopuser.html" class="tsd-kind-icon">Dvelop<wbr>User</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.getrepositoryparams.html" class="tsd-kind-icon">Get<wbr>Repository<wbr>Params</a>
+						<a href="identityprovider.getimpersonatedauthsessionidparams.html" class="tsd-kind-icon">Get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>IdParams</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="dms.getrepositoryparams.html#repositoryid" class="tsd-kind-icon">repository<wbr>Id</a>
+								<a href="identityprovider.getimpersonatedauthsessionidparams.html#userid" class="tsd-kind-icon">user<wbr>Id</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.listeddmsobject.html" class="tsd-kind-icon">Listed<wbr>Dms<wbr>Object</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.repository.html" class="tsd-kind-icon">Repository</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.searchdmsobjectsparams.html" class="tsd-kind-icon">Search<wbr>Dms<wbr>Objects<wbr>Params</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.searchdmsobjectsresultpage.html" class="tsd-kind-icon">Search<wbr>Dms<wbr>Objects<wbr>Result<wbr>Page</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.storefiletemporarilyparams.html" class="tsd-kind-icon">Store<wbr>File<wbr>Temporarily<wbr>Params</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="dms.updatedmsobjectparams.html" class="tsd-kind-icon">Update<wbr>Dms<wbr>Object<wbr>Params</a>
+						<a href="identityprovider.requestappsessionparams.html" class="tsd-kind-icon">Request<wbr>App<wbr>Session<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#createdmsobject" class="tsd-kind-icon">create<wbr>Dms<wbr>Object</a>
+						<a href="../modules/identityprovider.html#getauthsession" class="tsd-kind-icon">get<wbr>Auth<wbr>Session</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#deletecurrentdmsobjectversion" class="tsd-kind-icon">delete<wbr>Current<wbr>Dms<wbr>Object<wbr>Version</a>
+						<a href="../modules/identityprovider.html#getimpersonatedauthsessionid" class="tsd-kind-icon">get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>Id</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#getdmsobject" class="tsd-kind-icon">get<wbr>Dms<wbr>Object</a>
+						<a href="../modules/identityprovider.html#getloginredirectionuri" class="tsd-kind-icon">get<wbr>Login<wbr>Redirection<wbr>Uri</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#getdmsobjectmainfile" class="tsd-kind-icon">get<wbr>Dms<wbr>Object<wbr>Main<wbr>File</a>
+						<a href="../modules/identityprovider.html#requestappsession" class="tsd-kind-icon">request<wbr>App<wbr>Session</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#getdmsobjectpdffile" class="tsd-kind-icon">get<wbr>Dms<wbr>Object<wbr>Pdf<wbr>File</a>
+						<a href="../modules/identityprovider.html#validateappsessionsignature" class="tsd-kind-icon">validate<wbr>App<wbr>Session<wbr>Signature</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#getrepositories" class="tsd-kind-icon">get<wbr>Repositories</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#getrepository" class="tsd-kind-icon">get<wbr>Repository</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#searchdmsobjects" class="tsd-kind-icon">search<wbr>Dms<wbr>Objects</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#storefiletemporarily" class="tsd-kind-icon">store<wbr>File<wbr>Temporarily</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/dms.html#updatedmsobject" class="tsd-kind-icon">update<wbr>Dms<wbr>Object</a>
+						<a href="../modules/identityprovider.html#validateauthsessionid" class="tsd-kind-icon">validate<wbr>Auth<wbr>Session<wbr>Id</a>
 					</li>
 				</ul>
 			</nav>

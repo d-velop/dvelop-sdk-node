@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TaskContext | @dvelop-sdk</title>
+	<title>CompleteTaskParams | @dvelop-sdk</title>
 	<meta name="description" content="Documentation for @dvelop-sdk">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -58,10 +58,10 @@
 					<a href="../modules/task.html">task</a>
 				</li>
 				<li>
-					<a href="task.taskcontext.html">TaskContext</a>
+					<a href="task.completetaskparams.html">CompleteTaskParams</a>
 				</li>
 			</ul>
-			<h1>Interface TaskContext</h1>
+			<h1>Interface CompleteTaskParams</h1>
 		</div>
 	</div>
 </header>
@@ -71,28 +71,15 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>The context of a task.</p>
+						<p>Parameters for the <a href="../modules/task.html#completetask">completeTask</a>-function.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>example</dt>
-						<dd><pre><code class="language-typescript"><span style="color: #000000">{</span>
-<span style="color: #000000">  ...</span>
-<span style="color: #000000">  </span><span style="color: #A31515">&quot;context&quot;</span><span style="color: #000000"> : {</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;key&quot;</span><span style="color: #001080"> :</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;myContextKey&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080"> :</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;bpm&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">    </span><span style="color: #A31515">&quot;name&quot;</span><span style="color: #001080"> :</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;my context name&quot;</span>
-<span style="color: #000000">  }</span>
-<span style="color: #000000">}</span>
-</code></pre>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">TaskContext</span>
+						<span class="target">CompleteTaskParams</span>
 					</li>
 				</ul>
 			</section>
@@ -103,9 +90,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.taskcontext.html#key" class="tsd-kind-icon">key</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.taskcontext.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.taskcontext.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="task.completetaskparams.html#location" class="tsd-kind-icon">location</a></li>
 							</ul>
 						</section>
 					</div>
@@ -114,47 +99,17 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="key" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> key</h3>
-					<div class="tsd-signature tsd-kind-icon">key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="location" class="tsd-anchor"></a>
+					<h3>location</h3>
+					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/task/src/task.ts#L18">packages/task/src/task.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/task/src/tasks/complete-task/complete-task.ts#L10">packages/task/src/tasks/complete-task/complete-task.ts:10</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Technical identifier for this context.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/task/src/task.ts#L24">packages/task/src/task.ts:24</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Display name for this context.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="type" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> type</h3>
-					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/task/src/task.ts#L21">packages/task/src/task.ts:21</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Technical identifier for the type of this context.</p>
+							<p>Location-URI of the task.</p>
 						</div>
 					</div>
 				</section>
@@ -168,9 +123,6 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/app_router.html">app-<wbr>router</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/axios_hal_json.html">axios-<wbr>hal-<wbr>json</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/core.html">core</a>
@@ -189,49 +141,49 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.invalidtaskerror.html" class="tsd-kind-icon">Invalid<wbr>Task<wbr>Error</a>
+						<a href="../classes/task.badinputerror.html" class="tsd-kind-icon">Bad<wbr>Input<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.notasklocationerror.html" class="tsd-kind-icon">No<wbr>Task<wbr>Location<wbr>Error</a>
+						<a href="../classes/task.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.taskalreadycompletederror.html" class="tsd-kind-icon">Task<wbr>Already<wbr>Completed<wbr>Error</a>
+						<a href="../classes/task.invalidtaskdefinitionerror.html" class="tsd-kind-icon">Invalid<wbr>Task<wbr>Definition<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.tasknotfounderror.html" class="tsd-kind-icon">Task<wbr>Not<wbr>Found<wbr>Error</a>
+						<a href="../classes/task.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.unauthenticatederror.html" class="tsd-kind-icon">Unauthenticated<wbr>Error</a>
+						<a href="../classes/task.taskerror.html" class="tsd-kind-icon">Task<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/task.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="task.task-1.html" class="tsd-kind-icon">Task</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="task.taskcontext.html" class="tsd-kind-icon">Task<wbr>Context</a>
+						<a href="task.completetaskparams.html" class="tsd-kind-icon">Complete<wbr>Task<wbr>Params</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="task.taskcontext.html#key" class="tsd-kind-icon">key</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="task.taskcontext.html#name" class="tsd-kind-icon">name</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="task.taskcontext.html#type" class="tsd-kind-icon">type</a>
+								<a href="task.completetaskparams.html#location" class="tsd-kind-icon">location</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="task.tasklinks.html" class="tsd-kind-icon">Task<wbr>Links</a>
+						<a href="task.createtaskparams.html" class="tsd-kind-icon">Create<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="task.taskmetadata.html" class="tsd-kind-icon">Task<wbr>Meta<wbr>Data</a>
+						<a href="task.deletetaskparams.html" class="tsd-kind-icon">Delete<wbr>Task<wbr>Params</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="task.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="task.taskvalidation.html" class="tsd-kind-icon">Task<wbr>Validation</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="task.updatetaskparams.html" class="tsd-kind-icon">Update<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/task.html#completetask" class="tsd-kind-icon">complete<wbr>Task</a>
@@ -241,6 +193,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/task.html#deletetask" class="tsd-kind-icon">delete<wbr>Task</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/task.html#gettaskcount" class="tsd-kind-icon">get<wbr>Task<wbr>Count</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/task.html#updatetask" class="tsd-kind-icon">update<wbr>Task</a>

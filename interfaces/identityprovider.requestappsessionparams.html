@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>AuthSession | @dvelop-sdk</title>
+	<title>RequestAppSessionParams | @dvelop-sdk</title>
 	<meta name="description" content="Documentation for @dvelop-sdk">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -58,10 +58,10 @@
 					<a href="../modules/identityprovider.html">identityprovider</a>
 				</li>
 				<li>
-					<a href="identityprovider.authsession.html">AuthSession</a>
+					<a href="identityprovider.requestappsessionparams.html">RequestAppSessionParams</a>
 				</li>
 			</ul>
-			<h1>Interface AuthSession</h1>
+			<h1>Interface RequestAppSessionParams</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Used for authentication in the d.velop cloud. Refer to the <a href="https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#validating-the-login">documentation</a> for further information.</p>
+						<p>Parameters for the <a href="../modules/identityprovider.html#requestappsession">requestAppSession</a>-function.</p>
 					</div>
 				</div>
 			</section>
@@ -79,7 +79,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">AuthSession</span>
+						<span class="target">RequestAppSessionParams</span>
 					</li>
 				</ul>
 			</section>
@@ -90,8 +90,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="identityprovider.authsession.html#expire" class="tsd-kind-icon">expire</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="identityprovider.authsession.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="identityprovider.requestappsessionparams.html#appname" class="tsd-kind-icon">app<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="identityprovider.requestappsessionparams.html#callback" class="tsd-kind-icon">callback</a></li>
 							</ul>
 						</section>
 					</div>
@@ -100,32 +100,32 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="expire" class="tsd-anchor"></a>
-					<h3>expire</h3>
-					<div class="tsd-signature tsd-kind-icon">expire<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
+					<a name="appname" class="tsd-anchor"></a>
+					<h3>app<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">app<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/identityprovider/src/authentication/get-auth-session/auth-session.ts#L16">packages/identityprovider/src/authentication/get-auth-session/auth-session.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/identityprovider/src/authentication/request-app-session/request-app-session.ts#L10">packages/identityprovider/src/authentication/request-app-session/request-app-session.ts:10</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Date at which the AuthSessionId will no longer be valid.</p>
+							<p>Name of the app requesting the appSession</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="callback" class="tsd-anchor"></a>
+					<h3>callback</h3>
+					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/identityprovider/src/authentication/get-auth-session/auth-session.ts#L10">packages/identityprovider/src/authentication/get-auth-session/auth-session.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/identityprovider/src/authentication/request-app-session/request-app-session.ts#L12">packages/identityprovider/src/authentication/request-app-session/request-app-session.ts:12</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>This key will validate your requests (usually sent as Bearer-Token). <strong>The AuthSessionId should be kept secret and never be publicly available</strong></p>
+							<p>Relative URI to which the appSession will be sent via POST</p>
 						</div>
 					</div>
 				</section>
@@ -139,9 +139,6 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/app_router.html">app-<wbr>router</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/axios_hal_json.html">axios-<wbr>hal-<wbr>json</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/core.html">core</a>
@@ -160,7 +157,13 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.badinputerror.html" class="tsd-kind-icon">Bad<wbr>Input<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/identityprovider.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.identityprovidererror.html" class="tsd-kind-icon">Identityprovider<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/identityprovider.invalidappsessionsignatureerror.html" class="tsd-kind-icon">Invalid<wbr>App<wbr>Session<wbr>Signature<wbr>Error</a>
@@ -171,24 +174,33 @@
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/identityprovider.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="identityprovider.appsession.html" class="tsd-kind-icon">App<wbr>Session</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="identityprovider.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="identityprovider.dvelopuser.html" class="tsd-kind-icon">Dvelop<wbr>User</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="identityprovider.getimpersonatedauthsessionidparams.html" class="tsd-kind-icon">Get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>IdParams</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="identityprovider.authsession.html" class="tsd-kind-icon">Auth<wbr>Session</a>
+						<a href="identityprovider.requestappsessionparams.html" class="tsd-kind-icon">Request<wbr>App<wbr>Session<wbr>Params</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="identityprovider.authsession.html#expire" class="tsd-kind-icon">expire</a>
+								<a href="identityprovider.requestappsessionparams.html#appname" class="tsd-kind-icon">app<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="identityprovider.authsession.html#id" class="tsd-kind-icon">id</a>
+								<a href="identityprovider.requestappsessionparams.html#callback" class="tsd-kind-icon">callback</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="identityprovider.scimuser.html" class="tsd-kind-icon">Scim<wbr>User</a>
-					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/identityprovider.html#getauthsession" class="tsd-kind-icon">get<wbr>Auth<wbr>Session</a>
 					</li>

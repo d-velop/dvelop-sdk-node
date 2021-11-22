@@ -83,7 +83,7 @@
 								<img alt="license" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
 							</a>
 							</br>
-							<p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/taskapp/en">Task-App</a> in the d.velop cloud.</p>
+							<p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/taskapi/en">Task-App</a> in the d.velop cloud.</p>
 							<a href="https://d-velop.github.io/dvelop-sdk-node/modules/task.html"><strong>Explore the docs »</strong></a>
 							</br>
 							<a href="https://www.npmjs.com/package/@dvelop-sdk/task"><strong>Install via npm »</strong></a>
@@ -98,31 +98,46 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Namespaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-namespace tsd-parent-kind-module"><a href="task.internals.html" class="tsd-kind-icon">internals</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Error Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.invalidtaskerror.html" class="tsd-kind-icon">Invalid<wbr>Task<wbr>Error</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.notasklocationerror.html" class="tsd-kind-icon">No<wbr>Task<wbr>Location<wbr>Error</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.taskalreadycompletederror.html" class="tsd-kind-icon">Task<wbr>Already<wbr>Completed<wbr>Error</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.tasknotfounderror.html" class="tsd-kind-icon">Task<wbr>Not<wbr>Found<wbr>Error</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.unauthenticatederror.html" class="tsd-kind-icon">Unauthenticated<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.badinputerror.html" class="tsd-kind-icon">Bad<wbr>Input<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.invalidtaskdefinitionerror.html" class="tsd-kind-icon">Invalid<wbr>Task<wbr>Definition<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.taskerror.html" class="tsd-kind-icon">Task<wbr>Error</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/task.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Interfaces</h3>
+							<h3>Error Interfaces</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.task-1.html" class="tsd-kind-icon">Task</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.taskcontext.html" class="tsd-kind-icon">Task<wbr>Context</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.tasklinks.html" class="tsd-kind-icon">Task<wbr>Links</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.taskmetadata.html" class="tsd-kind-icon">Task<wbr>Meta<wbr>Data</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.taskvalidation.html" class="tsd-kind-icon">Task<wbr>Validation</a></li>
+							</ul>
+							<h3>Task Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.completetaskparams.html" class="tsd-kind-icon">Complete<wbr>Task<wbr>Params</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.createtaskparams.html" class="tsd-kind-icon">Create<wbr>Task<wbr>Params</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.deletetaskparams.html" class="tsd-kind-icon">Delete<wbr>Task<wbr>Params</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.updatetaskparams.html" class="tsd-kind-icon">Update<wbr>Task<wbr>Params</a></li>
+							</ul>
+							<h3>Other Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/task.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Functions</h3>
+							<h3>Task Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="task.html#completetask" class="tsd-kind-icon">complete<wbr>Task</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="task.html#createtask" class="tsd-kind-icon">create<wbr>Task</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="task.html#deletetask" class="tsd-kind-icon">delete<wbr>Task</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="task.html#gettaskcount" class="tsd-kind-icon">get<wbr>Task<wbr>Count</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="task.html#updatetask" class="tsd-kind-icon">update<wbr>Task</a></li>
 							</ul>
 						</section>
@@ -130,74 +145,41 @@
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Functions</h2>
+				<h2>Task Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
 					<a name="completetask" class="tsd-anchor"></a>
 					<h3>complete<wbr>Task</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">complete<wbr>Task<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, authSessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, task<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">complete<wbr>Task<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a>, params<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.completetaskparams.html" class="tsd-signature-type" data-tsd-kind="Interface">CompleteTaskParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/task/src/complete-task/complete-task.ts#L31">packages/task/src/complete-task/complete-task.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/task/src/tasks/complete-task/complete-task.ts#L54">packages/task/src/tasks/complete-task/complete-task.ts:54</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Mark a <a href="../interfaces/task.task-1.html">Task</a> as completed.</p>
+									<p>Complete a task.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.notasklocationerror.html">NoTaskLocationError</a> indicates that no location was given.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.unauthenticatederror.html">UnauthenticatedError</a> indicates that the authSessionId was invalid or expired.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.unauthorizederror.html">UnauthorizedError</a> indicates that the user associated with the authSessionId does miss permissions.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.tasknotfounderror.html">TaskNotFoundError</a> indicates that for the given location no task was found.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.taskalreadycompletederror.html">TaskAlreadyCompletedError</a> indicates that a task is already marked as completed.</p>
-									</dd>
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript">
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">completeTask</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;AUTH_SESSION_ID&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;/some/task/location&quot;</span><span style="color: #000000">);</span>
+								<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">completeTask</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/task&quot;</span><span style="color: #000000">;</span>
 
-<span style="color: #008000">// or</span>
-
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">task</span><span style="color: #000000">: </span><span style="color: #267F99">Task</span><span style="color: #000000"> = {</span>
-<span style="color: #000000">  </span><span style="color: #001080">location:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;/some/task/location&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">  ...</span>
-<span style="color: #000000">}</span>
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">completeTask</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;AUTH_SESSION_ID&quot;</span><span style="color: #000000">, </span><span style="color: #001080">task</span><span style="color: #000000">);</span>
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">completeTask</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">systemBaseUri:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">authSessionId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;dQw4w9WgXcQ&quot;</span>
+<span style="color: #000000">}, {</span>
+<span style="color: #000000">  </span><span style="color: #001080">location:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;some/task/location&quot;</span>
+<span style="color: #000000">});</span>
 </code></pre>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant</p>
-									</div>
+									<h5>context: <a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a></h5>
 								</li>
 								<li>
-									<h5>authSessionId: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Vaild AuthSessionId</p>
-									</div>
-								</li>
-								<li>
-									<h5>task: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Location of the task or <a href="../interfaces/task.task-1.html">Task</a></p>
-									</div>
+									<h5>params: <a href="../interfaces/task.completetaskparams.html" class="tsd-signature-type" data-tsd-kind="Interface">CompleteTaskParams</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -208,62 +190,42 @@
 					<a name="createtask" class="tsd-anchor"></a>
 					<h3>create<wbr>Task</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Task<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, authSessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, task<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Task<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a>, params<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.createtaskparams.html" class="tsd-signature-type" data-tsd-kind="Interface">CreateTaskParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/task/src/create-task/create-task.ts#L30">packages/task/src/create-task/create-task.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/task/src/tasks/create-task/create-task.ts#L152">packages/task/src/tasks/create-task/create-task.ts:152</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Create a <a href="../interfaces/task.task-1.html">Task</a>.</p>
+									<p>Create a task.</p>
 								</div>
-								<p><em>This method will automatically generate a random correlation key if the task does not contain one.</em></p>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.invalidtaskerror.html">InvalidTaskError</a> indicates that the given task was not accepted because it is invalid. You can check the <code>error.validation</code>-property.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.unauthenticatederror.html">UnauthenticatedError</a> indicates that the authSessionId was invalid or expired.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.unauthorizederror.html">UnauthorizedError</a> indicates that the user associated with the authSessionId does miss permissions.</p>
-									</dd>
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript">
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">task</span><span style="color: #000000">: </span><span style="color: #267F99">Task</span><span style="color: #000000"> = {</span>
+								<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">createTask</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/task&quot;</span><span style="color: #000000">;</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">taskLocation</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">createTask</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">systemBaseUri:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">authSessionId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;dQw4w9WgXcQ&quot;</span>
+<span style="color: #000000">}, {</span>
 <span style="color: #000000">  </span><span style="color: #001080">subject:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Cover up lab accident&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">  </span><span style="color: #001080">assignees:</span><span style="color: #000000"> [</span><span style="color: #A31515">&quot;USER_ID_1&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;USER_ID_2&quot;</span><span style="color: #000000">],</span>
-<span style="color: #000000">  </span><span style="color: #001080">correlationKey:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;everythingIsFine&quot;</span><span style="color: #000000">, </span><span style="color: #008000">// can be randomly generated</span>
-<span style="color: #000000">}</span>
-<span style="color: #001080">task</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">createTask</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;AUTH_SESSION_ID&quot;</span><span style="color: #000000">, </span><span style="color: #001080">task</span><span style="color: #000000">);</span>
+<span style="color: #000000">  </span><span style="color: #001080">assignees:</span><span style="color: #000000"> [</span><span style="color: #A31515">&quot;XiFkyR35v2Y&quot;</span><span style="color: #000000">]</span>
+<span style="color: #000000">});</span>
+
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">taskLocation</span><span style="color: #000000">); </span><span style="color: #008000">// some/task/location</span>
 </code></pre>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant</p>
-									</div>
+									<h5>context: <a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a></h5>
 								</li>
 								<li>
-									<h5>authSessionId: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>task: <a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p><a href="../interfaces/task.task-1.html">Task</a> to be created</p>
-									</div>
+									<h5>params: <a href="../interfaces/task.createtaskparams.html" class="tsd-signature-type" data-tsd-kind="Interface">CreateTaskParams</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Created <a href="../interfaces/task.task-1.html">Task</a></p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -271,69 +233,36 @@
 					<a name="deletetask" class="tsd-anchor"></a>
 					<h3>delete<wbr>Task</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">delete<wbr>Task<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, authSessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, task<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>Task<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a>, params<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.deletetaskparams.html" class="tsd-signature-type" data-tsd-kind="Interface">DeleteTaskParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/task/src/delete-task/delete-task.ts#L31">packages/task/src/delete-task/delete-task.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/task/src/tasks/delete-task/delete-task.ts#L50">packages/task/src/tasks/delete-task/delete-task.ts:50</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Delete a <a href="../interfaces/task.task-1.html">Task</a>.</p>
+									<p>Mark task as completed.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.notasklocationerror.html">NoTaskLocationError</a> indicates that no location was given.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.unauthenticatederror.html">UnauthenticatedError</a> indicates that the authSessionId was invalid or expired.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.unauthorizederror.html">UnauthorizedError</a> indicates that the user associated with the authSessionId does miss permissions.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.tasknotfounderror.html">TaskNotFoundError</a> indicates that for the given location no task was found.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.taskalreadycompletederror.html">TaskAlreadyCompletedError</a> indicates that a task is already marked as completed.</p>
-									</dd>
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript">
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">deleteTask</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;AUTH_SESSION_ID&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;/some/task/location&quot;</span><span style="color: #000000">);</span>
+								<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">deleteTask</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/task&quot;</span><span style="color: #000000">;</span>
 
-<span style="color: #008000">// or</span>
-
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">task</span><span style="color: #000000">: </span><span style="color: #267F99">Task</span><span style="color: #000000"> = {</span>
-<span style="color: #000000">    </span><span style="color: #001080">location:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;/some/task/location&quot;</span><span style="color: #000000">,</span>
-<span style="color: #000000">  ...</span>
-<span style="color: #000000">}</span>
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">deleteTask</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;AUTH_SESSION_ID&quot;</span><span style="color: #000000">, </span><span style="color: #001080">task</span><span style="color: #000000">);</span>
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">deleteTask</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">systemBaseUri:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">authSessionId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;dQw4w9WgXcQ&quot;</span>
+<span style="color: #000000">}, {</span>
+<span style="color: #000000">  </span><span style="color: #001080">location:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;some/task/location&quot;</span>
+<span style="color: #000000">});</span>
 </code></pre>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant</p>
-									</div>
+									<h5>context: <a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a></h5>
 								</li>
 								<li>
-									<h5>authSessionId: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Vaild AuthSessionId</p>
-									</div>
-								</li>
-								<li>
-									<h5>task: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Location of the task or the <a href="../interfaces/task.task-1.html">Task</a></p>
-									</div>
+									<h5>params: <a href="../interfaces/task.deletetaskparams.html" class="tsd-signature-type" data-tsd-kind="Interface">DeleteTaskParams</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -341,76 +270,79 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="updatetask" class="tsd-anchor"></a>
-					<h3>update<wbr>Task</h3>
+					<a name="gettaskcount" class="tsd-anchor"></a>
+					<h3>get<wbr>Task<wbr>Count</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">update<wbr>Task<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, authSessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, task<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Task<wbr>Count<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/task/src/update-task/update-task.ts#L30">packages/task/src/update-task/update-task.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/task/src/tasks/get-task-count/get-task-count.ts#L48">packages/task/src/tasks/get-task-count/get-task-count.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Update an existing <a href="../interfaces/task.task-1.html">Task</a>.</p>
+									<p>Create a task.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.notasklocationerror.html">NoTaskLocationError</a> indicates that no location was given.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.invalidtaskerror.html">InvalidTaskError</a> indicates that the given task was not accepted because it is invalid. You can check the <code>error.validation</code>-property.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.unauthenticatederror.html">UnauthenticatedError</a> indicates that the authSessionId was invalid or expired.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.unauthorizederror.html">UnauthorizedError</a> indicates that the user associated with the authSessionId does miss permissions.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.tasknotfounderror.html">TaskNotFoundError</a> indicates that for the given location no task was found.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/task.taskalreadycompletederror.html">TaskAlreadyCompletedError</a> indicates that a task is already marked as completed.</p>
-									</dd>
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript">
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">task</span><span style="color: #000000">: </span><span style="color: #267F99">Task</span><span style="color: #000000"> = {</span>
-<span style="color: #000000">  ...</span>
-<span style="color: #000000">  </span><span style="color: #001080">description</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;Try harder! Bribe some people if you must.&quot;</span>
-<span style="color: #000000">}</span>
+								<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">getTaskCount</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/task&quot;</span><span style="color: #000000">;</span>
 
-<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">updateTask</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;AUTH_SESSION_ID&quot;</span><span style="color: #000000">, </span><span style="color: #001080">task</span><span style="color: #000000">);</span>
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getTaskCount</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">systemBaseUri:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">authSessionId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;dQw4w9WgXcQ&quot;</span>
+<span style="color: #000000">});</span>
 </code></pre>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant</p>
-									</div>
-								</li>
-								<li>
-									<h5>authSessionId: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Vaild AuthSessionId</p>
-									</div>
-								</li>
-								<li>
-									<h5>task: <a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p><a href="../interfaces/task.task-1.html">Task</a> with updated values</p>
-									</div>
+									<h5>context: <a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/task.task-1.html" class="tsd-signature-type" data-tsd-kind="Interface">Task</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Updated <a href="../interfaces/task.task-1.html">Task</a></p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="updatetask" class="tsd-anchor"></a>
+					<h3>update<wbr>Task</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Task<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a>, params<span class="tsd-signature-symbol">: </span><a href="../interfaces/task.updatetaskparams.html" class="tsd-signature-type" data-tsd-kind="Interface">UpdateTaskParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/task/src/tasks/update-task/update-task.ts#L137">packages/task/src/tasks/update-task/update-task.ts:137</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Update a task.</p>
+								</div>
+								<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">updateTask</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/task&quot;</span><span style="color: #000000">;</span>
+
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">updateTask</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">systemBaseUri:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;https://umbrella-corp.d-velop.cloud&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">authSessionId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;dQw4w9WgXcQ&quot;</span>
+<span style="color: #000000">}, {</span>
+<span style="color: #000000">  </span><span style="color: #001080">location:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;some/task/location&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">description:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Try harder! Bribe some people if you must.&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">dueDate:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Date</span><span style="color: #000000">(</span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Date</span><span style="color: #000000">().</span><span style="color: #795E26">getTime</span><span style="color: #000000">() + (</span><span style="color: #098658">1000</span><span style="color: #000000"> * </span><span style="color: #098658">60</span><span style="color: #000000"> * </span><span style="color: #098658">60</span><span style="color: #000000"> * </span><span style="color: #098658">24</span><span style="color: #000000"> * </span><span style="color: #098658">5</span><span style="color: #000000">)) </span><span style="color: #008000">// due in 5 days</span>
+<span style="color: #000000">});</span>
+</code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>context: <a href="../interfaces/task.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a></h5>
+								</li>
+								<li>
+									<h5>params: <a href="../interfaces/task.updatetaskparams.html" class="tsd-signature-type" data-tsd-kind="Interface">UpdateTaskParams</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -424,9 +356,6 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="app_router.html">app-<wbr>router</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="axios_hal_json.html">axios-<wbr>hal-<wbr>json</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="core.html">core</a>
@@ -445,34 +374,40 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.invalidtaskerror.html" class="tsd-kind-icon">Invalid<wbr>Task<wbr>Error</a>
+						<a href="../classes/task.badinputerror.html" class="tsd-kind-icon">Bad<wbr>Input<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.notasklocationerror.html" class="tsd-kind-icon">No<wbr>Task<wbr>Location<wbr>Error</a>
+						<a href="../classes/task.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.taskalreadycompletederror.html" class="tsd-kind-icon">Task<wbr>Already<wbr>Completed<wbr>Error</a>
+						<a href="../classes/task.invalidtaskdefinitionerror.html" class="tsd-kind-icon">Invalid<wbr>Task<wbr>Definition<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.tasknotfounderror.html" class="tsd-kind-icon">Task<wbr>Not<wbr>Found<wbr>Error</a>
+						<a href="../classes/task.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/task.unauthenticatederror.html" class="tsd-kind-icon">Unauthenticated<wbr>Error</a>
+						<a href="../classes/task.taskerror.html" class="tsd-kind-icon">Task<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/task.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/task.task-1.html" class="tsd-kind-icon">Task</a>
+						<a href="../interfaces/task.completetaskparams.html" class="tsd-kind-icon">Complete<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/task.taskcontext.html" class="tsd-kind-icon">Task<wbr>Context</a>
+						<a href="../interfaces/task.createtaskparams.html" class="tsd-kind-icon">Create<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/task.tasklinks.html" class="tsd-kind-icon">Task<wbr>Links</a>
+						<a href="../interfaces/task.deletetaskparams.html" class="tsd-kind-icon">Delete<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/task.taskmetadata.html" class="tsd-kind-icon">Task<wbr>Meta<wbr>Data</a>
+						<a href="../interfaces/task.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/task.taskvalidation.html" class="tsd-kind-icon">Task<wbr>Validation</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/task.updatetaskparams.html" class="tsd-kind-icon">Update<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="task.html#completetask" class="tsd-kind-icon">complete<wbr>Task</a>
@@ -482,6 +417,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="task.html#deletetask" class="tsd-kind-icon">delete<wbr>Task</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="task.html#gettaskcount" class="tsd-kind-icon">get<wbr>Task<wbr>Count</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="task.html#updatetask" class="tsd-kind-icon">update<wbr>Task</a>

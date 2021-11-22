@@ -98,9 +98,17 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Namespaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-namespace tsd-parent-kind-module"><a href="identityprovider.internals.html" class="tsd-kind-icon">internals</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Error Classes</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/identityprovider.badinputerror.html" class="tsd-kind-icon">Bad<wbr>Input<wbr>Error</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/identityprovider.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/identityprovider.identityprovidererror.html" class="tsd-kind-icon">Identityprovider<wbr>Error</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/identityprovider.invalidappsessionsignatureerror.html" class="tsd-kind-icon">Invalid<wbr>App<wbr>Session<wbr>Signature<wbr>Error</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/identityprovider.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/identityprovider.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a></li>
@@ -109,8 +117,14 @@
 						<section class="tsd-index-section ">
 							<h3>Authentication Interfaces</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.authsession.html" class="tsd-kind-icon">Auth<wbr>Session</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.scimuser.html" class="tsd-kind-icon">Scim<wbr>User</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.appsession.html" class="tsd-kind-icon">App<wbr>Session</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.dvelopuser.html" class="tsd-kind-icon">Dvelop<wbr>User</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.getimpersonatedauthsessionidparams.html" class="tsd-kind-icon">Get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>IdParams</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.requestappsessionparams.html" class="tsd-kind-icon">Request<wbr>App<wbr>Session<wbr>Params</a></li>
+							</ul>
+							<h3>Other Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -133,48 +147,37 @@
 					<a name="getauthsession" class="tsd-anchor"></a>
 					<h3>get<wbr>Auth<wbr>Session</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Auth<wbr>Session<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, apiKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.authsession.html" class="tsd-signature-type" data-tsd-kind="Interface">AuthSession</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Auth<wbr>Session<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AuthSession</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/identityprovider/src/authentication/get-auth-session/get-auth-session.ts#L26">packages/identityprovider/src/authentication/get-auth-session/get-auth-session.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/identityprovider/src/authentication/get-auth-session/get-auth-session.ts#L66">packages/identityprovider/src/authentication/get-auth-session/get-auth-session.ts:66</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Returns an <a href="../interfaces/identityprovider.authsession.html">AuthSession</a> based on an API-Key. API-Keys can be generated by d.velop cloud tenant administrators.
+									<p>Returns an {@link AuthSession} based on an API-Key. API-Keys can be generated by d.velop cloud tenant administrators.
 									<strong>The AuthSessionId should be kept secret and never be publicly available.</strong></p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p><a href="../classes/identityprovider.unauthorizederror.html">UnauthorizedError</a> indicates an invalid authSessionId or no authSessionId was sent.</p>
-									</dd>
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">authSession</span><span style="color: #000000">: </span><span style="color: #267F99">AuthSession</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getAuthSession</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;&lt;API_KEY&gt;&quot;</span><span style="color: #000000">);</span>
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">authSession</span><span style="color: #000000">.</span><span style="color: #001080">id</span><span style="color: #000000">); </span><span style="color: #008000">//a valid authSessionId</span>
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;still valid:&#039;</span><span style="color: #000000">, </span><span style="color: #001080">authSession</span><span style="color: #000000">.</span><span style="color: #001080">expire</span><span style="color: #000000">.</span><span style="color: #795E26">getTime</span><span style="color: #000000">() &gt; </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Date</span><span style="color: #000000">().</span><span style="color: #795E26">getTime</span><span style="color: #000000">()); </span><span style="color: #008000">//still valid: true</span>
+								<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">getAuthSession</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/identityprovider&quot;</span><span style="color: #000000">;</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">authSession</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getAuthSession</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">systemBaseUri:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">authSessionId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;dQw4w9WgXcQ&quot;</span>
+<span style="color: #000000">});</span>
+
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">authSession</span><span style="color: #000000">);</span>
 </code></pre>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant</p>
-									</div>
-								</li>
-								<li>
-									<h5>apiKey: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>API-Key provided by the d.velop cloud</p>
-									</div>
+									<h5>context: <a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.authsession.html" class="tsd-signature-type" data-tsd-kind="Interface">AuthSession</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">AuthSession</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -182,47 +185,39 @@
 					<a name="getimpersonatedauthsessionid" class="tsd-anchor"></a>
 					<h3>get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>Id</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>Id<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, appSession<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, userId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>Id<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a>, params<span class="tsd-signature-symbol">: </span><a href="../interfaces/identityprovider.getimpersonatedauthsessionidparams.html" class="tsd-signature-type" data-tsd-kind="Interface">GetImpersonatedAuthSessionIdParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/identityprovider/src/authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id.ts#L23">packages/identityprovider/src/authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/identityprovider/src/authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id.ts#L62">packages/identityprovider/src/authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id.ts:62</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Provides a valid authSessionId for a user without login.</p>
+									<p>Returns an authSessionId for the given user. All requests with this authSessionId will be in that users name.
+									<strong>The AuthSessionId should be kept secret and never be publicly available.</strong></p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">authSessionIdForSulley</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getImpersonedAuthSessionId</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;&lt;APP_SESSION&gt;&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;&lt;SULLEYS_USER_ID&gt;&quot;</span><span style="color: #000000">);</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sulley</span><span style="color: #000000">: </span><span style="color: #267F99">ScimUser</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">validateAuthSessionId</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #001080">authSessionIdForSulley</span><span style="color: #000000">);</span>
-<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">sulley</span><span style="color: #000000">.</span><span style="color: #001080">displayName</span><span style="color: #000000">) </span><span style="color: #008000">// James P. Sullivan</span>
+								<pre><code class="language-typescript"><span style="color: #000000"> </span><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">getImpersonatedAuthSessionId</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/identityprovider&quot;</span><span style="color: #000000">;</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">authSessionId</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">getImpersonatedAuthSessionId</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">systemBaseUri:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">authSessionId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;dQw4w9WgXcQ&quot;</span><span style="color: #000000"> </span><span style="color: #008000">// has to be an AppSession</span>
+<span style="color: #000000">}, {</span>
+<span style="color: #000000">  </span><span style="color: #001080">userId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;XiFkyR35v2Y&quot;</span>
+<span style="color: #000000">});</span>
+
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">authSessionId</span><span style="color: #000000">);</span>
 </code></pre>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant</p>
-									</div>
+									<h5>context: <a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a></h5>
 								</li>
 								<li>
-									<h5>appSession: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>A valid appSession</p>
-									</div>
-								</li>
-								<li>
-									<h5>userId: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>User that should be impersonated</p>
-									</div>
+									<h5>params: <a href="../interfaces/identityprovider.getimpersonatedauthsessionidparams.html" class="tsd-signature-type" data-tsd-kind="Interface">GetImpersonatedAuthSessionIdParams</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -239,28 +234,21 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/identityprovider/src/authentication/get-login-redirection-uri/get-login-redirection-uri.ts#L13">packages/identityprovider/src/authentication/get-login-redirection-uri/get-login-redirection-uri.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/identityprovider/src/authentication/get-login-redirection-uri/get-login-redirection-uri.ts#L11">packages/identityprovider/src/authentication/get-login-redirection-uri/get-login-redirection-uri.ts:11</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Returns the URI a request should be redirected to in case it does not contain a valid authSessionId. Redirected requests will display a HTML Login for users to authenticate.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">redirectionUri</span><span style="color: #000000"> = </span><span style="color: #795E26">getLoginRedirectionUri</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;&lt;ORIGINAL_URL&gt;&quot;</span><span style="color: #000000">);</span>
-<span style="color: #001080">request</span><span style="color: #000000">.</span><span style="color: #795E26">redirect</span><span style="color: #000000">(</span><span style="color: #001080">redirectionUri</span><span style="color: #000000">);</span>
+								<pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">redirectionUri</span><span style="color: #000000"> = </span><span style="color: #795E26">getLoginRedirectionUri</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud/cda-compliance/feature&quot;</span><span style="color: #000000">);</span>
+<span style="color: #795E26">redirect</span><span style="color: #000000">(</span><span style="color: #001080">redirectionUri</span><span style="color: #000000">); </span><span style="color: #008000">// respond with 302</span>
 </code></pre>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>successUri: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The URI the request should be redirected to after a successful login</p>
-									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -271,51 +259,38 @@
 					<a name="requestappsession" class="tsd-anchor"></a>
 					<h3>request<wbr>App<wbr>Session</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">request<wbr>App<wbr>Session<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, appName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, requestId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">request<wbr>App<wbr>Session<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a>, params<span class="tsd-signature-symbol">: </span><a href="../interfaces/identityprovider.requestappsessionparams.html" class="tsd-signature-type" data-tsd-kind="Interface">RequestAppSessionParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/identityprovider/src/authentication/request-app-session/request-app-session.ts#L17">packages/identityprovider/src/authentication/request-app-session/request-app-session.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/identityprovider/src/authentication/request-app-session/request-app-session.ts#L69">packages/identityprovider/src/authentication/request-app-session/request-app-session.ts:69</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Request an appSession to be posted to the specified callback. For further information on this process refer to the <a href="https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#IdentityproviderApp-Inter-appcommunicationwithappsessions">documentation</a>.</p>
+									<p>Request an appSession for your app. The appSession will be sent via POST to your defined callback.
+									<strong>Do not forget to validate the appSessionId via the <a href="identityprovider.html#validateappsessionsignature">validateAppSessionSignature</a>-function</strong></p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript"><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">requestAppSession</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;monster-hello&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;/monster-hello/give/me/my/appsession&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;UUID&quot;</span><span style="color: #000000">)</span>
+								<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">requestAppSession</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/identityprovider&quot;</span><span style="color: #000000">;</span>
+
+<span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">requestAppSession</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">systemBaseUri:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">authSessionId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;dQw4w9WgXcQ&quot;</span>
+<span style="color: #000000">}, {</span>
+<span style="color: #000000">  </span><span style="color: #001080">appName:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;cda-compliance&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">callback:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;/cda-compliance/appsession&quot;</span>
+<span style="color: #000000">});</span>
 </code></pre>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant</p>
-									</div>
+									<h5>context: <a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a></h5>
 								</li>
 								<li>
-									<h5>appName: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>AppName of the requesting app</p>
-									</div>
-								</li>
-								<li>
-									<h5>callback: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>CallbackUri with leading slash and appName</p>
-									</div>
-								</li>
-								<li>
-									<h5>requestId: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Unique requestId</p>
-									</div>
+									<h5>params: <a href="../interfaces/identityprovider.requestappsessionparams.html" class="tsd-signature-type" data-tsd-kind="Interface">RequestAppSessionParams</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -326,32 +301,29 @@
 					<a name="validateappsessionsignature" class="tsd-anchor"></a>
 					<h3>validate<wbr>App<wbr>Session<wbr>Signature</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">validate<wbr>App<wbr>Session<wbr>Signature<span class="tsd-signature-symbol">(</span>appName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, requestId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, authSessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, expire<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, sign<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">validate<wbr>App<wbr>Session<wbr>Signature<span class="tsd-signature-symbol">(</span>appName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, requestId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, appSession<span class="tsd-signature-symbol">: </span><a href="../interfaces/identityprovider.appsession.html" class="tsd-signature-type" data-tsd-kind="Interface">AppSession</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/identityprovider/src/authentication/validate-app-session-signature/validate-app-session-signature.ts#L26">packages/identityprovider/src/authentication/validate-app-session-signature/validate-app-session-signature.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/identityprovider/src/authentication/validate-app-session-signature/validate-app-session-signature.ts#L30">packages/identityprovider/src/authentication/validate-app-session-signature/validate-app-session-signature.ts:30</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Validate the sign value which is provided when an appSession is sent. For further information on this process refer to the <a href="https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#IdentityproviderApp-Inter-appcommunicationwithappsessions">documentation</a>.</p>
+									<p>Validate the sign value which is provided when an appSession is sent to your app. For further information on this process refer to the <a href="https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#IdentityproviderApp-Inter-appcommunicationwithappsessions">documentation</a>.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p><a href="../classes/identityprovider.invalidappsessionsignatureerror.html">InvalidAppSessionSignatureError</a> indicates that the sign value is not valid</p>
-									</dd>
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript"><span style="color: #795E26">acceptPostRequest</span><span style="color: #000000">(</span><span style="color: #001080">req</span><span style="color: #000000">: </span><span style="color: #001080">Request</span><span style="color: #000000">, </span><span style="color: #001080">res</span><span style="color: #000000">: </span><span style="color: #001080">Respone</span><span style="color: #000000">) {</span>
-<span style="color: #000000">  </span><span style="color: #AF00DB">try</span><span style="color: #000000"> {</span>
-<span style="color: #000000">    </span><span style="color: #795E26">validateAppSessionSignature</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;acme-app&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;requestIdUsedOnAppSessionRequest&quot;</span><span style="color: #000000">, </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">body</span><span style="color: #000000">.</span><span style="color: #001080">authSessionId</span><span style="color: #000000">, </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">body</span><span style="color: #000000">.</span><span style="color: #001080">expire</span><span style="color: #000000">, </span><span style="color: #001080">req</span><span style="color: #000000">.</span><span style="color: #001080">body</span><span style="color: #000000">.</span><span style="color: #001080">sign</span><span style="color: #000000">); </span><span style="color: #008000">//pass or error</span>
+								<pre><code class="language-typescript"><span style="color: #000000">  </span><span style="color: #AF00DB">try</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #795E26">validateAppSessionSignature</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;cda-compliance&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;qP-7GNoDJ5c&quot;</span><span style="color: #000000">, </span><span style="color: #001080">requestBody</span><span style="color: #000000">); </span><span style="color: #008000">//pass or error</span>
 <span style="color: #000000">  } </span><span style="color: #AF00DB">catch</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000">) {</span>
-<span style="color: #000000">    </span><span style="color: #001080">res</span><span style="color: #000000">.</span><span style="color: #795E26">send</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Forbidden&quot;</span><span style="color: #000000">);</span>
+<span style="color: #000000">    </span><span style="color: #008000">// respond with 403 - Forbidden</span>
 <span style="color: #000000">  }</span>
 <span style="color: #000000">}</span>
 </code></pre>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p><a href="../classes/identityprovider.invalidappsessionsignatureerror.html">InvalidAppSessionSignatureError</a> indicates that the sign-value is not valid</p>
 									</dd>
 								</dl>
 							</div>
@@ -359,33 +331,12 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>appName: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>App that requested the appSession</p>
-									</div>
 								</li>
 								<li>
 									<h5>requestId: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The requestId that was sent when requesting an appSession</p>
-									</div>
 								</li>
 								<li>
-									<h5>authSessionId: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The authSessionId provided to your callback</p>
-									</div>
-								</li>
-								<li>
-									<h5>expire: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The expire value provided to your callback</p>
-									</div>
-								</li>
-								<li>
-									<h5>sign: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The sign value provided to your callback</p>
-									</div>
+									<h5>appSession: <a href="../interfaces/identityprovider.appsession.html" class="tsd-signature-type" data-tsd-kind="Interface">AppSession</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -396,52 +347,36 @@
 					<a name="validateauthsessionid" class="tsd-anchor"></a>
 					<h3>validate<wbr>Auth<wbr>Session<wbr>Id</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">validate<wbr>Auth<wbr>Session<wbr>Id<span class="tsd-signature-symbol">(</span>systemBaseUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, authSessionId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.scimuser.html" class="tsd-signature-type" data-tsd-kind="Interface">ScimUser</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">validate<wbr>Auth<wbr>Session<wbr>Id<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.dvelopuser.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopUser</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/identityprovider/src/authentication/validate-auth-session-id/validate-auth-session-id.ts#L20">packages/identityprovider/src/authentication/validate-auth-session-id/validate-auth-session-id.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/7d14b9c/packages/identityprovider/src/authentication/validate-auth-session-id/validate-auth-session-id.ts#L87">packages/identityprovider/src/authentication/validate-auth-session-id/validate-auth-session-id.ts:87</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Validates an AuthSessionId and returns a <a href="../interfaces/identityprovider.scimuser.html">ScimUser</a></p>
+									<p>Validates an AuthSessionId and returns a <a href="../interfaces/identityprovider.dvelopuser.html">DvelopUser</a>.</p>
 								</div>
-								<dl class="tsd-comment-tags">
-									<dt>throws</dt>
-									<dd><p><a href="../classes/identityprovider.unauthorizederror.html">UnauthorizedError</a> indicates an invalid authSessionId or no authSessionId was sent.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/identityprovider.forbiddenerror.html">ForbiddenError</a> indicates that a valid authSessionId for an external user was sent but external validation was set to false.</p>
-									</dd>
-									<dt>throws</dt>
-									<dd><p><a href="../classes/identityprovider.notfounderror.html">NotFoundError</a> indicates that a valid token for a deleted user was sent.</p>
-									</dd>
-									<dt>example</dt>
-									<dd><pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">user</span><span style="color: #000000">: </span><span style="color: #267F99">ScimUser</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">validateAuthSessionId</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;vXo4FMlnYYiGArNfjfJHEJDNWfjfejglgnewjgrjokgajifahfhdahfuewfhlR/4FxJxmNsjlq2XgWQm/GYVBq/hEvsJy1BK4WLoCXek=&amp;ga8gds7gafkajgkj24ut8ugudash34jGlDG&amp;dr6j0zusHVN8PcyerI0YXqRu30f8AGoUaZ6vInCDtZInS6aK2PplAelsv9t8&quot;</span><span style="color: #000000">);</span>
+								<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">validateAuthSessionId</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@dvelop-sdk/identityprovider&quot;</span><span style="color: #000000">;</span>
+
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">user</span><span style="color: #000000">: </span><span style="color: #267F99">DvelopUser</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #795E26">validateAuthSessionId</span><span style="color: #000000">({</span>
+<span style="color: #000000">  </span><span style="color: #001080">systemBaseUri:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;https://monster-ag.d-velop.cloud&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">  </span><span style="color: #001080">authSessionId:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;dQw4w9WgXcQ&quot;</span>
+<span style="color: #000000">});</span>
+
 <span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">user</span><span style="color: #000000">.</span><span style="color: #001080">displayName</span><span style="color: #000000">) </span><span style="color: #008000">//Mike Glotzkowski</span>
 </code></pre>
-									</dd>
-								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>systemBaseUri: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>SystemBaseUri for the tenant</p>
-									</div>
-								</li>
-								<li>
-									<h5>authSessionId: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>AuthSessionId which should be validated</p>
-									</div>
+									<h5>context: <a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopContext</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.scimuser.html" class="tsd-signature-type" data-tsd-kind="Interface">ScimUser</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/identityprovider.dvelopuser.html" class="tsd-signature-type" data-tsd-kind="Interface">DvelopUser</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -455,9 +390,6 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="app_router.html">app-<wbr>router</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="axios_hal_json.html">axios-<wbr>hal-<wbr>json</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="core.html">core</a>
@@ -476,7 +408,13 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.badinputerror.html" class="tsd-kind-icon">Bad<wbr>Input<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/identityprovider.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/identityprovider.identityprovidererror.html" class="tsd-kind-icon">Identityprovider<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/identityprovider.invalidappsessionsignatureerror.html" class="tsd-kind-icon">Invalid<wbr>App<wbr>Session<wbr>Signature<wbr>Error</a>
@@ -488,10 +426,19 @@
 						<a href="../classes/identityprovider.unauthorizederror.html" class="tsd-kind-icon">Unauthorized<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/identityprovider.authsession.html" class="tsd-kind-icon">Auth<wbr>Session</a>
+						<a href="../interfaces/identityprovider.appsession.html" class="tsd-kind-icon">App<wbr>Session</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/identityprovider.scimuser.html" class="tsd-kind-icon">Scim<wbr>User</a>
+						<a href="../interfaces/identityprovider.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/identityprovider.dvelopuser.html" class="tsd-kind-icon">Dvelop<wbr>User</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/identityprovider.getimpersonatedauthsessionidparams.html" class="tsd-kind-icon">Get<wbr>Impersonated<wbr>Auth<wbr>Session<wbr>IdParams</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/identityprovider.requestappsessionparams.html" class="tsd-kind-icon">Request<wbr>App<wbr>Session<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="identityprovider.html#getauthsession" class="tsd-kind-icon">get<wbr>Auth<wbr>Session</a>

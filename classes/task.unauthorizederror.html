@@ -68,18 +68,11 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>AuthSessionId is associated with a user who is not eligible.</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="tsd-signature-type">Error</span>
+						<span class="tsd-signature-type">DvelopSdkError</span>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">UnauthorizedError</span>
@@ -101,10 +94,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="task.unauthorizederror.html#message" class="tsd-kind-icon">message</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="task.unauthorizederror.html#message" class="tsd-kind-icon">message</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="task.unauthorizederror.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="task.unauthorizederror.html#originalerror" class="tsd-kind-icon">original<wbr>Error</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="task.unauthorizederror.html#preparestacktrace" class="tsd-kind-icon">prepare<wbr>Stack<wbr>Trace</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="task.unauthorizederror.html#response" class="tsd-kind-icon">response</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external"><a href="task.unauthorizederror.html#stack" class="tsd-kind-icon">stack</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-external"><a href="task.unauthorizederror.html#stacktracelimit" class="tsd-kind-icon">stack<wbr>Trace<wbr>Limit</a></li>
 							</ul>
@@ -124,23 +117,23 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Unauthorized<wbr>Error<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, response<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="task.unauthorizederror.html" class="tsd-signature-type" data-tsd-kind="Class">UnauthorizedError</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Unauthorized<wbr>Error<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, originalError<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="task.unauthorizederror.html" class="tsd-signature-type" data-tsd-kind="Class">UnauthorizedError</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides Error.constructor</p>
+								<p>Overrides DvelopSdkError.constructor</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/d-velop/dvelop-sdk-node/blob/51a671e/packages/task/src/errors.ts#L33">packages/task/src/errors.ts:33</a></li>
+									<li>Defined in packages/core/lib/errors/errors.d.ts:25</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>context: <span class="tsd-signature-type">string</span></h5>
+									<h5>message: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5>response: <span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> originalError: <span class="tsd-signature-type">Error</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="task.unauthorizederror.html" class="tsd-signature-type" data-tsd-kind="Class">UnauthorizedError</a></h4>
@@ -150,14 +143,14 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 					<a name="message" class="tsd-anchor"></a>
 					<h3>message</h3>
 					<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from Error.message</p>
+						<p>Overrides DvelopSdkError.message</p>
 						<ul>
-							<li>Defined in node_modules/typescript/lib/lib.es5.d.ts:974</li>
+							<li>Defined in packages/core/lib/errors/errors.d.ts:24</li>
 						</ul>
 					</aside>
 				</section>
@@ -166,9 +159,20 @@
 					<h3>name</h3>
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from Error.name</p>
+						<p>Inherited from DvelopSdkError.name</p>
 						<ul>
 							<li>Defined in node_modules/typescript/lib/lib.es5.d.ts:973</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+					<a name="originalerror" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> original<wbr>Error</h3>
+					<div class="tsd-signature tsd-kind-icon">original<wbr>Error<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span></div>
+					<aside class="tsd-sources">
+						<p>Overrides DvelopSdkError.originalError</p>
+						<ul>
+							<li>Defined in packages/core/lib/errors/errors.d.ts:25</li>
 						</ul>
 					</aside>
 				</section>
@@ -216,19 +220,12 @@
 						</ul>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="response" class="tsd-anchor"></a>
-					<h3>response</h3>
-					<div class="tsd-signature tsd-kind-icon">response<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AxiosResponse</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 					<a name="stack" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> stack</h3>
 					<div class="tsd-signature tsd-kind-icon">stack<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from Error.stack</p>
+						<p>Inherited from DvelopSdkError.stack</p>
 						<ul>
 							<li>Defined in node_modules/typescript/lib/lib.es5.d.ts:975</li>
 						</ul>
@@ -290,9 +287,6 @@
 						<a href="../modules/app_router.html">app-<wbr>router</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/axios_hal_json.html">axios-<wbr>hal-<wbr>json</a>
-					</li>
-					<li class=" tsd-kind-module">
 						<a href="../modules/core.html">core</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -309,19 +303,19 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="task.invalidtaskerror.html" class="tsd-kind-icon">Invalid<wbr>Task<wbr>Error</a>
+						<a href="task.badinputerror.html" class="tsd-kind-icon">Bad<wbr>Input<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="task.notasklocationerror.html" class="tsd-kind-icon">No<wbr>Task<wbr>Location<wbr>Error</a>
+						<a href="task.forbiddenerror.html" class="tsd-kind-icon">Forbidden<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="task.taskalreadycompletederror.html" class="tsd-kind-icon">Task<wbr>Already<wbr>Completed<wbr>Error</a>
+						<a href="task.invalidtaskdefinitionerror.html" class="tsd-kind-icon">Invalid<wbr>Task<wbr>Definition<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="task.tasknotfounderror.html" class="tsd-kind-icon">Task<wbr>Not<wbr>Found<wbr>Error</a>
+						<a href="task.notfounderror.html" class="tsd-kind-icon">Not<wbr>Found<wbr>Error</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="task.unauthenticatederror.html" class="tsd-kind-icon">Unauthenticated<wbr>Error</a>
+						<a href="task.taskerror.html" class="tsd-kind-icon">Task<wbr>Error</a>
 					</li>
 				</ul>
 				<ul class="current">
@@ -331,17 +325,17 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="task.unauthorizederror.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 								<a href="task.unauthorizederror.html#message" class="tsd-kind-icon">message</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="task.unauthorizederror.html#name" class="tsd-kind-icon">name</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+								<a href="task.unauthorizederror.html#originalerror" class="tsd-kind-icon">original<wbr>Error</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-external">
 								<a href="task.unauthorizederror.html#preparestacktrace" class="tsd-kind-icon">prepare<wbr>Stack<wbr>Trace</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="task.unauthorizederror.html#response" class="tsd-kind-icon">response</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-external">
 								<a href="task.unauthorizederror.html#stack" class="tsd-kind-icon">stack</a>
@@ -357,16 +351,22 @@
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/task.task-1.html" class="tsd-kind-icon">Task</a>
+						<a href="../interfaces/task.completetaskparams.html" class="tsd-kind-icon">Complete<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/task.taskcontext.html" class="tsd-kind-icon">Task<wbr>Context</a>
+						<a href="../interfaces/task.createtaskparams.html" class="tsd-kind-icon">Create<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/task.tasklinks.html" class="tsd-kind-icon">Task<wbr>Links</a>
+						<a href="../interfaces/task.deletetaskparams.html" class="tsd-kind-icon">Delete<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/task.taskmetadata.html" class="tsd-kind-icon">Task<wbr>Meta<wbr>Data</a>
+						<a href="../interfaces/task.dvelopcontext.html" class="tsd-kind-icon">Dvelop<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/task.taskvalidation.html" class="tsd-kind-icon">Task<wbr>Validation</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/task.updatetaskparams.html" class="tsd-kind-icon">Update<wbr>Task<wbr>Params</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/task.html#completetask" class="tsd-kind-icon">complete<wbr>Task</a>
@@ -376,6 +376,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/task.html#deletetask" class="tsd-kind-icon">delete<wbr>Task</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/task.html#gettaskcount" class="tsd-kind-icon">get<wbr>Task<wbr>Count</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="../modules/task.html#updatetask" class="tsd-kind-icon">update<wbr>Task</a>
