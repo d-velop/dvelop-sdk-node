@@ -1,53 +1,64 @@
-import axios from "axios";
-import { UnauthorizedError } from "../../index";
+import { DvelopContext } from "@dvelop-sdk/core";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
-interface ImpersonatedAuthSessionDto {
-  authSessionId: string;
+/**
+ * Parameters for the {@link getImpersonatedAuthSessionId}-function.
+ * @category Authentication
+ */
+export interface GetImpersonatedAuthSessionIdParams {
+  userId: string;
 }
 
 /**
- * Provides a valid authSessionId for a user without login.
- *
- * @param {string} systemBaseUri SystemBaseUri for the tenant
- * @param {string} appSession A valid appSession
- * @param {string} userId User that should be impersonated
- *
+ * Default transform-function provided to the {@link getImpersontedAuthSessionId}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * @internal
  * @category Authentication
- *
- * @example ```typescript
- * const authSessionIdForSulley = await getImpersonedAuthSessionId("https://monster-ag.d-velop.cloud", "<APP_SESSION>", "<SULLEYS_USER_ID>");
- * const sulley: ScimUser = await validateAuthSessionId("https://monster-ag.d-velop.cloud", authSessionIdForSulley);
- * console.log(sulley.displayName) // James P. Sullivan
- * ```
  */
-export async function getImpersonatedAuthSessionId(systemBaseUri: string, appSession: string, userId: string): Promise<string> {
+export function _getImpersonatedAuthSessionIdDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: GetImpersonatedAuthSessionIdParams): string {
+  return response.data.authSessionId;
+}
 
-  const errorContext: string = "Failed to impersonate user";
-
-  try {
-    const response = await axios.get<ImpersonatedAuthSessionDto>("/identityprovider/impersonatesession", {
-      baseURL: systemBaseUri,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/hal+json",
-        "Authorization": `Bearer ${appSession}`
-      },
+/**
+ * Factory for the {@link getImpersonatedAuthSessionId}}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * @typeparam T Return type of the {@link getImpersonatedAuthSessionId}-function. A corresponding transformFuntion has to be supplied.
+ * @internal
+ * @category Authentication
+ */
+export function _getImpersonatedAuthSessionIdFactory<T>(
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetImpersonatedAuthSessionIdParams) => T,
+): (context: DvelopContext, params: GetImpersonatedAuthSessionIdParams) => Promise<T> {
+  return async (context: DvelopContext, params: GetImpersonatedAuthSessionIdParams) => {
+    const response: HttpResponse = await httpRequestFunction(context, {
+      method: "GET",
+      url: "/identityprovider/impersonatesession",
       params: {
-        userId: userId
+        userId: params.userId
       }
     });
+    return transformFunction(response, context, params);
+  };
+}
 
-    return response.data.authSessionId;
-  } catch (e) {
-    if (e.response) {
-      switch (e.response.status) {
-      case 401:
-        throw new UnauthorizedError(errorContext, e.response);
-
-        //TODO: 404 if user does not exist?
-      }
-    }
-    e.message = `${errorContext}: ${e.message}`;
-    throw e;
-  }
+/**
+ * Returns an authSessionId for the given user. All requests with this authSessionId will be in that users name.
+ * **The AuthSessionId should be kept secret and never be publicly available.**
+ *
+ * ```typescript
+ *  import { getImpersonatedAuthSessionId } from "@dvelop-sdk/identityprovider";
+ *
+ * const authSessionId = await getImpersonatedAuthSessionId({
+ *   systemBaseUri: "https://monster-ag.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ" // has to be an AppSession
+ * }, {
+ *   userId: "XiFkyR35v2Y"
+ * });
+ *
+ * console.log(authSessionId);
+ * ```
+ * @category Authentication
+ */
+/* istanbul ignore next */
+export async function getImpersonatedAuthSessionId(context: DvelopContext, params: GetImpersonatedAuthSessionIdParams): Promise<string> {
+  return _getImpersonatedAuthSessionIdFactory(_defaultHttpRequestFunction, _getImpersonatedAuthSessionIdDefaultTransformFunction)(context, params);
 }

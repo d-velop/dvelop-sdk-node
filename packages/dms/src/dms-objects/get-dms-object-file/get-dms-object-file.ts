@@ -42,7 +42,7 @@ async function getDmsObjectBlobContentRespone(
 }
 
 /**
- * Factory for {@link getDmsObjectMainFile}-function. See internals for more information.
+ * Factory for {@link getDmsObjectMainFile}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the getRepositories-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category DmsObject
@@ -58,7 +58,7 @@ export function _getDmsObjectMainFileFactory<T>(
 }
 
 /**
- * Factory for {@link getDmsObjectPdfFile}-function. See internals for more information.
+ * Factory for {@link getDmsObjectPdfFile}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the getRepositories-function. A corresponding transformFuntion has to be supplied.
  * @internal
  * @category DmsObject

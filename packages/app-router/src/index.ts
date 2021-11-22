@@ -25,4 +25,4 @@
  */
 
 export { DvelopContext } from "@dvelop-sdk/core";
-export { validateRequestSignature, InvalidRequestSignatureError } from "./validate-request-signature/validate-request-signature";
+export { validateRequestSignature, validateDvelopContext, InvalidRequestSignatureError } from "./validate-request-signature/validate-request-signature";

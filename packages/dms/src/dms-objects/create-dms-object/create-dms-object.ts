@@ -39,7 +39,7 @@ export interface CreateDmsObjectParams {
 }
 
 /**
- * Default transform-function provided to the {@link createDmsObject}-function.
+ * Default transform-function provided to the {@link createDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
@@ -60,7 +60,7 @@ export function _createDmsObjectDefaultTransformFunction(response: HttpResponse<
 }
 
 /**
- * Default store-file-function provided to the {@link createDmsObject}-function.
+ * Default store-file-function provided to the {@link createDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
@@ -73,7 +73,7 @@ export async function _createDmsObjectDefaultStoreFileFunction(context: DvelopCo
 }
 
 /**
- * Factory for the {@link createDmsObject}-function. See internals for more information.
+ * Factory for the {@link createDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link createDmsObject}-function. A corresponding transformFuntion has to be supplied.
  * @category DmsObject
  */

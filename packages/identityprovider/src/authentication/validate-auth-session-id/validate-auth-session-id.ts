@@ -1,48 +1,89 @@
-import axios, { AxiosResponse } from "axios";
-import { ScimUser, ForbiddenError, NotFoundError, UnauthorizedError } from "../../index";
+import { DvelopContext } from "../../../../core/lib";
+import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
 /**
- * Validates an AuthSessionId and returns a [ScimUser]{@link ScimUser}
- *
- * @param {string} systemBaseUri SystemBaseUri for the tenant
- * @param {string} authSessionId AuthSessionId which should be validated
- * @throws {@link UnauthorizedError} indicates an invalid authSessionId or no authSessionId was sent.
- * @throws {@link ForbiddenError} indicates that a valid authSessionId for an external user was sent but external validation was set to false.
- * @throws {@link NotFoundError} indicates that a valid token for a deleted user was sent.
- *
+ * User representation according to the [System for Cross-domain Identity Management (SCIM)]{@link https://tools.ietf.org/html/rfc7644}.
  * @category Authentication
- *
- * @example ```typescript
- * const user: ScimUser = await validateAuthSessionId("https://monster-ag.d-velop.cloud", "vXo4FMlnYYiGArNfjfJHEJDNWfjfejglgnewjgrjokgajifahfhdahfuewfhlR/4FxJxmNsjlq2XgWQm/GYVBq/hEvsJy1BK4WLoCXek=&ga8gds7gafkajgkj24ut8ugudash34jGlDG&dr6j0zusHVN8PcyerI0YXqRu30f8AGoUaZ6vInCDtZInS6aK2PplAelsv9t8");
- * console.log(user.displayName) //Mike Glotzkowski
- * ```
  */
-export async function validateAuthSessionId(systemBaseUri: string, authSessionId: string): Promise<ScimUser> {
+export interface DvelopUser {
 
-  const errorContext: string = "Failed to validate authSessionId";
+  /** Unique UserId */
+  id?: string;
 
-  try {
-    const response: AxiosResponse<ScimUser> = await axios.get<ScimUser>("/identityprovider", {
-      baseURL: systemBaseUri,
-      headers: {
-        "Authorization": `Bearer ${authSessionId}`,
-        "Content-Type": "application/json"
-      },
+  /** Technical username */
+  userName?: string;
+
+  /** Name object containg family name and given name */
+  name?: {
+    familyName?: string;
+    givenName?: string;
+  };
+
+  /** Display name assigned by the administrators */
+  displayName?: string;
+
+  /** E-Mail addesses */
+  emails?: {
+    value?: string;
+  }[];
+
+  /** Groups assigned to the user */
+  groups?: {
+    value?: string;
+    display?: string;
+  }[];
+
+  /** Photos for the user usually provided by URL in value */
+  photos?: {
+    value?: string;
+    type?: string;
+  }[];
+}
+
+/**
+ * Default transform-function provided to the {@link validateAuthSessionId}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * @internal
+ * @category Authentication
+ */
+export function _validateAuthSessionIdDefaultTransformFunction(response: HttpResponse, _: DvelopContext): DvelopUser {
+  return response.data;
+}
+
+/**
+ * Factory for the {@link validateAuthSessionId}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * @typeparam T Return type of the {@link validateAuthSessionId}-function. A corresponding transformFuntion has to be supplied.
+ * @category Authentication
+ */
+export function _validateAuthSessionIdFactory<T>(
+  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
+  transformFunction: (response: HttpResponse, context: DvelopContext) => T,
+): (context: DvelopContext) => Promise<T> {
+  return async (context: DvelopContext) => {
+    const response: HttpResponse = await httpRequestFunction(context, {
+      method: "GET",
+      url: "/identityprovider",
       follows: ["validate"]
     });
-    return response.data;
-  } catch (e) {
-    if (e.response) {
-      switch (e.response.status) {
-      case 401:
-        throw new UnauthorizedError(errorContext, e.response);
-      case 403:
-        throw new ForbiddenError(errorContext, e.response);
-      case 404:
-        throw new NotFoundError(errorContext, e.response);
-      }
-    }
-    e.message = `${errorContext}: ${e.message}`;
-    throw e;
-  }
+    return transformFunction(response, context);
+  };
+}
+
+/**
+ * Validates an AuthSessionId and returns a {@link DvelopUser}.
+ *
+ * ```typescript
+ * import { validateAuthSessionId } from "@dvelop-sdk/identityprovider";
+ *
+ * const user: DvelopUser = await validateAuthSessionId({
+ *   systemBaseUri: "https://monster-ag.d-velop.cloud",
+ *   authSessionId: "dQw4w9WgXcQ"
+ * });
+ *
+ * console.log(user.displayName) //Mike Glotzkowski
+ * ```
+ * @category Authentication
+ */
+/* istanbul ignore next */
+export async function validateAuthSessionId(context: DvelopContext): Promise<DvelopUser> {
+  return await _validateAuthSessionIdFactory(_defaultHttpRequestFunction, _validateAuthSessionIdDefaultTransformFunction)(context);
 }

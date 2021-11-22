@@ -21,7 +21,7 @@ export class InvalidRequestSignatureError extends DvelopSdkError {
  *
  * @throws {@link InvalidRequestSignatureError} indicates that requestSignature was invalid for given appSecret.
  *
- * @example ```typescript
+ * ```typescript
  * validateRequestSignature(process.env.APP_SECRET, "https://header.example.com", "a12be5", "Zjcf28p5aQ6amtbs6s9b9cPyBPdziwUslR2DZqaGUTQ=");
  * ```
  */
@@ -47,14 +47,14 @@ export function validateRequestSignature(appSecret: string, systemBaseUri: strin
  * **The requestSignature should be validated for every request when recieving calls from the d.velop cloud.
  * Refer to the [d.velop basics tenant header section](https://developer.d-velop.de/dev/en/basics#tenant-header) for more information.**
  *
- * @throws {@link InvalidRequestSignatureError} indicates that requestSignature was invalid for given appSecret.
- *
- * @example ```typescript
+ * ```typescript
  * validateDvelopContext(process.env.APP_SECRET, {
  *   systemBaseUri: "https://header.example.com",
  *   tenantId: "a12be5",
  *   requestId: "Zjcf28p5aQ6amtbs6s9b9cPyBPdziwUslR2DZqaGUTQ="
  * );
+ *
+ * @throws {@link InvalidRequestSignatureError} indicates that requestSignature was invalid for given appSecret.
  * ```
  */
 export function validateDvelopContext(appSecret: string, context: DvelopContext): void {

@@ -23,16 +23,16 @@
 </div>
  * @module identityprovider
  */
-import axios from "axios";
-import { followHalJson } from "@dvelop-sdk/axios-hal-json";
-axios.interceptors.request.use(followHalJson);
 
-export { UnauthorizedError, ForbiddenError, NotFoundError, InvalidAppSessionSignatureError } from "./errors";
-export { AuthSession } from "./authentication/get-auth-session/auth-session";
+// Utils
+export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
+export { IdentityproviderError } from "./utils/http";
+export * as internals from "./internal";
+
+// Authentication
 export { getAuthSession } from "./authentication/get-auth-session/get-auth-session";
-export { ScimUser } from "./authentication/validate-auth-session-id/scim-user";
-export { validateAuthSessionId } from "./authentication/validate-auth-session-id/validate-auth-session-id";
+export { GetImpersonatedAuthSessionIdParams, getImpersonatedAuthSessionId } from "./authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id";
+export { RequestAppSessionParams, requestAppSession, AppSession } from "./authentication/request-app-session/request-app-session";
 export { getLoginRedirectionUri } from "./authentication/get-login-redirection-uri/get-login-redirection-uri";
-export { requestAppSession } from "./authentication/request-app-session/request-app-session";
-export { validateAppSessionSignature } from "./authentication/validate-app-session-signature/validate-app-session-signature";
-export { getImpersonatedAuthSessionId } from "./authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id";
+export { validateAppSessionSignature, InvalidAppSessionSignatureError } from "./authentication/validate-app-session-signature/validate-app-session-signature";
+export { validateAuthSessionId, DvelopUser } from "./authentication/validate-auth-session-id/validate-auth-session-id";
