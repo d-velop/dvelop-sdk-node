@@ -18,8 +18,7 @@
     "lint": "eslint packages/**/src/**/*.ts",
     "lint:fix": "eslint packages/**/src/**/*.ts --fix",
     "license": "ts-node scripts/check-licenses.ts",
-    "docs": "typedoc",
-    "version": "ts-node scripts/check-versions.ts"
+    "docs": "typedoc"
   },
   "pre-commit": [
     "test",
