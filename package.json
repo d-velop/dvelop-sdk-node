@@ -2,18 +2,24 @@
   "name": "dvelop-sdk",
   "private": true,
   "description": "Official SDK to build d.velop cloud Apps with Node.js",
+  "workspaces": [
+    "packages/core",
+    "packages/app-router",
+    "packages/identityprovider",
+    "packages/task",
+    "packages/dms"
+  ],
   "license": "Apache-2.0",
   "scripts": {
-    "prepare": "lerna bootstrap",
-    "test": "jest --config jest.json --coverage",
-    "test:watch": "jest --config jest.json --watch",
+    "build": "tsc -b",
+    "build:force": "tsc -b --clean && tsc -b",
+    "test": "npm run build && jest --config jest.json --coverage",
+    "test:watch": "npm run build && jest --config jest.json --watch",
     "lint": "eslint packages/**/src/**/*.ts",
     "lint:fix": "eslint packages/**/src/**/*.ts --fix",
     "license": "ts-node scripts/check-licenses.ts",
-    "build": "tsc -b",
-    "build:force": "tsc -b --clean && tsc -b",
     "docs": "typedoc",
-    "version": "lerna version --no-push"
+    "version": "ts-node scripts/check-versions.ts"
   },
   "pre-commit": [
     "test",
@@ -27,7 +33,6 @@
     "eslint": "^7.21.0",
     "eslint-plugin-jest": "^24.1.9",
     "jest": "^27.2.5",
-    "lerna": "^4.0.0",
     "license-checker": "^25.0.1",
     "pre-commit": "^1.2.2",
     "ts-jest": "^27.0.5",

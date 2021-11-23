@@ -27,7 +27,7 @@ jobs:
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Tag packages as latest on npm
-      run: npx ts-node scripts/tag-as-latest.ts
+      run: npm dist-tag add latest --workspaces
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

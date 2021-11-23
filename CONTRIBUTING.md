@@ -85,8 +85,6 @@ We already committed to some tools and frameworks to handle certain things. If y
 
 * [typescirpt](https://www.typescriptlang.org/) is used for development. If you are familiar with javascript and/or typed languages this should not cause problems. Have a look at the [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) for a quick start.
 
-* [lerna.js](https://lerna.js.org/) to maintain the project on the root level and manage the indivual packages.
-
 * [axios](https://www.npmjs.com/package/axios) is used for HTTP requests.
 
 * [jest](https://jestjs.io/) is used for testing.
