@@ -13,8 +13,8 @@
   "scripts": {
     "build": "tsc -b",
     "build:force": "tsc -b --clean && tsc -b",
-    "test": "npm run build && jest --config jest.json --coverage",
-    "test:watch": "npm run build && jest --config jest.json --watch",
+    "test": "jest --config jest.json --coverage",
+    "test:watch": "jest --config jest.json --watch",
     "lint": "eslint packages/**/src/**/*.ts",
     "lint:fix": "eslint packages/**/src/**/*.ts --fix",
     "license": "ts-node scripts/check-licenses.ts",
