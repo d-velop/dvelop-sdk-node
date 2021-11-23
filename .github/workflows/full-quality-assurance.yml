@@ -17,7 +17,7 @@ jobs:
       max-parallel: 2
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [lts/*, 17]
+        node-version: [15, 16, 17]
     name: Test for Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
     steps:
     - name: Checkout code
