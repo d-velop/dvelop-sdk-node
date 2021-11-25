@@ -19,6 +19,7 @@
     "lint:fix": "eslint packages/**/src/**/*.ts --fix",
     "license": "ts-node scripts/check-licenses.ts",
     "publish:next": "ts-node scripts/npm-publish-next.ts",
+    "publish:latest": "ts-node scripts/npm-tag-as-latest.ts",
     "docs": "typedoc"
   },
   "pre-commit": [
