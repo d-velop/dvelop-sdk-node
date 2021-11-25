@@ -1,0 +1,211 @@
+0 silly argv {
+0 silly argv   _: [ 'version' ],
+0 silly argv   push: false,
+0 silly argv   lernaVersion: '4.0.0',
+0 silly argv   '$0': 'node_modules\\lerna\\cli.js'
+0 silly argv }
+1 notice cli v4.0.0
+2 verbose rootPath C:\Users\lklo\source\repos\dvelop-sdk-node
+3 info versioning independent
+4 silly isAnythingCommitted
+5 verbose isAnythingCommitted 1
+6 silly getCurrentBranch
+7 verbose currentBranch develop
+8 silly hasTags
+9 verbose hasTags true
+10 silly git-describe.sync "@dvelop-sdk/axios-hal-json@2.0.5-3-g6c644d1" => {"lastTagName":"@dvelop-sdk/axios-hal-json@2.0.5","lastVersion":"2.0.5","refCount":"3","sha":"6c644d1","isDirty":false}
+11 info Looking for changed packages since @dvelop-sdk/axios-hal-json@2.0.5
+12 silly checking diff packages/app-router
+13 silly found diff in packages/app-router/package-lock.json
+13 silly found diff in packages/app-router/package.json
+13 silly found diff in packages/app-router/src/errors.ts
+13 silly found diff in packages/app-router/src/generate-request-id/generate-request-id.spec.ts
+13 silly found diff in packages/app-router/src/generate-request-id/generate-request-id.ts
+13 silly found diff in packages/app-router/src/index.ts
+13 silly found diff in packages/app-router/src/validate-request-signature/validate-request-signature.spec.ts
+13 silly found diff in packages/app-router/src/validate-request-signature/validate-request-signature.ts
+13 silly found diff in packages/app-router/tsconfig.json
+14 verbose filtered diff [
+14 verbose filtered diff   'packages/app-router/package-lock.json',
+14 verbose filtered diff   'packages/app-router/package.json',
+14 verbose filtered diff   'packages/app-router/src/errors.ts',
+14 verbose filtered diff   'packages/app-router/src/generate-request-id/generate-request-id.spec.ts',
+14 verbose filtered diff   'packages/app-router/src/generate-request-id/generate-request-id.ts',
+14 verbose filtered diff   'packages/app-router/src/index.ts',
+14 verbose filtered diff   'packages/app-router/src/validate-request-signature/validate-request-signature.spec.ts',
+14 verbose filtered diff   'packages/app-router/src/validate-request-signature/validate-request-signature.ts',
+14 verbose filtered diff   'packages/app-router/tsconfig.json'
+14 verbose filtered diff ]
+15 silly checking diff packages/axios-hal-json
+16 silly found diff in packages/axios-hal-json/src/followHalJson/follow-hal-json.ts
+17 verbose filtered diff [ 'packages/axios-hal-json/src/followHalJson/follow-hal-json.ts' ]
+18 silly checking diff packages/core
+19 silly found diff in packages/core/README.md
+19 silly found diff in packages/core/package-lock.json
+19 silly found diff in packages/core/package.json
+19 silly found diff in packages/core/src/context/context.ts
+19 silly found diff in packages/core/src/errors/errors.ts
+19 silly found diff in packages/core/src/generate-request-id/generate-request-id.spec.ts
+19 silly found diff in packages/core/src/generate-request-id/generate-request-id.ts
+19 silly found diff in packages/core/src/http/axios-follow-hal-json.spec.ts
+19 silly found diff in packages/core/src/http/axios-follow-hal-json.ts
+19 silly found diff in packages/core/src/http/http-client.spec.ts
+19 silly found diff in packages/core/src/http/http-client.ts
+19 silly found diff in packages/core/src/http/http-headers.ts
+19 silly found diff in packages/core/src/index.ts
+19 silly found diff in packages/core/tsconfig.json
+20 verbose filtered diff [
+20 verbose filtered diff   'packages/core/README.md',
+20 verbose filtered diff   'packages/core/package-lock.json',
+20 verbose filtered diff   'packages/core/package.json',
+20 verbose filtered diff   'packages/core/src/context/context.ts',
+20 verbose filtered diff   'packages/core/src/errors/errors.ts',
+20 verbose filtered diff   'packages/core/src/generate-request-id/generate-request-id.spec.ts',
+20 verbose filtered diff   'packages/core/src/generate-request-id/generate-request-id.ts',
+20 verbose filtered diff   'packages/core/src/http/axios-follow-hal-json.spec.ts',
+20 verbose filtered diff   'packages/core/src/http/axios-follow-hal-json.ts',
+20 verbose filtered diff   'packages/core/src/http/http-client.spec.ts',
+20 verbose filtered diff   'packages/core/src/http/http-client.ts',
+20 verbose filtered diff   'packages/core/src/http/http-headers.ts',
+20 verbose filtered diff   'packages/core/src/index.ts',
+20 verbose filtered diff   'packages/core/tsconfig.json'
+20 verbose filtered diff ]
+21 silly checking diff packages/dms
+22 silly found diff in packages/dms/README.md
+22 silly found diff in packages/dms/package.json
+22 silly found diff in packages/dms/src/dms-objects/create-dms-object/create-dms-object.spec.ts
+22 silly found diff in packages/dms/src/dms-objects/create-dms-object/create-dms-object.ts
+22 silly found diff in packages/dms/src/dms-objects/delete-current-dms-object-version/delete-current-dms-object-version.spec.ts
+22 silly found diff in packages/dms/src/dms-objects/delete-current-dms-object-version/delete-current-dms-object-version.ts
+22 silly found diff in packages/dms/src/dms-objects/get-dms-object-file/get-dms-obejct-file.spec.ts
+22 silly found diff in packages/dms/src/dms-objects/get-dms-object-file/get-dms-object-file.ts
+22 silly found diff in packages/dms/src/dms-objects/get-dms-object/get-dms-object.spec.ts
+22 silly found diff in packages/dms/src/dms-objects/get-dms-object/get-dms-object.ts
+22 silly found diff in packages/dms/src/dms-objects/search-dms-objects/search-dms-objects.spec.ts
+22 silly found diff in packages/dms/src/dms-objects/search-dms-objects/search-dms-objects.ts
+22 silly found diff in packages/dms/src/dms-objects/store-file-temporarily/store-file-temporarily.spec.ts
+22 silly found diff in packages/dms/src/dms-objects/store-file-temporarily/store-file-temporarily.ts
+22 silly found diff in packages/dms/src/dms-objects/update-dms-object/update-dms-object.spec.ts
+22 silly found diff in packages/dms/src/dms-objects/update-dms-object/update-dms-object.ts
+22 silly found diff in packages/dms/src/index.ts
+22 silly found diff in packages/dms/src/internal.ts
+22 silly found diff in packages/dms/src/repositories/get-repositories/get-repositories.spec.ts
+22 silly found diff in packages/dms/src/repositories/get-repositories/get-repositories.ts
+22 silly found diff in packages/dms/src/repositories/get-repository/get-repository.spec.ts
+22 silly found diff in packages/dms/src/repositories/get-repository/get-repository.ts
+22 silly found diff in packages/dms/src/utils/http.spec.ts
+22 silly found diff in packages/dms/src/utils/http.ts
+22 silly found diff in packages/dms/tsconfig.json
+23 verbose filtered diff [
+23 verbose filtered diff   'packages/dms/README.md',
+23 verbose filtered diff   'packages/dms/package.json',
+23 verbose filtered diff   'packages/dms/src/dms-objects/create-dms-object/create-dms-object.spec.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/create-dms-object/create-dms-object.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/delete-current-dms-object-version/delete-current-dms-object-version.spec.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/delete-current-dms-object-version/delete-current-dms-object-version.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/get-dms-object-file/get-dms-obejct-file.spec.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/get-dms-object-file/get-dms-object-file.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/get-dms-object/get-dms-object.spec.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/get-dms-object/get-dms-object.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/search-dms-objects/search-dms-objects.spec.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/search-dms-objects/search-dms-objects.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/store-file-temporarily/store-file-temporarily.spec.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/store-file-temporarily/store-file-temporarily.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/update-dms-object/update-dms-object.spec.ts',
+23 verbose filtered diff   'packages/dms/src/dms-objects/update-dms-object/update-dms-object.ts',
+23 verbose filtered diff   'packages/dms/src/index.ts',
+23 verbose filtered diff   'packages/dms/src/internal.ts',
+23 verbose filtered diff   'packages/dms/src/repositories/get-repositories/get-repositories.spec.ts',
+23 verbose filtered diff   'packages/dms/src/repositories/get-repositories/get-repositories.ts',
+23 verbose filtered diff   'packages/dms/src/repositories/get-repository/get-repository.spec.ts',
+23 verbose filtered diff   'packages/dms/src/repositories/get-repository/get-repository.ts',
+23 verbose filtered diff   'packages/dms/src/utils/http.spec.ts',
+23 verbose filtered diff   'packages/dms/src/utils/http.ts',
+23 verbose filtered diff   'packages/dms/tsconfig.json'
+23 verbose filtered diff ]
+24 silly checking diff packages/identityprovider
+25 silly no diff found in @dvelop-sdk/identityprovider
+26 silly checking diff packages/task
+27 silly no diff found in @dvelop-sdk/task
+28 verbose updated @dvelop-sdk/app-router
+29 verbose updated @dvelop-sdk/axios-hal-json
+30 verbose updated @dvelop-sdk/core
+31 verbose updated @dvelop-sdk/dms
+32 verbose updated @dvelop-sdk/identityprovider
+33 verbose updated @dvelop-sdk/task
+34 verbose git-describe undefined => "@dvelop-sdk/axios-hal-json@2.0.5-3-g6c644d1"
+35 silly git-describe parsed => {"lastTagName":"@dvelop-sdk/axios-hal-json@2.0.5","lastVersion":"2.0.5","refCount":"3","sha":"6c644d1","isDirty":false}
+36 info execute Skipping git push
+37 info execute Skipping releases
+38 warn lifecycle Skipping root "preversion" because it has already been called
+39 silly lifecycle No script for "preversion" in "@dvelop-sdk/axios-hal-json", continuing
+40 silly lifecycle No script for "preversion" in "@dvelop-sdk/core", continuing
+41 silly lifecycle No script for "version" in "@dvelop-sdk/core", continuing
+42 silly lifecycle No script for "preversion" in "@dvelop-sdk/app-router", continuing
+43 silly lifecycle No script for "preversion" in "@dvelop-sdk/dms", continuing
+44 silly lifecycle No script for "version" in "@dvelop-sdk/axios-hal-json", continuing
+45 silly lifecycle No script for "preversion" in "@dvelop-sdk/identityprovider", continuing
+46 silly lifecycle No script for "preversion" in "@dvelop-sdk/task", continuing
+47 silly lifecycle No script for "version" in "@dvelop-sdk/dms", continuing
+48 silly lifecycle No script for "version" in "@dvelop-sdk/app-router", continuing
+49 silly lifecycle No script for "version" in "@dvelop-sdk/identityprovider", continuing
+50 silly lifecycle No script for "version" in "@dvelop-sdk/task", continuing
+51 warn lifecycle Skipping root "version" because it has already been called
+52 silly gitAdd [
+52 silly gitAdd   'packages/core/package.json',
+52 silly gitAdd   'packages/core/package-lock.json',
+52 silly gitAdd   'packages/axios-hal-json/package.json',
+52 silly gitAdd   'packages/axios-hal-json/package-lock.json',
+52 silly gitAdd   'packages/dms/package.json',
+52 silly gitAdd   'packages/app-router/package.json',
+52 silly gitAdd   'packages/app-router/package-lock.json',
+52 silly gitAdd   'packages/identityprovider/package.json',
+52 silly gitAdd   'packages/identityprovider/package-lock.json',
+52 silly gitAdd   'packages/task/package.json',
+52 silly gitAdd   'packages/task/package-lock.json'
+52 silly gitAdd ]
+53 silly gitCommit Automated task: lerna versioning
+53 silly gitCommit
+53 silly gitCommit  - @dvelop-sdk/app-router@3.0.0
+53 silly gitCommit  - @dvelop-sdk/axios-hal-json@2.0.5
+53 silly gitCommit  - @dvelop-sdk/core@1.0.0
+53 silly gitCommit  - @dvelop-sdk/dms@1.0.0
+53 silly gitCommit  - @dvelop-sdk/identityprovider@2.1.7
+53 silly gitCommit  - @dvelop-sdk/task@2.0.12
+54 verbose git [
+54 verbose git   'commit',
+54 verbose git   '-F',
+54 verbose git   'C:\\Users\\lklo\\AppData\\Local\\Temp\\9ad94d2b-60f4-409e-b062-63d15cd37496\\lerna-commit.txt'
+54 verbose git ]
+55 silly gitTag @dvelop-sdk/app-router@3.0.0
+56 verbose git [
+56 verbose git   'tag',
+56 verbose git   '@dvelop-sdk/app-router@3.0.0',
+56 verbose git   '-m',
+56 verbose git   '@dvelop-sdk/app-router@3.0.0'
+56 verbose git ]
+57 silly gitTag @dvelop-sdk/axios-hal-json@2.0.5
+58 verbose git [
+58 verbose git   'tag',
+58 verbose git   '@dvelop-sdk/axios-hal-json@2.0.5',
+58 verbose git   '-m',
+58 verbose git   '@dvelop-sdk/axios-hal-json@2.0.5'
+58 verbose git ]
+59 silly gitTag @dvelop-sdk/core@1.0.0
+60 verbose git [ 'tag', '@dvelop-sdk/core@1.0.0', '-m', '@dvelop-sdk/core@1.0.0' ]
+61 silly gitTag @dvelop-sdk/dms@1.0.0
+62 verbose git [ 'tag', '@dvelop-sdk/dms@1.0.0', '-m', '@dvelop-sdk/dms@1.0.0' ]
+63 silly gitTag @dvelop-sdk/identityprovider@2.1.7
+64 verbose git [
+64 verbose git   'tag',
+64 verbose git   '@dvelop-sdk/identityprovider@2.1.7',
+64 verbose git   '-m',
+64 verbose git   '@dvelop-sdk/identityprovider@2.1.7'
+64 verbose git ]
+65 silly gitTag @dvelop-sdk/task@2.0.12
+66 verbose git [ 'tag', '@dvelop-sdk/task@2.0.12', '-m', '@dvelop-sdk/task@2.0.12' ]
+67 error Error: Command failed with exit code 128: git tag @dvelop-sdk/app-router@3.0.0 -m @dvelop-sdk/app-router@3.0.0
+67 error fatal: tag '@dvelop-sdk/app-router@3.0.0' already exists
+67 error     at makeError (C:\Users\lklo\source\repos\dvelop-sdk-node\node_modules\execa\lib\error.js:60:11)
+67 error     at handlePromise (C:\Users\lklo\source\repos\dvelop-sdk-node\node_modules\execa\index.js:118:26)
+67 error     at processTicksAndRejections (node:internal/process/task_queues:96:5)

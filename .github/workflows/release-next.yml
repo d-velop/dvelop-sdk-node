@@ -28,6 +28,6 @@ jobs:
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Publish code to npm
-      run: lerna publish from-package --no-push --no-verify-access --dist-tag next --yes
+      run: npm publish --tag next --workspaces
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
