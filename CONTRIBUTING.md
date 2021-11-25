@@ -62,7 +62,7 @@ You can submit feature requests on the [issues page](https://github.com/d-velop/
 Before you consider contributing please submit a feature request. This way we can discuss the scope and warn you potential problems of your idea.
 
 ### Get up and running
-For this project to work you need [node.js](https://nodejs.org/en/) installed. We recommend the latest stable version.
+For this project to work you need [node.js](https://nodejs.org/en/) installed. We recommend the latest stable version. As this project makes use of [workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces) you need at least npm 7 which ships with Node.js 15.
 
 1. Clone the project via:
 > ```git clone https://github.com/d-velop/dvelop-sdk-node.git```
@@ -70,9 +70,10 @@ For this project to work you need [node.js](https://nodejs.org/en/) installed. W
 2. Install dependecies via:
 > ```npm i```
 
-</br>
+3. Build via:
+> ```npm run build```
 
-If everything worked you should be able to successfully run:
+4. Teast via:
 >```npm test```
 
 ## Development
@@ -83,9 +84,11 @@ This SDK is devided into multiple packages. Ideally we want to keep a *one packa
 ### Technologies
 We already committed to some tools and frameworks to handle certain things. If you want to contribute within that scope please use the existing things at your disposal.
 
+* [npm workspaces](https://docs.npmjs.com/cli/v8/using-npm/workspaces) for package management.
+
 * [typescirpt](https://www.typescriptlang.org/) is used for development. If you are familiar with javascript and/or typed languages this should not cause problems. Have a look at the [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html) for a quick start.
 
-* [axios](https://www.npmjs.com/package/axios) is used for HTTP requests.
+* [axios](https://www.npmjs.com/package/axios) is used for HTTP requests. It is *pro forma* abstracted in [@dvelop-sdk/core](https://www.npmjs.com/package/@dvelop-sdk/core) meaning that we ship it from there and it is abstracted however all axios properties and utilities should work.
 
 * [jest](https://jestjs.io/) is used for testing.
 
@@ -98,12 +101,6 @@ We already committed to some tools and frameworks to handle certain things. If y
 ### Build-in commands
 
 This project comes with several utility commands. You can find the implementation in the ```package.json``` file.
-
-</br>
-
-> ```npm run prepare```
-
-Runs a bootstrap command. This is triggered by the [npm lifecycle](https://www.npmjs.com/package/npm-lifecycle) when doing a ```npm i``` an should usually never get executed on its own.
 
 </br>
 
@@ -153,12 +150,6 @@ Runs automated license checking on the project dependencies. This command should
 
 Generate [typedoc](https://typedoc.org/) documentation locally in ```/docs``` which is ignored by git. Feel free to generate and have a look.
 
-</br>
-
-> ```npm run version```
-
-Checks packages for changes and asks you for version updates and commits an update. This should be the last command (and commit) before a pull request.
-
 ### TDD
 For developing we recommend Test-driven development (TDD). For every new function/class/file you create there should be its corresponding test-equivalent. Ideally there should be no need to ever run a build command for your development as all testing is done on the typescript code with building behind the scene. For convience while developing test-driven you can run ```npm run test:watch``` which will run all relevant tests when you save a file.
 
@@ -179,8 +170,6 @@ As mentioned we are using [typedoc](https://typedoc.org/) to document code. A do
      ```
       /**
        * Provides a greeting string.
-       *
-       * @param {string} to name of the person that should be greeted
        *
        * @throws {@link UnknownPersonError} indicated that the person to be greeted was not found.
        *
