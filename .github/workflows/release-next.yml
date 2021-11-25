@@ -30,6 +30,6 @@ jobs:
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Publish code to npm
-      run: npm publish --tag next --workspaces
+      run: npm run publish:next
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
