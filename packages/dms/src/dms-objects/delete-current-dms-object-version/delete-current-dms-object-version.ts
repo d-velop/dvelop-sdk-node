@@ -23,7 +23,7 @@ export interface DeleteCurrentDmsObjectVersionParams {
  * @category DmsObject
  */
 export function _deleteCurrentDmsObjectVersionDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: DeleteCurrentDmsObjectVersionParams): boolean {
-  if (response.data._links.deleteWithReason || response.data._links.delete) {
+  if (response.data?._links?.deleteWithReason || response.data?._links?.delete) {
     return false;
   } else {
     return true;

@@ -15,6 +15,8 @@ jobs:
       uses: actions/checkout@v2
     - name: Set up node.js
       uses: actions/setup-node@v2
+      with:
+        node-version: 16
     - name: Install npm dependencies
       run: npm ci
     - name: Run build
@@ -27,7 +29,7 @@ jobs:
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     - name: Tag packages as latest on npm
-      run: npx ts-node scripts/tag-as-latest.ts
+      run: npm dist-tag add latest --workspaces
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -40,6 +42,8 @@ jobs:
       uses: actions/checkout@v2
     - name: Set up node.js
       uses: actions/setup-node@v2
+      with:
+        node-version: 16
     - name: Install npm dependencies
       run: npm ci
     - name: Build packages
