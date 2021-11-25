@@ -112,17 +112,19 @@ describe("deleteCurrentDmsObjectVersion", () => {
   describe("getDmsObjectFileDefaultTransformFunction", () => {
 
     [
-      { should: "return true on no relevant links", _links: {}, expected: true },
-      { should: "return true on no relevant links", _links: { irrelevant: { href: "HiItsMeHref" } }, expected: true },
-      { should: "return false on delete-href", _links: { deleteWithReason: { href: "HiItsMeHref" } }, expected: false },
-      { should: "return false on delete-href", _links: { delete: { href: "HiItsMeHref" } }, expected: false },
-      { should: "return false on delete- and deleteWithReason-href", _links: { deleteWithReason: { href: "HiItsMeHref" }, delete: { href: "HiImWrong" } }, expected: false },
-      { should: "return false on delete- and deleteWithReason-href", _links: { delete: { href: "HiImWrong" }, deleteWithReason: { href: "HiItsMeHref" } }, expected: false }
+      { should: "return true on no relevant links", data: undefined, expected: true },
+      { should: "return true on no relevant links", data: { _links: undefined }, expected: true },
+      { should: "return true on no relevant links", data: { _links: {} }, expected: true },
+      { should: "return true on no relevant links", data: { _links: { irrelevant: { href: "HiItsMeHref" } } }, expected: true },
+      { should: "return false on delete-href", data: { _links: { deleteWithReason: { href: "HiItsMeHref" } } }, expected: false },
+      { should: "return false on delete-href", data: { _links: { delete: { href: "HiItsMeHref" } } }, expected: false },
+      { should: "return false on delete- and deleteWithReason-href", data: { _links: { deleteWithReason: { href: "HiItsMeHref" }, delete: { href: "HiImWrong" } } }, expected: false },
+      { should: "return false on delete- and deleteWithReason-href", data: { _links: { delete: { href: "HiImWrong" }, deleteWithReason: { href: "HiItsMeHref" } } }, expected: false }
     ].forEach(testCase => {
       it(`should ${testCase.should}`, async () => {
 
         const response: HttpResponse = {
-          data: { _links: testCase._links }
+          data: testCase.data
         } as HttpResponse;
 
         mockGetDmsObject.mockResolvedValue({ data: { _links: { delete: { href: "HiItsMeDeleteHref" } } } });
