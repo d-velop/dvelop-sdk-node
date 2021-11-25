@@ -23,7 +23,7 @@
 ## About
 
 This is the official SDK to build apps for [d.velop cloud](https://www.d-velop.de/cloud/) using
-[node.js](https://nodejs.org/en/) and [typescirpt](https://www.typescriptlang.org/).
+[node.js](https://nodejs.org/en/) and [typescript](https://www.typescriptlang.org/).
 
 
 ## Getting started
