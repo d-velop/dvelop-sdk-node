@@ -10,7 +10,7 @@ import { Repository } from "../get-repository/get-repository";
 export function _getRepositoriesDefaultTransformFunction(response: HttpResponse, _: DvelopContext): Repository[] {
   return response.data.repositories.map((repositoryDto: any) => {
     return {
-      id: repositoryDto.id,
+      repositoryId: repositoryDto.id,
       name: repositoryDto.name,
       sourceId: repositoryDto._links["source"].href
     };

@@ -103,7 +103,7 @@ describe("getRepositoriesFactory", () => {
       const result: Repository[] = await getRepositories(context);
 
       data.repositories.forEach((repoDto: any, i: number) => {
-        expect(result[i]).toHaveProperty("id", repoDto.id);
+        expect(result[i]).toHaveProperty("repositoryId", repoDto.id);
         expect(result[i]).toHaveProperty("name", repoDto.name);
         expect(result[i]).toHaveProperty("sourceId", repoDto._links.source.href);
       });
