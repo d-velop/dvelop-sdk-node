@@ -36,3 +36,4 @@ declare global {
 export { DvelopContext } from "@dvelop-sdk/core";
 export { InvalidRequestSignatureError } from "@dvelop-sdk/app-router";
 export { dvelopContextMiddlewareFactory } from "./middleware/dvelop-context-middleware/dvelop-context-middleware";
+export { dvelopAuthenticationMiddleware } from "./middleware/dvelop-authentication-middleware/dvelop-authentication-middleware";
