@@ -2,7 +2,7 @@ import "../../index";
 import { NextFunction, Request, Response } from "express";
 import { DvelopContext } from "@dvelop-sdk/core";
 import { DvelopUser } from "@dvelop-sdk/identityprovider";
-import { _dvelopAuthenticationMiddlewareFactory, _getAuthSessionIdDefaultFunction } from "./dvelop-authentication-middleware";
+import { _dvelopAuthenticationMiddlewareFactory, _getAuthSessionIdFromRequestDefaultFunction } from "./dvelop-authentication-middleware";
 
 describe("dvelopContextMiddlewareFactory", () => {
 
@@ -73,7 +73,7 @@ describe("dvelopContextMiddlewareFactory", () => {
     });
   });
 
-  describe("_getAuthSessionIdDefaultFunction", () => {
+  describe("_getAuthSessionIdFromRequestDefaultFunction", () => {
 
     [
       { bearer: "Bearer 123", authSessionId: "123" },
@@ -87,7 +87,7 @@ describe("dvelopContextMiddlewareFactory", () => {
         (mockRequest.get as jest.Mock).mockReturnValueOnce(testCase.bearer);
         mockValidateAuthSessionId.mockResolvedValueOnce({});
 
-        const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdDefaultFunction, mockValidateAuthSessionId);
+        const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, mockValidateAuthSessionId);
         await dvelopAuthenticationMiddleware(mockRequest, mockResponse, mockNextFunction);
 
         expect(mockRequest.get).toHaveBeenCalledTimes(1);
@@ -103,7 +103,7 @@ describe("dvelopContextMiddlewareFactory", () => {
       (mockRequest.get as jest.Mock).mockReturnValueOnce(undefined);
       mockValidateAuthSessionId.mockResolvedValueOnce({});
 
-      const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdDefaultFunction, mockValidateAuthSessionId);
+      const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, mockValidateAuthSessionId);
       await dvelopAuthenticationMiddleware(mockRequest, mockResponse, mockNextFunction);
 
       expect(mockRequest.dvelopContext.authSessionId).toEqual(authSessionId);
@@ -114,7 +114,7 @@ describe("dvelopContextMiddlewareFactory", () => {
       (mockRequest.get as jest.Mock).mockReturnValueOnce(undefined);
       mockValidateAuthSessionId.mockResolvedValueOnce({});
 
-      const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdDefaultFunction, mockValidateAuthSessionId);
+      const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, mockValidateAuthSessionId);
       await dvelopAuthenticationMiddleware(mockRequest, mockResponse, mockNextFunction);
 
       expect(mockRequest.dvelopContext.authSessionId).toEqual(undefined);
