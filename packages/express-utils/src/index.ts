@@ -34,5 +34,6 @@ export * as internals from "./internal";
 
 export { DvelopContext, UnauthorizedError } from "@dvelop-sdk/core";
 export { InvalidRequestSignatureError } from "@dvelop-sdk/app-router";
-export { dvelopContextMiddlewareFactory } from "./middleware/dvelop-context-middleware/dvelop-context-middleware";
+export { dvelopContextMiddleware } from "./middleware/dvelop-context-middleware/dvelop-context-middleware";
+export { dvelopValidateSignatureMiddlewareFactory } from "./middleware/dvelop-validate-signature-middleware/dvelop-validate-signature-middleware";
 export { dvelopAuthenticationMiddleware } from "./middleware/dvelop-authentication-middleware/dvelop-authentication-middleware";
