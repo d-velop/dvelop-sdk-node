@@ -1,3 +1,4 @@
+import "../../index";
 import { NextFunction, Request, Response } from "express";
 import { DvelopContext } from "@dvelop-sdk/core";
 import { DvelopUser, validateAuthSessionId as _validateAuthSessionIdDefaultFunction } from "@dvelop-sdk/identityprovider";
@@ -56,7 +57,9 @@ export function _dvelopAuthenticationMiddlewareFactory(
  * **If the authSessionId is not validated data is anonimously available on the internet.**
  * @throws {@link UnauthorizedError}
  *
- * TODO: @example
+ * ```typescript
+ * //TODO
+ * ```
  *
  * @category Middleware
  */

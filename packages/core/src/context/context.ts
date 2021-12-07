@@ -13,5 +13,4 @@ export interface DvelopContext {
    * Refer to the [d.velop basics tenant header section](https://developer.d-velop.de/dev/en/basics#tenant-header) for more information.**
    */
   requestSignature?: string;
-  user?: any;
 }
