@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@dvelop-sdk/app-router": "^3.1.2",
-    "@dvelop-sdk/core": "^2.0.0",
+    "@dvelop-sdk/core": "^1.1.2",
     "@dvelop-sdk/identityprovider": "^3.0.2",
     "@types/express": "^4.17.13"
   }
