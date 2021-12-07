@@ -24,12 +24,9 @@
  * @module express-utils
  */
 import { DvelopContext } from "@dvelop-sdk/core";
-
-declare global {
-  namespace Express {
-    interface Request {
-      dvelopContext: DvelopContext
-    }
+declare module "express" {
+  interface Request {
+    dvelopContext: DvelopContext
   }
 }
 
