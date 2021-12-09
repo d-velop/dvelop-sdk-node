@@ -1,3 +1,4 @@
+import "../../index";
 import { NextFunction, Request, Response } from "express";
 import { DvelopContext } from "@dvelop-sdk/core";
 import { DvelopUser, validateAuthSessionId as _validateAuthSessionIdDefaultFunction } from "@dvelop-sdk/identityprovider";
@@ -44,8 +45,9 @@ export function _dvelopAuthenticationMiddlewareFactory(
       request.dvelopContext.authSessionId = getAuthSessionId(request);
     }
 
-    const user: DvelopUser = await validateAuthSessionId(request.dvelopContext);
-    request.dvelopContext.user = user;
+    // const user: DvelopUser = await validateAuthSessionId(request.dvelopContext);
+    await validateAuthSessionId(request.dvelopContext);
+    // request.dvelopContext.user = user;
     next();
   };
 }
@@ -56,7 +58,9 @@ export function _dvelopAuthenticationMiddlewareFactory(
  * **If the authSessionId is not validated data is anonimously available on the internet.**
  * @throws {@link UnauthorizedError}
  *
- * TODO: @example
+ * ```typescript
+ * //TODO
+ * ```
  *
  * @category Middleware
  */
