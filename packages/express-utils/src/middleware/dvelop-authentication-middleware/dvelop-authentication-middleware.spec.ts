@@ -2,23 +2,23 @@ import "../../index";
 import { NextFunction, Request, Response } from "express";
 import { DvelopContext } from "@dvelop-sdk/core";
 import { DvelopUser } from "@dvelop-sdk/identityprovider";
-import { _dvelopAuthenticationMiddlewareFactory, _getAuthSessionIdFromRequestDefaultFunction } from "./dvelop-authentication-middleware";
+import { _authenticationMiddlewareFactory, _getAuthSessionIdFromRequestDefaultFunction } from "./dvelop-authentication-middleware";
 
-describe("dvelopContextMiddlewareFactory", () => {
+describe("contextMiddlewareFactory", () => {
 
   let mockGetAuthSessionId = jest.fn();
   let mockValidateAuthSessionId = jest.fn();
-  let mockRequest: Request;
-  let mockResponse: Response;
-  let mockNextFunction: NextFunction = jest.fn();
+  let mockReq: Request;
+  let mockRes: Response;
+  let mockNext: NextFunction = jest.fn();
 
   beforeEach(() => {
     jest.resetAllMocks();
-    mockRequest = {
+    mockReq = {
       get: jest.fn(),
       cookies: {}
     } as unknown as Request;
-    mockResponse = {} as unknown as Response;
+    mockRes = {} as unknown as Response;
   });
 
   it("should use authSessionId from context", async () => {
@@ -26,22 +26,22 @@ describe("dvelopContextMiddlewareFactory", () => {
     const context: DvelopContext = {
       authSessionId: "HiItsMeAuthSessionId"
     };
-    mockRequest.dvelopContext = context;
+    mockReq.dvelopContext = context;
 
     const user: DvelopUser = {
       displayName: "HiItsMeUser"
     };
     mockValidateAuthSessionId.mockResolvedValueOnce(user);
 
-    const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(mockGetAuthSessionId, mockValidateAuthSessionId);
-    await dvelopAuthenticationMiddleware(mockRequest, mockResponse, mockNextFunction);
+    const dvelopAuthenticationMiddleware: Function = _authenticationMiddlewareFactory(mockGetAuthSessionId, mockValidateAuthSessionId);
+    await dvelopAuthenticationMiddleware(mockReq, mockRes, mockNext);
 
     expect(mockGetAuthSessionId).not.toHaveBeenCalled();
     expect(mockValidateAuthSessionId).toHaveBeenCalledTimes(1);
     expect(mockValidateAuthSessionId).toHaveBeenCalledWith(context);
-    expect(mockNextFunction).toHaveBeenCalledTimes(1);
-    expect(mockRequest.dvelopContext.authSessionId).toEqual(context.authSessionId);
-    expect(mockRequest.dvelopContext.user).toEqual(user);
+    expect(mockNext).toHaveBeenCalledTimes(1);
+    expect(mockReq.dvelopContext.authSessionId).toEqual(context.authSessionId);
+    expect(mockReq.dvelopContext.user).toEqual(user);
   });
 
   [
@@ -53,24 +53,43 @@ describe("dvelopContextMiddlewareFactory", () => {
 
       const authSessionId: string = "HiItsMeAuthSessionId";
       mockGetAuthSessionId.mockReturnValueOnce(authSessionId);
-      mockRequest.dvelopContext = testCase.context;
+      mockReq.dvelopContext = testCase.context;
 
       const user: DvelopUser = {
         displayName: "HiItsMeUser"
       };
       mockValidateAuthSessionId.mockResolvedValueOnce(user);
 
-      const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(mockGetAuthSessionId, mockValidateAuthSessionId);
-      await dvelopAuthenticationMiddleware(mockRequest, mockResponse, mockNextFunction);
+      const dvelopAuthenticationMiddleware: Function = _authenticationMiddlewareFactory(mockGetAuthSessionId, mockValidateAuthSessionId);
+      await dvelopAuthenticationMiddleware(mockReq, mockRes, mockNext);
 
       expect(mockGetAuthSessionId).toHaveBeenCalledTimes(1);
-      expect(mockGetAuthSessionId).toHaveBeenCalledWith(mockRequest);
+      expect(mockGetAuthSessionId).toHaveBeenCalledWith(mockReq);
       expect(mockValidateAuthSessionId).toHaveBeenCalledTimes(1);
       expect(mockValidateAuthSessionId).toHaveBeenCalledWith(expect.objectContaining({ authSessionId: authSessionId }));
-      expect(mockNextFunction).toHaveBeenCalledTimes(1);
-      expect(mockRequest.dvelopContext.authSessionId).toEqual(authSessionId);
-      expect(mockRequest.dvelopContext.user).toEqual(user);
+      expect(mockNext).toHaveBeenCalledTimes(1);
+      expect(mockReq.dvelopContext.authSessionId).toEqual(authSessionId);
+      expect(mockReq.dvelopContext.user).toEqual(user);
     });
+  });
+
+  it("should call next on validate-error", async () => {
+
+    const authSessionId: string = "HiItsMeAuthSessionId";
+    mockGetAuthSessionId.mockReturnValueOnce(authSessionId);
+    const context: DvelopContext = {
+      authSessionId: "HiItsMeAuthSessionId"
+    };
+    mockReq.dvelopContext = context;
+
+    const error: Error = new Error("HiItsMeError");
+    mockValidateAuthSessionId.mockRejectedValueOnce(error);
+
+    const dvelopAuthenticationMiddleware: Function = _authenticationMiddlewareFactory(mockGetAuthSessionId, mockValidateAuthSessionId);
+    await dvelopAuthenticationMiddleware(mockReq, mockRes, mockNext);
+
+    expect(mockNext).toHaveBeenCalledTimes(1);
+    expect(mockNext).toHaveBeenCalledWith(error);
   });
 
   describe("_getAuthSessionIdFromRequestDefaultFunction", () => {
@@ -84,40 +103,40 @@ describe("dvelopContextMiddlewareFactory", () => {
     ].forEach(testCase => {
       it("should get authSessionId from BearerToken", async () => {
 
-        (mockRequest.get as jest.Mock).mockReturnValueOnce(testCase.bearer);
+        (mockReq.get as jest.Mock).mockReturnValueOnce(testCase.bearer);
         mockValidateAuthSessionId.mockResolvedValueOnce({});
 
-        const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, mockValidateAuthSessionId);
-        await dvelopAuthenticationMiddleware(mockRequest, mockResponse, mockNextFunction);
+        const dvelopAuthenticationMiddleware: Function = _authenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, mockValidateAuthSessionId);
+        await dvelopAuthenticationMiddleware(mockReq, mockRes, mockNext);
 
-        expect(mockRequest.get).toHaveBeenCalledTimes(1);
-        expect(mockRequest.get).toHaveBeenCalledWith("Authorization");
-        expect(mockRequest.dvelopContext.authSessionId).toEqual(testCase.authSessionId);
+        expect(mockReq.get).toHaveBeenCalledTimes(1);
+        expect(mockReq.get).toHaveBeenCalledWith("Authorization");
+        expect(mockReq.dvelopContext.authSessionId).toEqual(testCase.authSessionId);
       });
     });
 
     it("should get authSessionId from cookies", async () => {
 
       const authSessionId: string = "HiItsMeAuthSessionId";
-      mockRequest.cookies = { "AuthSessionId": authSessionId };
-      (mockRequest.get as jest.Mock).mockReturnValueOnce(undefined);
+      mockReq.cookies = { "AuthSessionId": authSessionId };
+      (mockReq.get as jest.Mock).mockReturnValueOnce(undefined);
       mockValidateAuthSessionId.mockResolvedValueOnce({});
 
-      const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, mockValidateAuthSessionId);
-      await dvelopAuthenticationMiddleware(mockRequest, mockResponse, mockNextFunction);
+      const dvelopAuthenticationMiddleware: Function = _authenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, mockValidateAuthSessionId);
+      await dvelopAuthenticationMiddleware(mockReq, mockRes, mockNext);
 
-      expect(mockRequest.dvelopContext.authSessionId).toEqual(authSessionId);
+      expect(mockReq.dvelopContext.authSessionId).toEqual(authSessionId);
     });
 
     it("should return undefined on none", async () => {
 
-      (mockRequest.get as jest.Mock).mockReturnValueOnce(undefined);
+      (mockReq.get as jest.Mock).mockReturnValueOnce(undefined);
       mockValidateAuthSessionId.mockResolvedValueOnce({});
 
-      const dvelopAuthenticationMiddleware: Function = _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, mockValidateAuthSessionId);
-      await dvelopAuthenticationMiddleware(mockRequest, mockResponse, mockNextFunction);
+      const dvelopAuthenticationMiddleware: Function = _authenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, mockValidateAuthSessionId);
+      await dvelopAuthenticationMiddleware(mockReq, mockRes, mockNext);
 
-      expect(mockRequest.dvelopContext.authSessionId).toEqual(undefined);
+      expect(mockReq.dvelopContext.authSessionId).toEqual(undefined);
     });
   });
 });

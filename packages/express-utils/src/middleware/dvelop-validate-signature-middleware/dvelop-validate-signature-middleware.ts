@@ -15,7 +15,7 @@ import { validateDvelopContext as _validateDvelopContextDefaultFunction } from "
  * ```
  * @category Middleware
  */
-export function dvelopValidateSignatureMiddlewareFactory(
+export function validateSignatureMiddlewareFactory(
   appSecret: string
 ): (request: Request, response: Response, next: NextFunction) => void;
 
@@ -27,19 +27,19 @@ export function dvelopValidateSignatureMiddlewareFactory(
  * ```
  * @category Middleware
  */
-export function dvelopValidateSignatureMiddlewareFactory(
+export function validateSignatureMiddlewareFactory(
   appSecret: string,
   validateDvelopContext: (appSecret: string, context: DvelopContext) => void
 ): (request: Request, response: Response, next: NextFunction) => void;
-export function dvelopValidateSignatureMiddlewareFactory(
+export function validateSignatureMiddlewareFactory(
   appSecret: string,
   validateDvelopContext: (appSecret: string, context: DvelopContext) => void = _validateDvelopContextDefaultFunction
-): (request: Request, response: Response, next: NextFunction) => void {
-  return (request: Request, _: Response, next: NextFunction) => {
-    if (!request.dvelopContext) {
-      throw new DvelopSdkError("DvelopValidateSignatureMiddleware requires dvelopContext-property to be set.");
+): (req: Request, res: Response, next: NextFunction) => void {
+  return (req: Request, _: Response, next: NextFunction) => {
+    if (!req.dvelopContext) {
+      throw new DvelopSdkError("ValidateSignatureMiddleware requires dvelopContext-property to be set.");
     }
-    validateDvelopContext(appSecret, request.dvelopContext);
+    validateDvelopContext(appSecret, req.dvelopContext);
     next();
   };
 }

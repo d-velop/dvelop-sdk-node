@@ -10,12 +10,12 @@ import { Request, Response, NextFunction } from "express";
  *
  * @category Middleware
  */
-export function dvelopContextMiddleware(request: Request, _: Response, next: NextFunction): void {
-  request.dvelopContext = {
-    systemBaseUri: request.header(DVELOP_SYSTEM_BASE_URI_HEADER),
-    tenantId: request.header(DVELOP_TENANT_ID_HEADER),
-    requestId: request.header(DVELOP_REQUEST_ID_HEADER),
-    requestSignature: request.header(DVELOP_REQUEST_SIGNATURE_HEADER)
+export function contextMiddleware(req: Request, _: Response, next: NextFunction): void {
+  req.dvelopContext = {
+    systemBaseUri: req.header(DVELOP_SYSTEM_BASE_URI_HEADER),
+    tenantId: req.header(DVELOP_TENANT_ID_HEADER),
+    requestId: req.header(DVELOP_REQUEST_ID_HEADER),
+    requestSignature: req.header(DVELOP_REQUEST_SIGNATURE_HEADER)
   };
   next();
 }
