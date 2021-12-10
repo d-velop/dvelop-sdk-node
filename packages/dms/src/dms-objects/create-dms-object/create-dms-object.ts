@@ -131,7 +131,7 @@ export function createDmsObjectFactory<T>(
  * }, {
  *   repositoryId: "qnydFmqHuVo",
  *   sourceId: "/dms/r/qnydFmqHuVo/source",
- *   dmsObjectId: "GDYQ3PJKrT8",
+ *   categoryId: "GDYQ3PJKrT8",
  *   properties: [
  *     {
  *       key: "AaGK-fj-BAM",
