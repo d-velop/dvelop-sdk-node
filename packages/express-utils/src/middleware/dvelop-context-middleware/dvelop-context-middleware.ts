@@ -2,10 +2,12 @@ import { DVELOP_REQUEST_ID_HEADER, DVELOP_REQUEST_SIGNATURE_HEADER, DVELOP_SYSTE
 import { Request, Response, NextFunction } from "express";
 
 /**
- * Sets a {@link DvelopContext} to the express-request-object. Accessable via the ```dvelopContext```-property.
+ * Sets a {@link DvelopContext} to the express-request-object. Accessable via the ```req.dvelopContext```-property.
  *
  * ```typescript
- * //TODO
+ * import { contextMiddleware } from "@dvelop-sdk/express-utils";
+ *
+ * app.use(contextMiddleware);
  * ```
  *
  * @category Middleware

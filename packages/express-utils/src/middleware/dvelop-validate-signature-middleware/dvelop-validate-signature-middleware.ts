@@ -11,7 +11,9 @@ import { validateDvelopContext as _validateDvelopContextDefaultFunction } from "
  * Refer to the [d.velop basics tenant header section](https://developer.d-velop.de/dev/en/basics#tenant-header) for more information.**
  *
  * ```typescript
- * //TODO
+ * import { validateSignatureMiddlewareFactory } from "@dvelop-sdk/express-utils";
+ *
+ * app.use(validateSignatureMiddlewareFactory(process.env.APP_SECRET));
  * ```
  * @category Middleware
  */
@@ -22,9 +24,7 @@ export function validateSignatureMiddlewareFactory(
 /**
  * Validate the requestSignature against the requestData your appSecret. You can supply a custom validate-function.
  *
- * ```typescript
- * //TODO
- * ```
+ * @internal
  * @category Middleware
  */
 export function validateSignatureMiddlewareFactory(
