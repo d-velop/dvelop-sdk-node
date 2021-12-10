@@ -9,46 +9,46 @@ import { DvelopUser, validateAuthSessionId as _validateAuthSessionIdDefaultFunct
  * @internal
  * @category Middleware
  */
-export function _getAuthSessionIdFromRequestDefaultFunction(request: Request): string | undefined {
+export function _getAuthSessionIdFromRequestDefaultFunction(req: Request): string | undefined {
 
-  const authorizationHeader: string | undefined = request.get("Authorization");
+  const authorizationHeader: string | undefined = req.get("Authorization");
   if (authorizationHeader) {
     const matches: RegExpExecArray | null = new RegExp(/^bearer (.*)$/, "i").exec(authorizationHeader);
     return matches ? matches[1] : undefined;
   }
 
-  if (request.cookies && request.cookies["AuthSessionId"]) {
-    return request.cookies["AuthSessionId"];
+  if (req.cookies && req.cookies["AuthSessionId"]) {
+    return req.cookies["AuthSessionId"];
   }
 
   return undefined;
 }
 
 /**
- * Factory for the {@link dvelopAuthenticationMiddleware}-function.
+ * Factory for the {@link authenticationMiddleware}-function.
  *
  * @internal
  * @category Middleware
  */
-export function _dvelopAuthenticationMiddlewareFactory(
-  getAuthSessionId: (request: Request) => string | undefined,
+export function _authenticationMiddlewareFactory(
+  getAuthSessionId: (req: Request) => string | undefined,
   validateAuthSessionId: (context: DvelopContext) => Promise<DvelopUser>
-): (request: Request, _: Response, next: NextFunction) => Promise<void> {
+): (req: Request, _: Response, next: NextFunction) => Promise<void> {
 
-  return async (request: Request, _: Response, next: NextFunction) => {
+  return async (req: Request, _: Response, next: NextFunction) => {
 
-    if (!request.dvelopContext) {
-      request.dvelopContext = {};
+    if (!req.dvelopContext) {
+      req.dvelopContext = {};
     }
 
-    if (!request.dvelopContext.authSessionId) {
-      request.dvelopContext.authSessionId = getAuthSessionId(request);
+    if (!req.dvelopContext.authSessionId) {
+      req.dvelopContext.authSessionId = getAuthSessionId(req);
     }
 
     let user: DvelopUser;
     try {
-      user = await validateAuthSessionId(request.dvelopContext);
-      request.dvelopContext.user = user;
+      user = await validateAuthSessionId(req.dvelopContext);
+      req.dvelopContext.user = user;
       next();
     } catch (err: any) {
       next(err);
@@ -69,6 +69,6 @@ export function _dvelopAuthenticationMiddlewareFactory(
  * @category Middleware
  */
 /* istanbul ignore next */
-export async function dvelopAuthenticationMiddleware(request: Request, response: Response, next: NextFunction): Promise<void> {
-  return await _dvelopAuthenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, _validateAuthSessionIdDefaultFunction)(request, response, next);
+export async function authenticationMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
+  return await _authenticationMiddlewareFactory(_getAuthSessionIdFromRequestDefaultFunction, _validateAuthSessionIdDefaultFunction)(req, res, next);
 }

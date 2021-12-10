@@ -1,1 +1,1 @@
-export { _dvelopAuthenticationMiddlewareFactory, _getAuthSessionIdFromRequestDefaultFunction as _getAuthSessionIdDefaultFunction } from "./middleware/dvelop-authentication-middleware/dvelop-authentication-middleware";
+export { _authenticationMiddlewareFactory, _getAuthSessionIdFromRequestDefaultFunction } from "./middleware/dvelop-authentication-middleware/dvelop-authentication-middleware";
