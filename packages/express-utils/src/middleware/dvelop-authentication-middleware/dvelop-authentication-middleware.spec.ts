@@ -73,6 +73,25 @@ describe("dvelopContextMiddlewareFactory", () => {
     });
   });
 
+  it("should call next on validate-error", async () => {
+
+    const authSessionId: string = "HiItsMeAuthSessionId";
+    mockGetAuthSessionId.mockReturnValueOnce(authSessionId);
+    const context: DvelopContext = {
+      authSessionId: "HiItsMeAuthSessionId"
+    };
+    mockReq.dvelopContext = context;
+
+    const error: Error = new Error("HiItsMeError");
+    mockValidateAuthSessionId.mockRejectedValueOnce(error);
+
+    const dvelopAuthenticationMiddleware: Function = _authenticationMiddlewareFactory(mockGetAuthSessionId, mockValidateAuthSessionId);
+    await dvelopAuthenticationMiddleware(mockReq, mockRes, mockNext);
+
+    expect(mockNext).toHaveBeenCalledTimes(1);
+    expect(mockNext).toHaveBeenCalledWith(error);
+  });
+
   describe("_getAuthSessionIdFromRequestDefaultFunction", () => {
 
     [

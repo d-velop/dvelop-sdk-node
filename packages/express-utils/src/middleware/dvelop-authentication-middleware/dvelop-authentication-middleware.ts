@@ -45,9 +45,14 @@ export function _dvelopAuthenticationMiddlewareFactory(
       request.dvelopContext.authSessionId = getAuthSessionId(request);
     }
 
-    const user: DvelopUser = await validateAuthSessionId(request.dvelopContext);
-    request.dvelopContext.user = user;
-    next();
+    let user: DvelopUser;
+    try {
+      user = await validateAuthSessionId(request.dvelopContext);
+      request.dvelopContext.user = user;
+      next();
+    } catch (err: any) {
+      next(err);
+    }
   };
 }
 
