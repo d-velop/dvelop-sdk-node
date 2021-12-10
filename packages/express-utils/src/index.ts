@@ -32,6 +32,10 @@ declare module "express" {
 
 export * as internals from "./internal";
 
+// Functions
+export { redirectToLoginPage } from "./functions/redirect-to-login-page/redirect-to-login-page";
+
+// Middleware
 export { DvelopContext, UnauthorizedError } from "@dvelop-sdk/core";
 export { InvalidRequestSignatureError } from "@dvelop-sdk/app-router";
 export { contextMiddleware } from "./middleware/dvelop-context-middleware/dvelop-context-middleware";
