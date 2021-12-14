@@ -78,7 +78,7 @@ npm i @dvelop-sdk/dms
 ```json
 //package.json
 {
-  "type":"module",
+  "type":"module"
 }
 ```
 ```javascript
