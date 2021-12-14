@@ -7,7 +7,8 @@
     "packages/app-router",
     "packages/identityprovider",
     "packages/task",
-    "packages/dms"
+    "packages/dms",
+    "packages/express-utils"
   ],
   "license": "Apache-2.0",
   "scripts": {
