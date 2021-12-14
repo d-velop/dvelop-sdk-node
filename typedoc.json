@@ -6,8 +6,7 @@
     "packages/app-router/src/index.ts",
     "packages/identityprovider/src/index.ts",
     "packages/task/src/index.ts",
-    "packages/dms/src/index.ts",
-    "packages/express-utils/src/index.ts"
+    "packages/dms/src/index.ts"
   ],
   "categoryOrder": [
     "*",

@@ -18,9 +18,6 @@
     },
     {
       "path": "./packages/dms"
-    },
-    {
-      "path": "./packages/express-utils"
     }
   ]
 }
