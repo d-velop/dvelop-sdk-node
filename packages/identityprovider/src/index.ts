@@ -23,13 +23,6 @@
 </div>
  * @module identityprovider
  */
-import { DvelopUser } from "./authentication/validate-auth-session-id/validate-auth-session-id";
-
-declare module "@dvelop-sdk/core" {
-  interface DvelopContext {
-    user?: DvelopUser
-  }
-}
 
 // Utils
 export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
