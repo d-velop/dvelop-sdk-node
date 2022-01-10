@@ -1,10 +1,11 @@
 <div align="center">
+
+  <h1>dvelop-sdk-node</h1>
+
   <img alt="GitHub" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
-</div>
 
-</br>
+  </br>
 
-<div align="center">
   <a href="https://www.npmjs.com/package/@dvelop-sdk/app-router">
     <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/app-router?label=app-router&style=for-the-badge">
   </a>
@@ -20,13 +21,14 @@
   <a href="https://www.npmjs.com/package/@dvelop-sdk/express-utils">
     <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@dvelop-sdk/express-utils?label=express-utils&style=for-the-badge">
   </a>
-</div>
+  <a href="https://github.com/d-velop/dvelop-sdk-node/milestone/3">
+    <img alt="GitHub milestone" src="https://img.shields.io/github/milestones/progress-percent/d-velop/dvelop-sdk-node/3?style=for-the-badge">
+  </a>
 
-</br>
+  </br>
 
-<div align="center">
-  <h1>dvelop-sdk-node</h1>
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules.html"><strong>Explore the docs »</strong></a>
+
 </div>
 
 </br>
