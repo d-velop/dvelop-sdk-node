@@ -26,3 +26,5 @@
 
 //Utils
 export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
+export { BusinessObjectsError } from "./utils/http";
+export * as internals from "./internal";
