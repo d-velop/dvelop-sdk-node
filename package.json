@@ -8,6 +8,7 @@
     "packages/identityprovider",
     "packages/task",
     "packages/dms",
+    "packages/business-objects",
     "packages/express-utils"
   ],
   "license": "Apache-2.0",
