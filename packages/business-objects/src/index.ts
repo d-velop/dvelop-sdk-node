@@ -14,7 +14,7 @@
     <img alt="license" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
   </a
   </br>
-  <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/business-objectsap/en/dms-api-126976273.html">DMS-App</a> in the d.velop cloud.</p>
+  <p>This package contains functionality for the <a href="https://dv-businessobjects-assets.s3.eu-central-1.amazonaws.com/documentation/latest/business_objects_api.html">BusinessObjects-App</a> in the d.velop cloud.</p>
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules/business-objects.html"><strong>Explore the docs »</strong></a>
   </br>
   <a href="https://www.npmjs.com/package/@dvelop-sdk/business-objects"><strong>Install via npm »</strong></a>
