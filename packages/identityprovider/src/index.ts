@@ -14,7 +14,7 @@
     <img alt="license" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
   </a
   </br>
-  <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html">Identityprovider-App</a> in the d.velop cloud.</p>
+  <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/idpapi/en">Identityprovider-App</a> in the d.velop cloud.</p>
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules/identityprovider.html"><strong>Explore the docs »</strong></a>
   </br>
   <a href="https://www.npmjs.com/package/@dvelop-sdk/identityprovider"><strong>Install via npm »</strong></a>
