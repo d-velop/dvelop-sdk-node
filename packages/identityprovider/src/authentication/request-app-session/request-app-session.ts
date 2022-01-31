@@ -13,16 +13,6 @@ export interface RequestAppSessionParams {
 }
 
 /**
- * AppSession which will be postet to your app after using the {@link requestAppSession}-function.
- * @category Authentication
- */
-export interface AppSession {
-  appSessionId: string;
-  expire: string;
-  sign: string;
-}
-
-/**
  * Factory for the {@link requestAppSession}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @typeparam T Return type of the {@link requestAppSession}-function. A corresponding transformFuntion has to be supplied.
  * @category Authentication
