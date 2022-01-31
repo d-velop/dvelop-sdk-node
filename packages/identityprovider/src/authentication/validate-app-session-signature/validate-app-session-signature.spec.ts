@@ -8,7 +8,7 @@ describe("validateAppSessionSignature", () => {
     { appName: "just", requestId: "some", authSessionId: "arbitrary", expire: "strings", sign: "74e877434f5963826d433c3298401e59b05c1283d277d58f28358b7674615177" }
   ].forEach(testCase => {
     it(`should pass for appName: '${testCase.appName}'`, () => {
-      expect(() => validateAppSessionSignature(testCase.appName, testCase.requestId, { appSessionId: testCase.authSessionId, expire: testCase.expire, sign: testCase.sign })).not.toThrow();
+      expect(() => validateAppSessionSignature(testCase.appName, testCase.requestId, { authSessionId: testCase.authSessionId, expire: testCase.expire, sign: testCase.sign })).not.toThrow();
     });
   });
 
@@ -24,7 +24,7 @@ describe("validateAppSessionSignature", () => {
       let error: InvalidAppSessionSignatureError;
 
       try {
-        validateAppSessionSignature(testCase.appName, testCase.requestId, { appSessionId: testCase.authSessionId, expire: testCase.expire, sign: testCase.sign });
+        validateAppSessionSignature(testCase.appName, testCase.requestId, { authSessionId: testCase.authSessionId, expire: testCase.expire, sign: testCase.sign });
       } catch (e) {
         error = e;
       }
