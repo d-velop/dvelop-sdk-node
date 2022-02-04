@@ -20,7 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@dvelop-sdk/app-router": "^3.1.2",
+    "@dvelop-sdk/app-router": "^3.2.0",
     "@dvelop-sdk/core": "^2.0.0",
     "@dvelop-sdk/identityprovider": "^4.0.1",
     "@types/express": "^4.17.13"
