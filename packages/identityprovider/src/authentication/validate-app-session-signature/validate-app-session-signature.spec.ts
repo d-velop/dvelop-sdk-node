@@ -17,7 +17,9 @@ describe("validateAppSessionSignature", () => {
     { appName: "myapp", requestId: "1234567890", authSessionId: "abcd1234=+_", expire: "2021-07-27T02:46:16Z", sign: "9d80381381aa85361612642063a4afb9bc758852118741d14b0fd2762a9cbe35" },
     { appName: "myapp", requestId: "123456789", authSessionId: "abcd1234=+", expire: "2021-07-27T02:46:16Z", sign: "9d80381381aa85361612642063a4afb9bc758852118741d14b0fd2762a9cbe35" },
     { appName: "myapp", requestId: "123456789", authSessionId: "abcd1234=+-_", expire: "2021-07-27T02:46:00Z", sign: "9d80381381aa85361612642063a4afb9bc758852118741d14b0fd2762a9cbe35" },
-    { appName: "myapp", requestId: "123456789", authSessionId: "abcd1234=+-_", expire: "2021-07-27T02:46:16Z", sign: "8d80381381aa85361612642063a4afb9bc758852118741d14b0fd2762a9cbe35" }
+    { appName: "myapp", requestId: "123456789", authSessionId: "abcd1234=+-_", expire: "2021-07-27T02:46:16Z", sign: "8d80381381aa85361612642063a4afb9bc758852118741d14b0fd2762a9cbe35" },
+    { appName: "myapp", requestId: "123456789", authSessionId: "abcd1234=+-_", expire: "2021-07-27T02:46:16Z", sign: "0381381aa85361612642063a4afb9bc758852118741d14b0fd2762a9cbe35" },
+    { appName: "myapp", requestId: "123456789", authSessionId: "abcd1234=+-_", expire: "2021-07-27T02:46:16Z", sign: "8d80381381aa85361612642063a4afb9bc758852118741d14b0fd2762a9cbe35jd" }
   ].forEach(testCase => {
     it(`should fail for appName: '${testCase.appName}'`, () => {
 

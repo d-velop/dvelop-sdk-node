@@ -1,4 +1,4 @@
-import { createHash } from "crypto";
+import { createHash, timingSafeEqual } from "crypto";
 
 /**
 * Indicates an invalid sign-value
@@ -37,8 +37,16 @@ export interface AppSession {
  * @category Authentication
  */
 export function validateAppSessionSignature(appName: string, requestId: string, appSession: AppSession): void {
-  const expectedSign: string = createHash("sha256").update(appName + appSession.authSessionId + appSession.expire + requestId, "utf8").digest("hex");
-  if (expectedSign !== appSession.sign) {
+
+  let validSignature: boolean = false;
+
+  try {
+    const expectedSign: string = createHash("sha256").update(appName + appSession.authSessionId + appSession.expire + requestId, "utf8").digest("hex");
+    validSignature = timingSafeEqual(Buffer.from(appSession.sign), Buffer.from(expectedSign));
+  } catch (e) {
+    throw new InvalidAppSessionSignatureError();
+  }
+  if (!validSignature) {
     throw new InvalidAppSessionSignatureError();
   }
 }
