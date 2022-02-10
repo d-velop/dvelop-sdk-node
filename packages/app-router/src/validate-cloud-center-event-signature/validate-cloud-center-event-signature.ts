@@ -14,6 +14,19 @@ export class InvalidCloudCenterEventSignatureError extends DvelopSdkError {
 }
 
 /**
+ * RequestSignature is invalid for given appSecret.
+ * @category Error
+ */
+export interface ValidateCloudCenterEventSignatureParams {
+  httpMethod: string,
+  resourcePath: string,
+  queryString: string,
+  headers: { [key: string]: string | undefined },
+  payload: any,
+  cloudCenterEventSignature: string
+}
+
+/**
  * Validate a cloud-center-event-signature against your appSecret.
  *
  * **The cloud-center-event-signature should be validated for every cloud-center-event.
@@ -40,27 +53,19 @@ export class InvalidCloudCenterEventSignatureError extends DvelopSdkError {
  * );
  * ```
  */
-export function validateCloudCenterEventSignature(
-  appSecret: string,
-  httpMethod: string,
-  resourcePath: string,
-  queryString: string,
-  headers: { [key: string]: string | undefined },
-  payload: any,
-  cloudCenterEventSignature: string
-): void {
+export function validateCloudCenterEventSignature(appSecret: string, params: ValidateCloudCenterEventSignatureParams): void {
 
   let validSignature: boolean = false;
 
   try {
-    const normalizedHeaderString: string | undefined = headers["x-dv-signature-headers"]?.split(",").reduce((headerString: string, header: string) => {
-      return headerString + header.toLowerCase() + ":" + headers[header]?.trim() + "\n";
+    const normalizedHeaderString: string | undefined = params.headers["x-dv-signature-headers"]?.split(",").reduce((headerString: string, header: string) => {
+      return headerString + header.toLowerCase() + ":" + params.headers[header]?.trim() + "\n";
     }, "");
-    const sha256Payload: string = createHash("sha256").update(`${JSON.stringify(payload)}\n`).digest("hex");
-    const normalizedRequestString: string = `${httpMethod}\n${resourcePath}\n${queryString}\n${normalizedHeaderString}\n${sha256Payload}`;
+    const sha256Payload: string = createHash("sha256").update(`${JSON.stringify(params.payload)}\n`).digest("hex");
+    const normalizedRequestString: string = `${params.httpMethod.toUpperCase()}\n${params.resourcePath}\n${params.queryString}\n${normalizedHeaderString}\n${sha256Payload}`;
     const sha256RequestString: string = createHash("sha256").update(normalizedRequestString).digest("hex");
     const calculatedSignature: string = createHmac("sha256", Buffer.from(appSecret, "base64")).update(sha256RequestString).digest("hex");
-    validSignature = timingSafeEqual(Buffer.from(cloudCenterEventSignature), Buffer.from(calculatedSignature));
+    validSignature = timingSafeEqual(Buffer.from(params.cloudCenterEventSignature), Buffer.from(calculatedSignature));
   } catch (e) {
     throw new InvalidCloudCenterEventSignatureError();
   }
