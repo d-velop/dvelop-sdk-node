@@ -18,8 +18,7 @@ describe("alidateCloudCenterEventSignatureMiddlewareFactory", () => {
 
     mockRequest = {
       method: "get",
-      originalUrl: "https://tenant.d-velop.cloud/myapp/cloud-center-events",
-      path: "/myapp/cloud-center-events",
+      originalUrl: "/myapp/cloud-center-events",
       headers: {
         "authorization": "Bearer HiItsMeCloudCenterEventSignature",
         "test": "HiItsMeTest",
@@ -34,7 +33,7 @@ describe("alidateCloudCenterEventSignatureMiddlewareFactory", () => {
     expectedParams = {
       httpMethod: "get",
       resourcePath: "/myapp/cloud-center-events",
-      queryString: "",
+      queryString: undefined,
       headers: {
         "authorization": "Bearer HiItsMeCloudCenterEventSignature",
         "test": "HiItsMeTest",
@@ -59,19 +58,17 @@ describe("alidateCloudCenterEventSignatureMiddlewareFactory", () => {
       expectedParams.httpMethod = "HiItsMeMethod";
     },
     () => {
-      mockRequest.path = "HiItsMePath";
-      expectedParams.resourcePath = "HiItsMePath";
-    },
-    () => {
       mockRequest.originalUrl = "HiItsMeUrl";
-      expectedParams.queryString = "";
+      expectedParams.resourcePath = "HiItsMeUrl";
     },
     () => {
       mockRequest.originalUrl = "Hi/Its/MeUrl?HiItsMeQuery";
+      expectedParams.resourcePath = "Hi/Its/MeUrl";
       expectedParams.queryString = "HiItsMeQuery";
     },
     () => {
       mockRequest.originalUrl = "?HiItsMeQuery";
+      expectedParams.resourcePath = "";
       expectedParams.queryString = "HiItsMeQuery";
     },
     () => {
