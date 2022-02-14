@@ -36,13 +36,10 @@ export function validateCloudCenterEventSignatureMiddlewareFactory(
 ): (req: Request, res: Response, next: NextFunction) => void {
   return (req: Request, _: Response, next: NextFunction) => {
 
-    const query_index = req.originalUrl.indexOf("?");
-    const queryString: string = (query_index >= 0) ? req.originalUrl.slice(query_index + 1) : "";
-
+    const urlSplit: string[] = req.originalUrl.split("?");
     const cloudCenterEventSignature: string = req.headers["authorization"]?.split(" ")[1] || "";
 
     const headers: { [key: string]: string | undefined } = {};
-
     Object.keys(req.headers).forEach(h => {
       if (Array.isArray(req.headers[h])) {
         headers[h] = (req.headers[h] as string[]).join(", ");
@@ -53,8 +50,8 @@ export function validateCloudCenterEventSignatureMiddlewareFactory(
 
     validateCloudCenterEventSignature(appSecret, {
       httpMethod: req.method,
-      resourcePath: req.path,
-      queryString: queryString,
+      resourcePath: urlSplit[0],
+      queryString: urlSplit[1],
       headers: headers,
       payload: req.body,
       cloudCenterEventSignature: cloudCenterEventSignature
