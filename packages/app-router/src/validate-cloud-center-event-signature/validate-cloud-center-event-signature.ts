@@ -20,7 +20,7 @@ export class InvalidCloudCenterEventSignatureError extends DvelopSdkError {
 export interface ValidateCloudCenterEventSignatureParams {
   httpMethod: string,
   resourcePath: string,
-  queryString: string,
+  queryString: string | undefined,
   headers: { [key: string]: string | undefined },
   payload: any,
   cloudCenterEventSignature: string
@@ -62,7 +62,7 @@ export function validateCloudCenterEventSignature(appSecret: string, params: Val
       return headerString + header.toLowerCase() + ":" + params.headers[header]?.trim() + "\n";
     }, "");
     const sha256Payload: string = createHash("sha256").update(`${JSON.stringify(params.payload)}\n`).digest("hex");
-    const normalizedRequestString: string = `${params.httpMethod.toUpperCase()}\n${params.resourcePath}\n${params.queryString}\n${normalizedHeaderString}\n${sha256Payload}`;
+    const normalizedRequestString: string = `${params.httpMethod.toUpperCase()}\n${params.resourcePath}\n${params.queryString || ""}\n${normalizedHeaderString}\n${sha256Payload}`;
     const sha256RequestString: string = createHash("sha256").update(normalizedRequestString).digest("hex");
     const calculatedSignature: string = createHmac("sha256", Buffer.from(appSecret, "base64")).update(sha256RequestString).digest("hex");
     validSignature = timingSafeEqual(Buffer.from(params.cloudCenterEventSignature), Buffer.from(calculatedSignature));
