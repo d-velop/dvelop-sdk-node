@@ -26,3 +26,4 @@
 
 export { DvelopContext } from "@dvelop-sdk/core";
 export { validateRequestSignature, validateDvelopContext, InvalidRequestSignatureError } from "./validate-request-signature/validate-request-signature";
+export { validateCloudCenterEventSignature, InvalidCloudCenterEventSignatureError } from "./validate-cloud-center-event-signature/validate-cloud-center-event-signature";
