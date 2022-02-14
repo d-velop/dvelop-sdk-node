@@ -8,7 +8,7 @@ describe("validateCloudCenterEventSignature", () => {
       params: {
         httpMethod: "POST",
         resourcePath: "/myapp/dvelop-cloud-lifecycle-event",
-        queryString: "",
+        queryString: undefined,
         headers: {
           "x-dv-signature-algorithm": "DV1-HMAC-SHA256",
           "x-dv-signature-headers": "x-dv-signature-algorithm,x-dv-signature-headers,x-dv-signature-timestamp",
@@ -27,7 +27,7 @@ describe("validateCloudCenterEventSignature", () => {
       params: {
         httpMethod: "post",
         resourcePath: "/myapp/dvelop-cloud-lifecycle-event",
-        queryString: "",
+        queryString: undefined,
         headers: {
           "x-dv-signature-algorithm": "DV1-HMAC-SHA256",
           "x-dv-signature-headers": "x-dv-signature-algorithm,x-dv-signature-headers,x-dv-signature-timestamp",
@@ -39,9 +39,8 @@ describe("validateCloudCenterEventSignature", () => {
           baseUri: "https://someone.d-velop.cloud"
         },
         cloudCenterEventSignature: "02783453441665bf27aa465cbbac9b98507ae94c54b6be2b1882fe9a05ec104c"
-      }
+      },
     }
-
   ].forEach(testCase => {
 
     it("should calculate validate signature", () => {
