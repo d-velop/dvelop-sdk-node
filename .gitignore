@@ -4,3 +4,4 @@ docs
 *.tsbuildinfo
 tmp-*
 chicken.*
+.vscode
