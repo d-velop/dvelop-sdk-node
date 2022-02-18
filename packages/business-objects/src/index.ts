@@ -28,3 +28,5 @@
 export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
 export { BusinessObjectsError } from "./utils/http";
 export * as internals from "./internal";
+
+export { getBoEntities, GetBoEntitiesParams } from "./entities/get-entities/get-entities";
