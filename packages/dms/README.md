@@ -15,7 +15,7 @@
 
   </br>
 
-  <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/dmsap/en/dms-api-126976273.html">DMS-App</a> in the d.velop cloud.</p>
+  <p>This package contains functionality for the <a href="https://developer.d-velop.de/documentation/dmsap/en">DMS-App</a> in the d.velop cloud.</p>
 
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules/dms.html"><strong>Explore the docs »</strong></a>
 
