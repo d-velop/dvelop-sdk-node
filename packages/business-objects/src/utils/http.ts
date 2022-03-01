@@ -30,8 +30,18 @@ export interface BusinessObjectsErrorDto {
 }
 
 function getErrorString(error: BusinessObjectsErrorDto): string | null {
+
+
   if (error?.error) {
-    return `${error.error.message} (${error.error.code}). See 'See 'originalError'-property for details.'`;
+
+    let detailString: string = "";
+
+    if (error.error.details && error.error.details.length > 0) {
+      detailString = error.error.details
+        .reduce((detailString, detail) => detailString += `\t * ${detail.message} (${detail.code})\n`, "\n");
+    }
+
+    return `${error.error.message} (${error.error.code}).${detailString}\nSee 'See 'originalError'-property for details.'`;
   } else {
     return null;
   }

@@ -42,7 +42,14 @@ describe("defaultHttpRequestFunctionFactory", () => {
               data: {
                 error: {
                   code: "HiItsMeErrorCode",
-                  message: "HiItsMeErrorMessage"
+                  message: "HiItsMeErrorMessage",
+                  details: [{
+                    code: "HiItsMeDetail1Code",
+                    message: "HiItsMeDetail1Message"
+                  }, {
+                    code: "HiItsMeDetail2Code",
+                    message: "HiItsMeDetail2Message"
+                  }]
                 }
               }
             } as DvelopHttpResponse,
@@ -62,6 +69,10 @@ describe("defaultHttpRequestFunctionFactory", () => {
           expect(expectedError instanceof BadInputError).toBeTruthy();
           expect(expectedError.message).toContain((error.response.data as any).error.code);
           expect(expectedError.message).toContain((error.response.data as any).error.message);
+          expect(expectedError.message).toContain((error.response.data as any).error.details[0].code);
+          expect(expectedError.message).toContain((error.response.data as any).error.details[0].message);
+          expect(expectedError.message).toContain((error.response.data as any).error.details[1].code);
+          expect(expectedError.message).toContain((error.response.data as any).error.details[1].message);
           expect(expectedError.originalError).toBe(error);
         });
 
@@ -101,7 +112,8 @@ describe("defaultHttpRequestFunctionFactory", () => {
             data: {
               error: {
                 code: "HiItsMeErrorCode",
-                message: "HiItsMeErrorMessage"
+                message: "HiItsMeErrorMessage",
+                details: []
               }
             }
           } as DvelopHttpResponse,
