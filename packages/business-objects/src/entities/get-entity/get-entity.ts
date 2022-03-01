@@ -5,10 +5,13 @@ import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../uti
  * Parameters for the {@link getBoEntity}-function.
  * @category Entity
  */
-export interface GetBoEntityParams{
-    modelName:string;
-    pluralEntityName:string;
-    entityKeyValue:string|number;
+export interface GetBoEntityParams {
+  /** Name of the model */
+  modelName: string;
+  /** EntityName in plural (**Singular name won't work**) */
+  pluralEntityName: string;
+  /** Value for the key-property of the entity */
+  entityKeyValue: string | number;
 }
 
 /**
@@ -16,77 +19,80 @@ export interface GetBoEntityParams{
  * @internal
  * @category Entity
  */
-export function _getBoEntityDefaultTransformFunction <T extends Object>(response: HttpResponse, _: DvelopContext, __: GetBoEntityParams): T {
+export function _getBoEntityDefaultTransformFunction<T extends Object>(response: HttpResponse, _: DvelopContext, __: GetBoEntityParams): T {
   // TODO delete @odata.context!
   return response.data;
 }
 
 /**
  * Factory for {@link getBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the getBoEntity-function. A corresponding transformFuntion has to be supplied.
+ * @template E Return type of the {@link getBoEntity}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category Entity
  */
-export function _getBoEntityFactory<T>(
+export function _getBoEntityFactory<E>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetBoEntityParams) => T
-): (context: DvelopContext, params: GetBoEntityParams) => Promise<T> {
-  return async (context: DvelopContext, params: GetBoEntityParams) => { 
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetBoEntityParams) => E
+): (context: DvelopContext, params: GetBoEntityParams) => Promise<E> {
+  return async (context: DvelopContext, params: GetBoEntityParams) => {
 
-    let urlEntityKeyValue; 
-    if(typeof params.entityKeyValue === "number") {
+    let urlEntityKeyValue;
+    if (typeof params.entityKeyValue === "number") {
       urlEntityKeyValue = params.entityKeyValue;
     } else {
       urlEntityKeyValue = `'${params.entityKeyValue}'`;
-    }   
+    }
 
     const response = await httpRequestFunction(context, {
       method: "GET",
       url: `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}(${urlEntityKeyValue})`
     });
-    
+
     return transformFunction(response, context, params);
   };
 }
 
 /**
  * Returns one specified entity from a model.
+ * @template E Type for Entity. Defaults to `any`.
  *
+ * @example
  * ```typescript
  * import { getBoEntity } from "@dvelop-sdk/business-objects";
  *
- * const result = await getBoEntity({ 
+ * const result = await getBoEntity({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
- * },{ 
- *     modelName: "HOSPITALBASEDATA", 
-       pluralEntityName: "employees", 
-       entityKeyValue: "1"
+ * },{
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees",
+ *   entityKeyValue: "1"
  * });
- * console.log(result); // {employeeid: '1', firstName: 'John', lastName: 'Dorian', jobTitel: 'senior physician'}
+ * console.log(result); // { employeeid: '1', firstName: 'John', lastName: 'Dorian', jobTitel: 'senior physician' }
  * ```
  * ---
  * You can also use generics:
+ * @example
  * ```typescript
  * import { getBoEntity } from "@dvelop-sdk/business-objects";
- * 
+ *
  * interface MyEntity{
  *   lastName: string;
  * }
- * 
- * const result: MyEntity[] = await getBoEntity<MyEntity>({ 
+ *
+ * const result: MyEntity[] = await getBoEntity<MyEntity>({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
- * },{ 
- *   modelName: "HOSPITALBASEDATA", 
- *   pluralEntityName: "employees", 
+ * },{
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees",
  *   entityKeyValue: "1"
  * });
- * 
+ *
  * console.log(entity.lastName); // Dorian
  * ```
  */
 /* istanbul ignore next */
-export async function getBoEntity<T> (context :DvelopContext, params: GetBoEntityParams): Promise<T> {
-  return await _getBoEntityFactory<T>(_defaultHttpRequestFunction, _getBoEntityDefaultTransformFunction) (context, params);
+export async function getBoEntity<E = any>(context: DvelopContext, params: GetBoEntityParams): Promise<E> {
+  return await _getBoEntityFactory<E>(_defaultHttpRequestFunction, _getBoEntityDefaultTransformFunction)(context, params);
 }
