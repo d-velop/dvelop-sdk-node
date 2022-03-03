@@ -11,8 +11,10 @@ export interface UpdateBoEntityParams<E = any> {
   modelName: string;
   /** EntityName in plural (**Singular name won't work**) */
   pluralEntityName: string;
-  /** Value for the key-property of the entity */
-  entityKeyValue: string | number;
+  /** Type of the key property */
+  keyPropertyType: "string" | "number" | "guid";
+  /** Key-property of the entity to be updated */
+  keyPropertyValue: string | number;
   /** [Partial](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype) of `E`. Given properties will be updated. */
   entityChange: Partial<E>;
 }
@@ -30,10 +32,10 @@ export function _updateBoEntityFactory<E, R>(
   return async (context: DvelopContext, params: UpdateBoEntityParams<E>) => {
 
     let urlEntityKeyValue;
-    if (typeof params.entityKeyValue === "number") {
-      urlEntityKeyValue = params.entityKeyValue;
+    if (params.keyPropertyType === "number" || params.keyPropertyType === "guid") {
+      urlEntityKeyValue = params.keyPropertyValue;
     } else {
-      urlEntityKeyValue = `'${params.entityKeyValue}'`;
+      urlEntityKeyValue = `'${params.keyPropertyValue}'`;
     }
 
     const response = await httpRequestFunction(context, {
@@ -60,7 +62,8 @@ export function _updateBoEntityFactory<E, R>(
  * },{
  *     modelName: "HOSPITALBASEDATA",
  *     pluralEntityName: "employees",
- *     entityKeyValue: 1,
+ *     keyPropertyType: "number",
+ *     keyPropertyValue: 1;
  *     entityChange: {
  *       "firstName": "J.D."
  *     }
@@ -83,7 +86,8 @@ export function _updateBoEntityFactory<E, R>(
  * },{
  *     modelName: "HOSPITALBASEDATA",
  *     pluralEntityName: "employees",
- *     entityKeyValue: 1,
+ *     keyPropertyType: "number",
+ *     keyPropertyValue: 1;
  *     entityChange: {
  *       "firstName": "J.D."
  *     }
@@ -95,3 +99,35 @@ export function _updateBoEntityFactory<E, R>(
 export async function updateBoEntity<E = any>(context: DvelopContext, params: UpdateBoEntityParams<E>): Promise<void> {
   return await _updateBoEntityFactory<E, void>(_defaultHttpRequestFunction, () => { })(context, params);
 }
+
+// ---------------
+
+const context: DvelopContext = {
+  systemBaseUri: "https://lklo.d-velop.cloud",
+  authSessionId: "m3+Lker7UXZ7uSzMMuYMrruKJPPbIweEl44qUeN17WrnF/tsehx93tO7dKVzJnt0LkqFXJEhwTovp4xFuLMnzydnzDatKXIq1PG7vkquOpk=&_z_A0V5ayCS1TrEIECyGNtl8oCzI3dOogxJ7PmM2gthwyl8TBZiP62quWy20R4Fgg7ZT0vc3la24wyXm7BBII_fuEnX9amBJ"
+};
+
+updateBoEntity(context, {
+  modelName: "HOSPITALBASEDATA",
+  pluralEntityName: "employees",
+  keyPropertyType: "number",
+  keyPropertyValue: 1,
+  entityChange: {
+    "firstName": "J.D."
+  }
+});
+
+interface MyEntity {
+  firstName: string;
+  lastName: string;
+}
+
+updateBoEntity<MyEntity>(context, {
+  modelName: "HOSPITALBASEDATA",
+  pluralEntityName: "employees",
+  keyPropertyType: "number",
+  keyPropertyValue: 1,
+  entityChange: {
+    firstName: "J.D."
+  }
+});

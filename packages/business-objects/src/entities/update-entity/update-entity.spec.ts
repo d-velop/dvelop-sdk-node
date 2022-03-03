@@ -20,7 +20,8 @@ describe("updateBoEntityFactory", () => {
     params = {
       modelName: "HOSPITALBASEDATA",
       pluralEntityName: "employees",
-      entityKeyValue: "1",
+      keyPropertyType: "string",
+      keyPropertyValue: "1",
       entityChange: {
         "firstName": "J.D."
       }
@@ -28,12 +29,14 @@ describe("updateBoEntityFactory", () => {
   });
 
   [
-    { entityKeyValue: "1", expectedUrl: "/businessobjects/custom/HOSPITALBASEDATA/employees('1')" },
-    { entityKeyValue: 2, expectedUrl: "/businessobjects/custom/HOSPITALBASEDATA/employees(2)" }
+    { keyPropertyValue: "1", keyPropertyType: "string", expectedUrl: "/businessobjects/custom/HOSPITALBASEDATA/employees('1')" },
+    { keyPropertyValue: 2, keyPropertyType: "number", expectedUrl: "/businessobjects/custom/HOSPITALBASEDATA/employees(2)" },
+    { keyPropertyValue: "HiItsMeGuid", keyPropertyType: "guid", expectedUrl: "/businessobjects/custom/HOSPITALBASEDATA/employees(HiItsMeGuid)" }
   ].forEach(testCase => {
     it("should make correct request", async () => {
 
-      params.entityKeyValue = testCase.entityKeyValue;
+      params.keyPropertyValue = testCase.keyPropertyValue;
+      params.keyPropertyType = testCase.keyPropertyType as "string" | "number" | "guid";
 
       const deleteBoEntity = _updateBoEntityFactory(mockHttpRequestFunction, mockTransformFunction);
       await deleteBoEntity(context, params);

@@ -10,16 +10,19 @@ export interface GetBoEntityParams {
   modelName: string;
   /** EntityName in plural (**Singular name won't work**) */
   pluralEntityName: string;
-  /** Value for the key-property of the entity */
-  entityKeyValue: string | number;
+  /** Type of the key property */
+  keyPropertyType: "string" | "number" | "guid";
+  /** Key-property of the entity to be retrieved */
+  keyPropertyValue: string | number;
 }
 
 /**
  * Default transform-function provided to the {@link getBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * @template E Return type
  * @internal
  * @category Entity
  */
-export function _getBoEntityDefaultTransformFunction<T extends Object>(response: HttpResponse, _: DvelopContext, __: GetBoEntityParams): T {
+export function _getBoEntityDefaultTransformFunction<E = any>(response: HttpResponse, _: DvelopContext, __: GetBoEntityParams): E {
   // TODO delete @odata.context!
   return response.data;
 }
@@ -37,10 +40,10 @@ export function _getBoEntityFactory<E>(
   return async (context: DvelopContext, params: GetBoEntityParams) => {
 
     let urlEntityKeyValue;
-    if (typeof params.entityKeyValue === "number") {
-      urlEntityKeyValue = params.entityKeyValue;
+    if (params.keyPropertyType === "number" || params.keyPropertyType === "guid") {
+      urlEntityKeyValue = params.keyPropertyValue;
     } else {
-      urlEntityKeyValue = `'${params.entityKeyValue}'`;
+      urlEntityKeyValue = `'${params.keyPropertyValue}'`;
     }
 
     const response = await httpRequestFunction(context, {
@@ -66,7 +69,8 @@ export function _getBoEntityFactory<E>(
  * },{
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees",
- *   entityKeyValue: "1"
+ *   keyPropertyType: "string",
+ *   keyPropertyValue: "1";
  * });
  * console.log(result); // { employeeid: '1', firstName: 'John', lastName: 'Dorian', jobTitel: 'senior physician' }
  * ```
@@ -86,7 +90,8 @@ export function _getBoEntityFactory<E>(
  * },{
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees",
- *   entityKeyValue: "1"
+ *   keyPropertyType: "string",
+ *   keyPropertyValue: "1";
  * });
  *
  * console.log(entity.lastName); // Dorian

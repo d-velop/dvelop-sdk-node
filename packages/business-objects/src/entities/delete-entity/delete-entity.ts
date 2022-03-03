@@ -10,8 +10,10 @@ export interface DeleteBoEntityParams {
   modelName: string;
   /** EntityName in plural (**Singular name won't work**) */
   pluralEntityName: string;
-  /** Value for the key-property of the entity */
-  entityKeyValue: string | number;
+  /** Type of the key property */
+  keyPropertyType: "string" | "number" | "guid";
+  /** Key-property of the entity to be deleted */
+  keyPropertyValue: string | number;
 }
 
 /**
@@ -27,11 +29,12 @@ export function _deleteBoEntityFactory<T>(
   return async (context: DvelopContext, params: DeleteBoEntityParams) => {
 
     let urlEntityKeyValue;
-    if (typeof params.entityKeyValue === "number") {
-      urlEntityKeyValue = params.entityKeyValue;
+    if (params.keyPropertyType === "number" || params.keyPropertyType === "guid") {
+      urlEntityKeyValue = params.keyPropertyValue;
     } else {
-      urlEntityKeyValue = `'${params.entityKeyValue}'`;
+      urlEntityKeyValue = `'${params.keyPropertyValue}'`;
     }
+
 
     const response = await httpRequestFunction(context, {
       method: "DELETE",
