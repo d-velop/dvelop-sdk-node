@@ -61,6 +61,19 @@ export class BusinessObjectsError extends DvelopSdkError {
 }
 
 /**
+* TODO: Generic Error for business-objects package.
+* @category Error
+*/
+/* istanbul ignore next */
+export class NotImplementedError extends DvelopSdkError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(public message: string, public originalError?: Error) {
+    super(message);
+    Object.setPrototypeOf(this, NotImplementedError.prototype);
+  }
+}
+
+/**
  * Factory used to create the default httpRequestFunction. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Http
@@ -91,6 +104,9 @@ export function _defaultHttpRequestFunctionFactory(httpClient: DvelopHttpClient)
 
         case 404:
           throw new NotFoundError(getErrorString(error.response.data) || "BusinessObjects-App responded with Status 404 indicating a requested resource does not exist. See 'originalError'-property for details.", error);
+
+        case 501:
+          throw new NotImplementedError(getErrorString(error.response.data) || "BusinessObjects-App responded with Status 501 indicating a requested feature is not implemented. See 'originalError'-property for details.", error);
 
         default:
           throw new BusinessObjectsError(getErrorString(error.response.data) || `BusinessObjects-App responded with status ${error.response.status}. See 'originalError'-property for details.`, error);

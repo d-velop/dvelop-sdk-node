@@ -1,5 +1,5 @@
 import { BadInputError, DvelopContext, DvelopHttpClient, DvelopHttpError, DvelopHttpRequestConfig, DvelopHttpResponse, DvelopSdkError, ForbiddenError, NotFoundError, UnauthorizedError } from "@dvelop-sdk/core";
-import { _defaultHttpRequestFunctionFactory, BusinessObjectsError } from "./http";
+import { _defaultHttpRequestFunctionFactory, BusinessObjectsError, NotImplementedError } from "./http";
 
 describe("defaultHttpRequestFunctionFactory", () => {
 
@@ -298,6 +298,64 @@ describe("defaultHttpRequestFunctionFactory", () => {
 
         expect(expectedError instanceof NotFoundError).toBeTruthy();
         expect(expectedError.message).toEqual("BusinessObjects-App responded with Status 404 indicating a requested resource does not exist. See 'originalError'-property for details.");
+        expect(expectedError.originalError).toBe(error);
+      });
+    });
+
+    describe("on statusCode 501", () => {
+
+      it("should throw NotImplemented on BusinessObjectsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 501,
+            data: {
+              error: {
+                code: "HiItsMeErrorCode",
+                message: "HiItsMeErrorMessage"
+              }
+            }
+          } as DvelopHttpResponse,
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof NotImplementedError).toBeTruthy();
+        expect(expectedError.message).toContain((error.response.data as any).error.code);
+        expect(expectedError.message).toContain((error.response.data as any).error.message);
+        expect(expectedError.originalError).toBe(error);
+      });
+
+      it("should throw generic NotImplemented on missing BusinessObjectsErrorDto", async () => {
+
+        const error: DvelopHttpError = {
+          response: {
+            status: 501
+          } as DvelopHttpResponse,
+        } as DvelopHttpError;
+
+        mockRequestFunction.mockRejectedValue(error);
+
+
+        const requestFunction = _defaultHttpRequestFunctionFactory(mockHttpClient);
+        let expectedError: DvelopSdkError;
+        try {
+          await requestFunction(context, config);
+        } catch (e: any) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof NotImplementedError).toBeTruthy();
+        expect(expectedError.message).toEqual("BusinessObjects-App responded with Status 501 indicating a requested feature is not implemented. See 'originalError'-property for details.");
         expect(expectedError.originalError).toBe(error);
       });
     });
