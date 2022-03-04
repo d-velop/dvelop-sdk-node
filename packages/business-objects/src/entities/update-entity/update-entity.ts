@@ -60,74 +60,43 @@ export function _updateBoEntityFactory<E, R>(
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
- *     modelName: "HOSPITALBASEDATA",
- *     pluralEntityName: "employees",
- *     keyPropertyType: "number",
- *     keyPropertyValue: 1;
- *     entityChange: {
- *       "firstName": "J.D."
- *     }
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees",
+ *   keyPropertyType: "number", //"string", "number" or "guid"
+ *   keyPropertyValue: 1,
+ *   entityChange: {
+ *     "firstName": "J.D."
+ *   }
  * });
  * ```
  * ---
- * You can also write your own function.
- *
+ * You can also use generics:
  * @example
  * ```typescript
  * import { updateBoEntity } from "@dvelop-sdk/business-objects";
  *
- * const myUpdateFunction = _updateBoEntityFactory(_defaultHttpRequestFunction, (response:HttpResponse)=> {
- *   return "My own transform function message.";
- * })
+ * interface Employee {
+ *   employeeId: string;
+ *   firstName: string;
+ *   lastName: string;
+ *   jobTitel: string;
+ * }
  *
- * const responseMessage = await myUpdateFunction({
+ * await updateBoEntity<Employee>({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
- *     modelName: "HOSPITALBASEDATA",
- *     pluralEntityName: "employees",
- *     keyPropertyType: "number",
- *     keyPropertyValue: 1;
- *     entityChange: {
- *       "firstName": "J.D."
- *     }
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees",
+ *   keyPropertyType: "number", //"string", "number" or "guid"
+ *   keyPropertyValue: 1,
+ *   entityChange: {
+ *     "firstName": "John Micheal (J.D.)"
+ *   }
  * });
- * console.log(responseMessage); // My own transform function message
  * ```
  */
 /* istanbul ignore next */
 export async function updateBoEntity<E = any>(context: DvelopContext, params: UpdateBoEntityParams<E>): Promise<void> {
   return await _updateBoEntityFactory<E, void>(_defaultHttpRequestFunction, () => { })(context, params);
 }
-
-// ---------------
-
-const context: DvelopContext = {
-  systemBaseUri: "https://lklo.d-velop.cloud",
-  authSessionId: "m3+Lker7UXZ7uSzMMuYMrruKJPPbIweEl44qUeN17WrnF/tsehx93tO7dKVzJnt0LkqFXJEhwTovp4xFuLMnzydnzDatKXIq1PG7vkquOpk=&_z_A0V5ayCS1TrEIECyGNtl8oCzI3dOogxJ7PmM2gthwyl8TBZiP62quWy20R4Fgg7ZT0vc3la24wyXm7BBII_fuEnX9amBJ"
-};
-
-updateBoEntity(context, {
-  modelName: "HOSPITALBASEDATA",
-  pluralEntityName: "employees",
-  keyPropertyType: "number",
-  keyPropertyValue: 1,
-  entityChange: {
-    "firstName": "J.D."
-  }
-});
-
-interface MyEntity {
-  firstName: string;
-  lastName: string;
-}
-
-updateBoEntity<MyEntity>(context, {
-  modelName: "HOSPITALBASEDATA",
-  pluralEntityName: "employees",
-  keyPropertyType: "number",
-  keyPropertyValue: 1,
-  entityChange: {
-    firstName: "J.D."
-  }
-});

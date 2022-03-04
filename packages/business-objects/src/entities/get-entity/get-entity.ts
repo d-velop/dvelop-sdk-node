@@ -23,7 +23,7 @@ export interface GetBoEntityParams {
  * @category Entity
  */
 export function _getBoEntityDefaultTransformFunction<E = any>(response: HttpResponse, _: DvelopContext, __: GetBoEntityParams): E {
-  // TODO delete @odata.context!
+  // TODO: delete @odata.context!
   return response.data;
 }
 
@@ -63,16 +63,16 @@ export function _getBoEntityFactory<E>(
  * ```typescript
  * import { getBoEntity } from "@dvelop-sdk/business-objects";
  *
- * const result = await getBoEntity({
+ * const jd = await getBoEntity({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees",
- *   keyPropertyType: "string",
- *   keyPropertyValue: "1";
+ *   keyPropertyType: "string", //"string", "number" or "guid"
+ *   keyPropertyValue: "1"
  * });
- * console.log(result); // { employeeid: '1', firstName: 'John', lastName: 'Dorian', jobTitel: 'senior physician' }
+ * console.log(jd); // { employeeId: '1', firstName: 'John Micheal', lastName: 'Dorian', jobTitel: 'senior physician' }
  * ```
  * ---
  * You can also use generics:
@@ -80,21 +80,24 @@ export function _getBoEntityFactory<E>(
  * ```typescript
  * import { getBoEntity } from "@dvelop-sdk/business-objects";
  *
- * interface MyEntity{
+ * interface Employee {
+ *   employeeId: string;
+ *   firstName: string;
  *   lastName: string;
+ *   jobTitel: string;
  * }
  *
- * const result: MyEntity[] = await getBoEntity<MyEntity>({
+ * const jd: Employee = await getBoEntity<Employee>({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees",
- *   keyPropertyType: "string",
- *   keyPropertyValue: "1";
+ *   keyPropertyType: "string", //"string", "number" or "guid"
+ *   keyPropertyValue: "1"
  * });
  *
- * console.log(entity.lastName); // Dorian
+ * console.log(jd.lastName); // Dorian
  * ```
  */
 /* istanbul ignore next */

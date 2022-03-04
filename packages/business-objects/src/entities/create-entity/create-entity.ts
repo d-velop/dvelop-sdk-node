@@ -50,43 +50,42 @@ export function _createBoEntityFactory<E, R>(
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
- *     modelName: "HOSPITALBASEDATA",
- *     pluralEntityName: "employees",
- *     entity: {
- *       "employeeid": "1",
- *       "firstName": "John",
- *       "lastName": "Dorian",
- *       "jobTitel": "senior physician"
- *     }
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees",
+ *   entity: {
+ *     employeeId: "1",
+ *     firstName: "John Micheal",
+ *     lastName: "Dorian",
+ *     jobTitel: "senior physician"
+ *   }
  * });
  * ```
  * ---
- *
- * You can also write your own function, for example to get a notification, if the entity was successfully created.
+ * You can also use generics:
  * @example
  * ```typescript
  * import { createBoEntity } from "@dvelop-sdk/business-objects";
  *
- * const myCreateFunction = _createBoEntityFactory(_defaultHttpRequestFunction, (response:HttpResponse)=> {
- *   if(response.status == 201) {
- *     retrun "Entity created successfully.";
- *   }
- * })
+ * interface Employee {
+ *   employeeId: string;
+ *   firstName: string;
+ *   lastName: string;
+ *   jobTitel: string;
+ * }
  *
- * const responseMessage = await myCreateFunction({
+ * await create<Employee>({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
- *     modelName: "HOSPITALBASEDATA",
- *     pluralEntityName: "employees",
- *     entity: {
- *       "employeeid": "1",
- *       "firstName": "John",
- *       "lastName": "Dorian",
- *       "jobTitel": "senior physician"
- * }
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees",
+ *   entity: {
+ *     employeeId: "1",
+ *     firstName: "John Micheal",
+ *     lastName: "Dorian",
+ *     jobTitel: "senior physician"
+ *   }
  * });
- * console.log(responseMessage); // Entity created successfully.
  * ```
  */
 /* istanbul ignore next */

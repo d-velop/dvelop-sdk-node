@@ -51,37 +51,37 @@ export function _getBoEntitiesFactory<E>(
  * ```typescript
  * import { getBoEntities } from "@dvelop-sdk/business-objects";
  *
- * const result = await getBoEntities({
+ * const employees = await getBoEntities({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees",
  * });
- * console.log(result); // [{employeeid: '1', firstName: 'John', lastName: 'Dorian', jobTitel: 'senior physician'}, {employeeid: '2', firstName: 'Christopher', lastName: 'Turk', jobTitel: 'chief surgeon'}]
+ * console.log(employees); // [{ employeeId: '1', firstName: 'John Micheal', lastName: 'Dorian', jobTitel: 'senior physician' }, { employeeId: '2', firstName: 'Christopher', lastName: 'Turk', jobTitel: 'chief surgeon' }]
  * ```
  * ---
- *
- * @example
  * You can also use generics:
+ * @example
  * ```typescript
  * import { getBoEntities } from "@dvelop-sdk/business-objects";
  *
- * interface MyEntity{
+ * interface Employee {
+ *   employeeId: string;
+ *   firstName: string;
  *   lastName: string;
+ *   jobTitel: string;
  * }
  *
- * const result: MyEntity[] = await getBoEntities<MyEntity>({
+ * const employees: Employee[] = await getBoEntities<Employee>({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
  *   modelName: "HOSPITALBASEDATA",
- *   pluralEntityName: "employees",
+ *   pluralEntityName: "employees"
  * });
  *
- * result.forEach(entity => {
- *   console.log(entity.lastName);
- * });
+ * employees.forEach(e => console.log(e.lastName));
  * // Dorian
  * // Turk
  * ```

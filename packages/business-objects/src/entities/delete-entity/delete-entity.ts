@@ -56,33 +56,37 @@ export function _deleteBoEntityFactory<T>(
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
- *     modelName: "HOSPITALBASEDATA",
- *     pluralEntityName: "employees",
- *     entityKeyValue: 1
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees",
+ *   keyPropertyType: "number", //"string", "number" or "guid"
+ *   entityKeyValue: 1
  * });
  * ```
   * ---
  * You can also write your own function, for example to get a notification, if the entity requested for deletion doesn't exist.
- *
  * @example
  * ```typescript
  * import { deleteBoEntity } from "@dvelop-sdk/business-objects";
  *
- * const myDeleteFunction = _deleteBoEntityFactory(_defaultHttpRequestFunction, (response:HttpResponse)=> {
+ * const myDeleteFunction = _deleteBoEntityFactory(_defaultHttpRequestFunction, (response: HttpResponse) => {
  *   if(response.status === 204) {
- *     return "Entity requested for deletion does not exist.";
+ *     return "Entity does not exist.";
+ *   } else {
+ *     return "Entity was deleted.";
  *   }
- * })
+ * });
  *
- * const responseMessage = await myDeleteFunction({
+ * const responseMessage: string = await myDeleteFunction({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
- *     modelName: "HOSPITALBASEDATA",
- *     pluralEntityName: "employees",
- *     entityKeyValue: 1
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees",
+ *   keyPropertyType: "number", //"string", "number" or "guid"
+ *   entityKeyValue: 3
  * });
- * console.log(responseMessage); // Entity requested for deletion does not exist.
+ *
+ * console.log(responseMessage); // Entity does not exist.
  * ```
  */
 /* istanbul ignore next */
