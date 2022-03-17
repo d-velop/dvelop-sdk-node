@@ -5,3 +5,4 @@ docs
 *.tsbuildinfo
 tmp-*
 chicken.*
+.idea
