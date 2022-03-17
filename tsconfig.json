@@ -21,6 +21,9 @@
     },
     {
       "path": "./packages/express-utils"
+    },
+    {
+      "path": "./packages/logging"
     }
   ]
 }

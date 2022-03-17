@@ -1,0 +1,22 @@
+{
+  "name": "@dvelop-sdk/logging",
+  "description": "This package contains functions for logging with the OpenTelemetry.",
+  "version": "1.0.0-beta.1",
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "Veit Kunz <git@veit-kunz.de>",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d-velop/dvelop-sdk-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/d-velop/dvelop-sdk-node/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
