@@ -8,16 +8,13 @@ export interface Traceparent {
 }
 
 export enum TraceFlags {
-  none = 0,
-  sampled = 1 << 0
+  none = 0b00000000,
+  sampled = 0b00000001
 }
 
-// export interface Traceflags {
-//   sampled: boolean;
-// }
+const unknownFlagsEliminationMask = 0b00000001;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function parseTraceparent(traceparentHeader: string): Traceparent {
+export function parseTraceparentHeader(traceparentHeader: string): Traceparent {
   if(!isValidHeader(traceparentHeader)) {
     throw new DvelopSdkError("Invalid traceparent header");
   }
@@ -35,13 +32,21 @@ export function parseTraceparent(traceparentHeader: string): Traceparent {
   };
 }
 
-function isValidHeader (header: string) {
-  return /^[\da-f]{2}-[\da-f]{32}-[\da-f]{16}-[\da-f]{2}$/.test(header);
-}
+export function buildTraceparentHeader(traceId: string, spanId: string, flags?: TraceFlags): string {
+  if(!isValidTraceId(traceId)) {
+    throw new DvelopSdkError("Invalid traceId");
+  }
+  if(!isValidParentId(spanId)) {
+    throw new DvelopSdkError("Invalid spanId");
+  }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function buildTraceparent(traceId: string, spanId: string, flags?: TraceFlags): string {
-  return "";
+  if(flags == undefined) {
+    flags = TraceFlags.sampled;
+  } else {
+    flags = flags & unknownFlagsEliminationMask;
+  }
+
+  return `00-${traceId}-${spanId}-${toHex(flags)}`;
 }
 
 export function generateSpanId(): string {
@@ -50,4 +55,24 @@ export function generateSpanId(): string {
 
 export function generateTraceId(): string {
   return "";
+}
+
+function isValidHeader (header: string) {
+  return /^[\da-f]{2}-[\da-f]{32}-[\da-f]{16}-[\da-f]{2}$/.test(header);
+}
+
+function isValidTraceId (traceId: string) {
+  return /^[\da-f]{32}$/.test(traceId);
+}
+
+function isValidParentId (parentId: string) {
+  return /^[\da-f]{16}$/.test(parentId);
+}
+
+function toHex(n: number): string {
+  let h = n.toString(16);
+  if ((h.length % 2) > 0) {
+    h = "0" + h;
+  }
+  return h;
 }
