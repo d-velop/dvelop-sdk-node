@@ -6,6 +6,10 @@ export interface DvelopContext {
   authSessionId?: string;
   /** RequestId used to track coherent requests over multiple apps */
   requestId?: string;
+  /** TraceId from [W3C Trace Context](https://www.w3.org/TR/trace-context/) used to track coherent requests over multiple apps */
+  traceId?: string;
+  /** SpanId from [W3C Trace Context](https://www.w3.org/TR/trace-context/) */
+  spanId?: string;
   /** Id of a tenant */
   tenantId?: string;
   /** Signature assigned by the app-router.
