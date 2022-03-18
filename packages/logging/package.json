@@ -18,5 +18,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@dvelop-sdk/core": "^2.0.0"
   }
 }
