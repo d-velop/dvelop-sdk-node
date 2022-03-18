@@ -1,4 +1,11 @@
-import {buildTraceparentHeader, parseTraceparentHeader, TraceFlags, Traceparent} from "./traceparent";
+import {
+  buildTraceparentHeader,
+  generateSpanId,
+  generateTraceId,
+  parseTraceparentHeader,
+  TraceFlags,
+  Traceparent
+} from "./traceparent";
 import {DvelopSdkError} from "../errors/errors";
 
 describe("parseTraceparentHeader", () => {
@@ -70,5 +77,21 @@ describe("buildTraceparentHeader", () => {
     const spanId = "4bf92f3577b34da6a3ce929d0e0e4736";
     expect(() => buildTraceparentHeader(traceId, spanId)).toThrow(DvelopSdkError);
     expect(() => buildTraceparentHeader(traceId, spanId)).toThrow("Invalid spanId");
+  });
+});
+
+describe("generateTraceId", () => {
+  it("should return string with correct length and only allowed characters", () => {
+    const traceId = generateTraceId();
+    expect(traceId).toHaveLength(32);
+    expect(/^[\da-f]{32}$/.test(traceId)).toBeTruthy();
+  });
+});
+
+describe("generateSpanId", () => {
+  it("should return string with correct length and only allowed characters", () => {
+    const traceId = generateSpanId();
+    expect(traceId).toHaveLength(16);
+    expect(/^[\da-f]{16}$/.test(traceId)).toBeTruthy();
   });
 });

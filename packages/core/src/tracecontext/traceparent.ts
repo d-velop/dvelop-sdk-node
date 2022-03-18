@@ -1,4 +1,5 @@
 import {DvelopSdkError} from "../errors/errors";
+import * as crypto from "crypto";
 
 export interface Traceparent {
   version: number;
@@ -50,11 +51,11 @@ export function buildTraceparentHeader(traceId: string, spanId: string, flags?: 
 }
 
 export function generateSpanId(): string {
-  return "";
+  return crypto.randomBytes(8).toString("hex");
 }
 
 export function generateTraceId(): string {
-  return "";
+  return crypto.randomBytes(16).toString("hex");
 }
 
 function isValidHeader (header: string) {
