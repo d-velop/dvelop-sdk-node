@@ -295,6 +295,24 @@ describe("otel logger", () => {
         logger.withHttpRequest(request).info("Hello, world!");
       });});
 
+      test("should set method as upper case", () => {return new Promise<void>(done => {
+        const request: IncomingHttpRequest = {
+          method: "get",
+          url: "https://www.example.org/some/path?and=query#fragment"
+        };
+
+        const writable = (msg: string) => {
+          const json = JSON.parse(msg);
+          expect(json.attr).toBeDefined();
+          expect(json.attr.http).toBeDefined();
+          expect(json.attr.http.method).toEqual("GET");
+          done();
+        };
+
+        setLogWriter(writable);
+        logger.withHttpRequest(request).info("Hello, world!");
+      });});
+
     });
 
     describe("withHttpResponse()", () => {

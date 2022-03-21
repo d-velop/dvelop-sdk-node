@@ -127,7 +127,7 @@ class InternalLogger {
     logger.modifierFunctions.push((event: Event) => {
       event.attr = event.attr || {};
       event.attr.http = {
-        method: req.method,
+        method: req.method.toUpperCase(),
         url: req.url,
         target: url.pathname + url.search + url.hash,
         host: url.host,
