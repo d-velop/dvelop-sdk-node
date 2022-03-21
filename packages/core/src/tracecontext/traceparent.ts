@@ -32,9 +32,6 @@ export function parseTraceparentHeader(traceparentHeader: string): Traceparent {
   }
 
   const parts = traceparentHeader.split("-");
-  if(parts.length !== 4) {
-    throw new DvelopSdkError("Invalid traceparent header");
-  }
 
   return {
     traceId: parts[1],
@@ -103,6 +100,7 @@ function isValidParentId (parentId: string) {
 
 function toHex(n: number): string {
   let h = n.toString(16);
+  /* istanbul ignore next */
   if ((h.length % 2) > 0) {
     h = "0" + h;
   }

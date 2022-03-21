@@ -17,6 +17,12 @@ describe("parseTraceparentHeader", () => {
     expect(traceparent.traceFlags.sampled).toBeTruthy();
   });
 
+  it("should throw Error when invalid traceparent header is given", () => {
+    const headerValue = "0-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01-12";
+    expect(() => parseTraceparentHeader((headerValue))).toThrow(DvelopSdkError);
+    expect(() => parseTraceparentHeader((headerValue))).toThrow("Invalid traceparent header");
+  });
+
   it("should throw Error when traceparent header contains invalid version", () => {
     const headerValue = "0-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01";
     expect(() => parseTraceparentHeader((headerValue))).toThrow(DvelopSdkError);
