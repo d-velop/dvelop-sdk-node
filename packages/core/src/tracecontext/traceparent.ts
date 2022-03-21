@@ -1,6 +1,9 @@
 import {DvelopSdkError} from "../errors/errors";
 import * as crypto from "crypto";
 
+/**
+ * Defines the header used for distributed tracing. A Traceparent is based on the [W3C Trace Context specification](https://www.w3.org/TR/trace-context/#traceparent-header).
+ */
 export interface Traceparent {
   version: number;
   traceId: string;
@@ -8,13 +11,21 @@ export interface Traceparent {
   traceFlags: TraceFlags;
 }
 
-export enum TraceFlags {
-  none = 0b00000000,
+/**
+ *  Represents [trace-flags](https://www.w3.org/TR/trace-context/#trace-flags) as part of the traceparent header.
+ */
+export interface TraceFlags {
+  sampled: boolean;
+}
+
+enum BinaryTraceFlags {
   sampled = 0b00000001
 }
 
-const unknownFlagsEliminationMask = 0b00000001;
-
+/**
+ * Parses a traceparent header.
+ * @param traceparentHeader Value obtained from the traceparent HTTP header.
+ */
 export function parseTraceparentHeader(traceparentHeader: string): Traceparent {
   if(!isValidHeader(traceparentHeader)) {
     throw new DvelopSdkError("Invalid traceparent header");
@@ -28,11 +39,14 @@ export function parseTraceparentHeader(traceparentHeader: string): Traceparent {
   return {
     traceId: parts[1],
     parentId: parts[2],
-    traceFlags: parseInt(parts[3], 16),
+    traceFlags: parseBinaryTraceFlags(parseInt(parts[3], 16)),
     version: parseInt(parts[0], 16)
   };
 }
 
+/**
+ * Generates a new traceparent header based on a given traceId, spanId and flags.
+ */
 export function buildTraceparentHeader(traceId: string, spanId: string, flags?: TraceFlags): string {
   if(!isValidTraceId(traceId)) {
     throw new DvelopSdkError("Invalid traceId");
@@ -41,21 +55,38 @@ export function buildTraceparentHeader(traceId: string, spanId: string, flags?: 
     throw new DvelopSdkError("Invalid spanId");
   }
 
-  if(flags == undefined) {
-    flags = TraceFlags.sampled;
-  } else {
-    flags = flags & unknownFlagsEliminationMask;
+  if(flags === undefined) {
+    flags = {
+      sampled: true
+    };
   }
 
-  return `00-${traceId}-${spanId}-${toHex(flags)}`;
+  let binaryFlags = 0b00000000;
+  if(flags.sampled) {
+    binaryFlags = binaryFlags | BinaryTraceFlags.sampled;
+  }
+
+  return `00-${traceId}-${spanId}-${toHex(binaryFlags)}`;
 }
 
+/**
+ * Generates a new span-id and returns the string representation.
+ */
 export function generateSpanId(): string {
   return crypto.randomBytes(8).toString("hex");
 }
 
+/**
+ * Generates a new trace-id and returns the string representation.
+ */
 export function generateTraceId(): string {
   return crypto.randomBytes(16).toString("hex");
+}
+
+function parseBinaryTraceFlags(flags: number): TraceFlags {
+  return {
+    sampled: (flags & BinaryTraceFlags.sampled) === BinaryTraceFlags.sampled
+  };
 }
 
 function isValidHeader (header: string) {

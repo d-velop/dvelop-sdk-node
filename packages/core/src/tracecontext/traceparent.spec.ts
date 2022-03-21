@@ -3,7 +3,6 @@ import {
   generateSpanId,
   generateTraceId,
   parseTraceparentHeader,
-  TraceFlags,
   Traceparent
 } from "./traceparent";
 import {DvelopSdkError} from "../errors/errors";
@@ -15,7 +14,7 @@ describe("parseTraceparentHeader", () => {
     expect(traceparent.traceId).toEqual("4bf92f3577b34da6a3ce929d0e0e4736");
     expect(traceparent.parentId).toEqual("00f067aa0ba902b7");
     expect(traceparent.version).toEqual(0);
-    expect(traceparent.traceFlags & TraceFlags.sampled).toEqual(TraceFlags.sampled);
+    expect(traceparent.traceFlags.sampled).toBeTruthy();
   });
 
   it("should throw Error when traceparent header contains invalid version", () => {
@@ -51,17 +50,17 @@ describe("buildTraceparentHeader", () => {
     expect(header).toEqual(`00-${traceId}-${spanId}-01`);
   });
 
-  it("should return traceparent header when valid input with flags is given", () => {
+  it("should return traceparent header when valid input with flags set to false is given", () => {
     const traceId = "4bf92f3577b34da6a3ce929d0e0e4736";
     const spanId = "00f067aa0ba902b7";
-    const header = buildTraceparentHeader(traceId, spanId, TraceFlags.none);
+    const header = buildTraceparentHeader(traceId, spanId, {sampled: false});
     expect(header).toEqual(`00-${traceId}-${spanId}-00`);
   });
 
-  it("should return traceparent header when valid input with unsupported flags is given", () => {
+  it("should return traceparent header when valid input with flags set to true is given", () => {
     const traceId = "4bf92f3577b34da6a3ce929d0e0e4736";
     const spanId = "00f067aa0ba902b7";
-    const header = buildTraceparentHeader(traceId, spanId, 0b1111111);
+    const header = buildTraceparentHeader(traceId, spanId, {sampled: true});
     expect(header).toEqual(`00-${traceId}-${spanId}-01`);
   });
 
