@@ -28,3 +28,26 @@
   <a href="https://github.com/d-velop/dvelop-sdk-node"><strong>Check us out on GitHub »</strong></a>
 
 </div>
+
+## A note on datatypes in OData and Javascript
+D.velop BusinessObjects uses OData as data model. When working with BusinessObject Models you can refer to the [propertyType-section](https://dv-businessobjects-assets.s3.eu-central-1.amazonaws.com/documentation/latest/business_objects_api.html#propertytype).
+
+BO property type | Javascript type | Example
+--- | --- | ---
+boolean | boolean | true
+string | string | "Hi it's me string"
+`list<string>` | Array | ["Hi", "it's", "me", "list"]
+guid | string | "ED7BA470-8E54-465E-825C-99712043E01C"
+date | string |  "2011-04-17"
+dateTimeOffset | string | "2011-04-17T20:00:00.000Z"
+single | number* | 3.14159
+double | number* | 3.14159
+decimal | number* | 3.14159
+int16 | number* | 42
+int32 | number* | 42
+int64 | number* | 42
+byte | number | 255
+sByte | number | -8
+binary | string | "23ABFF"
+
+_* When working with numbers please mind [Javascript Numbers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)_
