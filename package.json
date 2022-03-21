@@ -9,7 +9,7 @@
     "packages/task",
     "packages/dms",
     "packages/express-utils",
-    "packages\\logging"
+    "packages/logging"
   ],
   "license": "Apache-2.0",
   "scripts": {
