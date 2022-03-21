@@ -120,7 +120,7 @@ export async function _getDmsObjectDefaultTransformFunction(response: HttpRespon
  * ```typescript
  * import { getDmsObject } from "@dvelop-sdk/dms";
  *
- * const dmsObject: DmsObject = await getDmsObjec({
+ * const dmsObject: DmsObject = await getDmsObject({
  *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
  *   authSessionId: "dQw4w9WgXcQ"
  * },{
