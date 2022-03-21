@@ -39,7 +39,7 @@ export * as internals from "./internal";
 // Authentication
 export { getAuthSession } from "./authentication/get-auth-session/get-auth-session";
 export { GetImpersonatedAuthSessionIdParams, getImpersonatedAuthSessionId } from "./authentication/get-impersonated-auth-session-id/get-impersonated-auth-session-id";
-export { RequestAppSessionParams, requestAppSession, AppSession } from "./authentication/request-app-session/request-app-session";
+export { RequestAppSessionParams, requestAppSession } from "./authentication/request-app-session/request-app-session";
 export { getLoginRedirectionUri } from "./authentication/get-login-redirection-uri/get-login-redirection-uri";
-export { validateAppSessionSignature, InvalidAppSessionSignatureError } from "./authentication/validate-app-session-signature/validate-app-session-signature";
+export { AppSession, validateAppSessionSignature, InvalidAppSessionSignatureError } from "./authentication/validate-app-session-signature/validate-app-session-signature";
 export { validateAuthSessionId, DvelopUser } from "./authentication/validate-auth-session-id/validate-auth-session-id";

@@ -24,9 +24,11 @@
  * @module express-utils
  */
 import { DvelopContext } from "@dvelop-sdk/core";
-declare module "express" {
-  interface Request {
-    dvelopContext: DvelopContext
+declare global {
+  namespace Express {
+    interface Request {
+      dvelopContext: DvelopContext;
+    }
   }
 }
 
@@ -37,7 +39,8 @@ export { redirectToLoginPage } from "./functions/redirect-to-login-page/redirect
 
 // Middleware
 export { DvelopContext, UnauthorizedError } from "@dvelop-sdk/core";
-export { InvalidRequestSignatureError } from "@dvelop-sdk/app-router";
+export { InvalidRequestSignatureError, InvalidCloudCenterEventSignatureError } from "@dvelop-sdk/app-router";
 export { contextMiddleware } from "./middleware/dvelop-context-middleware/dvelop-context-middleware";
 export { validateSignatureMiddlewareFactory } from "./middleware/dvelop-validate-signature-middleware/dvelop-validate-signature-middleware";
 export { authenticationMiddleware } from "./middleware/dvelop-authentication-middleware/dvelop-authentication-middleware";
+export { validateCloudCenterEventSignatureMiddlewareFactory } from "./middleware/validate-cloud-center-event-signature-middleware/validate-cloud-center-event-signature-middleware";

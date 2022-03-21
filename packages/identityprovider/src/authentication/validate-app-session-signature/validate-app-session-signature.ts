@@ -1,5 +1,4 @@
-import { createHash } from "crypto";
-import { AppSession } from "../request-app-session/request-app-session";
+import { createHash, timingSafeEqual } from "crypto";
 
 /**
 * Indicates an invalid sign-value
@@ -11,6 +10,16 @@ export class InvalidAppSessionSignatureError extends Error {
     super("Invalid AppSessionSingature: An AppSession was sent that contains no valid signature.");
     Object.setPrototypeOf(this, InvalidAppSessionSignatureError.prototype);
   }
+}
+
+/**
+ * AppSession which will be postet to your app after using the {@link requestAppSession}-function.
+ * @category Authentication
+ */
+export interface AppSession {
+  authSessionId: string;
+  expire: string;
+  sign: string;
 }
 
 /**
@@ -28,8 +37,16 @@ export class InvalidAppSessionSignatureError extends Error {
  * @category Authentication
  */
 export function validateAppSessionSignature(appName: string, requestId: string, appSession: AppSession): void {
-  const expectedSign: string = createHash("sha256").update(appName + appSession.appSessionId + appSession.expire + requestId, "utf8").digest("hex");
-  if (expectedSign !== appSession.sign) {
+
+  let validSignature: boolean = false;
+
+  try {
+    const expectedSign: string = createHash("sha256").update(appName + appSession.authSessionId + appSession.expire + requestId, "utf8").digest("hex");
+    validSignature = timingSafeEqual(Buffer.from(appSession.sign), Buffer.from(expectedSign));
+  } catch (e) {
+    throw new InvalidAppSessionSignatureError();
+  }
+  if (!validSignature) {
     throw new InvalidAppSessionSignatureError();
   }
 }
