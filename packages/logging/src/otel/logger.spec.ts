@@ -275,37 +275,78 @@ describe("otel logger", () => {
         logger.withHttpRequest(request).info("Hello, world!");
       });});
 
+      test("should not set user agent when missing", () => {return new Promise<void>(done => {
+        const request: IncomingHttpRequest = {
+          method: "GET",
+          url: "https://www.example.org/some/path?and=query#fragment",
+          routeTemplate: "/some/:id",
+          clientIp: "127.0.0.1"
+        };
+
+        const writable = (msg: string) => {
+          const json = JSON.parse(msg);
+          expect(json.attr).toBeDefined();
+          expect(json.attr.http).toBeDefined();
+          expect(json.attr.http.userAgent).toBeUndefined();
+          done();
+        };
+
+        setLogWriter(writable);
+        logger.withHttpRequest(request).info("Hello, world!");
+      });});
+
     });
 
-    test("withHttpResponse() should set http attributes", () => {return new Promise<void>(done => {
-      const response: HttpResponse = {
-        clientDuration: 17,
-        serverDuration: 32,
-        statusCode: 203,
-        url: "https://www.example.org/some/path?and=query#fragment"
-      };
+    describe("withHttpResponse()", () => {
+      test("should set http attributes", () => {return new Promise<void>(done => {
+        const response: HttpResponse = {
+          clientDuration: 17,
+          serverDuration: 32,
+          statusCode: 203,
+          url: "https://www.example.org/some/path?and=query#fragment"
+        };
 
-      const writable = (msg: string) => {
-        const json = JSON.parse(msg);
-        expect(json.attr).toBeDefined();
-        expect(json.attr.http).toBeDefined();
-        expect(json.attr.http.method).toBeUndefined();
-        expect(json.attr.http.statusCode).toEqual(203);
-        expect(json.attr.http.url).toEqual("https://www.example.org/some/path?and=query#fragment");
-        expect(json.attr.http.target).toEqual("/some/path?and=query#fragment");
-        expect(json.attr.http.host).toEqual("www.example.org");
-        expect(json.attr.http.scheme).toEqual("https");
-        expect(json.attr.http.route).toBeUndefined();
-        expect(json.attr.http.userAgent).toBeUndefined();
-        expect(json.attr.http.clientIp).toBeUndefined();
-        expect(json.attr.http.server?.duration).toEqual(32);
-        expect(json.attr.http.client?.duration).toEqual(17);
-        done();
-      };
+        const writable = (msg: string) => {
+          const json = JSON.parse(msg);
+          expect(json.attr).toBeDefined();
+          expect(json.attr.http).toBeDefined();
+          expect(json.attr.http.method).toBeUndefined();
+          expect(json.attr.http.statusCode).toEqual(203);
+          expect(json.attr.http.url).toEqual("https://www.example.org/some/path?and=query#fragment");
+          expect(json.attr.http.target).toEqual("/some/path?and=query#fragment");
+          expect(json.attr.http.host).toEqual("www.example.org");
+          expect(json.attr.http.scheme).toEqual("https");
+          expect(json.attr.http.route).toBeUndefined();
+          expect(json.attr.http.userAgent).toBeUndefined();
+          expect(json.attr.http.clientIp).toBeUndefined();
+          expect(json.attr.http.server?.duration).toEqual(32);
+          expect(json.attr.http.client?.duration).toEqual(17);
+          done();
+        };
 
-      setLogWriter(writable);
-      logger.withHttpResponse(response).info("Hello, world!");
-    });});
+        setLogWriter(writable);
+        logger.withHttpResponse(response).info("Hello, world!");
+      });});
+
+      test("should set http attributes without duration", () => {return new Promise<void>(done => {
+        const response: HttpResponse = {
+          statusCode: 203,
+          url: "https://www.example.org/some/path?and=query#fragment"
+        };
+
+        const writable = (msg: string) => {
+          const json = JSON.parse(msg);
+          expect(json.attr).toBeDefined();
+          expect(json.attr.http).toBeDefined();
+          expect(json.attr.http.server?.duration).toBeUndefined();
+          expect(json.attr.http.client?.duration).toBeUndefined();
+          done();
+        };
+
+        setLogWriter(writable);
+        logger.withHttpResponse(response).info("Hello, world!");
+      });});
+    });
 
     test("withDatabaseRequest() should set db attributes", () => {return new Promise<void>(done => {
       const dbRequest: DbRequest = {
