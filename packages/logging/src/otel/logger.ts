@@ -131,7 +131,7 @@ class InternalLogger {
         url: req.url,
         target: url.pathname + url.search + url.hash,
         host: url.host,
-        scheme: url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol,
+        scheme: /* istanbul ignore next */ url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol,
         userAgent: req.headers?.userAgent,
         route: (req as IncomingHttpRequest).routeTemplate,
         clientIp: (req as IncomingHttpRequest).clientIp
@@ -155,7 +155,7 @@ class InternalLogger {
         url: res.url,
         target: url.pathname + url.search + url.hash,
         host: url.host,
-        scheme: url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol
+        scheme: /* istanbul ignore next */ url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol
       };
       if (res.serverDuration) {
         event.attr.http.server = {
@@ -239,6 +239,7 @@ class InternalLogger {
 
     const msg = JSON.stringify(event);
 
+    /* istanbul ignore next */
     if (_outputWriter) {
       if (typeof _outputWriter === "function") {
         _outputWriter(msg);
@@ -268,6 +269,7 @@ class InternalLogger {
 export function resetLogging() {
   logger = new InternalLogger();
   globalLoggingContext.setServiceInformation("", undefined, undefined);
+  /* istanbul ignore next */
   setLogWriter(typeof process !== "undefined" ? process.stdout : undefined);
 }
 

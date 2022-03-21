@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars,no-undef */
 
+/* istanbul ignore next */
 const fakeConsole: Console = {
   // @ts-ignore
   Console: undefined,
