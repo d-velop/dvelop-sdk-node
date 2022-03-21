@@ -39,7 +39,7 @@ export function _updateBoEntityFactory<E, R>(
     }
 
     const response = await httpRequestFunction(context, {
-      method: "PUT",
+      method: "PATCH",
       url: `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}(${urlEntityKeyValue})`,
       data: params.entityChange
     });

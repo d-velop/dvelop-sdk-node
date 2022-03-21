@@ -43,7 +43,7 @@ describe("updateBoEntityFactory", () => {
 
       expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
       expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-        method: "PUT",
+        method: "PATCH",
         url: testCase.expectedUrl,
         data: params.entityChange
       });
