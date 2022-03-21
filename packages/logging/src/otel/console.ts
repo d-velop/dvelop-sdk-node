@@ -31,11 +31,17 @@ const fakeConsole: Console = {
 
 const originalConsole = console;
 
+/**
+ * Disables any console output function (e.g. console.log())
+ */
 export function disableDefaultConsole(): void {
   // eslint-disable-next-line no-global-assign
   console = fakeConsole;
 }
 
+/**
+ * Enables console functions again (e.g. console.log())
+ */
 export function enableDefaultConsole(): void {
   // eslint-disable-next-line no-global-assign
   console = originalConsole;

@@ -3,36 +3,66 @@ import { globalLoggingContext } from "./context";
 import { DbRequest, HttpResponse, IncomingHttpRequest, OutgoingHttpRequest } from "../types/public";
 import { Event, Severity, LogWriter } from "../types/private";
 
-export class Logger {
+/**
+ * Type used by the logging singleton from this package.
+ */
+export type Logger = InstanceType<typeof InternalLogger>;
+
+class InternalLogger {
 
   private readonly modifierFunctions: ((event: Event) => void)[];
 
-  constructor(logger?: Logger) {
+  constructor(logger?: InternalLogger) {
     this.modifierFunctions = logger ? [...logger.modifierFunctions] : [];
   }
 
+  /**
+   * Log a message with severity `Debug`.
+   * @param body The log message
+   */
   public debug(body: string | object): void {
     this.log(Severity.Debug, body);
   }
 
+  /**
+   * Log a message with severity `Info`.
+   * @param body The log message
+   */
   public info(body: string | object): void {
     this.log(Severity.Info, body);
   }
 
+  /**
+   * Log a message with severity `Warn`.
+   * @param body The log message
+   */
   public warn(body: string | object): void {
     this.log(Severity.Warn, body);
   }
 
+  /**
+   * Log a message with severity `Error`.
+   * @param body The log message
+   */
   public error(body: string | object): void {
     this.log(Severity.Error, body);
   }
 
+  /**
+   * This is a shortcut for `.withException(error).error("Name: Message")`.
+   * @param error The error object
+   */
   public exception(error: Error): void {
     logger.withException(error).error(`${error.name}: ${error.message}`);
   }
 
+  /**
+   * Return a new logger with information of a DvelopContext (tenantId, traceId, spanId) attached.
+   * @param {DvelopContext} context
+   * @returns {Logger} A new Logger with the information attached
+   */
   public withCtx(context: DvelopContext): Logger {
-    const logger = new Logger(this);
+    const logger = new InternalLogger(this);
     logger.modifierFunctions.push((event: Event) => {
       event.tn = context.tenantId;
       event.trace = context.traceId;
@@ -41,24 +71,38 @@ export class Logger {
     return logger;
   }
 
+  /**
+   * Return a new logger with the name set.
+   * @param {string} name
+   * @returns {Logger} A new Logger with the information attached
+   */
   public withName(name: string): Logger {
-    const logger = new Logger(this);
+    const logger = new InternalLogger(this);
     logger.modifierFunctions.push((event: Event) => {
       event.name = name;
     });
     return logger;
   }
 
+  /**
+   * Return a new logger with the visibility property set to 1.
+   * @returns {Logger} A new Logger with the information attached
+   */
   public withInvisibility(): Logger {
-    const logger = new Logger(this);
+    const logger = new InternalLogger(this);
     logger.modifierFunctions.push((event: Event) => {
       event.vis = 0;
     });
     return logger;
   }
 
+  /**
+   * Return a new logger with the request attributes set.
+   * @param req Incoming or Outgoing Request
+   * @returns {Logger} A new Logger with the information attached
+   */
   public withHttpRequest(req: IncomingHttpRequest | OutgoingHttpRequest): Logger {
-    const logger = new Logger(this);
+    const logger = new InternalLogger(this);
     const url = new URL(req.url);
 
     logger.modifierFunctions.push((event: Event) => {
@@ -77,8 +121,13 @@ export class Logger {
     return logger;
   }
 
+  /**
+   * Return a new logger with the response attributes set.
+   * @param res Incoming or Outgoing Request
+   * @returns {Logger} A new Logger with the information attached
+   */
   public withHttpResponse(res: HttpResponse): Logger {
-    const logger = new Logger(this);
+    const logger = new InternalLogger(this);
     const url = new URL(res.url);
     logger.modifierFunctions.push((event: Event) => {
       event.attr = event.attr || {};
@@ -103,8 +152,13 @@ export class Logger {
     return logger;
   }
 
+  /**
+   * Return a new logger with the request attributes set.
+   * @param dbReq Incoming or Outgoing Request
+   * @returns {Logger} A new Logger with the information attached
+   */
   public withDatabaseRequest(dbReq: DbRequest): Logger {
-    const logger = new Logger(this);
+    const logger = new InternalLogger(this);
     logger.modifierFunctions.push((event: Event) => {
       event.attr = event.attr || {};
       event.attr.db = {
@@ -117,8 +171,14 @@ export class Logger {
     return logger;
   }
 
+  /**
+   * Return a new logger with custom attributes set.
+   * @param key The name of the attributes key
+   * @param value Any JSON compatible value
+   * @returns {Logger} A new Logger with the information attached
+   */
   public withAttributes(key: string, value: object | string | number | boolean | null): Logger {
-    const logger = new Logger(this);
+    const logger = new InternalLogger(this);
     logger.modifierFunctions.push((event: Event) => {
       event.attr = event.attr || {};
       event.attr[key] = value;
@@ -126,8 +186,13 @@ export class Logger {
     return logger;
   }
 
+  /**
+   * Return a new logger with the exception information set.
+   * @param error An error object
+   * @returns {Logger} A new Logger with the information attached
+   */
   public withException(error: Error): Logger {
-    const logger = new Logger(this);
+    const logger = new InternalLogger(this);
     logger.modifierFunctions.push((event: Event) => {
       event.attr = event.attr || {};
       event.attr.exception = {
@@ -178,22 +243,38 @@ export class Logger {
   }
 }
 
+/**
+ * Resets all user defined customization of the Logger, like globalLoggingContext and logWriter.
+ */
 export function resetLogging() {
-  logger = new Logger();
+  logger = new InternalLogger();
   globalLoggingContext.setServiceInformation("", undefined, undefined);
   setLogWriter(typeof process !== "undefined" ? process.stdout : undefined);
 }
 
 let _outputWriter: LogWriter;
 
+/**
+ * Replace the default log output (stdout) with a custom LogWriter.
+ * @param {LogWriter} writer Can be a WriteStream, WritableStream or a function with one string parameter.
+ */
 export function setLogWriter(writer: LogWriter): void {
   _outputWriter = writer;
 
 }
+
+/**
+ * Returns the current LogWriter.
+ * @returns {LogWriter} Can be a WriteStream, WritableStream or a function with one string parameter.
+ */
 export function logWriter(): LogWriter {
   return _outputWriter;
 
 }
+
+/**
+ * The global logger.
+ */
 export let logger: Logger;
 
 
