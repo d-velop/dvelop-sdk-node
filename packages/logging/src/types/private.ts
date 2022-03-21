@@ -1,5 +1,11 @@
+/**
+ * Defines the method for writing log statements. Can be either a {@link WriteStream}, a {@link WritableStream} or a function with one string parameter.
+ */
 export type LogWriter = ({write: (str: string, encoding: "utf8") => unknown}) | ((msg: string) => void) | undefined
 
+/**
+ * Severity for logging. The numbers represent the severity numbers of OpenTelemetry.
+ */
 export enum Severity {
   Debug = 5,
   Info = 9,
@@ -7,6 +13,10 @@ export enum Severity {
   Error = 17
 }
 
+/**
+ * A log event. An object with this type is populated inside the logging functions and
+ * written out as JSON to the log writer.
+ */
 export interface Event {
   time?: string;
   sev?: Severity;

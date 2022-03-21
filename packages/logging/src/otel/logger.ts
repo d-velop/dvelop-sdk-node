@@ -4,10 +4,13 @@ import { DbRequest, HttpResponse, IncomingHttpRequest, OutgoingHttpRequest } fro
 import { Event, Severity, LogWriter } from "../types/private";
 
 /**
- * Type used by the logging singleton from this package.
+ * Type used by the logging singleton and the `with` functions from this package.
  */
 export type Logger = InstanceType<typeof InternalLogger>;
 
+/**
+ * Only internally used logger class. Use {@link Logger} instead.
+ */
 class InternalLogger {
 
   private readonly modifierFunctions: ((event: Event) => void)[];
@@ -18,7 +21,10 @@ class InternalLogger {
 
   /**
    * Log a message with severity `Debug`.
-   * @param body The log message
+   * @param body A value containing the body of the log record. Can be for example
+   * a human-readable string message (including multi-line) describing the event in
+   * a free form or it can be a structured data composed of arrays and maps of other
+   * values. Can vary for each occurrence of the event coming from the same source.
    */
   public debug(body: string | object): void {
     this.log(Severity.Debug, body);
@@ -26,7 +32,10 @@ class InternalLogger {
 
   /**
    * Log a message with severity `Info`.
-   * @param body The log message
+   * @param body A value containing the body of the log record. Can be for example
+   * a human-readable string message (including multi-line) describing the event in
+   * a free form or it can be a structured data composed of arrays and maps of other
+   * values. Can vary for each occurrence of the event coming from the same source.
    */
   public info(body: string | object): void {
     this.log(Severity.Info, body);
@@ -34,7 +43,10 @@ class InternalLogger {
 
   /**
    * Log a message with severity `Warn`.
-   * @param body The log message
+   * @param body A value containing the body of the log record. Can be for example
+   * a human-readable string message (including multi-line) describing the event in
+   * a free form or it can be a structured data composed of arrays and maps of other
+   * values. Can vary for each occurrence of the event coming from the same source.
    */
   public warn(body: string | object): void {
     this.log(Severity.Warn, body);
@@ -42,7 +54,10 @@ class InternalLogger {
 
   /**
    * Log a message with severity `Error`.
-   * @param body The log message
+   * @param body A value containing the body of the log record. Can be for example
+   * a human-readable string message (including multi-line) describing the event in
+   * a free form or it can be a structured data composed of arrays and maps of other
+   * values. Can vary for each occurrence of the event coming from the same source.
    */
   public error(body: string | object): void {
     this.log(Severity.Error, body);
@@ -50,7 +65,7 @@ class InternalLogger {
 
   /**
    * This is a shortcut for `.withException(error).error("Name: Message")`.
-   * @param error The error object
+   * @param error An error object
    */
   public exception(error: Error): void {
     logger.withException(error).error(`${error.name}: ${error.message}`);
@@ -58,8 +73,8 @@ class InternalLogger {
 
   /**
    * Return a new logger with information of a DvelopContext (tenantId, traceId, spanId) attached.
-   * @param {DvelopContext} context
-   * @returns {Logger} A new Logger with the information attached
+   * @param context
+   * @returns A new Logger with the information attached
    */
   public withCtx(context: DvelopContext): Logger {
     const logger = new InternalLogger(this);
@@ -73,8 +88,12 @@ class InternalLogger {
 
   /**
    * Return a new logger with the name set.
-   * @param {string} name
-   * @returns {Logger} A new Logger with the information attached
+   * @param name Short **event identifier** that does not contain varying parts.
+   * `Name` describes what happened (e.g. "ProcessStarted"). Recommended to be
+   * no longer than 50 characters. Not guaranteed to be unique in any way.
+   * Typically used for filtering and grouping purposes in backends.<br>
+   * Can be used to identify domain events like FeaturesRequested or UserLoggedIn (cf. example).
+   * @returns A new Logger with the information attached
    */
   public withName(name: string): Logger {
     const logger = new InternalLogger(this);
@@ -189,7 +208,7 @@ class InternalLogger {
   /**
    * Return a new logger with the exception information set.
    * @param error An error object
-   * @returns {Logger} A new Logger with the information attached
+   * @returns A new Logger with the information attached
    */
   public withException(error: Error): Logger {
     const logger = new InternalLogger(this);
@@ -256,7 +275,7 @@ let _outputWriter: LogWriter;
 
 /**
  * Replace the default log output (stdout) with a custom LogWriter.
- * @param {LogWriter} writer Can be a WriteStream, WritableStream or a function with one string parameter.
+ * @param writer Can be a WriteStream, WritableStream or a function with one string parameter.
  */
 export function setLogWriter(writer: LogWriter): void {
   _outputWriter = writer;
@@ -265,7 +284,7 @@ export function setLogWriter(writer: LogWriter): void {
 
 /**
  * Returns the current LogWriter.
- * @returns {LogWriter} Can be a WriteStream, WritableStream or a function with one string parameter.
+ * @returns Can be a WriteStream, WritableStream or a function with one string parameter.
  */
 export function logWriter(): LogWriter {
   return _outputWriter;
