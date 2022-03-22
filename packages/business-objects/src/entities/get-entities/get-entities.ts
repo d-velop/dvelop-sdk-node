@@ -3,7 +3,7 @@ import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../uti
 
 /**
  * Parameters for the {@link getBoEntities}-function.
- * @category Entities
+ * @category Entity
  */
 export interface GetBoEntitiesParams {
   /** Name of the model */
@@ -16,7 +16,7 @@ export interface GetBoEntitiesParams {
  * Default transform-function provided to the {@link getBoEntities}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @template E Return type
  * @internal
- * @category Entities
+ * @category Entity
  */
 export function _getBoEntitiesDefaultTransformFunction<E>(response: HttpResponse, _: DvelopContext, __: GetBoEntitiesParams): E[] {
   return response.data.value;
@@ -26,7 +26,7 @@ export function _getBoEntitiesDefaultTransformFunction<E>(response: HttpResponse
  * Factory for {@link getBoEntities}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @template E Return type of the {@link getBoEntities}-function. A corresponding transformFunction has to be supplied.
  * @internal
- * @category Entities
+ * @category Entity
  */
 export function _getBoEntitiesFactory<E>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
