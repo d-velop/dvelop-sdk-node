@@ -23,8 +23,11 @@ export interface GetBoEntityParams {
  * @category Entity
  */
 export function _getBoEntityDefaultTransformFunction<E = any>(response: HttpResponse, _: DvelopContext, __: GetBoEntityParams): E {
-  // TODO: delete @odata.context!
-  return response.data;
+  const entity: any = response.data;
+  if (typeof entity === "object" && entity["@odata.context"]) {
+    delete entity["@odata.context"];
+  }
+  return response.data as E;
 }
 
 /**
