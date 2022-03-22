@@ -79,5 +79,23 @@ describe("getBoEntityFactory", () => {
 
       expect(result).toHaveProperty("employeeid", data.employeeid);
     });
+
+    it("should remove @odata.context", async () => {
+
+      const data: any = {
+        "@odata.context": "HiItsMeOdataContext",
+        "employeeid": "1",
+        "firstName": "John",
+        "lastName": "Dorian",
+        "jobTitel": "senior physician"
+      };
+
+      mockHttpRequestFunction.mockResolvedValue({ data: data } as HttpResponse);
+
+      const getBoEntity = _getBoEntityFactory(mockHttpRequestFunction, _getBoEntityDefaultTransformFunction);
+      const result = await getBoEntity(context, params);
+
+      expect(result).not.toHaveProperty("@odata.context");
+    });
   });
 });
