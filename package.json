@@ -8,6 +8,7 @@
     "packages/identityprovider",
     "packages/task",
     "packages/dms",
+    "packages/business-objects",
     "packages/express-utils",
     "packages/logging"
   ],
@@ -40,7 +41,7 @@
     "pre-commit": "^1.2.2",
     "ts-jest": "^27.0.5",
     "ts-node": "^9.1.1",
-    "typedoc": "^0.22.11",
+    "typedoc": "^0.20.32",
     "typescript": "^4.1.2"
   }
 }

@@ -20,6 +20,9 @@
       "path": "./packages/dms"
     },
     {
+      "path": "./packages/business-objects"
+    },
+    {
       "path": "./packages/express-utils"
     },
     {
