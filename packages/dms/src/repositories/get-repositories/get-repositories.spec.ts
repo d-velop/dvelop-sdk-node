@@ -40,10 +40,11 @@ describe("getRepositoriesFactory", () => {
     mockTransformFunction.mockReturnValue(transformResult);
 
     const getRepositories = _getRepositoriesFactory(mockHttpRequestFunction, mockTransformFunction);
-    await getRepositories(context);
+    const result = await getRepositories(context);
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
     expect(mockTransformFunction).toHaveBeenCalledWith(response, context);
+    expect(result).toEqual(transformResult);
   });
 
   describe("getRepositoriesDefaultTransformFunction", () => {
