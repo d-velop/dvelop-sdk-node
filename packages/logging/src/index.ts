@@ -26,4 +26,4 @@
 
 export * from "./logger/logger";
 export * from "./logger/types";
-export * from "./provider/otelProvider";
+export * from "./otelProvider/otelProvider";
