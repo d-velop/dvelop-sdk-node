@@ -1,51 +1,103 @@
-import { deepMergeObjects, DvelopContext } from "@dvelop-sdk/core";
+/* eslint-disable no-dupe-class-members */
+import { DvelopContext } from "@dvelop-sdk/core";
+import { DvelopLoggerOptions, LogOptions, Severity } from "./types";
 
-export type DvelopLogEventSeverity = "error" | "warn" | "info" | "debug" | number;
-export type DvelopLogEvent<E> = E & { severity: DvelopLogEventSeverity };
-export type FilterFn<E> = (context: DvelopContext, event: DvelopLogEvent<E>) => boolean;
-export type FormatFn<E> = (context: DvelopContext, event: DvelopLogEvent<E>) => any;
-export type TransportFn = (context: DvelopContext, event: any) => void | Promise<void>;
+/**
+ * General Logger class. This class does not log itself, but is a wrapper that wraps logging providers.
+ * Each logging provider can decide how and where it logs a log statement.
+ *
+ * If you create a new instance, you have to define at least one {@link ProviderFn} in the options.
+ *
+ * This package delivers an {@link otelProviderFactory} function, to create a logging provider that
+ * logs a log statement in the otel log format.
+ */
+export class DvelopLogger {
 
-export interface DvelopLoggerOptions<E> {
-  filter?: FilterFn<E>;
-  format?: FormatFn<E>;
-  transport: TransportFn;
+  constructor(public options: DvelopLoggerOptions) {
+    if (options.provider.length === 0) {
+      throw new Error("No logging provider defined.");
+    }
+  }
+
+  /**
+   * Log a message with severity `Error`.
+   * @param context A {@link DvelopContext}
+   * @param message A value containing the body of the log record. Can be for example
+   * a human-readable string message (including multi-line) describing the event in
+   * a free form or it can be a structured data composed of arrays and maps of other
+   * values. Can vary for each occurrence of the event coming from the same source.
+   */
+  public error(context: DvelopContext, message: string): void;
+  /**
+   * Log a message with severity `Error`.
+   * @param context A {@link DvelopContext}
+   * @param options A {@link LogOptions} object.
+   */
+  public error(context: DvelopContext, options: LogOptions): void;
+  public error(context: DvelopContext, parameter: string | LogOptions): void {
+    this.log(context, Severity.error, typeof parameter === "string" ? {message: parameter} : parameter);
+  }
+
+  /**
+   * Log a message with severity `Warn`.
+   * @param context A {@link DvelopContext}
+   * @param message A value containing the body of the log record. Can be for example
+   * a human-readable string message (including multi-line) describing the event in
+   * a free form or it can be a structured data composed of arrays and maps of other
+   * values. Can vary for each occurrence of the event coming from the same source.
+   */
+  public warn(context: DvelopContext, message: string): void;
+  /**
+   * Log a message with severity `Warn`.
+   * @param context A {@link DvelopContext}
+   * @param options A {@link LogOptions} object.
+   */
+  public warn(context: DvelopContext, options: LogOptions): void;
+  public warn(context: DvelopContext, parameter: string | LogOptions): void {
+    this.log(context, Severity.warn, typeof parameter === "string" ? {message: parameter} : parameter);
+  }
+
+  /**
+   * Log a message with severity `Info`.
+   * @param context A {@link DvelopContext}
+   * @param message A value containing the body of the log record. Can be for example
+   * a human-readable string message (including multi-line) describing the event in
+   * a free form or it can be a structured data composed of arrays and maps of other
+   * values. Can vary for each occurrence of the event coming from the same source.
+   */
+  public info(context: DvelopContext, message: string): void;
+  /**
+   * Log a message with severity `Info`.
+   * @param context A {@link DvelopContext}
+   * @param options A {@link LogOptions} object.
+   */
+  public info(context: DvelopContext, options: LogOptions): void;
+  public info(context: DvelopContext, parameter: string | LogOptions): void {
+    this.log(context, Severity.info, typeof parameter === "string" ? {message: parameter} : parameter);
+  }
+
+  /**
+   * Log a message with severity `Debug`.
+   * @param context A {@link DvelopContext}
+   * @param message A value containing the body of the log record. Can be for example
+   * a human-readable string message (including multi-line) describing the event in
+   * a free form or it can be a structured data composed of arrays and maps of other
+   * values. Can vary for each occurrence of the event coming from the same source.
+   */
+  public debug(context: DvelopContext, message: string): void;
+  /**
+   * Log a message with severity `Debug`.
+   * @param context A {@link DvelopContext}
+   * @param options A {@link LogOptions} object.
+   */
+  public debug(context: DvelopContext, options: LogOptions): void;
+  public debug(context: DvelopContext, parameter: string | LogOptions): void {
+    this.log(context, Severity.debug, typeof parameter === "string" ? {message: parameter} : parameter);
+  }
+
+  private log(context: DvelopContext, severity: Severity, options: LogOptions): void {
+    for (const provider of this.options.provider) {
+      provider(context, severity, options);
+    }
+  }
 }
-
-export abstract class DvelopLogger<E> {
-
-  constructor(
-    public options: DvelopLoggerOptions<E>[],
-    public defaults?: Partial<E>,
-  ) { }
-
-  error(context: DvelopContext, event: E): void {
-    this.log(context, { ...{ severity: "error" }, ...event });
-  }
-
-  warn(context: DvelopContext, event: E): void {
-    this.log(context, { ...{ severity: "warn" }, ...event });
-  }
-
-  info(context: DvelopContext, event: E): void {
-    this.log(context, { ...{ severity: "info" }, ...event });
-  }
-
-  debug(context: DvelopContext, event: E): void {
-    this.log(context, { ...{ severity: "debug" }, ...event });
-  }
-
-  log(context: DvelopContext, event: DvelopLogEvent<E>): void {
-    this.options.forEach(opt => {
-      if (!opt.filter || opt.filter(context, event)) {
-        const eventWithDefaults: DvelopLogEvent<E> = this.defaults ? deepMergeObjects(this.defaults, event) as DvelopLogEvent<E> : { ...event };
-        const formattedEvent: any = opt.format ? opt.format(context, eventWithDefaults) : eventWithDefaults;
-        const promise: void | Promise<void> = opt.transport(context, formattedEvent);
-        if (promise && promise.then) {
-          promise.then(() => { return; });
-        }
-      }
-    });
-  }
-}
-

@@ -24,6 +24,6 @@
  * @module logging
  */
 
-export * from "./otel/logger";
-export * from "./otel/context";
-export * from "./types/public";
+export * from "./logger/logger";
+export * from "./logger/types";
+export * from "./provider/otelProvider";
