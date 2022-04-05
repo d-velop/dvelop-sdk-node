@@ -25,3 +25,5 @@
  */
 
 export { DvelopLogEvent, IncomingHttpRequest, OutgoingHttpRequest, HttpResponse, DbRequest } from "./logger/log-event";
+export { DvelopLogger } from "./logger/logger";
+export { otelProviderFactory, OtelProviderOptions, OtelProviderTransport, otelConsoleTransport } from "./otelProvider/otelProvider";
