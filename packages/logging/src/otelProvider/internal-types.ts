@@ -1,7 +1,7 @@
 /**
  * The log event used by d.velop for otel logging.
  */
-export interface Event {
+export interface OtelEvent {
   time?: string;
   sev?: OtelSeverity;
   name?: string;

@@ -13,7 +13,7 @@ export enum Severity {
 /**
  * Several options for a log statement, that can be used by logging providers.
  */
-export interface LogOptions {
+export interface DvelopLogEvent {
   /**
    * A value containing the body of the log record. Can be for example
    * a human-readable string message (including multi-line) describing the event in
@@ -75,7 +75,7 @@ export interface LogOptions {
 /**
  * Type definition of logging providers.
  */
-export type ProviderFn = (context: DvelopContext, severity: Severity, options: LogOptions) => void;
+export type ProviderFn = (context: DvelopContext, severity: Severity, options: DvelopLogEvent) => void;
 
 /**
  * Options needed to create a new {@link DvelopLogger}

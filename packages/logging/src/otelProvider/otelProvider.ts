@@ -1,6 +1,6 @@
 import { DvelopContext } from "@dvelop-sdk/core";
-import { Event, EventAttributesHttp, EventAttributesDb, EventAttributesException, OtelSeverity } from "./internal-types";
-import { LogOptions, ProviderFn, Severity } from "../logger/types";
+import { OtelEvent, EventAttributesHttp, EventAttributesDb, EventAttributesException, OtelSeverity } from "./internal-types";
+import { DvelopLogEvent, ProviderFn, Severity } from "../logger/log-event";
 
 /**
  * Options for the otel provider.
@@ -53,12 +53,12 @@ export function otelProviderFactory(providerOptions: OtelProviderOptions, transp
     transports = [otelConsoleTransport];
   }
 
-  return (context: DvelopContext, severity: Severity, options: LogOptions) => {
-    const event: Event = {
+  return (context: DvelopContext, severity: Severity, event: DvelopLogEvent) => {
+    const otelEvent: OtelEvent = {
       time: (new Date()).toISOString(),
       sev: mapSeverity(severity),
-      name: options.name,
-      body: options.message,
+      name: event.name,
+      body: event.message,
       tn: context.tenantId,
       trace: context.traceId,
       span: context.spanId,
@@ -69,16 +69,16 @@ export function otelProviderFactory(providerOptions: OtelProviderOptions, transp
           inst: providerOptions.instanceId
         }
       },
-      attr: hasAttributes(options) ? {
-        ...options.customAttributes,
-        ...mapHttpAttribute(options),
-        ...mapDbAttribute(options),
-        ...mapExceptionAttribute(options)
+      attr: hasAttributes(event) ? {
+        ...event.customAttributes,
+        ...mapHttpAttribute(event),
+        ...mapDbAttribute(event),
+        ...mapExceptionAttribute(event)
       } : undefined,
-      vis: options.invisible ? 0 : 1
+      vis: event.invisible ? 0 : 1
     };
 
-    const otelMessage = JSON.stringify(event);
+    const otelMessage = JSON.stringify(otelEvent);
 
     for (const transport of transports) {
       transport(otelMessage);
@@ -86,65 +86,65 @@ export function otelProviderFactory(providerOptions: OtelProviderOptions, transp
   };
 }
 
-function hasAttributes(options: LogOptions): boolean {
-  return !!(options.httpIncomingRequest ||
-    options.httpIncomingResponse ||
-    options.httpOutgoingRequest ||
-    options.httpOutgoingResponse ||
-    options.dbRequest ||
-    options.error ||
-    options.customAttributes);
+function hasAttributes(event: DvelopLogEvent): boolean {
+  return !!(event.httpIncomingRequest ||
+    event.httpIncomingResponse ||
+    event.httpOutgoingRequest ||
+    event.httpOutgoingResponse ||
+    event.dbRequest ||
+    event.error ||
+    event.customAttributes);
 }
 
-function mapHttpAttribute(options: LogOptions): {http?: EventAttributesHttp} {
+function mapHttpAttribute(event: DvelopLogEvent): { http?: EventAttributesHttp } {
   let attributes: EventAttributesHttp | undefined = undefined;
-  if (options.httpIncomingRequest) {
-    const url = new URL(options.httpIncomingRequest.url);
+  if (event.httpIncomingRequest) {
+    const url = new URL(event.httpIncomingRequest.url);
     attributes = {
-      method: options.httpIncomingRequest.method.toUpperCase(),
-      url: options.httpIncomingRequest.url,
+      method: event.httpIncomingRequest.method.toUpperCase(),
+      url: event.httpIncomingRequest.url,
       target: url.pathname + url.search + url.hash,
       host: url.host,
       scheme: /* istanbul ignore next */ url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol,
-      userAgent: options.httpIncomingRequest.headers?.userAgent,
-      route: options.httpIncomingRequest.routeTemplate,
-      clientIp: options.httpIncomingRequest.clientIp
+      userAgent: event.httpIncomingRequest.headers?.userAgent,
+      route: event.httpIncomingRequest.routeTemplate,
+      clientIp: event.httpIncomingRequest.clientIp
     };
-  } else if (options.httpIncomingResponse) {
-    const url = new URL(options.httpIncomingResponse.url);
+  } else if (event.httpIncomingResponse) {
+    const url = new URL(event.httpIncomingResponse.url);
     attributes = {
-      method: options.httpIncomingResponse.method.toUpperCase(),
-      statusCode: options.httpIncomingResponse.statusCode,
-      url: options.httpIncomingResponse.url,
+      method: event.httpIncomingResponse.method.toUpperCase(),
+      statusCode: event.httpIncomingResponse.statusCode,
+      url: event.httpIncomingResponse.url,
       target: url.pathname + url.search + url.hash,
       host: url.host,
       scheme: /* istanbul ignore next */ url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol,
-      route: options.httpIncomingResponse.routeTemplate,
-      client: options.httpIncomingResponse.clientDuration ? {
-        duration: options.httpIncomingResponse.clientDuration
+      route: event.httpIncomingResponse.routeTemplate,
+      client: event.httpIncomingResponse.clientDuration ? {
+        duration: event.httpIncomingResponse.clientDuration
       } : undefined
     };
-  } else if (options.httpOutgoingRequest) {
-    const url = new URL(options.httpOutgoingRequest.url);
+  } else if (event.httpOutgoingRequest) {
+    const url = new URL(event.httpOutgoingRequest.url);
     attributes = {
-      method: options.httpOutgoingRequest.method.toUpperCase(),
-      url: options.httpOutgoingRequest.url,
+      method: event.httpOutgoingRequest.method.toUpperCase(),
+      url: event.httpOutgoingRequest.url,
       target: url.pathname + url.search + url.hash,
       host: url.host,
       scheme: /* istanbul ignore next */ url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol,
-      userAgent: options.httpOutgoingRequest.headers?.userAgent
+      userAgent: event.httpOutgoingRequest.headers?.userAgent
     };
-  } else if (options.httpOutgoingResponse) {
-    const url = new URL(options.httpOutgoingResponse.url);
+  } else if (event.httpOutgoingResponse) {
+    const url = new URL(event.httpOutgoingResponse.url);
     attributes = {
-      method: options.httpOutgoingResponse.method.toUpperCase(),
-      statusCode: options.httpOutgoingResponse.statusCode,
-      url: options.httpOutgoingResponse.url,
+      method: event.httpOutgoingResponse.method.toUpperCase(),
+      statusCode: event.httpOutgoingResponse.statusCode,
+      url: event.httpOutgoingResponse.url,
       target: url.pathname + url.search + url.hash,
       host: url.host,
       scheme: /* istanbul ignore next */ url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol,
-      server: options.httpOutgoingResponse.serverDuration ? {
-        duration: options.httpOutgoingResponse.serverDuration
+      server: event.httpOutgoingResponse.serverDuration ? {
+        duration: event.httpOutgoingResponse.serverDuration
       } : undefined
     };
   }
@@ -157,14 +157,14 @@ function mapHttpAttribute(options: LogOptions): {http?: EventAttributesHttp} {
   }
 }
 
-function mapDbAttribute(options: LogOptions): {db?: EventAttributesDb} {
-  if (options.dbRequest) {
+function mapDbAttribute(event: DvelopLogEvent): { db?: EventAttributesDb } {
+  if (event.dbRequest) {
     return {
       db: {
-        name: options.dbRequest.name,
-        operation: options.dbRequest.operation,
-        statement: options.dbRequest.statement,
-        duration: options.dbRequest.duration
+        name: event.dbRequest.name,
+        operation: event.dbRequest.operation,
+        statement: event.dbRequest.statement,
+        duration: event.dbRequest.duration
       }
     };
   } else {
@@ -172,13 +172,13 @@ function mapDbAttribute(options: LogOptions): {db?: EventAttributesDb} {
   }
 }
 
-function mapExceptionAttribute(options: LogOptions): {exception?: EventAttributesException} {
-  if (options.error) {
+function mapExceptionAttribute(event: DvelopLogEvent): { exception?: EventAttributesException } {
+  if (event.error) {
     return {
       exception: {
-        message: options.error.message,
-        type: options.error.name,
-        stacktrace: options.error.stack
+        message: event.error.message,
+        type: event.error.name,
+        stacktrace: event.error.stack
       }
     };
   } else {

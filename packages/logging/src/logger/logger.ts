@@ -1,6 +1,6 @@
 /* eslint-disable no-dupe-class-members */
 import { DvelopContext } from "@dvelop-sdk/core";
-import { DvelopLoggerOptions, LogOptions, Severity } from "./types";
+import { DvelopLoggerOptions, DvelopLogEvent, Severity } from "./log-event";
 
 /**
  * General Logger class. This class does not log itself, but is a wrapper that wraps logging providers.
@@ -31,11 +31,11 @@ export class DvelopLogger {
   /**
    * Log a message with severity `Error`.
    * @param context A {@link DvelopContext}
-   * @param options A {@link LogOptions} object.
+   * @param event A {@link DvelopLogEvent} object.
    */
-  public error(context: DvelopContext, options: LogOptions): void;
-  public error(context: DvelopContext, parameter: string | LogOptions): void {
-    this.log(context, Severity.error, typeof parameter === "string" ? {message: parameter} : parameter);
+  public error(context: DvelopContext, event: DvelopLogEvent): void;
+  public error(context: DvelopContext, parameter: string | DvelopLogEvent): void {
+    this.log(context, Severity.error, typeof parameter === "string" ? { message: parameter } : parameter);
   }
 
   /**
@@ -50,11 +50,11 @@ export class DvelopLogger {
   /**
    * Log a message with severity `Warn`.
    * @param context A {@link DvelopContext}
-   * @param options A {@link LogOptions} object.
+   * @param event A {@link DvelopLogEvent} object.
    */
-  public warn(context: DvelopContext, options: LogOptions): void;
-  public warn(context: DvelopContext, parameter: string | LogOptions): void {
-    this.log(context, Severity.warn, typeof parameter === "string" ? {message: parameter} : parameter);
+  public warn(context: DvelopContext, event: DvelopLogEvent): void;
+  public warn(context: DvelopContext, parameter: string | DvelopLogEvent): void {
+    this.log(context, Severity.warn, typeof parameter === "string" ? { message: parameter } : parameter);
   }
 
   /**
@@ -69,11 +69,11 @@ export class DvelopLogger {
   /**
    * Log a message with severity `Info`.
    * @param context A {@link DvelopContext}
-   * @param options A {@link LogOptions} object.
+   * @param event A {@link DvelopLogEvent} object.
    */
-  public info(context: DvelopContext, options: LogOptions): void;
-  public info(context: DvelopContext, parameter: string | LogOptions): void {
-    this.log(context, Severity.info, typeof parameter === "string" ? {message: parameter} : parameter);
+  public info(context: DvelopContext, event: DvelopLogEvent): void;
+  public info(context: DvelopContext, parameter: string | DvelopLogEvent): void {
+    this.log(context, Severity.info, typeof parameter === "string" ? { message: parameter } : parameter);
   }
 
   /**
@@ -88,14 +88,14 @@ export class DvelopLogger {
   /**
    * Log a message with severity `Debug`.
    * @param context A {@link DvelopContext}
-   * @param options A {@link LogOptions} object.
+   * @param event A {@link DvelopLogEvent} object.
    */
-  public debug(context: DvelopContext, options: LogOptions): void;
-  public debug(context: DvelopContext, parameter: string | LogOptions): void {
-    this.log(context, Severity.debug, typeof parameter === "string" ? {message: parameter} : parameter);
+  public debug(context: DvelopContext, event: DvelopLogEvent): void;
+  public debug(context: DvelopContext, parameter: string | DvelopLogEvent): void {
+    this.log(context, Severity.debug, typeof parameter === "string" ? { message: parameter } : parameter);
   }
 
-  private log(context: DvelopContext, severity: Severity, options: LogOptions): void {
+  private log(context: DvelopContext, severity: Severity, options: DvelopLogEvent): void {
     for (const provider of this.options.provider) {
       provider(context, severity, options);
     }

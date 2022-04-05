@@ -24,6 +24,4 @@
  * @module logging
  */
 
-export * from "./logger/logger";
-export * from "./logger/types";
-export * from "./otelProvider/otelProvider";
+export { DvelopLogEvent, IncomingHttpRequest, OutgoingHttpRequest, HttpResponse, DbRequest } from "./logger/log-event";
