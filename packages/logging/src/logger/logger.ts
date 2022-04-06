@@ -22,10 +22,11 @@ export class DvelopLogger {
   /**
    * Log a message with severity `Error`.
    * @param context A {@link DvelopContext}
-   * @param message A value containing the body of the log record. Can be for example
-   * a human-readable string message (including multi-line) describing the event in
-   * a free form or it can be a structured data composed of arrays and maps of other
-   * values. Can vary for each occurrence of the event coming from the same source.
+   * @param message A value containing the body of the log record. Can be a
+   * human-readable string message (including multi-line) describing the event
+   * in a free form. To pass structured data composed of arrays and maps of
+   * other values, use a {@link DvelopLogEvent} instead of a string message.
+   * Can vary for each occurrence of the event coming from the same source.
    */
   public error(context: DvelopContext, message: string): void;
   /**
@@ -41,10 +42,11 @@ export class DvelopLogger {
   /**
    * Log a message with severity `Warn`.
    * @param context A {@link DvelopContext}
-   * @param message A value containing the body of the log record. Can be for example
-   * a human-readable string message (including multi-line) describing the event in
-   * a free form or it can be a structured data composed of arrays and maps of other
-   * values. Can vary for each occurrence of the event coming from the same source.
+   * @param message A value containing the body of the log record. Can be a
+   * human-readable string message (including multi-line) describing the event
+   * in a free form. To pass structured data composed of arrays and maps of
+   * other values, use a {@link DvelopLogEvent} instead of a string message.
+   * Can vary for each occurrence of the event coming from the same source.
    */
   public warn(context: DvelopContext, message: string): void;
   /**
@@ -60,10 +62,11 @@ export class DvelopLogger {
   /**
    * Log a message with severity `Info`.
    * @param context A {@link DvelopContext}
-   * @param message A value containing the body of the log record. Can be for example
-   * a human-readable string message (including multi-line) describing the event in
-   * a free form or it can be a structured data composed of arrays and maps of other
-   * values. Can vary for each occurrence of the event coming from the same source.
+   * @param message A value containing the body of the log record. Can be a
+   * human-readable string message (including multi-line) describing the event
+   * in a free form. To pass structured data composed of arrays and maps of
+   * other values, use a {@link DvelopLogEvent} instead of a string message.
+   * Can vary for each occurrence of the event coming from the same source.
    */
   public info(context: DvelopContext, message: string): void;
   /**
@@ -79,10 +82,11 @@ export class DvelopLogger {
   /**
    * Log a message with severity `Debug`.
    * @param context A {@link DvelopContext}
-   * @param message A value containing the body of the log record. Can be for example
-   * a human-readable string message (including multi-line) describing the event in
-   * a free form or it can be a structured data composed of arrays and maps of other
-   * values. Can vary for each occurrence of the event coming from the same source.
+   * @param message A value containing the body of the log record. Can be a
+   * human-readable string message (including multi-line) describing the event
+   * in a free form. To pass structured data composed of arrays and maps of
+   * other values, use a {@link DvelopLogEvent} instead of a string message.
+   * Can vary for each occurrence of the event coming from the same source.
    */
   public debug(context: DvelopContext, message: string): void;
   /**
