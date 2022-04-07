@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [15, 16, 17]
+        node-version: [16, 17]
     name: Build with Node.js ${{ matrix.node-version }}
     steps:
     - name: Checkout code
@@ -44,7 +44,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [15, 16, 17]
+        node-version: [16, 17]
     name: Test for Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
     steps:
     - name: Checkout code
