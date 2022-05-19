@@ -280,4 +280,4 @@ Thanks to the following projects for inspiration
 
 * [Starting an Open Source Project](https://opensource.guide/starting-a-project/)
 * [README template](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [CONTRIBUTING template](https://github.com/nayafia/contributing-template/blob/master/CONTRIBUTING-template.md)
+* [CONTRIBUTING template](https://github.com/nayafia/contributing-template/blob/main/CONTRIBUTING-template.md)

@@ -10,7 +10,7 @@
   <a href="https://github.com/d-velop/dvelop-sdk-node">
     <img alt="GitHub" src="https://img.shields.io/badge/GitHub-dvelop--sdk--node-%23ff0844?logo=github&style=for-the-badge">
   </a>
-  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/master/LICENSE">
+  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
   </a>
   </br>
