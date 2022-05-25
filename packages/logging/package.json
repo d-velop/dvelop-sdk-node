@@ -1,11 +1,11 @@
 {
-  "name": "@dvelop-sdk/identityprovider",
-  "description": "This package contains functionality for the Identityprovider-App in the d.velop cloud.",
-  "version": "4.0.2",
+  "name": "@dvelop-sdk/logging",
+  "description": "This package contains functions for logging with OpenTelemetry.",
+  "version": "1.0.0-beta.4",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "author": "Lennart <lennart.klose@d-velop.de>",
+  "author": "Veit Kunz <git@veit-kunz.de>",
   "files": [
     "lib"
   ],
@@ -18,9 +18,6 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "scripts": {
-    "license": "license-checker --production --onlyAllow Apache-2.0;MIT;ISC;BSD-2-Clause;BSD-3-Clause"
   },
   "dependencies": {
     "@dvelop-sdk/core": "^2.1.0-beta.0"

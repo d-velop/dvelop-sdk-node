@@ -18,3 +18,8 @@ export const DVELOP_REQUEST_ID_HEADER = "x-dv-request-id";
  * Refer to the [d.velop basics tenant header section](https://developer.d-velop.de/dev/en/basics#tenant-header) for more information.**
  */
 export const DVELOP_REQUEST_SIGNATURE_HEADER = "x-dv-sig-1";
+
+/**
+ * HTTP Header used for [W3C Trace Context specification](https://www.w3.org/TR/trace-context/#traceparent-header).
+ */
+export declare const TRACEPARENT_HEADER = "traceparent";

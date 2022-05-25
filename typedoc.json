@@ -8,7 +8,8 @@
     "packages/task/src/index.ts",
     "packages/dms/src/index.ts",
     "packages/business-objects/src/index.ts",
-    "packages/express-utils/src/index.ts"
+    "packages/express-utils/src/index.ts",
+    "packages/logging/src/index.ts"
   ],
   "categoryOrder": [
     "*",
