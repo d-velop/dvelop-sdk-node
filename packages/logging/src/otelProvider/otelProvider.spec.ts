@@ -222,8 +222,8 @@ describe("otel provider", () => {
             expect(json.attr.http.route).toEqual("/some/:id");
             expect(json.attr.http.userAgent).toEqual("something/1.2 (some other)");
             expect(json.attr.http.clientIp).toEqual("127.0.0.1");
-            expect(json.attr.http.server?.duration).toBeUndefined();
             expect(json.attr.http.client?.duration).toBeUndefined();
+            expect(json.attr.http.server?.duration).toBeUndefined();
             done();
           };
           const provider = otelProviderFactory({ appName: "test" }, [transport]);
@@ -285,8 +285,8 @@ describe("otel provider", () => {
             expect(json.attr.http.route).toEqual("/some/:id");
             expect(json.attr.http.userAgent).toBeUndefined();
             expect(json.attr.http.clientIp).toBeUndefined();
-            expect(json.attr.http.server?.duration).toBeUndefined();
-            expect(json.attr.http.client?.duration).toBe(42);
+            expect(json.attr.http.client?.duration).toBeUndefined();
+            expect(json.attr.http.server?.duration).toBe(43);
             done();
           };
           const provider = otelProviderFactory({ appName: "test" }, [transport]);
@@ -314,6 +314,7 @@ describe("otel provider", () => {
             const json: OtelEvent = JSON.parse(otelMessage);
             expect(json.attr?.http).toBeDefined();
             expect(json.attr.http.client).toBeUndefined();
+            expect(json.attr.http.server).toBeUndefined();
             done();
           };
           const provider = otelProviderFactory({ appName: "test" }, [transport]);
@@ -349,8 +350,8 @@ describe("otel provider", () => {
             expect(json.attr.http.route).toBeUndefined();
             expect(json.attr.http.userAgent).toEqual("something/1.2 (some other)");
             expect(json.attr.http.clientIp).toBeUndefined();
-            expect(json.attr.http.server?.duration).toBeUndefined();
             expect(json.attr.http.client?.duration).toBeUndefined();
+            expect(json.attr.http.server?.duration).toBeUndefined();
             done();
           };
           const provider = otelProviderFactory({ appName: "test" }, [transport]);
@@ -408,8 +409,8 @@ describe("otel provider", () => {
             expect(json.attr.http.route).toBeUndefined();
             expect(json.attr.http.userAgent).toBeUndefined();
             expect(json.attr.http.clientIp).toBeUndefined();
-            expect(json.attr.http.server?.duration).toBe(43);
-            expect(json.attr.http.client?.duration).toBeUndefined();
+            expect(json.attr.http.client?.duration).toBe(42);
+            expect(json.attr.http.server?.duration).toBeUndefined();
             done();
           };
           const provider = otelProviderFactory({ appName: "test" }, [transport]);
@@ -436,6 +437,7 @@ describe("otel provider", () => {
           const transport: OtelProviderTransport = otelMessage => {
             const json: OtelEvent = JSON.parse(otelMessage);
             expect(json.attr?.http).toBeDefined();
+            expect(json.attr.http.client).toBeUndefined();
             expect(json.attr.http.server).toBeUndefined();
             done();
           };
