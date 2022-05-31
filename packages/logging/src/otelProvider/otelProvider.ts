@@ -120,8 +120,8 @@ function mapHttpAttribute(event: DvelopLogEvent): { http?: EventAttributesHttp }
       host: url.host,
       scheme: /* istanbul ignore next */ url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol,
       route: event.httpIncomingResponse.routeTemplate,
-      client: event.httpIncomingResponse.clientDuration ? {
-        duration: event.httpIncomingResponse.clientDuration
+      server: event.httpIncomingResponse.serverDuration ? {
+        duration: event.httpIncomingResponse.serverDuration
       } : undefined
     };
   } else if (event.httpOutgoingRequest) {
@@ -143,8 +143,8 @@ function mapHttpAttribute(event: DvelopLogEvent): { http?: EventAttributesHttp }
       target: url.pathname + url.search + url.hash,
       host: url.host,
       scheme: /* istanbul ignore next */ url.protocol.slice(-1) === ":" ? url.protocol.slice(0, -1) : url.protocol,
-      server: event.httpOutgoingResponse.serverDuration ? {
-        duration: event.httpOutgoingResponse.serverDuration
+      client: event.httpOutgoingResponse.clientDuration ? {
+        duration: event.httpOutgoingResponse.clientDuration
       } : undefined
     };
   }
