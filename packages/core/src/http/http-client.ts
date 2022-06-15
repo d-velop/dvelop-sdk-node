@@ -3,6 +3,7 @@ import { generateRequestId } from "..";
 import { DvelopContext } from "../context/context";
 import { axiosFollowHalJsonFunctionFactory } from "./axios-follow-hal-json";
 import { DVELOP_REQUEST_ID_HEADER } from "./http-headers";
+import { deepMergeObjects } from "../util/deep-merge-objects";
 
 export interface DvelopHttpRequestConfig<T = any> extends AxiosRequestConfig<T> {
   follows?: string[];
@@ -44,17 +45,13 @@ export function axiosHttpClientFactory(axiosInstance: AxiosInstance, generateReq
         defaultConfig.headers["Authorization"] = `Bearer ${context.authSessionId}`;
       }
 
-      if (context.authSessionId) {
-        defaultConfig.headers["Authorization"] = `Bearer ${context.authSessionId}`;
-      }
-
       if (context.requestId) {
         defaultConfig.headers[DVELOP_REQUEST_ID_HEADER] = context.requestId;
       } else {
         defaultConfig.headers[DVELOP_REQUEST_ID_HEADER] = generateRequestId();
       }
 
-      return axiosInstance.request({ ...defaultConfig, ...config, ...{ headers: { ...defaultConfig.headers, ...config.headers } } });
+      return axiosInstance.request(deepMergeObjects(defaultConfig, config));
     }
   };
 }
