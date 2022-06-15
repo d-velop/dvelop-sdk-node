@@ -1,8 +1,9 @@
 import axios, { AxiosInstance } from "axios";
-import { DVELOP_REQUEST_ID_HEADER } from "..";
+import { DVELOP_REQUEST_ID_HEADER, TRACEPARENT_HEADER } from "../http/http-headers";
 import { DvelopContext } from "../context/context";
 import { axiosFollowHalJsonFunctionFactory } from "./axios-follow-hal-json";
 import { DvelopHttpClient, DvelopHttpRequestConfig, axiosHttpClientFactory, axiosInstanceFactory } from "./http-client";
+import { TraceContext } from "../tracecontext/traceparent";
 
 jest.mock("axios");
 const mockAxios = axios as jest.Mocked<typeof axios>;
@@ -40,9 +41,13 @@ describe("axiosHttpClientFactory", () => {
 
   let mockAxiosInstance: AxiosInstance;
   let mockGenerateRequestId = jest.fn();
+  let mockBuildTraceparentHeader = jest.fn();
+  let mockMergeConfigs = jest.fn();
 
   beforeEach(() => {
     jest.resetAllMocks();
+
+    mockMergeConfigs.mockReturnValue({});
 
     mockAxiosInstance = {
       request: jest.fn()
@@ -55,7 +60,7 @@ describe("axiosHttpClientFactory", () => {
   let axiosClient: DvelopHttpClient;
 
   beforeEach(() => {
-    axiosClient = axiosHttpClientFactory(mockAxiosInstance, mockGenerateRequestId);
+    axiosClient = axiosHttpClientFactory(mockAxiosInstance, mockGenerateRequestId, mockBuildTraceparentHeader, mockMergeConfigs);
   });
 
   it("should have default config on empty context", async () => {
@@ -64,12 +69,12 @@ describe("axiosHttpClientFactory", () => {
 
     await axiosClient.request(context, {});
 
-    expect(mockAxiosInstance.request).toHaveBeenCalledWith({
+    expect(mockMergeConfigs).toHaveBeenCalledWith({
       headers: {
         "ContentType": "application/json",
         "Accept": "application/hal+json, application/json"
       }
-    });
+    }, {});
   });
 
   it("should set systemBaseUri as baseURL", async () => {
@@ -80,9 +85,9 @@ describe("axiosHttpClientFactory", () => {
 
     await axiosClient.request(context, {});
 
-    expect(mockAxiosInstance.request).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockMergeConfigs).toHaveBeenCalledWith(expect.objectContaining({
       baseURL: context.systemBaseUri
-    }));
+    }), {});
   });
 
   it("should set authSessionId as Bearer-Token", async () => {
@@ -93,11 +98,11 @@ describe("axiosHttpClientFactory", () => {
 
     await axiosClient.request(context, {});
 
-    expect(mockAxiosInstance.request).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockMergeConfigs).toHaveBeenCalledWith(expect.objectContaining({
       headers: expect.objectContaining({
         "Authorization": `Bearer ${context.authSessionId}`
       })
-    }));
+    }), {});
   });
 
   it("should set requestId as header", async () => {
@@ -108,30 +113,51 @@ describe("axiosHttpClientFactory", () => {
 
     await axiosClient.request(context, {});
 
-    expect(mockAxiosInstance.request).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockMergeConfigs).toHaveBeenCalledWith(expect.objectContaining({
       headers: expect.objectContaining({
         [DVELOP_REQUEST_ID_HEADER]: context.requestId
       })
-    }));
+    }), {});
   });
 
   it("should generate requestId if non given", async () => {
 
-    context = { };
+    context = {};
     const requestId: string = "HiItsMeRequestId";
     mockGenerateRequestId.mockReturnValue(requestId);
 
     await axiosClient.request(context, {});
 
     expect(mockGenerateRequestId).toHaveBeenCalledTimes(1);
-    expect(mockAxiosInstance.request).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockMergeConfigs).toHaveBeenCalledWith(expect.objectContaining({
       headers: expect.objectContaining({
         [DVELOP_REQUEST_ID_HEADER]: requestId
       })
-    }));
+    }), {});
   });
 
-  it("should add config", async () => {
+  it("should build traceparent-Header on traceContext", async () => {
+
+    const traceContext: TraceContext = { traceId: "trace", spanId: "span", version: 0, sampled: true };
+    const traceParentHeader: string = "someTraceParentHeader";
+    context = {
+      traceContext: traceContext
+    };
+    mockBuildTraceparentHeader.mockReturnValue(traceParentHeader);
+
+    await axiosClient.request(context, {});
+
+    expect(mockBuildTraceparentHeader).toHaveBeenCalledTimes(1);
+    expect(mockBuildTraceparentHeader).toHaveBeenCalledWith(traceContext);
+
+    expect(mockMergeConfigs).toHaveBeenCalledWith(expect.objectContaining({
+      headers: expect.objectContaining({
+        [TRACEPARENT_HEADER]: traceParentHeader
+      })
+    }), {});
+  });
+
+  it("should merge configs", async () => {
 
     config = {
       method: "GET",
@@ -140,29 +166,22 @@ describe("axiosHttpClientFactory", () => {
 
     await axiosClient.request({}, config);
 
-    expect(mockAxiosInstance.request).toHaveBeenCalledWith(expect.objectContaining({
+    expect(mockMergeConfigs).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
       method: config.method,
       data: config.data
     }));
   });
 
-  it("should add and overwrite config-headers", async () => {
+  it("should fire request with merged config", async () => {
 
-    config = {
-      headers: {
-        "Accept": "HiItsMeAcceptHeader",
-        "ContentType": "application/json",
-        "test": "HiItsMeTestHeader"
-      }
+    const mergedConfig = {
+      hi: "itsMeTest"
     };
 
-    await axiosClient.request({}, config);
+    mockMergeConfigs.mockReturnValue(mergedConfig);
 
-    expect(mockAxiosInstance.request).toHaveBeenCalledWith(expect.objectContaining({
-      headers: expect.objectContaining({
-        "Accept": config.headers["Accept"],
-        "test": config.headers["test"]
-      })
-    }));
+    await axiosClient.request({}, config);
+    expect(mockAxiosInstance.request).toHaveBeenCalledTimes(1);
+    expect(mockAxiosInstance.request).toHaveBeenCalledWith(mergedConfig);
   });
 });

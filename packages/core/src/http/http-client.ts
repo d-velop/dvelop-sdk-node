@@ -2,8 +2,9 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Ax
 import { generateRequestId } from "..";
 import { DvelopContext } from "../context/context";
 import { axiosFollowHalJsonFunctionFactory } from "./axios-follow-hal-json";
-import { DVELOP_REQUEST_ID_HEADER } from "./http-headers";
+import { DVELOP_REQUEST_ID_HEADER, TRACEPARENT_HEADER } from "./http-headers";
 import { deepMergeObjects } from "../util/deep-merge-objects";
+import { buildTraceparentHeader, TraceContext } from "../tracecontext/traceparent";
 
 export interface DvelopHttpRequestConfig<T = any> extends AxiosRequestConfig<T> {
   follows?: string[];
@@ -24,11 +25,15 @@ export function axiosInstanceFactory(axios: AxiosStatic): AxiosInstance {
   return instance;
 }
 
-export function axiosHttpClientFactory(axiosInstance: AxiosInstance, generateRequestId: () => string): DvelopHttpClient {
+export function axiosHttpClientFactory(
+  axiosInstance: AxiosInstance,
+  generateRequestId: () => string,
+  buildTraceparentHeader: (traceContext: TraceContext) => string,
+  mergeConfigs: (...configs: DvelopHttpRequestConfig[]) => DvelopHttpRequestConfig
+): DvelopHttpClient {
 
   return {
     request: async (context: DvelopContext, config: DvelopHttpRequestConfig) => {
-
 
       const defaultConfig: DvelopHttpRequestConfig = {};
 
@@ -51,12 +56,16 @@ export function axiosHttpClientFactory(axiosInstance: AxiosInstance, generateReq
         defaultConfig.headers[DVELOP_REQUEST_ID_HEADER] = generateRequestId();
       }
 
-      return axiosInstance.request(deepMergeObjects(defaultConfig, config));
+      if (context.traceContext) {
+        defaultConfig.headers[TRACEPARENT_HEADER] = buildTraceparentHeader(context.traceContext);
+      }
+
+      return axiosInstance.request(mergeConfigs(defaultConfig, config));
     }
   };
 }
 
 /* istanbul ignore next */
 export function defaultDvelopHttpClientFactory(): DvelopHttpClient {
-  return axiosHttpClientFactory(axiosInstanceFactory(axios), generateRequestId);
+  return axiosHttpClientFactory(axiosInstanceFactory(axios), generateRequestId, buildTraceparentHeader, deepMergeObjects);
 }
