@@ -29,4 +29,4 @@ export * from "./http/http-headers";
 export { DeepMergeError, deepMergeObjects } from "./util/deep-merge-objects";
 export { DvelopHttpRequestConfig, HttpResponse as DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
 export { generateUuid, generateRequestId } from "./generate-uuid/generate-uudi-id";
-export { parseTraceparentHeader, buildTraceparentHeader, generateTraceId, generateSpanId, Traceparent, TraceFlags } from "./tracecontext/traceparent";
+export { TraceContext, parseTraceparentHeader, buildTraceparentHeader, generateTraceId, generateSpanId } from "./tracecontext/traceparent";

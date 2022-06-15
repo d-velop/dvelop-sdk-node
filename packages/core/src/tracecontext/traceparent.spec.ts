@@ -3,14 +3,14 @@ import {
   generateSpanId,
   generateTraceId,
   parseTraceparentHeader,
-  Traceparent
+  TraceContext
 } from "./traceparent";
 import {DvelopSdkError} from "../errors/errors";
 
 describe("parseTraceparentHeader", () => {
   it("should return Traceparent object when valid traceparent header is given", () => {
     const headerValue = "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01";
-    const traceparent: Traceparent = parseTraceparentHeader(headerValue);
+    const traceparent: TraceContext = parseTraceparentHeader(headerValue);
     expect(traceparent.traceId).toEqual("4bf92f3577b34da6a3ce929d0e0e4736");
     expect(traceparent.parentId).toEqual("00f067aa0ba902b7");
     expect(traceparent.version).toEqual(0);
