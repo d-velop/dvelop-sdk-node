@@ -3,8 +3,9 @@ import { generateRequestId } from "..";
 import { DvelopContext } from "../context/context";
 import { axiosFollowHalJsonFunctionFactory } from "./axios-follow-hal-json";
 import { DVELOP_REQUEST_ID_HEADER, TRACEPARENT_HEADER } from "./http-headers";
+import { TraceContext } from "../trace-context/trace-context";
+import { buildTraceparentHeader } from "../trace-context/traceparent-header/traceparent-header";
 import { deepMergeObjects } from "../util/deep-merge-objects";
-import { buildTraceparentHeader, TraceContext } from "../tracecontext/traceparent";
 
 export interface DvelopHttpRequestConfig<T = any> extends AxiosRequestConfig<T> {
   follows?: string[];

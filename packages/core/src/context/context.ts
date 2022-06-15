@@ -1,4 +1,4 @@
-import { TraceContext } from "../tracecontext/traceparent";
+import { TraceContext } from "../trace-context/trace-context";
 
 /** Defines a common d.velop context used across all requests. */
 export interface DvelopContext {

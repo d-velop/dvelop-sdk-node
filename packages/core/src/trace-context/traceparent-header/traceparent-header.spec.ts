@@ -1,11 +1,6 @@
-import {
-  buildTraceparentHeader,
-  generateSpanId,
-  generateTraceId,
-  parseTraceparentHeader,
-  TraceContext,
-  TraceContextError
-} from "./traceparent";
+import { TraceContext } from "../trace-context";
+import { TraceContextError } from "../trace-context-error";
+import { buildTraceparentHeader, parseTraceparentHeader } from "./traceparent-header";
 
 describe("parseTraceparentHeader", () => {
   it("should return Traceparent object when valid traceparent header is given", () => {
@@ -82,21 +77,5 @@ describe("buildTraceparentHeader", () => {
     const spanId = "4bf92f3577b34da6a3ce929d0e0e4736";
     expect(() => buildTraceparentHeader({ traceId: traceId, spanId: spanId, version: 0, sampled: true })).toThrow(TraceContextError);
     expect(() => buildTraceparentHeader({ traceId: traceId, spanId: spanId, version: 0, sampled: true })).toThrow("SpanId '4bf92f3577b34da6a3ce929d0e0e4736' is malformed.");
-  });
-});
-
-describe("generateTraceId", () => {
-  it("should return string with correct length and only allowed characters", () => {
-    const traceId = generateTraceId();
-    expect(traceId).toHaveLength(32);
-    expect(/^[\da-f]{32}$/.test(traceId)).toBeTruthy();
-  });
-});
-
-describe("generateSpanId", () => {
-  it("should return string with correct length and only allowed characters", () => {
-    const traceId = generateSpanId();
-    expect(traceId).toHaveLength(16);
-    expect(/^[\da-f]{16}$/.test(traceId)).toBeTruthy();
   });
 });

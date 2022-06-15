@@ -3,7 +3,7 @@ import { DVELOP_REQUEST_ID_HEADER, TRACEPARENT_HEADER } from "../http/http-heade
 import { DvelopContext } from "../context/context";
 import { axiosFollowHalJsonFunctionFactory } from "./axios-follow-hal-json";
 import { DvelopHttpClient, DvelopHttpRequestConfig, axiosHttpClientFactory, axiosInstanceFactory } from "./http-client";
-import { TraceContext } from "../tracecontext/traceparent";
+import { TraceContext } from "../trace-context/trace-context";
 
 jest.mock("axios");
 const mockAxios = axios as jest.Mocked<typeof axios>;

@@ -29,4 +29,8 @@ export * from "./http/http-headers";
 export { DeepMergeError, deepMergeObjects } from "./util/deep-merge-objects";
 export { DvelopHttpRequestConfig, HttpResponse as DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
 export { generateUuid, generateRequestId } from "./generate-uuid/generate-uudi-id";
-export { TraceContext, TraceContextError, parseTraceparentHeader, buildTraceparentHeader, generateTraceId, generateSpanId } from "./tracecontext/traceparent";
+
+export { TraceContext } from "./trace-context/trace-context";
+export { TraceContextError } from "./trace-context/trace-context-error";
+export { buildTraceparentHeader, parseTraceparentHeader } from "./trace-context/traceparent-header/traceparent-header";
+export { generateTraceContext, generateTraceId, generateSpanId } from "./trace-context/generate-trace-context/generate-trace-context";
