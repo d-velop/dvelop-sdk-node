@@ -60,8 +60,8 @@ export function otelProviderFactory(providerOptions: OtelProviderOptions, transp
       name: event.name,
       body: event.message,
       tn: context.tenantId,
-      trace: context.traceId,
-      span: context.spanId,
+      trace: context.traceContext?.traceId,
+      span: context.traceContext?.spanId,
       res: {
         svc: {
           name: providerOptions.appName,

@@ -1,7 +1,7 @@
 import { otelProviderFactory, OtelProviderTransport } from "./otelProvider";
 import { DvelopLogEvent, Severity, DbRequest, HttpResponse, IncomingHttpRequest, OutgoingHttpRequest } from "../logger/log-event";
 import { OtelEvent, OtelSeverity } from "./internal-types";
-import { DvelopContext } from "@dvelop-sdk/core";
+import { DvelopContext, TraceContext } from "@dvelop-sdk/core";
 
 describe("otel provider", () => {
 
@@ -132,8 +132,7 @@ describe("otel provider", () => {
 
       const dvelopContext: DvelopContext = {
         tenantId: "someTenantId",
-        spanId: "someSpanId",
-        traceId: "someTraceId"
+        traceContext: { traceId: "someTraceId", spanId: "someSpanId" } as TraceContext
       };
 
       provider(dvelopContext, Severity.info, {});
