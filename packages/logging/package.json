@@ -20,6 +20,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@dvelop-sdk/core": "^2.1.0-beta.1"
+    "@dvelop-sdk/core": "^2.1.0-beta.2"
   }
 }
