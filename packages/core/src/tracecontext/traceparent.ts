@@ -12,6 +12,18 @@ export interface TraceContext {
   sampled: boolean;
 }
 
+/**
+* Indicates an error with the TraceContext.
+* @category Error
+*/
+export class TraceContextError extends DvelopSdkError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(message: string) {
+    super(message);
+    Object.setPrototypeOf(this, TraceContextError.prototype);
+  }
+}
+
 enum BinaryTraceFlags {
   sampled = 0b00000001
 }
@@ -22,7 +34,7 @@ enum BinaryTraceFlags {
  */
 export function parseTraceparentHeader(traceparentHeader: string): TraceContext {
   if (!isValidHeader(traceparentHeader)) {
-    throw new DvelopSdkError("Invalid traceparent header");
+    throw new TraceContextError(`traceparent-Header '${traceparentHeader}' is malformed.`);
   }
 
   const parts = traceparentHeader.split("-");
@@ -41,10 +53,10 @@ export function parseTraceparentHeader(traceparentHeader: string): TraceContext 
  */
 export function buildTraceparentHeader(traceContext: TraceContext): string {
   if (!isValidTraceId(traceContext.traceId)) {
-    throw new DvelopSdkError("Invalid traceId");
+    throw new TraceContextError(`TraceId '${traceContext.traceId}' is malformed.`);
   }
   if (!isValidParentId(traceContext.spanId)) {
-    throw new DvelopSdkError("Invalid spanId");
+    throw new TraceContextError(`SpanId '${traceContext.spanId}' is malformed.`);
   }
 
   let binaryFlags = 0b00000000;
