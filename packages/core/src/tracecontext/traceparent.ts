@@ -7,15 +7,8 @@ import * as crypto from "crypto";
 export interface TraceContext {
   version: number;
   traceId: string;
-  parentId: string;
-  spanId?: string;
-  traceFlags: TraceFlags;
-}
-
-/**
- *  Represents [trace-flags](https://www.w3.org/TR/trace-context/#trace-flags) as part of the traceparent header.
- */
-export interface TraceFlags {
+  parentId?: string;
+  spanId: string;
   sampled: boolean;
 }
 
@@ -38,7 +31,7 @@ export function parseTraceparentHeader(traceparentHeader: string): TraceContext 
     traceId: parts[1],
     spanId: generateSpanId(),
     parentId: parts[2],
-    traceFlags: parseBinaryTraceFlags(parseInt(parts[3], 16)),
+    sampled: (parseInt(parts[3], 16) & BinaryTraceFlags.sampled) === BinaryTraceFlags.sampled,
     version: parseInt(parts[0], 16)
   };
 }
@@ -46,26 +39,20 @@ export function parseTraceparentHeader(traceparentHeader: string): TraceContext 
 /**
  * Generates a new traceparent header based on a given traceId, spanId and flags.
  */
-export function buildTraceparentHeader(traceId: string, spanId: string, flags?: TraceFlags): string {
-  if (!isValidTraceId(traceId)) {
+export function buildTraceparentHeader(traceContext: TraceContext): string {
+  if (!isValidTraceId(traceContext.traceId)) {
     throw new DvelopSdkError("Invalid traceId");
   }
-  if (!isValidParentId(spanId)) {
+  if (!isValidParentId(traceContext.spanId)) {
     throw new DvelopSdkError("Invalid spanId");
   }
 
-  if (flags === undefined) {
-    flags = {
-      sampled: true
-    };
-  }
-
   let binaryFlags = 0b00000000;
-  if (flags.sampled) {
+  if (traceContext.sampled) {
     binaryFlags = binaryFlags | BinaryTraceFlags.sampled;
   }
 
-  return `00-${traceId}-${spanId}-${toHex(binaryFlags)}`;
+  return `00-${traceContext.traceId}-${traceContext.spanId}-${toHex(binaryFlags)}`;
 }
 
 /**
@@ -80,12 +67,6 @@ export function generateSpanId(): string {
  */
 export function generateTraceId(): string {
   return crypto.randomBytes(16).toString("hex");
-}
-
-function parseBinaryTraceFlags(flags: number): TraceFlags {
-  return {
-    sampled: (flags & BinaryTraceFlags.sampled) === BinaryTraceFlags.sampled
-  };
 }
 
 function isValidHeader(header: string) {

@@ -5,7 +5,7 @@ import {
   parseTraceparentHeader,
   TraceContext
 } from "./traceparent";
-import {DvelopSdkError} from "../errors/errors";
+import { DvelopSdkError } from "../errors/errors";
 
 describe("parseTraceparentHeader", () => {
   it("should return Traceparent object when valid traceparent header is given", () => {
@@ -14,7 +14,7 @@ describe("parseTraceparentHeader", () => {
     expect(traceparent.traceId).toEqual("4bf92f3577b34da6a3ce929d0e0e4736");
     expect(traceparent.parentId).toEqual("00f067aa0ba902b7");
     expect(traceparent.version).toEqual(0);
-    expect(traceparent.traceFlags.sampled).toBeTruthy();
+    expect(traceparent.sampled).toBeTruthy();
   });
 
   it("should throw Error when invalid traceparent header is given", () => {
@@ -52,36 +52,36 @@ describe("buildTraceparentHeader", () => {
   it("should return traceparent header when valid input without flags is given", () => {
     const traceId = "4bf92f3577b34da6a3ce929d0e0e4736";
     const spanId = "00f067aa0ba902b7";
-    const header = buildTraceparentHeader(traceId, spanId);
+    const header = buildTraceparentHeader({ traceId: traceId, spanId: spanId, version: 0, sampled: true });
     expect(header).toEqual(`00-${traceId}-${spanId}-01`);
   });
 
   it("should return traceparent header when valid input with flags set to false is given", () => {
     const traceId = "4bf92f3577b34da6a3ce929d0e0e4736";
     const spanId = "00f067aa0ba902b7";
-    const header = buildTraceparentHeader(traceId, spanId, {sampled: false});
+    const header = buildTraceparentHeader({ traceId: traceId, spanId: spanId, version: 0, sampled: false });
     expect(header).toEqual(`00-${traceId}-${spanId}-00`);
   });
 
   it("should return traceparent header when valid input with flags set to true is given", () => {
     const traceId = "4bf92f3577b34da6a3ce929d0e0e4736";
     const spanId = "00f067aa0ba902b7";
-    const header = buildTraceparentHeader(traceId, spanId, {sampled: true});
+    const header = buildTraceparentHeader({ traceId: traceId, spanId: spanId, version: 0, sampled: true });
     expect(header).toEqual(`00-${traceId}-${spanId}-01`);
   });
 
   it("should throw Error when invalid traceId is given", () => {
     const traceId = "00f067aa0ba902b7";
     const spanId = "00f067aa0ba902b7";
-    expect(() => buildTraceparentHeader(traceId, spanId)).toThrow(DvelopSdkError);
-    expect(() => buildTraceparentHeader(traceId, spanId)).toThrow("Invalid traceId");
+    expect(() => buildTraceparentHeader({ traceId: traceId, spanId: spanId, version: 0, sampled: true })).toThrow(DvelopSdkError);
+    expect(() => buildTraceparentHeader({ traceId: traceId, spanId: spanId, version: 0, sampled: true })).toThrow("Invalid traceId");
   });
 
   it("should throw Error when invalid spanId is given", () => {
     const traceId = "4bf92f3577b34da6a3ce929d0e0e4736";
     const spanId = "4bf92f3577b34da6a3ce929d0e0e4736";
-    expect(() => buildTraceparentHeader(traceId, spanId)).toThrow(DvelopSdkError);
-    expect(() => buildTraceparentHeader(traceId, spanId)).toThrow("Invalid spanId");
+    expect(() => buildTraceparentHeader({ traceId: traceId, spanId: spanId, version: 0, sampled: true })).toThrow(DvelopSdkError);
+    expect(() => buildTraceparentHeader({ traceId: traceId, spanId: spanId, version: 0, sampled: true })).toThrow("Invalid spanId");
   });
 });
 
