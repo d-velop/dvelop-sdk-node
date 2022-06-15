@@ -12,12 +12,12 @@ export interface DvelopHttpRequestConfig<T = any> extends AxiosRequestConfig<T> 
   templates?: { [key: string]: any }
 }
 
-export interface HttpResponse<T = any> extends AxiosResponse<T> { }
+export interface DvelopHttpResponse<T = any> extends AxiosResponse<T> { }
 
 export interface DvelopHttpError extends AxiosError { }
 
 export interface DvelopHttpClient {
-  request(context: DvelopContext, config: DvelopHttpRequestConfig): Promise<HttpResponse>
+  request(context: DvelopContext, config: DvelopHttpRequestConfig): Promise<DvelopHttpResponse>
 }
 
 export function axiosInstanceFactory(axios: AxiosStatic): AxiosInstance {

@@ -11,6 +11,11 @@ import {
 
 import { Request, Response, NextFunction } from "express";
 
+/**
+ * Factory for the {@link contextMiddleware}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * @internal
+ * @category Core
+ */
 export function contextMiddlewareFactory(
   parseTraceparentHeader: (traceparentHeader: string) => TraceContext,
   generateTraceContext: () => TraceContext

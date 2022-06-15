@@ -6,6 +6,11 @@ enum BinaryTraceFlags {
   sampled = 0b00000001
 }
 
+/**
+ * Factory for the {@link parseTraceparentHeader}-function.
+ * @internal
+ * @category Core
+ */
 export function parseTraceparentHeaderFactory(generateSpanId: () => string): (traceparentHeader: string, spanId?: string) => TraceContext {
   return (traceparentHeader: string, spanId?: string) => {
 
@@ -26,7 +31,15 @@ export function parseTraceparentHeaderFactory(generateSpanId: () => string): (tr
 }
 
 /**
- * Generates a new traceparent header based on a given traceId, spanId and flags.
+ * Generates a corresponding traceparent-HTTP-Header for a {@link TraceContext}-object. See [W3C Trace Context](https://www.w3.org/TR/trace-context/) for more information.
+ *
+ * ```typescript
+ * import { buildTraceparentHeader } from "@dvelop-sdk/core"
+ *
+ * const traceparentHeader: string = buildTraceparentHeader(traceContext);
+ * console.log(traceparentHeader); // 00-00cbe959725ad2d75abd9d47017604d7-d84f4664cc5d1266-00
+ * ```
+ * @category Core
  */
 export function buildTraceparentHeader(traceContext: TraceContext): string {
   if (!isValidTraceId(traceContext.traceId)) {
@@ -66,8 +79,15 @@ function toHex(n: number): string {
 }
 
 /**
- * Parses the traceparent header into a {@link TraceContext}-object
- * @param traceparentHeader Value obtained from the "traceparent"-HTTP-Header
+ * Parses the traceparent-HTTP-header into a {@link TraceContext}-object. See [W3C Trace Context](https://www.w3.org/TR/trace-context/) for more information.
+ *
+ * ```typescript
+ * import { parseTraceparentHeader } from "@dvelop-sdk/core";
+ *
+ * const traceContext: TraceContext = parseTraceparentHeader("00-00cbe959725ad2d75abd9d47017604d7-d84f4664cc5d1266-00")
+ * console.log(traceContext); // { traceId: '00cbe959725ad2d75abd9d47017604d7', spanId: '48743343d1130693', parentId: 'd84f4664cc5d1266', sampled: false, version: 0 }
+ * ```
+ * @category Core
  */
 export function parseTraceparentHeader(traceparentHeader: string): TraceContext {
   return parseTraceparentHeaderFactory(generateSpanId)(traceparentHeader);

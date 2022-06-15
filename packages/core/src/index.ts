@@ -26,8 +26,9 @@
 export { DvelopContext } from "./context/context";
 export * from "./errors/errors";
 export * from "./http/http-headers";
+export * as internals from "./internals";
 export { DeepMergeError, deepMergeObjects } from "./util/deep-merge-objects";
-export { DvelopHttpRequestConfig, HttpResponse as DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
+export { DvelopHttpRequestConfig, DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
 export { generateUuid, generateRequestId } from "./generate-uuid/generate-uudi-id";
 
 export { TraceContext } from "./trace-context/trace-context";
