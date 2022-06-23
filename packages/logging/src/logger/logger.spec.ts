@@ -65,8 +65,12 @@ describe("DvelopLogger", () => {
         return new Promise<void>(done => {
           const dvelopContext: DvelopContext = {
             tenantId: "someTenant",
-            traceId: "someTrace",
-            spanId: "someSpan"
+            traceContext: {
+              version: 0,
+              sampled: true,
+              traceId: "someTrace",
+              spanId: "someSpan"
+            }
           };
 
           const logger = new DvelopLogger({
