@@ -1,3 +1,4 @@
+import { LoggingError } from "../../error";
 import { consoleTransportFactory } from "./console-transport";
 
 describe("consoleTransportFactory", () => {
@@ -40,6 +41,7 @@ describe("consoleTransportFactory", () => {
   [
     true, false
   ].forEach(err => {
+
     describe(`console.${err ? "error" : "log"}`, () => {
 
       let _console: Console;
@@ -90,7 +92,24 @@ describe("consoleTransportFactory", () => {
           expect(uncalled).not.toHaveBeenCalled();
         });
       });
+
+      it("should throw LoggingError on console-error", async () => {
+
+        const err: Error = new Error("HiItsMeError");
+        called.mockImplementation((_: any, __: Function) => { throw err; });
+
+        let expectedError;
+        try {
+          await consoleTransport("HiItsMeStatement");
+        } catch (e) {
+          expectedError = e;
+        }
+
+        expect(expectedError instanceof LoggingError).toBeTruthy();
+        expect(expectedError.message).toContain(err.message);
+        expect(expectedError.message).toContain("Failed to write event to console:");
+        expect(expectedError.originalError).toBe(err);
+      });
     });
   });
-
 });
