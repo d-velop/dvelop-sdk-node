@@ -23,8 +23,6 @@ export function consoleTransportFactory(
         const err: LoggingError = new LoggingError(`Failed to write event to console: '${e.message}'. See 'originalError-property for details.`, e);
         reject(err);
       }
-
-
     });
   };
 }
