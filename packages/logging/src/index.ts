@@ -27,6 +27,6 @@
 export { consoleTransportFactory } from "./transports/console-transport/console-transport";
 export { fileTransportFactory } from "./transports/file-transport/file-transport";
 
-export { DvelopLogEvent, IncomingHttpRequest, OutgoingHttpRequest, HttpResponse, DbRequest, Severity, ProviderFn, DvelopLoggerOptions } from "./logger/log-event";
-export { DvelopLogger } from "./logger/logger";
-export { otelProviderFactory, OtelProviderOptions, OtelProviderTransport, otelConsoleTransport } from "./otelProvider/otelProvider";
+export { DvelopLogEvent, IncomingHttpRequest, OutgoingHttpRequest, HttpResponse, DbRequest } from "./logger/log-event";
+export { DvelopLogger, DvelopLoggerOptions, ProviderFn } from "./logger/logger";
+export { OtelProviderOptions, otelProviderFactory, } from "./otelProvider/otelProvider";

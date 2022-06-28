@@ -1,7 +1,7 @@
 {
   "name": "@dvelop-sdk/core",
   "description": "This package contains shared functionality for the @dvelop-sdk packages.",
-  "version": "2.1.0-beta.2",
+  "version": "2.1.0-beta.3",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
