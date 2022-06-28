@@ -1,38 +1,38 @@
-import { DvelopLogger } from "./logger";
-import { DvelopLogEvent, ProviderFn, Severity } from "./log-event";
+import { DvelopLogger, ProviderFn } from "./logger";
+import { DvelopLogEvent } from "./log-event";
 import { DvelopContext } from "@dvelop-sdk/core";
 
 describe("DvelopLogger", () => {
 
   test("should create a new DvelopLogger", () => {
-    const logger = new DvelopLogger({ provider: [() => { }] });
+    const logger = new DvelopLogger({ providers: [async () => { }] });
     expect(logger).toBeDefined();
   });
 
   test("should throw error on new DvelopLogger if no provider specified", () => {
-    expect(() => new DvelopLogger({ provider: [] })).toThrowError();
+    expect(() => new DvelopLogger({ providers: [] })).toThrowError();
   });
 
   describe("severity function", () => {
     describe.each([
-      { func: "debug", severity: Severity.debug },
-      { func: "info", severity: Severity.info },
-      { func: "warn", severity: Severity.warn },
-      { func: "error", severity: Severity.error },
-    ])("$func()", ({ func, severity }) => {
+      { func: "debug", level: "debug" },
+      { func: "info", level: "info" },
+      // { func: "warn", level: "warn" },
+      { func: "error", level: "error" },
+    ])("$func()", ({ func, level }) => {
 
-      test("should use logging provider", () => {
+      test("should use logging provider", async () => {
+        let logger: DvelopLogger;
+        const provider: ProviderFn = jest.fn();
         return new Promise<void>(done => {
-          const logger = new DvelopLogger({
-            provider: [(context, severity, options) => {
-              expect(context).toBeDefined();
-              expect(severity).toBeDefined();
-              expect(options).toBeDefined();
-              done();
-            }]
+          logger = new DvelopLogger({
+            providers: [provider]
           });
 
-          logger[func]({}, "");
+          logger[func]({}, {}, "debug");
+          expect(provider).toHaveBeenCalledTimes(1);
+          expect(provider).toHaveBeenCalledWith({}, {}, level);
+          done();
         });
       });
 
@@ -40,24 +40,14 @@ describe("DvelopLogger", () => {
         const provider1: ProviderFn = jest.fn();
         const provider2: ProviderFn = jest.fn();
 
-        const logger = new DvelopLogger({ provider: [provider1, provider2] });
+        const logger = new DvelopLogger({ providers: [provider1, provider2] });
 
-        logger[func]({}, "");
-
-        expect(provider1).toHaveBeenCalled();
-        expect(provider2).toHaveBeenCalled();
-      });
-
-      test("should set severity", () => {
         return new Promise<void>(done => {
-          const logger = new DvelopLogger({
-            provider: [(_, logSeverity, __) => {
-              expect(logSeverity).toBe(severity);
-              done();
-            }]
-          });
-
           logger[func]({}, "");
+
+          expect(provider1).toHaveBeenCalled();
+          expect(provider2).toHaveBeenCalled();
+          done();
         });
       });
 
@@ -74,7 +64,7 @@ describe("DvelopLogger", () => {
           };
 
           const logger = new DvelopLogger({
-            provider: [(context, _, __) => {
+            providers: [async (context, _, __) => {
               expect(context).toEqual(dvelopContext);
               done();
             }]
@@ -87,8 +77,8 @@ describe("DvelopLogger", () => {
       test("should set message in LogOptions", () => {
         return new Promise<void>(done => {
           const logger = new DvelopLogger({
-            provider: [(_, __, options) => {
-              expect(options.message).toEqual("some message");
+            providers: [async (_, event, __) => {
+              expect(event.message).toEqual("some message");
               done();
             }]
           });
@@ -99,7 +89,8 @@ describe("DvelopLogger", () => {
 
       test("should pass LogOptions as is", () => {
         return new Promise<void>(done => {
-          const logOptions: DvelopLogEvent = {
+
+          const event: DvelopLogEvent = {
             message: { some: "thing" },
             error: new Error("some error"),
             name: "some name",
@@ -110,25 +101,40 @@ describe("DvelopLogger", () => {
           };
 
           const logger = new DvelopLogger({
-            provider: [(_, __, options) => {
-              expect(options).toEqual(logOptions);
+            providers: [async (_, options, __) => {
+              expect(options).toEqual(event);
               done();
             }]
           });
 
-          logger[func]({}, logOptions);
+          logger[func]({}, event);
         });
       });
+
+      test("should merge with defaults", async () => {
+
+        const mergeFn: (...events: Partial<DvelopLogEvent>[]) => DvelopLogEvent = jest.fn();
+        const event: DvelopLogEvent = {
+          message: "HiItsMeMessage"
+        };
+        const defaults: DvelopLogEvent = {
+          message: "HiItsMeDefaultMessage"
+        };
+
+        const logger = new DvelopLogger({
+          providers: [async (_, __, ___) => { }],
+          defaults: defaults
+
+        }, mergeFn);
+
+        logger[func]({}, event);
+        expect(mergeFn).toHaveBeenCalledTimes(1);
+        expect(mergeFn).toHaveBeenCalledWith(defaults, event);
+      });
     });
+
+
   });
 
+
 });
-
-// eslint-disable-next-line jest/no-commented-out-tests
-/*
-  test("", () => {return new Promise<void>(done => {
-    const logger = new DvelopLogger({provider: [(context, severity, options) => {
-
-    }]});
-  });});
-*/

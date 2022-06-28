@@ -1,6 +1,20 @@
 import { DvelopContext } from "@dvelop-sdk/core";
 import { OtelEvent, EventAttributesHttp, EventAttributesDb, EventAttributesException, OtelSeverity } from "./internal-types";
-import { DvelopLogEvent, ProviderFn, Severity } from "../logger/log-event";
+import { DvelopLogEvent, DvelopLogLevel } from "../logger/log-event";
+import { ProviderFn } from "../logger/logger";
+import { LoggingError } from "../error";
+
+/**
+* Indicates a problem with the OtelLoggingProvider
+* @category Error
+*/
+export class OtelProviderError extends LoggingError {
+  // eslint-disable-next-line no-unused-vars
+  constructor(message: string, originalError?: Error) {
+    super(message, originalError);
+    Object.setPrototypeOf(this, OtelProviderError.prototype);
+  }
+}
 
 /**
  * Options for the otel provider.
@@ -18,45 +32,28 @@ export interface OtelProviderOptions {
    * ID of the current instance of your app. If set, it is included in every log statement.
    */
   instanceId?: string;
+  /**
+   * Transport options for logging.
+   */
+  transports: ((event: any) => Promise<void>)[];
 }
-
-/**
- * The type to use for custom transport functions.
- */
-export type OtelProviderTransport = (otelMessage: string) => void;
-
-/* istanbul ignore next */
-/**
- * This transport functions prints every log statement to stdout (when used in node.js)
- * or to the console (when used in the browser).
- *
- * The default transport, if no transport is defined in the {@link otelProviderFactory} function.
- */
-export const otelConsoleTransport: OtelProviderTransport = (otelMessage) => {
-  if (process?.stdout) {
-    process.stdout.write(`${otelMessage}\n`);
-  } else {
-    // eslint-disable-next-line no-console
-    console.log(otelMessage);
-  }
-};
 
 /**
  * Creates a new otel provider for the {@link DvelopLogger}.
  *
- * @param providerOptions Options for creating the provider
+ * @param options Options for creating the provider
  * @param transports Transports define, where the log statements are written. Defaults to {@link otelConsoleTransport}.
  * @return A new provider for otel.
  */
-export function otelProviderFactory(providerOptions: OtelProviderOptions, transports: OtelProviderTransport[] = []): ProviderFn {
-  if (!transports || transports.length === 0) {
-    transports = [otelConsoleTransport];
+export function otelProviderFactory(options: OtelProviderOptions): ProviderFn {
+  if (options.transports.length === 0) {
+    throw new OtelProviderError("OtelLogginProvider failed to initialize: No transports.");
   }
 
-  return (context: DvelopContext, severity: Severity, event: DvelopLogEvent) => {
+  return async (context: DvelopContext, event: DvelopLogEvent, level: DvelopLogLevel) => {
     const otelEvent: OtelEvent = {
       time: (new Date()).toISOString(),
-      sev: mapSeverity(severity),
+      sev: mapSeverity(level),
       name: event.name,
       body: event.message,
       tn: context.tenantId,
@@ -64,9 +61,9 @@ export function otelProviderFactory(providerOptions: OtelProviderOptions, transp
       span: context.traceContext?.spanId,
       res: {
         svc: {
-          name: providerOptions.appName,
-          ver: providerOptions.appVersion,
-          inst: providerOptions.instanceId
+          name: options.appName,
+          ver: options.appVersion,
+          inst: options.instanceId
         }
       },
       attr: hasAttributes(event) ? {
@@ -80,7 +77,7 @@ export function otelProviderFactory(providerOptions: OtelProviderOptions, transp
 
     const otelMessage = JSON.stringify(otelEvent);
 
-    for (const transport of transports) {
+    for (const transport of options.transports) {
       transport(otelMessage);
     }
   };
@@ -186,15 +183,15 @@ function mapExceptionAttribute(event: DvelopLogEvent): { exception?: EventAttrib
   }
 }
 
-function mapSeverity(severity: Severity): OtelSeverity {
-  switch (severity) {
-  case Severity.debug:
+function mapSeverity(level: DvelopLogLevel): OtelSeverity {
+  switch (level) {
+  case "debug":
     return OtelSeverity.DEBUG1;
-  case Severity.info:
+  case "info":
     return OtelSeverity.INFO1;
-  case Severity.warn:
-    return OtelSeverity.WARN1;
-  case Severity.error:
+  case "error":
     return OtelSeverity.ERROR1;
+  default:
+    return 0;
   }
 }

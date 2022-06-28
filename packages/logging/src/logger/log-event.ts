@@ -1,14 +1,4 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-
-/**
- * Severity of log statement
- */
-export enum Severity {
-  debug,
-  info,
-  warn,
-  error
-}
+export type DvelopLogLevel = "debug" | "info" | "error";
 
 /**
  * Several options for a log statement, that can be used by logging providers.
@@ -73,18 +63,6 @@ export interface DvelopLogEvent {
 }
 
 /**
- * Type definition of logging providers.
- */
-export type ProviderFn = (context: DvelopContext, severity: Severity, options: DvelopLogEvent) => void;
-
-/**
- * Options needed to create a new {@link DvelopLogger}
- */
-export interface DvelopLoggerOptions {
-  provider: ProviderFn[];
-}
-
-/**
  * Information about outbound db requests.
  */
 export interface DbRequest {
@@ -135,7 +113,7 @@ export interface IncomingHttpRequest {
     /**
      * Value of the HTTP User-Agent header sent by the client.
      */
-    userAgent?: string;
+    [key: string]: string;
   };
   /**
    * The IP address of the original client behind all proxies, if known (e.g. from X-Forwarded-For).
@@ -168,10 +146,7 @@ export interface OutgoingHttpRequest {
    * Values of some http headers.
    */
   headers?: {
-    /**
-     * Value of the HTTP User-Agent header sent by the client.
-     */
-    userAgent?: string;
+    [key: string]: string;
   };
 }
 
