@@ -1,6 +1,6 @@
 import { TraceContext } from "../trace-context";
 import { TraceContextError } from "../trace-context-error";
-import { buildTraceparentHeader, parseTraceparentHeader } from "./traceparent-header";
+import { buildTraceparentHeader, parseTraceparentHeader, parseTraceparentHeaderFactory } from "./traceparent-header";
 
 describe("parseTraceparentHeader", () => {
   it("should return Traceparent object when valid traceparent header is given", () => {
@@ -10,6 +10,22 @@ describe("parseTraceparentHeader", () => {
     expect(traceparent.parentId).toEqual("00f067aa0ba902b7");
     expect(traceparent.version).toEqual(0);
     expect(traceparent.sampled).toBeTruthy();
+  });
+
+  it("should set provided spanId", () => {
+    const spanId = "HiItsMeSpanId";
+    const traceparent: TraceContext = parseTraceparentHeader("00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01", spanId);
+    expect(traceparent.spanId).toEqual(spanId);
+  });
+
+  it("should set a generated spanId if none is provided", () => {
+    const headerValue = "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01";
+    const spanId = "HiItsMeSpanId";
+    const generateSpanId = jest.fn();
+    generateSpanId.mockReturnValue(spanId);
+    const parseTraceparentHeader = parseTraceparentHeaderFactory(generateSpanId);
+    const traceparent: TraceContext = parseTraceparentHeader(headerValue);
+    expect(traceparent.spanId).toEqual(spanId);
   });
 
   it("should throw Error when invalid traceparent header is given", () => {

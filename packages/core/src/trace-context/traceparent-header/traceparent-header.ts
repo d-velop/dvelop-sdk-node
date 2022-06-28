@@ -89,6 +89,6 @@ function toHex(n: number): string {
  * ```
  * @category Core
  */
-export function parseTraceparentHeader(traceparentHeader: string): TraceContext {
-  return parseTraceparentHeaderFactory(generateSpanId)(traceparentHeader);
+export function parseTraceparentHeader(traceparentHeader: string, spanId?: string): TraceContext {
+  return parseTraceparentHeaderFactory(generateSpanId)(traceparentHeader, spanId);
 }
