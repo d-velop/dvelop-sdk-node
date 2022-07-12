@@ -3,8 +3,12 @@
     "eslint:recommended",
     "plugin:jest/recommended"
   ],
+  "globals": {
+    "Console": true
+  },
   "env": {
     "node": true,
+    "browser": true,
     "jest/globals": true,
     "es6": true
   },

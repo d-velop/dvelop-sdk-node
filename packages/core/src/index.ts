@@ -26,5 +26,12 @@
 export { DvelopContext } from "./context/context";
 export * from "./errors/errors";
 export * from "./http/http-headers";
-export { DvelopHttpRequestConfig, HttpResponse as DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
+export * as internals from "./internal";
+export { DeepMergeError, deepMergeObjects } from "./util/deep-merge-objects";
+export { DvelopHttpRequestConfig, DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
 export { generateUuid, generateRequestId } from "./generate-uuid/generate-uudi-id";
+
+export { TraceContext } from "./trace-context/trace-context";
+export { TraceContextError } from "./trace-context/trace-context-error";
+export { buildTraceparentHeader, parseTraceparentHeader } from "./trace-context/traceparent-header/traceparent-header";
+export { generateTraceContext, generateTraceId, generateSpanId } from "./trace-context/generate-trace-context/generate-trace-context";
