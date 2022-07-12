@@ -24,6 +24,41 @@ export interface DvelopLoggerOptions {
  *
  * This package delivers an {@link otelProviderFactory} function, to create a logging provider that
  * logs a log statement in the otel log format.
+ * @example
+ * ```typescript
+ * const logger = new DvelopLogger({
+ * level: "info",// logs info and above
+ * providers: [
+ *   // Providers define a loggin scheme. Currently only OTEL is supported.
+ *   otelProviderFactory({
+ *
+ *      appName: "acme-myapp",
+ *      appVersion: "1.0.0",
+ *      instanceId: "0",
+ *
+ *      // Transports define where to send the logs. Mutliple transports can be used.
+ *      transports: [
+ *        consoleTransportFactory(), // logs to console
+ *        fileTransportFactory("./logs.txt") // logs to file 'logs.txt'
+ *      ]
+ *    })
+ *  ],
+ * });
+ *
+ * logger.debug({}, "Hello World!");
+ *
+ * logger.error({
+ *   systemBaseUri: "https://sparta.d-velop.cloud",
+ *   tenantId: "T8r3cWM4JII"
+ * }, {
+ *   name: "MissionFailedLogger",
+ *   message: "Apperently this is Sparta",
+ *   error: error,
+ *   customAttributes: {
+ *     learnings: "Don't stand near a well"
+ *   }
+ * });
+ * ```
  */
 export class DvelopLogger {
 
