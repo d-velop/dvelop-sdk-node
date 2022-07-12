@@ -1,9 +1,10 @@
 import { LoggingError } from "../../error";
+import { TransportFn } from "../transport-funtion";
 
 export function consoleTransportFactory(
   error: boolean = false,
   _console: Console = console
-): (statement: any) => Promise<void> {
+): TransportFn {
   return (statement: any) => {
     return new Promise((resolve, reject) => {
       try {

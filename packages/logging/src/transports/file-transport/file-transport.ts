@@ -1,11 +1,12 @@
 import { createWriteStream, PathLike, WriteStream } from "fs";
 import { LoggingError } from "../../error";
+import { TransportFn } from "../transport-funtion";
 
 export function fileTransportFactory(
   path: string,
   /* istanbul ignore next */
   _createWriteStream: (path: PathLike, options: { flags: "a" }) => WriteStream = createWriteStream
-): (statement: any) => Promise<void> {
+): TransportFn {
   return (statement: any) => {
     return new Promise((resolve, reject) => {
       try {
