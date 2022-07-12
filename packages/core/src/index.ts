@@ -26,7 +26,7 @@
 export { DvelopContext } from "./context/context";
 export * from "./errors/errors";
 export * from "./http/http-headers";
-export * as internals from "./internals";
+export * as internals from "./internal";
 export { DeepMergeError, deepMergeObjects } from "./util/deep-merge-objects";
 export { DvelopHttpRequestConfig, DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
 export { generateUuid, generateRequestId } from "./generate-uuid/generate-uudi-id";
