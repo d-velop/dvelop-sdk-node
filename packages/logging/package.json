@@ -1,11 +1,11 @@
 {
-  "name": "@dvelop-sdk/core",
-  "description": "This package contains shared functionality for the @dvelop-sdk packages.",
-  "version": "2.1.0",
+  "name": "@dvelop-sdk/logging",
+  "description": "This package contains functions for logging with OpenTelemetry.",
+  "version": "1.0.0",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "author": "Lennart Klose <lennart.klose@d-velop.de>",
+  "author": "Veit Kunz <git@veit-kunz.de>",
   "files": [
     "lib"
   ],
@@ -20,10 +20,6 @@
     "access": "public"
   },
   "dependencies": {
-    "axios": "^0.23.0",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "@types/uuid": "^8.3.1"
+    "@dvelop-sdk/core": "^2.1.0"
   }
 }
