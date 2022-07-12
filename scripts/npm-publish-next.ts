@@ -20,8 +20,8 @@ import { execSync } from "child_process";
   });
 
   console.log(`Published ${published.length} packages:`);
-  console.log(`${published.join("\n\t")}`);
+  console.log(`\t${published.join("\n\t")}`);
 
   console.log(`${unpublished.length} packages were not published:`);
-  console.log(`${unpublished.join("\n\t")}`);
+  console.log(`\t${unpublished.join("\n\t")}`);
 })();
