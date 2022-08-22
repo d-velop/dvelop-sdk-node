@@ -10,7 +10,7 @@
   <a href="https://github.com/d-velop/dvelop-sdk-node">
     <img alt="GitHub" src="https://img.shields.io/badge/GitHub-dvelop--sdk--node-%23ff0844?logo=github&style=for-the-badge">
   </a>
-  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/master/LICENSE">
+  <a href="https://github.com/d-velop/dvelop-sdk-node/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/github/license/d-velop/dvelop-sdk-node?style=for-the-badge">
   </a
   </br>
@@ -39,5 +39,6 @@ export { getDmsObjectMainFile, getDmsObjectPdfFile } from "./dms-objects/get-dms
 export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms-object/create-dms-object";
 export { StoreFileTemporarilyParams, storeFileTemporarily } from "./dms-objects/store-file-temporarily/store-file-temporarily";
 export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms-object/update-dms-object";
+export { UpdateDmsObjectStatusParams, updateDmsObjectStatus } from "./dms-objects/update-dms-object-status/update-dms-object-status";
 export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
 export { SearchDmsObjectsParams, SearchDmsObjectsResultPage, ListedDmsObject, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
