@@ -1,4 +1,5 @@
 import { AxiosInstance } from "axios";
+import { isArray } from "util";
 import { DvelopHttpResponse, NotFoundError } from "..";
 import { DvelopHttpRequestConfig } from "./http-client";
 
@@ -56,8 +57,19 @@ function templateUrl(url: string, originalParams: { [key: string]: string | unde
       const keys: string[] = matchWithoutBrackets.slice(1).split(",");
 
       keys.forEach(key => {
+
         if (templates && templates[key]) {
-          params[key] = templates[key];
+
+          let value: any = templates[key];
+
+          if (Array.isArray(value)) {
+            if (value.length > 0) {
+              value = JSON.stringify(templates[key]);
+              params[key] = value;
+            }
+          } else {
+            params[key] = value;
+          }
         }
       });
 
