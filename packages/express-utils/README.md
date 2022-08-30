@@ -17,7 +17,8 @@
 
   <p>This package contains util-functions for the <a href="https://www.npmjs.com/package/express">express</a>-framework and d.velop app-building.</p>
 
-  <a href="https://d-velop.github.io/dvelop-sdk-node/modules/express-utils.html"><strong>Explore the docs »</strong></a>
+  <a href="https://d-velop.github.io/dvelop-sdk-node/modules/express_utils.html"><strong>Explore the docs »</strong></a>
+
 
   </br>
 
