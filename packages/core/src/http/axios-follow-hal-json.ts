@@ -1,5 +1,4 @@
 import { AxiosInstance } from "axios";
-import { isArray } from "util";
 import { DvelopHttpResponse, NotFoundError } from "..";
 import { DvelopHttpRequestConfig } from "./http-client";
 

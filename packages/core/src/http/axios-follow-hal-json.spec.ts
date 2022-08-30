@@ -53,16 +53,16 @@ describe("axiosFollowHalJsonFunctionFactory", () => {
 
           mockRequest.mockImplementation(config => {
             switch (config.url) {
-              case "base":
-                return Promise.resolve({ data: { _links: { "1": { href: "one" } } } });
-              case "one":
-                return Promise.resolve({ data: { _links: { "2": { href: "two" } } } });
-              case "two":
-                return Promise.resolve({ data: { _links: { "3": { href: "three" } } } });
-              case "three":
-                return Promise.resolve({ data: { _links: { "final": { href: finalUrl } } } });
-              default:
-                return Promise.reject(new Error());
+            case "base":
+              return Promise.resolve({ data: { _links: { "1": { href: "one" } } } });
+            case "one":
+              return Promise.resolve({ data: { _links: { "2": { href: "two" } } } });
+            case "two":
+              return Promise.resolve({ data: { _links: { "3": { href: "three" } } } });
+            case "three":
+              return Promise.resolve({ data: { _links: { "final": { href: finalUrl } } } });
+            default:
+              return Promise.reject(new Error());
             }
           });
 
