@@ -119,7 +119,7 @@ describe("deepMergeObjects", () => {
       }
 
     ].forEach(testCase => {
-      it(`should merge objects with ArrayBuffers`, () => {
+      it("should merge objects with ArrayBuffers", () => {
         expect(deepMergeObjects(...testCase.objects)).toEqual(testCase.expected);
       });
     });
