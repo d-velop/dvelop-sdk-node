@@ -84,39 +84,80 @@ describe("deepMergeObjects", () => {
     });
   });
 
-  [
-    ["1"],
-    ["1", { b: "2" }, { c: "3" }],
-    [{ a: "1" }, { b: "2" }, "3"],
-    [1],
-    [1, { b: "2" }, { c: "3" }],
-    [{ a: "1" }, { b: "2" }, 3],
-  ].forEach(testCase => {
-    it("should throw DeepMergeError on primitive datatypes", () => {
-      let expectedError: DeepMergeError;
-      try {
-        deepMergeObjects(...testCase);
-      } catch (e: any) {
-        expectedError = e;
-      }
-      expect(expectedError instanceof DeepMergeError).toBeTruthy();
-      expect(expectedError.message).toContain("deepMergeObjects-function can only accept objects.");
-    });
-  });
+  describe("on ArrayBuffers", () => {
 
-  [
-    [],
-    [{ a: "1" }]
-  ].forEach(testCase => {
-    it("should throw DeepMergeError on less than 2 arguments", () => {
-      let expectedError: DeepMergeError;
-      try {
-        deepMergeObjects(...testCase);
-      } catch (e: any) {
-        expectedError = e;
+    const b1: ArrayBuffer = new ArrayBuffer(42);
+    const b2: ArrayBuffer = new ArrayBuffer(41);
+
+    [
+      {
+        objects: [
+          { a: b1 },
+          { b: b2 }
+        ],
+        expected: {
+          a: b1, b: b2
+        }
+      },
+      {
+        objects: [
+          { a: b1 },
+          { a: b2 }
+        ],
+        expected: {
+          a: b2
+        }
+      },
+      {
+        objects: [
+          { a: "1" },
+          { a: b2 }
+        ],
+        expected: {
+          a: b2
+        }
       }
-      expect(expectedError instanceof DeepMergeError).toBeTruthy();
-      expect(expectedError.message).toContain("Must supply at least two objects to deepMergeObjects-function.");
+
+    ].forEach(testCase => {
+      it(`should merge objects with ArrayBuffers`, () => {
+        expect(deepMergeObjects(...testCase.objects)).toEqual(testCase.expected);
+      });
+    });
+
+    [
+      ["1"],
+      ["1", { b: "2" }, { c: "3" }],
+      [{ a: "1" }, { b: "2" }, "3"],
+      [1],
+      [1, { b: "2" }, { c: "3" }],
+      [{ a: "1" }, { b: "2" }, 3],
+    ].forEach(testCase => {
+      it("should throw DeepMergeError on primitive datatypes", () => {
+        let expectedError: DeepMergeError;
+        try {
+          deepMergeObjects(...testCase);
+        } catch (e: any) {
+          expectedError = e;
+        }
+        expect(expectedError instanceof DeepMergeError).toBeTruthy();
+        expect(expectedError.message).toContain("deepMergeObjects-function can only accept objects.");
+      });
+    });
+
+    [
+      [],
+      [{ a: "1" }]
+    ].forEach(testCase => {
+      it("should throw DeepMergeError on less than 2 arguments", () => {
+        let expectedError: DeepMergeError;
+        try {
+          deepMergeObjects(...testCase);
+        } catch (e: any) {
+          expectedError = e;
+        }
+        expect(expectedError instanceof DeepMergeError).toBeTruthy();
+        expect(expectedError.message).toContain("Must supply at least two objects to deepMergeObjects-function.");
+      });
     });
   });
 });
