@@ -150,6 +150,10 @@ describe("axiosFollowHalJsonFunctionFactory", () => {
           { url: "test{?test1,test2}", templates: { "test1": "hi", "unneeded": "ho" }, expectedUrl: "test", expectedParams: { "test1": "hi" } },
           { url: "/test{?test1,test2}", templates: { "unneeded": "hi", "test2": "ho" }, expectedUrl: "/test", expectedParams: { "test2": "ho" } },
           { url: "/test{?}", templates: { "unneeded": "hi" }, expectedUrl: "/test", expectedParams: {} },
+          { url: "/test{?test1}", templates: { "test1": [] }, expectedUrl: "/test", expectedParams: {} },
+          { url: "/test{?test1}", templates: { "test1": ["hi"] }, expectedUrl: "/test", expectedParams: { "test1": "[\"hi\"]" } },
+          { url: "/test{?test1}", templates: { "test1": ["hi", "ho"] }, expectedUrl: "/test", expectedParams: { "test1": "[\"hi\",\"ho\"]" } },
+          { url: "/test{?test1,test2}", templates: { "test1": ["hi", "ho"], "test2": ["1", "2"] }, expectedUrl: "/test", expectedParams: { "test1": "[\"hi\",\"ho\"]", "test2": "[\"1\",\"2\"]" } },
 
           { url: "a{B}c{D}e", templates: { D: "d" }, expectedUrl: "acde" },
           { url: "a{B}c{D}e", templates: {}, expectedUrl: "ace" },
