@@ -13,3 +13,4 @@ export { _updateDmsObjectFactory, _updateDmsObjectDefaultTransformFunction } fro
 export { _updateDmsObjectStatusFactory, _updateDmsObjectStatusDefaultTransformFunction } from "./dms-objects/update-dms-object-status/update-dms-object-status";
 export { _deleteCurrentDmsObjectVersionFactory, _deleteCurrentDmsObjectVersionDefaultTransformFunction } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
 export { _searchDmsObjectsDefaultTransformFunctionFactory } from "./dms-objects/search-dms-objects/search-dms-objects";
+export { _releaseAndUpdateDmsObjectFactory } from "./dms-objects/release-and-update-dms-objects/release-and-update-dms-objects";

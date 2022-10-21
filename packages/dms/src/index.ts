@@ -42,3 +42,4 @@ export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms
 export { UpdateDmsObjectStatusParams, updateDmsObjectStatus } from "./dms-objects/update-dms-object-status/update-dms-object-status";
 export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
 export { SearchDmsObjectsParams, SearchDmsObjectsResultPage, ListedDmsObject, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
+export { ReleaseAndUpdateDmsObjectError, releaseAndUpdateDmsObject } from "./dms-objects/release-and-update-dms-objects/release-and-update-dms-objects";
