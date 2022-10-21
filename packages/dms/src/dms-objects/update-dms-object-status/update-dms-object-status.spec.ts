@@ -2,13 +2,10 @@ import { DvelopContext } from "../../index";
 import { HttpResponse } from "../../utils/http";
 import { _updateDmsObjectStatusDefaultTransformFunction, _updateDmsObjectStatusFactory, UpdateDmsObjectStatusParams } from "./update-dms-object-status";
 
-jest.mock("../store-file-temporarily/store-file-temporarily");
-
 describe("updateDmsObject", () => {
 
   let mockHttpRequestFunction = jest.fn();
   let mockTransformFunction = jest.fn();
-  let mockStoreFileFunction = jest.fn();
 
   let context: DvelopContext;
   let params: UpdateDmsObjectStatusParams;
