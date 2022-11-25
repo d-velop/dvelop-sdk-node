@@ -21,6 +21,7 @@ export interface SearchDmsObjectsParams {
   fulltext?: string;
   page?: number;
   pageSize?: number;
+  childrenOf?: string;
 }
 
 /**
@@ -185,6 +186,9 @@ export function searchDmsObjectsFactory<T>(
     }
     if (params.pageSize) {
       templates["pagesize"] = params.pageSize;
+    }
+    if (params.childrenOf) {
+      templates["children_of"] = params.childrenOf;
     }
 
     const response: HttpResponse = await httpRequestFunction(context, {

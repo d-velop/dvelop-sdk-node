@@ -60,14 +60,13 @@ export function _authenticationMiddlewareFactory(
  * Authenticate an authSessionId by sending it to the Identityprovder-App. In case of success a {@link DvelopUser} object will be available in the ```request.dvelopContext.user```-property.
  * **If the authSessionId is not validated data is anonimously available on the internet.**
  *
- * @throws {@link UnauthorizedError}
- *
  * ```typescript
  * import { authenticationMiddleware } from "@dvelop-sdk/express-utils";
  *
  * app.use(authenticationMiddleware);
  * ```
  *
+ * @throws {@link UnauthorizedError}
  * @category Middleware
  */
 /* istanbul ignore next */
