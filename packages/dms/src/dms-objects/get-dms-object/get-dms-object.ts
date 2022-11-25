@@ -1,6 +1,5 @@
-import { DvelopContext } from "../../index";
+import { DvelopContext, SearchDmsObjectsResultPage, getDmsObjectMainFile, getDmsObjectPdfFile, SearchDmsObjectsParams, searchDmsObjects } from "../../index";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
-import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
 
 /**
  * Parameters for the {@link getDmsObject}-function.
@@ -45,6 +44,8 @@ export interface DmsObject {
   getMainFile?: () => Promise<ArrayBuffer>;
   /** Function that returns the DmsObject-pdf. */
   getPdfFile?: () => Promise<ArrayBuffer>;
+
+  getChildren?: () => Promise<SearchDmsObjectsResultPage>;
 }
 
 /**
@@ -54,7 +55,8 @@ export interface DmsObject {
  */
 export function _getDmsObjectDefaultTransformFunctionFactory(
   getDmsObjectMainFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
-  getDmsObjectPdfFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>
+  getDmsObjectPdfFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
+  searchDmsObjects: (context: DvelopContext, params: SearchDmsObjectsParams) => Promise<SearchDmsObjectsResultPage>,
 ) {
   return (response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) => {
 
@@ -72,6 +74,14 @@ export function _getDmsObjectDefaultTransformFunctionFactory(
 
     if (response.data._links.pdfblobcontent) {
       dmsObject.getPdfFile = async () => (await getDmsObjectPdfFileFunction(context, params));
+    }
+
+    if (response.data._links.children) {
+      dmsObject.getChildren = async () => (await searchDmsObjects(context, {
+        repositoryId: params.sourceId,
+        sourceId: params.sourceId,
+        childrenOf: params.dmsObjectId
+      }));
     }
 
     return dmsObject;
@@ -111,7 +121,7 @@ export function _getDmsObjectFactory<T>(
  */
 /* istanbul ignore next */
 export async function _getDmsObjectDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) {
-  return _getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile)(response, context, params);
+  return _getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile, searchDmsObjects)(response, context, params);
 }
 
 /**
