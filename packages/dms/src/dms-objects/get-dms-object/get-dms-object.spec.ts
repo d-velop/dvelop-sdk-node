@@ -190,9 +190,9 @@ describe("getDmsObject", () => {
       const getDmsObject = _getDmsObjectFactory(mockHttpRequestFunction, _getDmsObjectDefaultTransformFunction);
       const result: DmsObject = await getDmsObject(context, params);
 
-      expect(result.getChildren).toEqual(expect.any(Function));
+      expect(result.searchChildren).toEqual(expect.any(Function));
 
-      const resultChildren: SearchDmsObjectsResultPage = await result.getChildren();
+      const resultChildren: SearchDmsObjectsResultPage = await result.searchChildren();
       expect(mockSearchDmsObjects).toHaveBeenCalledTimes(1);
       expect(mockSearchDmsObjects).toHaveBeenCalledWith(context, {
         repositoryId: params.sourceId,

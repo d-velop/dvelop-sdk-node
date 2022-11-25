@@ -45,7 +45,7 @@ export interface DmsObject {
   /** Function that returns the DmsObject-pdf. */
   getPdfFile?: () => Promise<ArrayBuffer>;
 
-  getChildren?: () => Promise<SearchDmsObjectsResultPage>;
+  searchChildren?: () => Promise<SearchDmsObjectsResultPage>;
 }
 
 /**
@@ -77,7 +77,7 @@ export function _getDmsObjectDefaultTransformFunctionFactory(
     }
 
     if (response.data._links.children) {
-      dmsObject.getChildren = async () => (await searchDmsObjects(context, {
+      dmsObject.searchChildren = async () => (await searchDmsObjects(context, {
         repositoryId: params.sourceId,
         sourceId: params.sourceId,
         childrenOf: params.dmsObjectId
