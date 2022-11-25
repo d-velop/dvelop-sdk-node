@@ -20,9 +20,9 @@ export function _redirectToLoginPageFactory(getLoginRedirectionUri: (sucessUri: 
  *
  * app.use((err, req, res, next) => {
  *   if (err instanceof UnauthorizedError && req.accepts("text/html")) {
- *     redirectToLoginPage(req: Request, res: Response);
+ *     redirectToLoginPage(req, res);
  *   } else {
- *     next();
+ *     res.status(401).send("Unauhtorized") // For Content-Types such as JSON return a 401 - Unauthorized
  *   }
  * });
  * ```
