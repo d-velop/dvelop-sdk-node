@@ -66,7 +66,7 @@ export function _releaseAndUpdateDmsObjectFactory(
  * //only node.js
  * const file: ArrayBuffer = readFileSync(`${ __dirname }/our-profits.kaching`).buffer;
  *
- * await updateDmsObject({
+ * await releaseAndUpdateDmsObject({
  *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
  *   authSessionId: "dQw4w9WgXcQ"
  * }, {

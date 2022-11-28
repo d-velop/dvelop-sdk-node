@@ -144,6 +144,17 @@ describe("searchDmsObjects", () => {
         "sourceid": "HiItsMeSourceId",
         "pagesize": 42,
       }
+    },
+    {
+      params: {
+        repositoryId: "HiItsMeRepositoryId",
+        sourceId: "HiItsMeSourceId",
+        childrenOf: "HiItsMeParentDmsObjectId"
+      }, expectedTemplates: {
+        "repositoryid": "HiItsMeRepositoryId",
+        "sourceid": "HiItsMeSourceId",
+        "children_of": "HiItsMeParentDmsObjectId",
+      }
     }
   ].forEach(testCase => {
     it(`should make correct request for params: ${JSON.stringify(testCase.params)}`, async () => {

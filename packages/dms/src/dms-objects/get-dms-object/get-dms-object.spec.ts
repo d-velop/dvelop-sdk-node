@@ -1,11 +1,12 @@
-import { DvelopContext, DmsObject } from "../../index";
+import { DvelopContext, getDmsObjectMainFile, getDmsObjectPdfFile, searchDmsObjects, SearchDmsObjectsResultPage } from "../../index";
 import { HttpResponse } from "../../utils/http";
-import { getDmsObjectMainFile, getDmsObjectPdfFile } from "../get-dms-object-file/get-dms-object-file";
-import { GetDmsObjectParams, _getDmsObjectFactory, _getDmsObjectDefaultTransformFunction } from "../get-dms-object/get-dms-object";
+import { GetDmsObjectParams, _getDmsObjectFactory, _getDmsObjectDefaultTransformFunction, DmsObject } from "../get-dms-object/get-dms-object";
 
 jest.mock("../get-dms-object-file/get-dms-object-file");
+jest.mock("../search-dms-objects/search-dms-objects");
 const mockGetDmsObjectMainFile = getDmsObjectMainFile as jest.MockedFunction<typeof getDmsObjectMainFile>;
 const mockGetDmsObjectPdfFile = getDmsObjectPdfFile as jest.MockedFunction<typeof getDmsObjectPdfFile>;
+const mockSearchDmsObjects = searchDmsObjects as jest.MockedFunction<typeof searchDmsObjects>;
 
 describe("getDmsObject", () => {
 
@@ -117,7 +118,7 @@ describe("getDmsObject", () => {
         },
         "id": "HiItsMeId",
         "sourceProperties": [],
-        "sourceCategories": [ ]
+        "sourceCategories": []
       };
 
       const response: HttpResponse = { data: data } as HttpResponse;
@@ -146,7 +147,7 @@ describe("getDmsObject", () => {
         },
         "id": "HiItsMeId",
         "sourceProperties": [],
-        "sourceCategories": [ ]
+        "sourceCategories": []
       };
 
       const response: HttpResponse = { data: data } as HttpResponse;
@@ -163,6 +164,42 @@ describe("getDmsObject", () => {
       expect(mockGetDmsObjectPdfFile).toHaveBeenCalledTimes(1);
       expect(mockGetDmsObjectPdfFile).toHaveBeenCalledWith(context, params);
       expect(resultFile).toBe(pdfFile);
+    });
+
+    it("should set getChildren correctly", async () => {
+
+      const data: any = {
+        "_links": {
+          "children": {
+            "href": "HiItsMeChildrenHref"
+          },
+        },
+        "id": "HiItsMeId",
+        "sourceProperties": [],
+        "sourceCategories": []
+      };
+
+      const response: HttpResponse = { data: data } as HttpResponse;
+      mockHttpRequestFunction.mockResolvedValue(response);
+      const searchResultPage: SearchDmsObjectsResultPage = {
+        page: 42,
+        dmsObjects: []
+      }
+      mockSearchDmsObjects.mockResolvedValue(searchResultPage);
+
+      const getDmsObject = _getDmsObjectFactory(mockHttpRequestFunction, _getDmsObjectDefaultTransformFunction);
+      const result: DmsObject = await getDmsObject(context, params);
+
+      expect(result.searchChildren).toEqual(expect.any(Function));
+
+      const resultChildren: SearchDmsObjectsResultPage = await result.searchChildren();
+      expect(mockSearchDmsObjects).toHaveBeenCalledTimes(1);
+      expect(mockSearchDmsObjects).toHaveBeenCalledWith(context, {
+        repositoryId: params.repositoryId,
+        sourceId: params.sourceId,
+        childrenOf: params.dmsObjectId
+      });
+      expect(resultChildren).toBe(searchResultPage);
     });
   });
 });
