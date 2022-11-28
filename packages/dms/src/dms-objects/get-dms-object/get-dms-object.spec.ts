@@ -195,7 +195,7 @@ describe("getDmsObject", () => {
       const resultChildren: SearchDmsObjectsResultPage = await result.searchChildren();
       expect(mockSearchDmsObjects).toHaveBeenCalledTimes(1);
       expect(mockSearchDmsObjects).toHaveBeenCalledWith(context, {
-        repositoryId: params.sourceId,
+        repositoryId: params.repositoryId,
         sourceId: params.sourceId,
         childrenOf: params.dmsObjectId
       });

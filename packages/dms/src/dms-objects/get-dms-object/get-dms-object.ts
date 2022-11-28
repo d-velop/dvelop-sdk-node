@@ -78,7 +78,7 @@ export function _getDmsObjectDefaultTransformFunctionFactory(
 
     if (response.data._links.children) {
       dmsObject.searchChildren = async () => (await searchDmsObjects(context, {
-        repositoryId: params.sourceId,
+        repositoryId: params.repositoryId,
         sourceId: params.sourceId,
         childrenOf: params.dmsObjectId
       }));
