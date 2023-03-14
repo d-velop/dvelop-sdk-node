@@ -11,7 +11,7 @@ import { ValidateCloudCenterEventSignatureParams } from "@dvelop-sdk/app-router/
  * ```typescript
  * import { validateCloudCenterEventSignatureMiddlewareFactory } from "@dvelop-sdk/express-utils";
  *
- * app.use("/some/route/dvelop-cloud-lifecycle-event", validateSignatureMiddlewareFactory(process.env.APP_SECRET));
+ * app.use("/some/route/dvelop-cloud-lifecycle-event", validateCloudCenterEventSignatureMiddlewareFactory(process.env.APP_SECRET));
  * ```
  * @category Middleware
  */
