@@ -45,3 +45,6 @@ export { SearchDmsObjectsParams, SearchDmsObjectsResultPage, ListedDmsObject, se
 export { ReleaseAndUpdateDmsObjectError, releaseAndUpdateDmsObject } from "./dms-objects/release-and-update-dms-objects/release-and-update-dms-objects";
 export { LinkDmsObjectsParams, linkDmsObjects } from "./dms-objects/link-dms-objects/link-dms-objects";
 export { UnlinkDmsObjectsParams, unlinkDmsObjects } from "./dms-objects/unlink-dms-objects/unlink-dms-objects";
+
+// Mappings
+export { GetMappingsParams, getMappings } from "./mapping/get-mappings/get-mappings";
