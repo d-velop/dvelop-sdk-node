@@ -48,3 +48,6 @@ export { UnlinkDmsObjectsParams, unlinkDmsObjects } from "./dms-objects/unlink-d
 
 // Mappings
 export { GetMappingsParams, getMappings } from "./mapping/get-mappings/get-mappings";
+
+// Object Definitions
+export { GetObjectDefinitionsParams, getObjectDefinitions } from "./object-definitions/get-object-definitions/get-object-definitions";
