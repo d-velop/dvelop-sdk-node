@@ -1,7 +1,7 @@
 {
   "name": "@dvelop-sdk/dms",
   "description": "This package contains functionality for the DMS-App in the d.velop cloud.",
-  "version": "1.3.3",
+  "version": "1.4.0",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
