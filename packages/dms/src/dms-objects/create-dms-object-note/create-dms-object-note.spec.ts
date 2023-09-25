@@ -1,9 +1,9 @@
 import { DvelopContext } from "@dvelop-sdk/core";
 import {
-  _createDmsObjectNotesDefaultTransformFunction,
-  _createDmsObjectNotesFactory,
-  CreateDmsObjectNotesParams
-} from "./create-dms-object-notes";
+  _createDmsObjectNoteDefaultTransformFunction,
+  _createDmsObjectNoteFactory,
+  CreateDmsObjectNoteParams
+} from "./create-dms-object-note";
 import { HttpResponse } from "../../utils/http";
 
 describe("createDmsObjectNotes", () => {
@@ -11,7 +11,7 @@ describe("createDmsObjectNotes", () => {
   let mockTransformFunction = jest.fn();
 
   let context: DvelopContext;
-  let params: CreateDmsObjectNotesParams;
+  let params: CreateDmsObjectNoteParams;
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -28,7 +28,7 @@ describe("createDmsObjectNotes", () => {
   });
 
   it("should make correct request", async () => {
-    const createDmsObjectNotes = _createDmsObjectNotesFactory(mockHttpRequestFunction, mockTransformFunction);
+    const createDmsObjectNotes = _createDmsObjectNoteFactory(mockHttpRequestFunction, mockTransformFunction);
     await createDmsObjectNotes(context, params);
 
     expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
@@ -52,7 +52,7 @@ describe("createDmsObjectNotes", () => {
     mockHttpRequestFunction.mockResolvedValue(response);
     mockTransformFunction.mockReturnValue(transformResult);
 
-    const createDmsObjectNotes = _createDmsObjectNotesFactory(mockHttpRequestFunction, mockTransformFunction);
+    const createDmsObjectNotes = _createDmsObjectNoteFactory(mockHttpRequestFunction, mockTransformFunction);
     await createDmsObjectNotes(context, params);
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
@@ -65,7 +65,7 @@ describe("createDmsObjectNotes", () => {
       const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
       mockHttpRequestFunction.mockResolvedValue(response);
 
-      const createDmsObjectNotes = _createDmsObjectNotesFactory(mockHttpRequestFunction, _createDmsObjectNotesDefaultTransformFunction);
+      const createDmsObjectNotes = _createDmsObjectNoteFactory(mockHttpRequestFunction, _createDmsObjectNoteDefaultTransformFunction);
       const result = await createDmsObjectNotes(context, params);
 
       expect(result).toBe(undefined);
