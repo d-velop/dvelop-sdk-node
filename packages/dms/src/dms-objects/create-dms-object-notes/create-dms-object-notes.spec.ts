@@ -1,10 +1,10 @@
-import {DvelopContext} from "@dvelop-sdk/core";
+import { DvelopContext } from "@dvelop-sdk/core";
 import {
   _createDmsObjectNotesDefaultTransformFunction,
   _createDmsObjectNotesFactory,
   CreateDmsObjectNotesParams
 } from "./create-dms-object-notes";
-import {HttpResponse} from "../../utils/http";
+import { HttpResponse } from "../../utils/http";
 
 describe("createDmsObjectNotes", () => {
   let mockHttpRequestFunction = jest.fn();
@@ -59,18 +59,16 @@ describe("createDmsObjectNotes", () => {
     expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
   });
 
-  describe("createDmsObjectNotesDefaultTransformFunction", function () {
-    it("should map with values for all properties", async() => {
+
+  describe("createDmsObjectNotesDefaultTransformFunction", () => {
+    it("should return void", async () => {
       const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
       mockHttpRequestFunction.mockResolvedValue(response);
-      mockTransformFunction.mockReturnValue(params);
 
       const createDmsObjectNotes = _createDmsObjectNotesFactory(mockHttpRequestFunction, _createDmsObjectNotesDefaultTransformFunction);
-      const result: CreateDmsObjectNotesParams = await createDmsObjectNotes(context, params);
+      const result = await createDmsObjectNotes(context, params);
 
-      expect(result).toHaveProperty("repositoryId", params.repositoryId);
-      expect(result).toHaveProperty("dmsObjectId", params.dmsObjectId);
-      expect(result).toHaveProperty("noteText", params.noteText);
+      expect(result).toBe(undefined);
     });
   });
 });

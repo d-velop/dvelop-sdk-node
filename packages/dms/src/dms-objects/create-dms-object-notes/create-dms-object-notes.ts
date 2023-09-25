@@ -1,5 +1,5 @@
-import {_defaultHttpRequestFunction, HttpConfig, HttpResponse} from "../../utils/http";
-import {DvelopContext} from "../../index";
+import { _defaultHttpRequestFunction, HttpConfig, HttpResponse } from "../../utils/http";
+import { DvelopContext } from "../../index";
 
 /**
  * Parameters for the {@link createDmsObjectNotes}-function.
@@ -21,13 +21,7 @@ export interface CreateDmsObjectNotesParams {
  * @internal
  * @category DmsObject
  */
-export function _createDmsObjectNotesDefaultTransformFunction(response: HttpResponse<any>, _: DvelopContext, params: CreateDmsObjectNotesParams): CreateDmsObjectNotesParams {
-  return {
-    repositoryId: params.repositoryId,
-    dmsObjectId: params.dmsObjectId,
-    noteText: params.noteText
-  };
-}
+export function _createDmsObjectNotesDefaultTransformFunction(_: HttpResponse<any>, __: DvelopContext, ___: CreateDmsObjectNotesParams): void { } // no error indicates sucess
 
 /**
  * Factory for the {@link createDmsObjectNotes}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
@@ -75,6 +69,6 @@ export function _createDmsObjectNotesFactory<T>(
  * @category DmsObject
  */
 /* istanbul ignore next */
-export async function createDmsObjectNotes(context: DvelopContext, params: CreateDmsObjectNotesParams): Promise<CreateDmsObjectNotesParams> {
+export async function createDmsObjectNotes(context: DvelopContext, params: CreateDmsObjectNotesParams): Promise<void> {
   return await _createDmsObjectNotesFactory(_defaultHttpRequestFunction, _createDmsObjectNotesDefaultTransformFunction)(context, params);
 }
