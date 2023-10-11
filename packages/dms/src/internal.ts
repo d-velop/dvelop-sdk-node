@@ -7,8 +7,9 @@ export { _getRepositoriesFactory, _getRepositoriesDefaultTransformFunction } fro
 // DmsObjects
 export { _getDmsObjectFactory, _getDmsObjectDefaultTransformFunction, _getDmsObjectDefaultTransformFunctionFactory } from "./dms-objects/get-dms-object/get-dms-object";
 export { _getDmsObjectMainFileFactory, _getDmsObjectPdfFileFactory } from "./dms-objects/get-dms-object-file/get-dms-object-file";
+export { _getDmsObjectNotesFactory, _getDmsObjectNotesDefaultTransformFunction } from "./dms-objects/get-dms-object-notes/get-dms-object-notes";
 export { _createDmsObjectDefaultStoreFileFunction, _createDmsObjectDefaultTransformFunction } from "./dms-objects/create-dms-object/create-dms-object";
-export { _createDmsObjectNoteFactory, _createDmsObjectNoteDefaultTransformFunction } from "./dms-objects/create-dms-object-note/create-dms-object-note"
+export { _createDmsObjectNoteFactory, _createDmsObjectNoteDefaultTransformFunction } from "./dms-objects/create-dms-object-note/create-dms-object-note";
 export { _storeFileTemporarilyFactory, _storeFileTemporarilyDefaultTransformFunction } from "./dms-objects/store-file-temporarily/store-file-temporarily";
 export { _updateDmsObjectFactory, _updateDmsObjectDefaultTransformFunction } from "./dms-objects/update-dms-object/update-dms-object";
 export { _updateDmsObjectStatusFactory, _updateDmsObjectStatusDefaultTransformFunction } from "./dms-objects/update-dms-object-status/update-dms-object-status";
