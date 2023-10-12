@@ -49,13 +49,7 @@ export interface SingleDmsObjectNote {
  * @category DmsObject
  */
 export function _getDmsObjectNotesDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectNotesParams) {
-  let responseNotes = response.data.notes;
-
-  if (responseNotes === undefined || responseNotes === null) {
-    responseNotes = [];
-  }
-
-  const mappedNotes = responseNotes.map((note: SingleDmsObjectNote) => {
+  const mappedNotes = response.data.notes.map((note: SingleDmsObjectNote) => {
     return {
       creator: {
         id: note.creator.id,
@@ -103,7 +97,7 @@ export function _getDmsObjectNotesFactory<T>(
  * ```typescript
  * import { getDmsObjectNotes } from "@dvelop-sdk/dms";
  *
- * await createDmsObjectNote({
+ * await getDmsObjectNotes({
  *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
  *   authSessionId: "dQw4w9WgXcQ"
  * }, {
