@@ -13,23 +13,10 @@ export interface GetDmsObjectNotesParams {
 }
 
 /**
- * Result type for the {@link getDmsObjectNotes}-function.
- * @category DmsObject
- */
-export interface DmsObjectNotes {
-  /** ID of the repository */
-  repositoryId: string;
-  /** ID of the DmsObject */
-  dmsObjectId: string;
-  /* Notes of the DmsObject */
-  notes: SingleDmsObjectNote[];
-}
-
-/**
  * All information provided for a single note for the {@link DmsObjectNotes}-interface.
  * @category DmsObject
  */
-export interface SingleDmsObjectNote {
+export interface DmsObjectNote {
   /* Creator of the DmsObjectNotes */
   creator: {
     /* ID of the creator of the note */
@@ -48,8 +35,8 @@ export interface SingleDmsObjectNote {
  * @internal
  * @category DmsObject
  */
-export function _getDmsObjectNotesDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectNotesParams) {
-  const mappedNotes = response.data.notes.map((note: SingleDmsObjectNote) => {
+export function _getDmsObjectNotesDefaultTransformFunction(response: HttpResponse<any>, _: DvelopContext, __: GetDmsObjectNotesParams): DmsObjectNote[] {
+  const mappedNotes: DmsObjectNote[] = response.data.notes.map((note: DmsObjectNote) => {
     return {
       creator: {
         id: note.creator.id,
@@ -60,11 +47,7 @@ export function _getDmsObjectNotesDefaultTransformFunction(response: HttpRespons
     };
   });
 
-  return {
-    repositoryId: params.repositoryId,
-    dmsObjectId: params.dmsObjectId,
-    notes: mappedNotes
-  };
+  return mappedNotes;
 }
 
 /**
@@ -109,6 +92,6 @@ export function _getDmsObjectNotesFactory<T>(
  * @category DmsObject
  */
 /* istanbul ignore next */
-export async function getDmsObjectNotes(context: DvelopContext, params: GetDmsObjectNotesParams): Promise<DmsObjectNotes> {
+export async function getDmsObjectNotes(context: DvelopContext, params: GetDmsObjectNotesParams): Promise<DmsObjectNote[]> {
   return await _getDmsObjectNotesFactory(_defaultHttpRequestFunction, _getDmsObjectNotesDefaultTransformFunction)(context, params);
 }

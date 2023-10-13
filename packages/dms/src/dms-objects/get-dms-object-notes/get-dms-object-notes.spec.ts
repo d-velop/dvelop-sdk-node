@@ -1,8 +1,9 @@
 import { DvelopContext } from "@dvelop-sdk/core";
 import {
   _getDmsObjectNotesDefaultTransformFunction,
-  _getDmsObjectNotesFactory, DmsObjectNotes,
-  GetDmsObjectNotesParams
+  _getDmsObjectNotesFactory,
+  GetDmsObjectNotesParams,
+  DmsObjectNote
 } from "./get-dms-object-notes";
 import { HttpResponse } from "../../utils/http";
 
@@ -43,29 +44,27 @@ describe("getDmsObjectNotes", () => {
   });
 
   it("should pass response to transform and return transform-result", async () => {
-    const response: HttpResponse = { data: {
-      notes: [{
-        creator: {
-          id: "HiItsMeCreatorId",
-          displayName: "HiItsMeCreatorDisplayName"
-        },
-        text: "HiItsMeText",
-        created: "2023-10-11T09:09:09.453+02:00"
-      }]
-    } } as HttpResponse;
+    const response: HttpResponse = {
+      data: {
+        notes: [{
+          creator: {
+            id: "HiItsMeCreatorId",
+            displayName: "HiItsMeCreatorDisplayName"
+          },
+          text: "HiItsMeText",
+          created: "2023-10-11T09:09:09.453+02:00"
+        }]
+      }
+    } as HttpResponse;
 
-    const transformResult: DmsObjectNotes = {
-      repositoryId: "HiItsMeRepositoryId",
-      dmsObjectId: "HiItsMeDmsObjectId",
-      notes: [{
-        creator: {
-          id: "HiItsMeCreatorId",
-          displayName: "HiItsMeCreatorDisplayName"
-        },
-        text: "HiItsMeText",
-        created: new Date("2023-10-11T09:09:09.453+02:00")
-      }]
-    };
+    const transformResult: DmsObjectNote[] = [{
+      creator: {
+        id: "HiItsMeCreatorId",
+        displayName: "HiItsMeCreatorDisplayName"
+      },
+      text: "HiItsMeText",
+      created: new Date("2023-10-11T09:09:09.453+02:00")
+    }];
 
     mockHttpRequestFunction.mockResolvedValue(response);
     mockTransformFunction.mockReturnValue(transformResult);
@@ -79,29 +78,27 @@ describe("getDmsObjectNotes", () => {
 
   describe("getDmsObjectNotesDefaultTransformFunction", () => {
     it("should return response DmsObjectNotes with single note", async () => {
-      const response: HttpResponse = { data: {
-        notes: [{
-          creator: {
-            id: "HiItsMeCreatorId",
-            displayName: "HiItsMeCreatorDisplayName"
-          },
-          text: "HiItsMeText",
-          created: "2023-10-11T09:09:09.453+02:00"
-        }]
-      } } as HttpResponse;
+      const response: HttpResponse = {
+        data: {
+          notes: [{
+            creator: {
+              id: "HiItsMeCreatorId",
+              displayName: "HiItsMeCreatorDisplayName"
+            },
+            text: "HiItsMeText",
+            created: "2023-10-11T09:09:09.453+02:00"
+          }]
+        }
+      } as HttpResponse;
 
-      const expectedResult: DmsObjectNotes = {
-        repositoryId: "HiItsMeRepositoryId",
-        dmsObjectId: "HiItsMeDmsObjectId",
-        notes: [{
-          creator: {
-            id: "HiItsMeCreatorId",
-            displayName: "HiItsMeCreatorDisplayName"
-          },
-          text: "HiItsMeText",
-          created: new Date("2023-10-11T09:09:09.453+02:00")
-        }]
-      };
+      const expectedResult: DmsObjectNote[] = [{
+        creator: {
+          id: "HiItsMeCreatorId",
+          displayName: "HiItsMeCreatorDisplayName"
+        },
+        text: "HiItsMeText",
+        created: new Date("2023-10-11T09:09:09.453+02:00")
+      }];
 
       mockHttpRequestFunction.mockResolvedValue(response);
       const getDmsObjectNotes = _getDmsObjectNotesFactory(mockHttpRequestFunction, _getDmsObjectNotesDefaultTransformFunction);
@@ -111,15 +108,13 @@ describe("getDmsObjectNotes", () => {
     });
 
     it("should return response DmsObjectNotes without notes when dmsObject has no notes", async () => {
-      const response: HttpResponse = { data: {
-        notes: []
-      } } as HttpResponse;
+      const response: HttpResponse = {
+        data: {
+          notes: []
+        }
+      } as HttpResponse;
 
-      const expectedResult: any = {
-        repositoryId: "HiItsMeRepositoryId",
-        dmsObjectId: "HiItsMeDmsObjectId",
-        notes: []
-      };
+      const expectedResult: any = [];
 
       mockHttpRequestFunction.mockResolvedValue(response);
       const getDmsObjectNotes = _getDmsObjectNotesFactory(mockHttpRequestFunction, _getDmsObjectNotesDefaultTransformFunction);
