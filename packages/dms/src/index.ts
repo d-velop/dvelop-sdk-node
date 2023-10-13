@@ -36,6 +36,7 @@ export { getRepositories } from "./repositories/get-repositories/get-repositorie
 // DmsObjects
 export { GetDmsObjectParams, DmsObject, getDmsObject } from "./dms-objects/get-dms-object/get-dms-object";
 export { getDmsObjectMainFile, getDmsObjectPdfFile } from "./dms-objects/get-dms-object-file/get-dms-object-file";
+export { GetDmsObjectNotesParams, DmsObjectNotes, SingleDmsObjectNote, getDmsObjectNotes } from "./dms-objects/get-dms-object-notes/get-dms-object-notes";
 export { CreateDmsObjectParams, createDmsObject } from "./dms-objects/create-dms-object/create-dms-object";
 export { CreateDmsObjectNoteParams, createDmsObjectNote as createDmsObjectNotes } from "./dms-objects/create-dms-object-note/create-dms-object-note";
 export { StoreFileTemporarilyParams, storeFileTemporarily } from "./dms-objects/store-file-temporarily/store-file-temporarily";
