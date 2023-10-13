@@ -1,4 +1,4 @@
-import { DvelopContext, SearchDmsObjectsResultPage, getDmsObjectMainFile, getDmsObjectPdfFile, SearchDmsObjectsParams, searchDmsObjects } from "../../index";
+import { DvelopContext, SearchDmsObjectsResultPage, getDmsObjectMainFile, getDmsObjectPdfFile, SearchDmsObjectsParams, searchDmsObjects, DmsObjectNote, getDmsObjectNotes } from "../../index";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
 /**
@@ -44,8 +44,10 @@ export interface DmsObject {
   getMainFile?: () => Promise<ArrayBuffer>;
   /** Function that returns the DmsObject-pdf. */
   getPdfFile?: () => Promise<ArrayBuffer>;
-
+  /** Function that returns a searchresult of all children. */
   searchChildren?: () => Promise<SearchDmsObjectsResultPage>;
+  /** Function that returns the notes of a DmsObject. */
+  getNotes?: () => Promise<DmsObjectNote[]>;
 }
 
 /**
@@ -82,6 +84,10 @@ export function _getDmsObjectDefaultTransformFunctionFactory(
         sourceId: params.sourceId,
         childrenOf: params.dmsObjectId
       }));
+    }
+
+    if (response.data._links.notes) {
+      dmsObject.getNotes = async () => (await getDmsObjectNotes(context, params));
     }
 
     return dmsObject;
