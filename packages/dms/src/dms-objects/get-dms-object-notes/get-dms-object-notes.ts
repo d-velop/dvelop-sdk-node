@@ -80,13 +80,20 @@ export function _getDmsObjectNotesFactory<T>(
  * ```typescript
  * import { getDmsObjectNotes } from "@dvelop-sdk/dms";
  *
- * await getDmsObjectNotes({
+ * const notes: DmsObjectNote[] = getDmsObjectNotes({
  *   systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
  *   authSessionId: "dQw4w9WgXcQ"
  * }, {
  *   repositoryId: "qnydFmqHuVo",
  *   dmsObjectId: "GDYQ3PJKrT8"
  * });
+ *
+ * notes.forEach(n => {
+ *   console.log(`${n.creator.displayName}: "${n.text}"`);
+ * });
+ *
+ * // Jastor Gallywix: "I need this taken care of ASAP!"
+ * // Bing Zapcrackle: "I'm on it my prince."
  * ```
  *
  * @category DmsObject
