@@ -12,7 +12,7 @@ export function _getTaskCountDefaultTransformFunction(response: HttpResponse, _:
 
 /**
  * Factory for the {@link getTaskCount}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link getTaskCount}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link getTaskCount}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category Task
  */

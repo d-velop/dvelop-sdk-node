@@ -19,7 +19,7 @@ export function _getRepositoriesDefaultTransformFunction(response: HttpResponse,
 
 /**
  * Factory for {@link getRepositories}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the getRepositories-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the getRepositories-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category Repository
  */
