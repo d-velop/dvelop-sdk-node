@@ -12,7 +12,7 @@ export interface DeleteTaskParams {
 
 /**
  * Factory for the {@link deleteTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link deleteTask}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link deleteTask}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category Task
  */
