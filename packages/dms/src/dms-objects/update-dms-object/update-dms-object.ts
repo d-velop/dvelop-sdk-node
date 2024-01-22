@@ -60,7 +60,7 @@ export async function updateDmsObjectDefaultStoreFileFunction(context: DvelopCon
 
 /**
  * Factory for the {@link updateDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link updateDmsObject}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link updateDmsObject}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category DmsObject
  */

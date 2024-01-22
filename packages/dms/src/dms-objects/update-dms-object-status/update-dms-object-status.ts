@@ -4,7 +4,7 @@ import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../uti
 export type DmsObjectStatus = "Processing" | "Verification" | "Release";
 
 /**
- * Parameters for the {@link updateDmsObject}-function.
+ * Parameters for the {@link updateDmsObjectStatus}-function.
  * @category DmsObject
  */
 export interface UpdateDmsObjectStatusParams {
@@ -21,7 +21,7 @@ export interface UpdateDmsObjectStatusParams {
 }
 
 /**
- * Default transform-function provided to the {@link updateDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Default transform-function provided to the {@link updateDmsObjectStatus}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
@@ -29,7 +29,7 @@ export function _updateDmsObjectStatusDefaultTransformFunction(_: HttpResponse, 
 
 /**
  * Factory for the {@link updateDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link updateDmsObject}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link updateDmsObjectStatus}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category DmsObject
  */
