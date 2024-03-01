@@ -96,7 +96,7 @@ export function _getDmsObjectDefaultTransformFunctionFactory(
 
 /**
  * Factory for {@link getDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link getDmsObject}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link getDmsObject}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category DmsObject
  */

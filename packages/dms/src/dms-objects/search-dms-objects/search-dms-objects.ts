@@ -152,7 +152,7 @@ function formatProperties(properties: { key: string, values: string[] }[]): { [k
 
 /**
  * Factory for the {@link searchDmsObjects}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link storeFileFunction}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link storeFileFunction}-function. A corresponding transformFunction has to be supplied.
  * @internal
  * @category DmsObject
  */

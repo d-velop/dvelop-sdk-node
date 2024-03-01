@@ -74,7 +74,7 @@ export async function _createDmsObjectDefaultStoreFileFunction(context: DvelopCo
 
 /**
  * Factory for the {@link createDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link createDmsObject}-function. A corresponding transformFuntion has to be supplied.
+ * @typeparam T Return type of the {@link createDmsObject}-function. A corresponding transformFunction has to be supplied.
  * @category DmsObject
  */
 export function createDmsObjectFactory<T>(
