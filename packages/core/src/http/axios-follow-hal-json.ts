@@ -18,11 +18,12 @@ interface UrlParamSplit {
 async function getFollowUrl(axios: AxiosInstance, config: DvelopHttpRequestConfig, follow: string): Promise<UrlParamSplit> {
 
   if (!config.headers) {
-    config.headers = {};
+    config.headers = {
+      Accept: "application/hal+json, application/json"
+    };
   }
 
   config.method = "GET";
-  config.headers["Accept"] = "application/hal+json, application/json";
   config.responseType = "json";
   config.follows = [];
 

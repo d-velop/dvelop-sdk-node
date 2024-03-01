@@ -1,7 +1,7 @@
 {
   "name": "@dvelop-sdk/core",
   "description": "This package contains shared functionality for the @dvelop-sdk packages.",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,7 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "axios": "^0.23.0",
+    "axios": "^1.6.7",
     "lodash.merge": "^4.6.2",
     "uuid": "^8.3.2"
   },
