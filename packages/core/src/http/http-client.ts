@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosStatic, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosStatic } from "axios";
 import { generateRequestId } from "..";
 import { DvelopContext } from "../context/context";
 import { axiosFollowHalJsonFunctionFactory } from "./axios-follow-hal-json";
@@ -22,7 +22,7 @@ export interface DvelopHttpClient {
 
 export function axiosInstanceFactory(axios: AxiosStatic): AxiosInstance {
   const instance: AxiosInstance = axios.create();
-  instance.interceptors.request.use(axiosFollowHalJsonFunctionFactory(instance) as (config: InternalAxiosRequestConfig) => Promise<InternalAxiosRequestConfig>);
+  instance.interceptors.request.use(axiosFollowHalJsonFunctionFactory(instance));
   return instance;
 }
 
@@ -41,14 +41,14 @@ export function axiosHttpClientFactory(
       defaultConfig.headers = {
         "ContentType": "application/json",
         "Accept": "application/hal+json, application/json",
-      }
+      };
 
       if (context.systemBaseUri) {
         defaultConfig.baseURL = context.systemBaseUri;
       }
 
       if (context.authSessionId) {
-        defaultConfig.headers.Authorization = `Bearer ${context.authSessionId}`;
+        defaultConfig.headers["Authorization"] = `Bearer ${context.authSessionId}`;
       }
 
       if (context.requestId) {
