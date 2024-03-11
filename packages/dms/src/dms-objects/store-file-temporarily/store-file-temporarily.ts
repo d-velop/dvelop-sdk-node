@@ -18,7 +18,7 @@ export interface StoreFileTemporarilyParams {
  * @category DmsObject
  */
 export function _storeFileTemporarilyDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: StoreFileTemporarilyParams): string {
-  return response.headers["location"];
+  return response.headers["location"] || "";
 }
 
 /**

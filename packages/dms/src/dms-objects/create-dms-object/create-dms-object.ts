@@ -45,7 +45,7 @@ export interface CreateDmsObjectParams {
  */
 export function _createDmsObjectDefaultTransformFunction(response: HttpResponse<any>, _: DvelopContext, params: CreateDmsObjectParams): GetDmsObjectParams {
 
-  const location: string = response.headers["location"];
+  const location: string = response.headers["location"] || "";
   const matches: RegExpExecArray | null = /^.*\/(.*?)(\?|$)/.exec(location);
 
   if (matches) {
