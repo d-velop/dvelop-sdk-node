@@ -80,7 +80,7 @@ export interface CreateTaskParams {
  * @category Task
  */
 export function _createTaskDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: CreateTaskParams): string {
-  return response.headers["location"];
+  return response.headers["location"] || "";
 }
 
 /**
