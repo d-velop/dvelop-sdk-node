@@ -9,9 +9,7 @@ on:
     branches:
       - develop
 
-
 jobs:
-
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -20,25 +18,25 @@ jobs:
         node-version: [16, 17, 18]
     name: Build with Node.js ${{ matrix.node-version }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Set up node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install npm dependencies
-      run: npm ci
-    - name: Run build
-      run: npm run build
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: "@dvelop-sdk-${{github.run_id}}-${{matrix.node-version}}"
-        path: |
-          packages/*/lib/*
-          packages/*/package.json
-          packages/*/package-lock.json
-          packages/*/README.md
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Run build
+        run: npm run build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: "@dvelop-sdk-${{github.run_id}}-${{matrix.node-version}}"
+          path: |
+            packages/*/lib/*
+            packages/*/package.json
+            packages/*/package-lock.json
+            packages/*/README.md
 
   test:
     runs-on: ${{ matrix.os }}
@@ -46,68 +44,67 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [16, 17, 18]
+        node-version: [18, 20, 21]
     name: Test for Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Set up node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        registry-url: 'https://registry.npmjs.org'
-    - name: Install npm dependencies
-      run: npm ci
-    - name: Build packages
-      run: npm run build
-    - name: Run tests
-      run: npm test
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: "https://registry.npmjs.org"
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Build packages
+        run: npm run build
+      - name: Run tests
+        run: npm test
 
   lint:
     name: Lint code
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Set up node.js
-      uses: actions/setup-node@v2
-    - name: Install npm dependencies
-      run: npm ci
-    - name: Run linting
-      run: npm run lint
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up node.js
+        uses: actions/setup-node@v2
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Run linting
+        run: npm run lint
 
   license:
     name: Check license conformity
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Set up node.js
-      uses: actions/setup-node@v2
-    - name: Install npm dependencies
-      run: npm ci
-    - name: Run license check
-      run: npm run license
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up node.js
+        uses: actions/setup-node@v2
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Run license check
+        run: npm run license
 
   generate-docs:
     name: Generate documentation
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Set up node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 16
-    - name: Install npm dependencies
-      run: npm ci
-    - name: Build packages
-      run: npm run build
-    - name: Generate docs
-      run: npm run docs
-    - name: Upload docs
-      uses: actions/upload-artifact@v2
-      with:
-        name: dvelop-sdk-${{github.run_id}}-docs
-        path: docs
-
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Build packages
+        run: npm run build
+      - name: Generate docs
+        run: npm run docs
+      - name: Upload docs
+        uses: actions/upload-artifact@v2
+        with:
+          name: dvelop-sdk-${{github.run_id}}-docs
+          path: docs
