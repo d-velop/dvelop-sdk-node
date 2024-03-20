@@ -61,6 +61,10 @@ function templateUrl(url: string, originalParams: { [key: string]: string | unde
 
           let value: any = templates[key];
 
+          if (typeof value === "object" && !Array.isArray(value)) {
+            value = JSON.stringify(value);
+          }
+
           if (Array.isArray(value)) {
             if (value.length > 0) {
               value = JSON.stringify(templates[key]);
