@@ -1,2 +1,0 @@
-https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/srm?sourceid=/able-pageneric/sources/default&sourceproperties[AA_documentType][0]=ZR03T01D01&sourceproperties[AA_personnelArea][0]=ID&sourcecategories=["XPWFL"]
-https://able-group-dev.d-velop.cloud/dms/r/1a2cde3f-2913-3dc2-4a2e-e623459ac23a/srm?sourceid=/able-pageneric/sources/default&sourceproperties={"AA_documentType":["ZR03T01D01"],"AA_personnelArea":["ID"]}&sourcecategories=["XPWFL"]
