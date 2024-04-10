@@ -58,4 +58,21 @@ describe("completeTaskFactory", () => {
       location: "/some/faulty/location"
     })).rejects.toThrow(TaskError);
   });
+
+  it("should work with location with request parameters", async () => {
+
+    const completeTask = _completeTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+    await completeTask(context, {
+      location: "/task/tasks/HiItsMeLocation?foo=bar&baz=foo"
+    });
+
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+      method: "POST",
+      url: "/task/tasks/HiItsMeLocation/completionState",
+      data: {
+        complete: true
+      }
+    });
+  });
 });
