@@ -26,7 +26,7 @@ describe("getTaskCountFactory", () => {
     expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
     expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
       method: "GET",
-      follows: ["count", "all"]
+      url: "/task/count/all"
     });
   });
 

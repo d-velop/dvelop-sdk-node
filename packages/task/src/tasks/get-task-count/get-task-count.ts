@@ -24,7 +24,7 @@ export function _getTaskCountFactory<T>(
 
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "GET",
-      follows: ["count", "all"]
+      url: "/task/count/all",
     });
     return transformFunction(response, context);
   };
