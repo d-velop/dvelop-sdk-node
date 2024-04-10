@@ -120,8 +120,7 @@ export function _createTaskFactory<T>(
 
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "POST",
-      url: "/task",
-      follows: ["tasks"],
+      url: "/task/tasks",
       data: task
     });
 
