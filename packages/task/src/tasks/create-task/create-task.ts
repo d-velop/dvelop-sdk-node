@@ -120,8 +120,7 @@ export function _createTaskFactory<T>(
 
     const response: HttpResponse = await httpRequestFunction(context, {
       method: "POST",
-      url: "/task",
-      follows: ["tasks"],
+      url: "/task/tasks",
       data: task
     });
 
@@ -131,6 +130,7 @@ export function _createTaskFactory<T>(
 
 /**
  * Create a task.
+ * @returns Location of the created task
  *
  * ```typescript
  * import { createTask } from "@dvelop-sdk/task";

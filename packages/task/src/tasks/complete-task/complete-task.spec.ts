@@ -1,5 +1,5 @@
 import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpResponse } from "../../utils/http";
+import { HttpResponse, TaskError } from "../../utils/http";
 import { CompleteTaskParams, _completeTaskFactory } from "./complete-task";
 
 describe("completeTaskFactory", () => {
@@ -19,7 +19,7 @@ describe("completeTaskFactory", () => {
     };
 
     params = {
-      location: "HiItsMeLocation"
+      location: "/task/tasks/HiItsMeLocation"
     };
   });
 
@@ -31,8 +31,7 @@ describe("completeTaskFactory", () => {
     expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
     expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
       method: "POST",
-      url: params.location,
-      follows: ["completion"],
+      url: "/task/tasks/HiItsMeLocation/completionState",
       data: {
         complete: true
       }
@@ -51,5 +50,29 @@ describe("completeTaskFactory", () => {
 
     expect(mockTransformFunction).toHaveBeenCalledTimes(1);
     expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+  });
+
+  it("invalid location should throw an error", async () => {
+    const completeTask = _completeTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+    await expect(() => completeTask(context, {
+      location: "/some/faulty/location"
+    })).rejects.toThrow(TaskError);
+  });
+
+  it("should work with location with request parameters", async () => {
+
+    const completeTask = _completeTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+    await completeTask(context, {
+      location: "/task/tasks/HiItsMeLocation?foo=bar&baz=foo"
+    });
+
+    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+      method: "POST",
+      url: "/task/tasks/HiItsMeLocation/completionState",
+      data: {
+        complete: true
+      }
+    });
   });
 });

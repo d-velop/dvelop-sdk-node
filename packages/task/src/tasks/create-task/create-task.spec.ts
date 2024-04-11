@@ -83,8 +83,7 @@ describe("createTaskFactory", () => {
       expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
       expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
         method: "POST",
-        url: "/task",
-        follows: ["tasks"],
+        url: "/task/tasks",
         data: testCase.expectedData
       });
     });
