@@ -130,6 +130,7 @@ export function _createTaskFactory<T>(
 
 /**
  * Create a task.
+ * @returns Location of the created task
  *
  * ```typescript
  * import { createTask } from "@dvelop-sdk/task";
