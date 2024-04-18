@@ -88,6 +88,7 @@ export function _updateDmsObjectFactory<T>(
       data: {
         "sourceId": params.sourceId,
         "alterationText": params.alterationText,
+        "sourceCategory": params.categoryId,
         "sourceProperties": {
           "properties": params.properties
         },
