@@ -2,6 +2,11 @@ import { DvelopContext } from "@dvelop-sdk/core";
 import { HttpResponse } from "../../utils/http";
 import { UpdateTaskParams, _updateTaskFactory } from "./update-task";
 
+interface TestCase {
+  params: UpdateTaskParams;
+  expectedData: any;
+}
+
 describe("updateTaskFactory", () => {
 
   let mockHttpRequestFunction = jest.fn();
@@ -25,20 +30,68 @@ describe("updateTaskFactory", () => {
     };
   });
 
-  it("should make correct request", async () => {
+  const testCases: TestCase[] = [
+    {
+      params: {
+        location: "HiItsMeLocation",
+        subject: "HiItsMeSubject",
+        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"]
+      },
+      expectedData: {
+        subject: "HiItsMeSubject",
+        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
+      }
+    },
+    {
+      params: {
+        location: "HiItsMeLocation",
+        subject: "HiItsMeSubject",
+        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
+        correlationKey: "HiItsMeGeneratedCorrelationKey",
+      },
+      expectedData: {
+        subject: "HiItsMeSubject",
+        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
+        correlationKey: "HiItsMeGeneratedCorrelationKey",
+      }
+    },
+    {
+      params: {
+        location: "HiItsMeLocation",
+        subject: "HiItsMeSubject",
+        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
+        actionScopes: {
+          complete: ["details"],
+          claim: ["list"],
+          forward: ["details", "list"]
+        }
+      },
+      expectedData: {
+        subject: "HiItsMeSubject",
+        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
+        actionScopes: {
+          complete: ["details"],
+          claim: ["list"],
+          forward: ["details", "list"]
+        }
+      }
+    },
+  ]
 
-    const updateTask = _updateTaskFactory(mockHttpRequestFunction, mockTransformFunction);
-    await updateTask(context, params);
+  testCases.forEach(testCase => {
+    it("should make correct request", async () => {
 
-    const expectedData: any = { ...params, ...{ location: null } };
+      const updateTask = _updateTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+      await updateTask(context, testCase.params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "PATCH",
-      url: params.location,
-      data: expectedData
+      expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
+      expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+        method: "PATCH",
+        url: params.location,
+        data: testCase.expectedData
+      });
     });
-  });
+  })
 
   it("should parse dueDate", async () => {
 
