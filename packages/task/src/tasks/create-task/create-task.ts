@@ -59,6 +59,16 @@ export interface CreateTaskParams {
   sendCompletionNotification?: boolean;
   /** Specifies if a notification should be sent to the task creator when the due date is exceeded. This option is only available if a dueDate is specified. Default is false. */
   sendDueDateNotification?: boolean;
+  /** Configuration of actions in the user interface */
+  actionScopes?: {
+    /** Context for complete button. Possible values are "list" & "details" */
+    complete?: ("list" | "details")[];
+    /** Context for claim button. Possible values are "list" & "details" */
+    claim?: ("list" | "details")[];
+    /** Context for forward button. Possible values are "list" & "details" */
+    forward?: ("list" | "details")[];
+  }
+
   /** Links to the task */
   _links?: {
     /** This URI provides an editing dialog for the task. You can find further details in the section [Adding editing dialogs](https://developer.d-velop.de/documentation/taskapi/en#adding-editing-dialogs). */

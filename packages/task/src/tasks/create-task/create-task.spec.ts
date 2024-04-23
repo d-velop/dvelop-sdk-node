@@ -2,6 +2,12 @@ import { DvelopContext } from "@dvelop-sdk/core";
 import { HttpResponse } from "../../utils/http";
 import { CreateTaskParams, _createTaskDefaultTransformFunction, _createTaskFactory } from "./create-task";
 
+interface TestCase {
+  params: CreateTaskParams;
+  mockedUuidGenerator?: () => string;
+  expectedData: any;
+}
+
 describe("createTaskFactory", () => {
 
   let mockHttpRequestFunction = jest.fn();
@@ -24,13 +30,12 @@ describe("createTaskFactory", () => {
     };
   });
 
-  [
+  const testCases: TestCase[] = [
     {
       params: {
         subject: "HiItsMeSubject",
         assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"]
       },
-      mockedUuidGenerator: null,
       expectedData: {
         subject: "HiItsMeSubject",
         assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
@@ -42,7 +47,6 @@ describe("createTaskFactory", () => {
         assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
         correlationKey: "HiItsMeCorrelationKey"
       },
-      mockedUuidGenerator: null,
       expectedData: {
         subject: "HiItsMeSubject",
         assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
@@ -74,7 +78,31 @@ describe("createTaskFactory", () => {
         correlationKey: "HiItsMeGeneratedCorrelationKey"
       }
     },
-  ].forEach(testCase => {
+    {
+      params: {
+        subject: "HiItsMeSubject",
+        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
+        actionScopes: {
+          complete: ["details"],
+          claim: ["list"],
+          forward: ["details", "list"]
+        }
+      },
+      mockedUuidGenerator: () => "HiItsMeGeneratedCorrelationKey",
+      expectedData: {
+        subject: "HiItsMeSubject",
+        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
+        correlationKey: "HiItsMeGeneratedCorrelationKey",
+        actionScopes: {
+          complete: ["details"],
+          claim: ["list"],
+          forward: ["details", "list"]
+        }
+      }
+    },
+  ]
+
+  testCases.forEach(testCase => {
     it("should make correct request", async () => {
 
       const createTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction, testCase.mockedUuidGenerator);

@@ -15,7 +15,7 @@
 
   </br>
 
-  <p>This package contains functions for logging with the OpenTelemetry.</p>
+  <p>This package contains functions for logging in the d.velop cloud.</p>
 
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules/logging.html"><strong>Explore the docs »</strong></a>
 
@@ -30,21 +30,20 @@
 </div>
 
 ## Just let me log
-This package expoases a `DvelopLogger` class which is initialized with a level and 1-n `Providers` which hadnle Logging. See [Concepts](##Concepts) for more information.
+This package exposes a `DvelopLogger`-class which is initialized with a `level` and 1-n `Providers`. See [Concepts](##Concepts) for more information.
 
 ### Initialize a logger
 ```typescript
 const logger = new DvelopLogger({
   level: "info",// logs info and above
   providers: [
-    // Providers define a loggin scheme. Currently only OTEL is supported.
+    // Providers define a logging scheme. Currently only OTEL is supported.
     otelProviderFactory({
-
       appName: "acme-myapp",
       appVersion: "1.0.0",
       instanceId: "0",
 
-      // Transports define where to send the logs. Mutliple transports can be used.
+      // Transports define where to logging statements are send. Multiple transports can be used.
       transports: [
         consoleTransportFactory(), // logs to console
         fileTransportFactory("./logs.txt") // logs to file 'logs.txt'
@@ -58,7 +57,7 @@ Supported LogLevels are `debug`, `info` and `error`, represented by exposed meth
 
 ### Start Logging
 
-The minimal logstatement defines a level and a string to log. The OTEL-Provdider transforms the information.
+The minimal logstatement defines a level and a string to log. The OTEL-Provider transforms the information.
 
 ```typescript
 logger.debug({}, "Hello World!");
@@ -85,7 +84,7 @@ For each method the first argument is a `DvelopContext`-object and the second ar
 ```typescript
 
 try {
-  conviceLeonidasThatThisIsMadness();
+  convinceLeonidasThatThisIsMadness();
 } catch (error: any) {
 
   logger.error({
@@ -93,7 +92,7 @@ try {
     tenantId: "T8r3cWM4JII"
   }, {
     name: "MissionFailedLogger",
-    message: "Apperently this is Sparta",
+    message: "Apparently this is Sparta",
     error: error,
     customAttributes: {
       learnings: "Don't stand near a well"
@@ -105,7 +104,7 @@ try {
  *   "time":"479BCT11:11:11.111Z",
  *   "sev":17,
  *   "name":"MissionFailedLogger",
- *   "body":"Apperently this is Sparta",
+ *   "body":"Apparently this is Sparta",
  *   "tn":"T8r3cWM4JII",
  *   "res":{
  *     "svc":{
@@ -129,13 +128,13 @@ try {
 ```
 
 ## Concepts
-To work with logging you need to
-* Transports
-* Providers
-* Loggers
+In this package logging is divided over three layers
+1. Transports
+2. Providers
+3. Logger
 
 ### Transports
-Transports are responsable for transporting a log-event. Transports are agnostic about the form of the log event.
+Transports are responsible for transporting a log-event. Transports are agnostic about the form of the log event.
 
 ```typescript
 export type TransportFn = (event: any) => Promise<void>;
@@ -147,6 +146,7 @@ import { TransportFn, consoleTransportFactory, fileTransportFactory } from "@dve
 
 const consoleTransport: TransportFn = consoleTransportFactory();
 await consoleTransport("Hello World!"); // log "Hello World" to console in Node.js and Browsers
+
 const fileTransport: TransportFn = fileTransportFactory("./logs.txt");
 await fileTransport("Hello World!"); // log "Hello World" to logs.txt
 ```
@@ -159,7 +159,7 @@ async function myTransport(event: any): Promise<void> {
 ```
 
 ### Providers
-Providers are able to work with the `DvelopLogEvent`-Type. The do transformation and **may** support generic TransportFns, a subset or none (e.g a Syslog-Provider could have a UDP Transport to Port 514 baked in).
+Providers are able to work with the `DvelopLogEvent`-Type. The do transformation and **may** support any Transport-Functions, a subset or none (e.g a Syslog-Provider could have a UDP Transport to Port 514 baked in).
 
 ```typescript
 export type ProviderFn = (context: DvelopContext, event: DvelopLogEvent, level: DvelopLogLevel) => Promise<void>;
@@ -177,7 +177,7 @@ const otel: ProviderFn =  otelProviderFactory({
 });
 ```
 
-D.velop default is to log in a JSON-Format derived from the [Open Telemtry Standard](https://opentelemetry.io/docs/reference/specification/logs/overview). The `otelProviderFactory` creates a `ProviderFn` that is responsable for according transformations (e.g. map level "info" to OTELs numeric severity of 9).
+D.velop default is to log in a JSON-Format derived from the [Open Telemetry Standard](https://opentelemetry.io/docs/reference/specification/logs/overview). The `otelProviderFactory` creates a `ProviderFn` that is responsable for according transformations (e.g. map level "info" to OTELs numeric severity of 9).
 
 You can easily implement your own Provider-Function:
 ```typescript
@@ -205,3 +205,20 @@ async function myProviderFactory(transports: TransportFn[]): ProviderFn {
 
 ### Logger
 Finally we have that can log something. The `DvelopLogger` accepts a level (everything above is logged) and 1-n provider-functions.
+
+```typescript
+const logger = new DvelopLogger({
+  level: "info",
+  providers: [
+    otelProviderFactory({
+      appName: "acme-myapp",
+      appVersion: "1.0.0",
+      instanceId: "0",
+      transports: [
+        consoleTransportFactory(),
+        fileTransportFactory("./logs.txt")
+      ]
+    })
+  ],
+});
+```
