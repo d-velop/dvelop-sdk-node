@@ -25,10 +25,10 @@ export function contextMiddlewareFactory(
 
   return (req: Request, _: Response, next: NextFunction) => {
 
-    if (systemBaseUri && tenantId) {
+    if (systemBaseUri) {
       req.dvelopContext = {
         systemBaseUri: systemBaseUri,
-        tenantId: tenantId,
+        tenantId: tenantId || req.header(DVELOP_TENANT_ID_HEADER),
         requestId: req.header(DVELOP_REQUEST_ID_HEADER)
       }
     } else {
