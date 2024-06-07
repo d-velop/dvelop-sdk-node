@@ -82,9 +82,9 @@ export function contextMiddleware(req: Request, _: Response, next: NextFunction)
  * This is a version with a fixed systemBaseUri, primarily used on premise.
  *
  * ```typescript
- * import { contextMiddleware } from "@dvelop-sdk/express-utils";
+ * import { contextMiddlewareFactoryWithFixedSystemBaseUri } from "@dvelop-sdk/express-utils";
  *
- * app.use(contextMiddleware);
+ * app.use(contextMiddlewareFactoryWithFixedSystemBaseUri("https://my.local.baseuri")); //could optionally supply a tenantId (default: 0)
  *
  * app.use((req: Request, _: Response, next: NextFunction) => {
  *   console.log(req.dvelopContext);
