@@ -30,44 +30,110 @@ describe("contextMiddlewareFactory", () => {
     mockRes = {} as unknown as Response;
   });
 
-  it("should set context", () => {
+  describe("dvelopContext", () => {
+    it("should set context from headers on no systemBaseUri", () => {
 
-    const systemBaseUri: string = "HiItsMeSystemBaseUri";
-    const tenantId: string = "HiItsMeTenantId";
-    const requestId: string = "HiItsMeRequestId";
-    const requestSignature: string = "HiItsMeRequestSignature";
+      const systemBaseUri: string = "HiItsMeSystemBaseUri";
+      const tenantId: string = "HiItsMeTenantId";
+      const requestId: string = "HiItsMeRequestId";
+      const requestSignature: string = "HiItsMeRequestSignature";
 
-    (mockReq.header as jest.Mock).mockImplementation((header: string) => {
-      switch (header) {
-      case DVELOP_SYSTEM_BASE_URI_HEADER:
-        return systemBaseUri;
+      (mockReq.header as jest.Mock).mockImplementation((header: string) => {
+        switch (header) {
+          case DVELOP_SYSTEM_BASE_URI_HEADER:
+            return systemBaseUri;
 
-      case DVELOP_TENANT_ID_HEADER:
-        return tenantId;
+          case DVELOP_TENANT_ID_HEADER:
+            return tenantId;
 
-      case DVELOP_REQUEST_ID_HEADER:
-        return requestId;
+          case DVELOP_REQUEST_ID_HEADER:
+            return requestId;
 
-      case DVELOP_REQUEST_SIGNATURE_HEADER:
-        return requestSignature;
+          case DVELOP_REQUEST_SIGNATURE_HEADER:
+            return requestSignature;
 
-      case TRACEPARENT_HEADER:
-        return undefined;
+          case TRACEPARENT_HEADER:
+            return undefined;
 
-      default:
-        throw "No other should be requested";
-      }
+          default:
+            throw "No other should be requested";
+        }
+      });
+
+      contextMiddlewareFactory(mockParseTraceparentHeader, mockGenerateTraceContext)(mockReq, mockRes, mockNext);
+
+      expect(mockReq.dvelopContext).toEqual(expect.objectContaining({
+        systemBaseUri: systemBaseUri,
+        tenantId: tenantId,
+        requestId: requestId,
+        requestSignature: requestSignature,
+        traceContext: undefined
+      }));
     });
 
-    contextMiddlewareFactory(mockParseTraceparentHeader, mockGenerateTraceContext)(mockReq, mockRes, mockNext);
+    it("should not set systemBaseUri and tenantId from input if provided", () => {
 
-    expect(mockReq.dvelopContext).toEqual(expect.objectContaining({
-      systemBaseUri: systemBaseUri,
-      tenantId: tenantId,
-      requestId: requestId,
-      requestSignature: requestSignature,
-      traceContext: undefined
-    }));
+      const systemBaseUri: string = "HiItsMeSystemBaseUri";
+      const tenantId: string = "HiItsMeTenantId";
+      const requestId: string = "HiItsMeRequestId";
+
+      (mockReq.header as jest.Mock).mockImplementation((header: string) => {
+        switch (header) {
+
+          case DVELOP_REQUEST_ID_HEADER:
+            return requestId;
+
+          case TRACEPARENT_HEADER:
+            return undefined;
+
+          default:
+            throw "No other should be requested";
+        }
+      });
+
+      contextMiddlewareFactory(mockParseTraceparentHeader, mockGenerateTraceContext, systemBaseUri, tenantId)(mockReq, mockRes, mockNext);
+
+      expect(mockReq.dvelopContext).toEqual(expect.objectContaining({
+        systemBaseUri: systemBaseUri,
+        tenantId: tenantId,
+        requestId: requestId,
+        traceContext: undefined
+      }));
+    });
+
+    it("should set systemBaseUri from input and tenantId from headers if only systemBaseUri is provided", () => {
+
+      const systemBaseUri: string = "HiItsMeSystemBaseUri";
+      const tenantId: string = "HiItsMeTenantId";
+      const requestId: string = "HiItsMeRequestId";
+      const requestSignature: string = "HiItsMeRequestSignature";
+
+      (mockReq.header as jest.Mock).mockImplementation((header: string) => {
+        switch (header) {
+
+          case DVELOP_TENANT_ID_HEADER:
+            return tenantId;
+
+          case DVELOP_REQUEST_ID_HEADER:
+            return requestId;
+
+          case TRACEPARENT_HEADER:
+            return undefined;
+
+          default:
+            throw "No other should be requested";
+        }
+      });
+
+      contextMiddlewareFactory(mockParseTraceparentHeader, mockGenerateTraceContext, systemBaseUri)(mockReq, mockRes, mockNext);
+
+      expect(mockReq.dvelopContext).toEqual(expect.objectContaining({
+        systemBaseUri: systemBaseUri,
+        tenantId: tenantId,
+        requestId: requestId,
+        traceContext: undefined
+      }));
+    });
   });
 
   describe("traceContext", () => {
@@ -79,10 +145,10 @@ describe("contextMiddlewareFactory", () => {
 
       (mockReq.header as jest.Mock).mockImplementation((header: string) => {
         switch (header) {
-        case TRACEPARENT_HEADER:
-          return traceparentHeader;
-        default:
-          return "HiItsMeHeader";
+          case TRACEPARENT_HEADER:
+            return traceparentHeader;
+          default:
+            return "HiItsMeHeader";
         }
       });
 
@@ -92,52 +158,53 @@ describe("contextMiddlewareFactory", () => {
       expect(mockParseTraceparentHeader).toHaveBeenCalledWith(traceparentHeader);
       expect(mockGenerateTraceContext).toHaveBeenCalledTimes(0);
     });
-  });
 
-  it("should generate traceContext on no traceparent-header", () => {
+    it("should generate traceContext on no traceparent-header", () => {
 
-    const traceContext: TraceContext = { traceId: "traceId" } as TraceContext;
-    mockGenerateTraceContext.mockReturnValue(traceContext);
+      const traceContext: TraceContext = { traceId: "traceId" } as TraceContext;
+      mockGenerateTraceContext.mockReturnValue(traceContext);
 
-    (mockReq.header as jest.Mock).mockImplementation((header: string) => {
-      switch (header) {
-      case TRACEPARENT_HEADER:
-        return undefined;
-      default:
-        return "HiItsMeHeader";
-      }
+      (mockReq.header as jest.Mock).mockImplementation((header: string) => {
+        switch (header) {
+          case TRACEPARENT_HEADER:
+            return undefined;
+          default:
+            return "HiItsMeHeader";
+        }
+      });
+
+      contextMiddlewareFactory(mockParseTraceparentHeader, mockGenerateTraceContext)(mockReq, mockRes, mockNext);
+
+      expect(mockReq.dvelopContext.traceContext).toEqual(traceContext);
+      expect(mockParseTraceparentHeader).toHaveBeenCalledTimes(0);
+      expect(mockGenerateTraceContext).toHaveBeenCalledTimes(1);
     });
 
-    contextMiddlewareFactory(mockParseTraceparentHeader, mockGenerateTraceContext)(mockReq, mockRes, mockNext);
+    it("should generate traceContext on traceparent-header parsing error", () => {
 
-    expect(mockReq.dvelopContext.traceContext).toEqual(traceContext);
-    expect(mockParseTraceparentHeader).toHaveBeenCalledTimes(0);
-    expect(mockGenerateTraceContext).toHaveBeenCalledTimes(1);
-  });
+      const traceparentHeader: string = "HiItsMeTraceparentHeader";
+      mockParseTraceparentHeader.mockImplementation((_: string) => { throw new TraceContextError(""); });
 
-  it("should generate traceContext on traceparent-header parsing error", () => {
+      const traceContext: TraceContext = { traceId: "traceId" } as TraceContext;
+      mockGenerateTraceContext.mockReturnValue(traceContext);
 
-    const traceparentHeader: string = "HiItsMeTraceparentHeader";
-    mockParseTraceparentHeader.mockImplementation((_: string) => { throw new TraceContextError(""); });
+      (mockReq.header as jest.Mock).mockImplementation((header: string) => {
+        switch (header) {
+          case TRACEPARENT_HEADER:
+            return traceparentHeader;
+          default:
+            return "HiItsMeHeader";
+        }
+      });
 
-    const traceContext: TraceContext = { traceId: "traceId" } as TraceContext;
-    mockGenerateTraceContext.mockReturnValue(traceContext);
+      contextMiddlewareFactory(mockParseTraceparentHeader, mockGenerateTraceContext)(mockReq, mockRes, mockNext);
 
-    (mockReq.header as jest.Mock).mockImplementation((header: string) => {
-      switch (header) {
-      case TRACEPARENT_HEADER:
-        return traceparentHeader;
-      default:
-        return "HiItsMeHeader";
-      }
+      expect(mockReq.dvelopContext.traceContext).toEqual(traceContext);
+      expect(mockParseTraceparentHeader).toHaveBeenCalledTimes(1);
+      expect(mockParseTraceparentHeader).toHaveBeenCalledWith(traceparentHeader);
+      expect(mockGenerateTraceContext).toHaveBeenCalledTimes(1);
     });
 
-    contextMiddlewareFactory(mockParseTraceparentHeader, mockGenerateTraceContext)(mockReq, mockRes, mockNext);
-
-    expect(mockReq.dvelopContext.traceContext).toEqual(traceContext);
-    expect(mockParseTraceparentHeader).toHaveBeenCalledTimes(1);
-    expect(mockParseTraceparentHeader).toHaveBeenCalledWith(traceparentHeader);
-    expect(mockGenerateTraceContext).toHaveBeenCalledTimes(1);
   });
 
 });
