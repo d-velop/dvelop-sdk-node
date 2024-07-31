@@ -100,6 +100,29 @@ describe("search tasks", () => {
     });
   });
 
+  it ("should transform date values", async () => {
+    mockHttpRequestFunction.mockResolvedValue({ data: {
+      tasks: [{
+        id: "test1",
+        receiveDate: "2024-01-01T12:00:00.000Z",
+        dueDate: "2025-01-01T12:00:00.000Z",
+        reminderDate: "2026-01-01T12:00:00.000Z",
+        completionDate: "2027-01-01T12:00:00.000Z",
+        state: "COMPLETED"
+      }]
+    }} as unknown as HttpResponse);
+
+    const transformFunction = _searchTasksDefaultTransformFunctionFactory(mockHttpRequestFunction);
+    const searchTasks = _searchTasksFactory(mockHttpRequestFunction, transformFunction);
+
+    let page = await searchTasks(context, {});
+
+    expect(page.tasks[0].receiveDate).toStrictEqual(new Date("2024-01-01T12:00:00.000Z"));
+    expect(page.tasks[0].dueDate).toStrictEqual(new Date("2025-01-01T12:00:00.000Z"));
+    expect(page.tasks[0].reminderDate).toStrictEqual(new Date("2026-01-01T12:00:00.000Z"));
+    expect(page.tasks[0].completionDate).toStrictEqual(new Date("2027-01-01T12:00:00.000Z"));
+  });
+
   it("should support paging", async () => {
     mockHttpRequestFunction.mockResolvedValue({ data: {
       tasks: [],

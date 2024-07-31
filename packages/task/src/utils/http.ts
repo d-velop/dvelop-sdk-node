@@ -83,7 +83,8 @@ export function _defaultHttpRequestFunctionFactory(httpClient: DvelopHttpClient)
 
         case 404:
           throw new NotFoundError("Task-App responded with Status 404 indicating a requested resource does not exist. See 'originalError'-property for details.", error);
-
+        case 429:
+          throw new TaskError("Task-App responded with status 429 indicating that you sent too many requests in a short time. Consider throttling your requests.", error);
         default:
           throw new TaskError(`Task-App responded with status ${error.response.status}. See 'originalError'-property for details.`, error);
         }

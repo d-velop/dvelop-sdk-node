@@ -114,6 +114,17 @@ export interface BuildRangeParameterParams<T> {
 /**
  * Helper function to build search ranges for priority or date values.
  * @param params Description of the range.
+ *
+ * ```typescript
+ * import { buildRangeParameter } from "@dvelop-sdk/task";
+ *
+ * const range = buildRangeParameter({
+ *   from: new Date(),
+ *   to: new Date("2025-01-01T00:00:00.000Z"),
+ *   beginInclusive: true,
+ *   endInclusive: true
+ * });
+ * ```
  */
 export function buildRangeParameter(params: BuildRangeParameterParams<number | Date>) : string {
   let result = "";
@@ -155,6 +166,9 @@ export function buildRangeParameter(params: BuildRangeParameterParams<number | D
   return result;
 }
 
+/**
+ * A result page returned by the {@link searchTasks} function.
+ */
 export interface SearchTasksPage {
   /** Tasks that match the search parameters */
   tasks: Task[],
@@ -173,7 +187,22 @@ export function _searchTasksDefaultTransformFunctionFactory(httpRequestFunction:
       tasks: response.data.tasks
     };
 
-    if (response.data._links.next) {
+    page.tasks.forEach(task => {
+      if (task.receiveDate) {
+        task.receiveDate = new Date(task.receiveDate);
+      }
+      if (task.reminderDate) {
+        task.reminderDate = new Date(task.reminderDate);
+      }
+      if (task.dueDate) {
+        task.dueDate = new Date(task.dueDate);
+      }
+      if (task.completionDate) {
+        task.completionDate = new Date(task.completionDate);
+      }
+    });
+
+    if (response.data._links?.next) {
       page.getNextPage = async () => {
         const nextResponse: HttpResponse = await httpRequestFunction(context, {
           method: "POST",
