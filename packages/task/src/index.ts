@@ -32,3 +32,5 @@ export { CompleteTaskParams, completeTask } from "./tasks/complete-task/complete
 export { DeleteTaskParams, deleteTask } from "./tasks/delete-task/delete-task";
 export { getTaskCount } from "./tasks/get-task-count/get-task-count";
 export { UpdateTaskParams, updateTask } from "./tasks/update-task/update-task";
+export { GetTaskParams, getTask } from "./tasks/get-task/get-task";
+export { SearchTasksParams, SearchTasksPage, searchTasks, buildRangeParameter } from "./tasks/search-tasks/search-tasks";
