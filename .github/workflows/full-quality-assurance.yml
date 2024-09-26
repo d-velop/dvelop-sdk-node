@@ -29,7 +29,7 @@ jobs:
       - name: Run build
         run: npm run build
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: "@dvelop-sdk-${{github.run_id}}-${{matrix.node-version}}"
           path: |
@@ -104,7 +104,7 @@ jobs:
       - name: Generate docs
         run: npm run docs
       - name: Upload docs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: dvelop-sdk-${{github.run_id}}-docs
           path: docs
