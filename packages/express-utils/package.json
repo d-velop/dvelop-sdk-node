@@ -1,7 +1,7 @@
 {
   "name": "@dvelop-sdk/express-utils",
   "description": "This package contains middleware-functions for the express-framework and d.velop app-building.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
