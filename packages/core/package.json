@@ -20,7 +20,7 @@
     "access": "public"
   },
   "dependencies": {
-    "axios": "^0.28.0",
+    "axios": "^1.8.2",
     "lodash.merge": "^4.6.2",
     "uuid": "^8.3.2"
   },
