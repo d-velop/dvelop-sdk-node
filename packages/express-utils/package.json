@@ -21,10 +21,8 @@
   },
   "dependencies": {
     "@dvelop-sdk/app-router": "^3.2.1",
-    "@dvelop-sdk/core": "^2.1.5",
-    "@dvelop-sdk/identityprovider": "^4.0.2"
-  },
-  "peerDependencies": {
+    "@dvelop-sdk/core": "^2.2.0",
+    "@dvelop-sdk/identityprovider": "^4.0.7",
     "@types/express": "^4.17.13"
   }
 }
