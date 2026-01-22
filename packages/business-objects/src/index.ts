@@ -29,7 +29,7 @@ export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFou
 export { BusinessObjectsError } from "./utils/http";
 export * as internals from "./internal";
 
-export { GetBoEntitiesParams, getBoEntities } from "./entities/get-entities/get-entities";
+export { GetBoEntitiesParams, getBoEntities, GetEntitiesResultPage } from "./entities/get-entities/get-entities";
 export { GetBoEntityParams, getBoEntity } from "./entities/get-entity/get-entity";
 export { CreateBoEntityParams, createBoEntity } from "./entities/create-entity/create-entity";
 export { UpdateBoEntityParams, updateBoEntity } from "./entities/update-entity/update-entity";

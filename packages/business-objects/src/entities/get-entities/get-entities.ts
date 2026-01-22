@@ -16,7 +16,7 @@ export interface GetBoEntitiesParams {
  * Page of a searchResult. There might be more than one page.
  * @category Entity
  */
-export interface GetEntitiesResultPage<E> {
+export interface GetEntitiesResultPage<E = any> {
   /** Array of entitiess found */
   entities: E[]
   /** Function that returns the next page. Undefined if there is none. */
