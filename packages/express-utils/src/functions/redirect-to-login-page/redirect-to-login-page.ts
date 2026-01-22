@@ -22,7 +22,7 @@ export function _redirectToLoginPageFactory(getLoginRedirectionUri: (sucessUri: 
  *   if (err instanceof UnauthorizedError && req.accepts("text/html")) {
  *     redirectToLoginPage(req, res);
  *   } else {
- *     res.status(401).send("Unauhtorized") // For Content-Types such as JSON return a 401 - Unauthorized
+ *     res.status(401).send("Unauthorized") // For Content-Types such as JSON return a 401 - Unauthorized
  *   }
  * });
  * ```
