@@ -77,7 +77,7 @@ describe("getBoEntitiesFactory", () => {
       const result: GetEntitiesResultPage = await getBoEntities(context, params);
 
       response.value.forEach((entity: any, i: number) => {
-        expect(result.entities[i]).toHaveProperty("employeeid", entity.employeeid);
+        expect(result.value[i]).toHaveProperty("employeeid", entity.employeeid);
       });
       expect(result).not.toHaveProperty("getNextPage");
     });
@@ -117,7 +117,7 @@ describe("getBoEntitiesFactory", () => {
 
       let page2 = await result.getNextPage();
 
-      expect(page2.entities).toContain(response2.value[0]);
+      expect(page2.value).toContain(response2.value[0]);
       expect(mockHttpRequestFunction).toBeCalledTimes(2);
       expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
         method: "GET",
@@ -136,8 +136,8 @@ describe("getBoEntitiesFactory", () => {
       const getBoEntities = _getBoEntitiesFactory(mockHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(mockHttpRequestFunction));
       const result: GetEntitiesResultPage = await getBoEntities(context, params);
 
-      expect(result).toHaveProperty("entities");
-      expect(result.entities).toHaveLength(0);
+      expect(result).toHaveProperty("value");
+      expect(result.value).toHaveLength(0);
     });
   });
 });

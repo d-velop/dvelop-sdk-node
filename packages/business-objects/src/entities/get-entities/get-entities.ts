@@ -18,7 +18,7 @@ export interface GetBoEntitiesParams {
  */
 export interface GetEntitiesResultPage<E = any> {
   /** Array of entitiess found */
-  entities: E[]
+  value: E[]
   /** Function that returns the next page. Undefined if there is none. */
   getNextPage?: () => Promise<GetEntitiesResultPage<E>>;
 }
@@ -33,7 +33,7 @@ export function _getBoEntitiesDefaultTransformFunctionFactory<E>(httpRequestFunc
   return <E>(response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => {
 
     let result: GetEntitiesResultPage<E> = {
-      entities: response.data.value
+      value: response.data.value
     };
 
     if (response.data["@odata.nextLink"]) {
