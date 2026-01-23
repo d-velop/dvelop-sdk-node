@@ -1,0 +1,25 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - develop
+      - feature/*
+
+jobs:
+  publish-next:
+    if: "github.repository == 'd-velop/dvelop-sdk-node'"
+    name: Publish to npm as @dvelop-sdk/<package>@next
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - run: npm ci
+      - run: npm run build
+      - run: npm run publish:next
