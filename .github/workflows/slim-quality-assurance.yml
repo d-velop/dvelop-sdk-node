@@ -1,10 +1,9 @@
 name: slim-quality-assurance
 
 on:
-  pull_request:
+  push:
     branches-ignore:
-      - develop
-      - feature/*
+      - main
 
 jobs:
   test:
