@@ -3,11 +3,10 @@ name: full-quality-assurance
 on:
   pull_request:
     branches:
-      - main
-      - develop
+      - "*"
   push:
     branches:
-      - develop
+      - "*"
 
 jobs:
   build:
@@ -15,19 +14,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 17, 18]
+        node-version: [23, 24, 25]
     name: Build with Node.js ${{ matrix.node-version }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install npm dependencies
-        run: npm ci
-      - name: Run build
-        run: npm run build
+      - run: npm ci
+      - run: npm run build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -44,65 +39,52 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node-version: [18, 20, 21]
+        node-version: [23, 24, 25]
     name: Test for Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          registry-url: "https://registry.npmjs.org"
-      - name: Install npm dependencies
-        run: npm ci
-      - name: Build packages
-        run: npm run build
-      - name: Run tests
-        run: npm test
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
 
   lint:
     name: Lint code
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up node.js
-        uses: actions/setup-node@v2
-      - name: Install npm dependencies
-        run: npm ci
-      - name: Run linting
-        run: npm run lint
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
 
-  license:
+  check-license:
     name: Check license conformity
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up node.js
-        uses: actions/setup-node@v2
-      - name: Install npm dependencies
-        run: npm ci
-      - name: Run license check
-        run: npm run license
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - run: npm ci
+      - run: npm run build
+      - run: npm run license
 
   generate-docs:
     name: Generate documentation
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16
-      - name: Install npm dependencies
-        run: npm ci
-      - name: Build packages
-        run: npm run build
-      - name: Generate docs
-        run: npm run docs
+          node-version: "24"
+      - run: npm ci
+      - run: npm run build
+      - run: npm run docs
       - name: Upload docs
         uses: actions/upload-artifact@v4
         with:
