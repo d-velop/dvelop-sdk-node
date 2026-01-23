@@ -9,7 +9,7 @@ on:
 jobs:
   publish-next:
     if: ${{ (github.repository == 'd-velop/dvelop-sdk-node') && (github.ref == 'refs/heads/develop') }}
-    name: Publish to npm as @dvelop-sdk/<package>@next
+    name: Publish next
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,7 +26,7 @@ jobs:
 
   publish:
     if: ${{ (github.repository == 'd-velop/dvelop-sdk-node') && (github.ref == 'refs/heads/main') }}
-    name: Publish to npm as @dvelop-sdk/<package>@latest
+    name: Publish latest
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -43,7 +43,7 @@ jobs:
 
   publish-docs:
     if: ${{ (github.repository == 'd-velop/dvelop-sdk-node') && (github.ref == 'refs/heads/main') }}
-    name: release documentation
+    name: publish docs
     runs-on: ubuntu-latest
     needs: publish
     steps:
