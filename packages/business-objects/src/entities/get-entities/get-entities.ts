@@ -72,8 +72,8 @@ export function _getBoEntitiesFactory<E>(
 }
 
 /**
- * Returns all specified entities from a model.
- * @template E Type for Entity. Defaults to `any`.
+ * Returns all specified entities from a model. This result might be partial due to the default page size.
+ * You can navigate to the next pages using the function ```getNextPage```. If the function is undefined, the page does not exist.
  *
  * @example
  * ```typescript
@@ -86,32 +86,9 @@ export function _getBoEntitiesFactory<E>(
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees",
  * });
- * console.log(employees); // [{ employeeId: '1', firstName: 'John Micheal', lastName: 'Dorian', jobTitel: 'senior physician' }, { employeeId: '2', firstName: 'Christopher', lastName: 'Turk', jobTitel: 'chief surgeon' }]
- * ```
- * ---
- * You can also use generics:
- * @example
- * ```typescript
- * import { getBoEntities } from "@dvelop-sdk/business-objects";
- *
- * interface Employee {
- *   employeeId: string;
- *   firstName: string;
- *   lastName: string;
- *   jobTitel: string;
- * }
- *
- * const employees: Employee[] = await getBoEntities<Employee>({
- *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
- *   authSessionId: "3f3c428d452"
- * },{
- *   modelName: "HOSPITALBASEDATA",
- *   pluralEntityName: "employees"
- * });
- *
- * employees.forEach(e => console.log(e.lastName));
- * // Dorian
- * // Turk
+ * console.log(employees.value); // [{ employeeId: '1', firstName: 'John Micheal', lastName: 'Dorian', jobTitel: 'senior physician' }, { employeeId: '2', firstName: 'Christopher', lastName: 'Turk', jobTitel: 'chief surgeon' }]
+ * let nextPage = await employees.getNextPage();
+ * console.log(nextPage?.value.length);
  * ```
  */
 /* istanbul ignore next */
