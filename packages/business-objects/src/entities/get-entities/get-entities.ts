@@ -16,11 +16,11 @@ export interface GetBoEntitiesParams {
  * Page of a searchResult. There might be more than one page.
  * @category Entity
  */
-export interface GetEntitiesResultPage<E = any> {
+export interface GetBoEntitiesResultPage<E = any> {
   /** Array of entitiess found */
   value: E[]
   /** Function that returns the next page. Undefined if there is none. */
-  getNextPage?: () => Promise<GetEntitiesResultPage<E>>;
+  getNextPage?: () => Promise<GetBoEntitiesResultPage<E>>;
 }
 
 /**
@@ -29,10 +29,10 @@ export interface GetEntitiesResultPage<E = any> {
  * @internal
  * @category Entity
  */
-export function _getBoEntitiesDefaultTransformFunctionFactory<E>(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetEntitiesResultPage<E> {
+export function _getBoEntitiesDefaultTransformFunctionFactory<E>(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetBoEntitiesResultPage<E> {
   return <E>(response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => {
 
-    let result: GetEntitiesResultPage<E> = {
+    let result: GetBoEntitiesResultPage<E> = {
       value: response.data.value
     };
 
@@ -58,8 +58,8 @@ export function _getBoEntitiesDefaultTransformFunctionFactory<E>(httpRequestFunc
  */
 export function _getBoEntitiesFactory<E>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetEntitiesResultPage<E>
-): (context: DvelopContext, params: GetBoEntitiesParams) => Promise<GetEntitiesResultPage<E>> {
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetBoEntitiesResultPage<E>
+): (context: DvelopContext, params: GetBoEntitiesParams) => Promise<GetBoEntitiesResultPage<E>> {
   return async (context: DvelopContext, params: GetBoEntitiesParams) => {
 
     const response = await httpRequestFunction(context, {
@@ -72,49 +72,64 @@ export function _getBoEntitiesFactory<E>(
 }
 
 /**
- * Returns all specified entities from a model.
- * @template E Type for Entity. Defaults to `any`.
+ * Returns all specified entities from a model. This result might be partial due to the default page size.
+ * You can navigate to the next pages using the function ```getNextPage```. If the function is undefined, the page does not exist.
  *
  * @example
  * ```typescript
  * import { getBoEntities } from "@dvelop-sdk/business-objects";
  *
- * const employees = await getBoEntities({
- *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
- *   authSessionId: "3f3c428d452"
- * },{
- *   modelName: "HOSPITALBASEDATA",
- *   pluralEntityName: "employees",
- * });
- * console.log(employees); // [{ employeeId: '1', firstName: 'John Micheal', lastName: 'Dorian', jobTitel: 'senior physician' }, { employeeId: '2', firstName: 'Christopher', lastName: 'Turk', jobTitel: 'chief surgeon' }]
- * ```
- * ---
- * You can also use generics:
- * @example
- * ```typescript
- * import { getBoEntities } from "@dvelop-sdk/business-objects";
- *
- * interface Employee {
- *   employeeId: string;
- *   firstName: string;
- *   lastName: string;
- *   jobTitel: string;
- * }
- *
- * const employees: Employee[] = await getBoEntities<Employee>({
+ * const resultPage: GetEntitiesResultPage = await getBoEntities({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees"
  * });
+ * 
+ * let employees = await resultPage.value;
  *
+ * // Use this for paging
+ * while (resultPage.getNextPage) {
+ *   const nextPage: GetBoEntitiesResultPage = await resultPage.getNextPage();
+ *   employees = employees.concat(nextPage.value);
+ * }
+ * ```
+ * ---
+ * You can also use generics:
+ *  * @example
+ * ```typescript
+ * import { getBoEntities } from "@dvelop-sdk/business-objects";
+ *
+ *  interface Employee {
+ *   employeeId: string;
+ *   firstName: string;
+ *   lastName: string;
+ *   jobTitel: string;
+ * }
+ * 
+ * const resultPage: GetBoEntitiesResultPage<Employee> = await getBoEntities({
+ *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
+ *   authSessionId: "3f3c428d452"
+ * }, {
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees"
+ * });
+ * 
+ * let employees: Employee[] = await resultPage.value;
+ * 
+ * // Use this for paging
+ * while (resultPage.getNextPage) {
+ *   const nextPage: GetBoEntitiesResultPage<Employee> = await resultPage.getNextPage();
+ *   employees = employees.concat(nextPage.value);
+ * }
+ * 
  * employees.forEach(e => console.log(e.lastName));
  * // Dorian
  * // Turk
  * ```
  */
 /* istanbul ignore next */
-export async function getBoEntities<E = any>(context: DvelopContext, params: GetBoEntitiesParams): Promise<GetEntitiesResultPage<E>> {
+export async function getBoEntities<E = any>(context: DvelopContext, params: GetBoEntitiesParams): Promise<GetBoEntitiesResultPage<E>> {
   return await _getBoEntitiesFactory<E>(_defaultHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(_defaultHttpRequestFunction))(context, params);
 }
