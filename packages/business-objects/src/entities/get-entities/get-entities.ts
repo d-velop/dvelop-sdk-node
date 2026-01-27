@@ -79,16 +79,54 @@ export function _getBoEntitiesFactory<E>(
  * ```typescript
  * import { getBoEntities } from "@dvelop-sdk/business-objects";
  *
- * const employees = await getBoEntities({
+ * const resultPage: GetEntitiesResultPage = await getBoEntities({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees",
  * });
- * console.log(employees.value); // [{ employeeId: '1', firstName: 'John Micheal', lastName: 'Dorian', jobTitel: 'senior physician' }, { employeeId: '2', firstName: 'Christopher', lastName: 'Turk', jobTitel: 'chief surgeon' }]
- * let nextPage = await employees.getNextPage();
- * console.log(nextPage?.value.length);
+ * 
+ * let employees = await resultPage.value;
+ *
+ * // Use this for paging
+ * while (resultPage.getNextPage) {
+ *   const nextPage: GetBoEntitiesResultPage = await resultPage.getNextPage();
+ *   employees = employees.concat(nextPage.value);
+ * }
+ * ```
+ * ---
+ * You can also use generics:
+ *  * @example
+ * ```typescript
+ * import { getBoEntities } from "@dvelop-sdk/business-objects";
+ *
+ *  interface Employee {
+ *   employeeId: string;
+ *   firstName: string;
+ *   lastName: string;
+ *   jobTitel: string;
+ * }
+ * 
+ * const resultPage: GetBoEntitiesResultPage<Employee> = await getBoEntities({
+ *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
+ *   authSessionId: "3f3c428d452"
+ * }, {
+ *   modelName: "HOSPITALBASEDATA",
+ *   pluralEntityName: "employees",
+ * });
+ * 
+ * let employees: Employee[] = await resultPage.value;
+ * 
+ * // Use this for paging
+ * while (resultPage.getNextPage) {
+ *   const nextPage: GetBoEntitiesResultPage<Employee> = await resultPage.getNextPage();
+ *   employees = employees.concat(nextPage.value);
+ * }
+ * 
+ * employees.forEach(e => console.log(e.lastName));
+ * // Dorian
+ * // Turk
  * ```
  */
 /* istanbul ignore next */
