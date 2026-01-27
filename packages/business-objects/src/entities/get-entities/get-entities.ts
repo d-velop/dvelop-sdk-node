@@ -84,7 +84,7 @@ export function _getBoEntitiesFactory<E>(
  *   authSessionId: "3f3c428d452"
  * },{
  *   modelName: "HOSPITALBASEDATA",
- *   pluralEntityName: "employees",
+ *   pluralEntityName: "employees"
  * });
  * 
  * let employees = await resultPage.value;
@@ -113,7 +113,7 @@ export function _getBoEntitiesFactory<E>(
  *   authSessionId: "3f3c428d452"
  * }, {
  *   modelName: "HOSPITALBASEDATA",
- *   pluralEntityName: "employees",
+ *   pluralEntityName: "employees"
  * });
  * 
  * let employees: Employee[] = await resultPage.value;
