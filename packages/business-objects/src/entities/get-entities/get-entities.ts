@@ -16,11 +16,11 @@ export interface GetBoEntitiesParams {
  * Page of a searchResult. There might be more than one page.
  * @category Entity
  */
-export interface GetEntitiesResultPage<E = any> {
+export interface GetBoEntitiesResultPage<E = any> {
   /** Array of entitiess found */
   value: E[]
   /** Function that returns the next page. Undefined if there is none. */
-  getNextPage?: () => Promise<GetEntitiesResultPage<E>>;
+  getNextPage?: () => Promise<GetBoEntitiesResultPage<E>>;
 }
 
 /**
@@ -29,10 +29,10 @@ export interface GetEntitiesResultPage<E = any> {
  * @internal
  * @category Entity
  */
-export function _getBoEntitiesDefaultTransformFunctionFactory<E>(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetEntitiesResultPage<E> {
+export function _getBoEntitiesDefaultTransformFunctionFactory<E>(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetBoEntitiesResultPage<E> {
   return <E>(response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => {
 
-    let result: GetEntitiesResultPage<E> = {
+    let result: GetBoEntitiesResultPage<E> = {
       value: response.data.value
     };
 
@@ -58,8 +58,8 @@ export function _getBoEntitiesDefaultTransformFunctionFactory<E>(httpRequestFunc
  */
 export function _getBoEntitiesFactory<E>(
   httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetEntitiesResultPage<E>
-): (context: DvelopContext, params: GetBoEntitiesParams) => Promise<GetEntitiesResultPage<E>> {
+  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetBoEntitiesResultPage<E>
+): (context: DvelopContext, params: GetBoEntitiesParams) => Promise<GetBoEntitiesResultPage<E>> {
   return async (context: DvelopContext, params: GetBoEntitiesParams) => {
 
     const response = await httpRequestFunction(context, {
@@ -92,6 +92,6 @@ export function _getBoEntitiesFactory<E>(
  * ```
  */
 /* istanbul ignore next */
-export async function getBoEntities<E = any>(context: DvelopContext, params: GetBoEntitiesParams): Promise<GetEntitiesResultPage<E>> {
+export async function getBoEntities<E = any>(context: DvelopContext, params: GetBoEntitiesParams): Promise<GetBoEntitiesResultPage<E>> {
   return await _getBoEntitiesFactory<E>(_defaultHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(_defaultHttpRequestFunction))(context, params);
 }
