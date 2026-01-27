@@ -1,5 +1,5 @@
 import { DvelopContext, DvelopHttpResponse as HttpResponse } from "@dvelop-sdk/core";
-import { GetBoEntitiesParams, _getBoEntitiesDefaultTransformFunctionFactory, _getBoEntitiesFactory, GetEntitiesResultPage } from "./get-entities";
+import { GetBoEntitiesParams, _getBoEntitiesDefaultTransformFunctionFactory, _getBoEntitiesFactory, GetBoEntitiesResultPage } from "./get-entities";
 
 describe("getBoEntitiesFactory", () => {
 
@@ -74,7 +74,7 @@ describe("getBoEntitiesFactory", () => {
       mockHttpRequestFunction.mockResolvedValue({ data: response } as HttpResponse);
 
       const getBoEntities = _getBoEntitiesFactory(mockHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(mockHttpRequestFunction));
-      const result: GetEntitiesResultPage = await getBoEntities(context, params);
+      const result: GetBoEntitiesResultPage = await getBoEntities(context, params);
 
       response.value.forEach((entity: any, i: number) => {
         expect(result.value[i]).toHaveProperty("employeeid", entity.employeeid);
@@ -99,7 +99,7 @@ describe("getBoEntitiesFactory", () => {
       mockHttpRequestFunction.mockResolvedValue({ data: response } as HttpResponse);
 
       const getBoEntities = _getBoEntitiesFactory(mockHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(mockHttpRequestFunction));
-      const result: GetEntitiesResultPage = await getBoEntities(context, params);
+      const result: GetBoEntitiesResultPage = await getBoEntities(context, params);
 
       expect(result).toHaveProperty("getNextPage");
 
@@ -134,7 +134,7 @@ describe("getBoEntitiesFactory", () => {
       mockHttpRequestFunction.mockResolvedValue({ data: response } as HttpResponse);
 
       const getBoEntities = _getBoEntitiesFactory(mockHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(mockHttpRequestFunction));
-      const result: GetEntitiesResultPage = await getBoEntities(context, params);
+      const result: GetBoEntitiesResultPage = await getBoEntities(context, params);
 
       expect(result).toHaveProperty("value");
       expect(result.value).toHaveLength(0);
