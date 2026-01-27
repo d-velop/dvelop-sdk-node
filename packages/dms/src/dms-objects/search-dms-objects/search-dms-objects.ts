@@ -1,4 +1,4 @@
-import { DvelopContext } from "../../index";
+import { DmsObject, DvelopContext } from "../../index";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
 /**
@@ -202,6 +202,27 @@ export function searchDmsObjectsFactory<T>(
   };
 }
 
+const searchResult: SearchDmsObjectsResultPage = await searchDmsObjects({
+  systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
+  authSessionId: "dQw4w9WgXcQ"
+}, {
+  repositoryId: "qnydFmqHuVo",
+  sourceId: "/dms/r/qnydFmqHuVo/source",
+  categories: ["TIfAkOBMf5A"],
+  fulltext: "Ashenvale",
+  properties: [{
+    key: "AaGK-fj-BAM",
+    values: ["unpaid"]
+  }]
+});
+
+const dmsObjects: DmsObject[] = searchResult.dmsObjects
+
+while (searchResult.getNextPage) {
+  const nextPage: SearchDmsObjectsResultPage = await searchResult.getNextPage();
+  dmsObjects.concat(nextPage.dmsObjects)
+}
+
 /**
  * Execute a search and returns the search-result. This result might be partial due to the defined ```pageSize```-property.
  * You can navigate pages with the ```getPreviousPage```- and ```getNextPage```-functions. If functions are undefined the page does not exist.
@@ -215,7 +236,7 @@ export function searchDmsObjectsFactory<T>(
  * },{
  *   repositoryId: "qnydFmqHuVo",
  *   sourceId: "/dms/r/qnydFmqHuVo/source",
- *   categories: ["TIfAkOBMf5A"]
+ *   categories: ["TIfAkOBMf5A"],
  *   fulltext: "Ashenvale",
  *   properties: [{
  *     key: "AaGK-fj-BAM",
@@ -224,6 +245,13 @@ export function searchDmsObjectsFactory<T>(
  * });
  *
  * console.log(searchResult.dmsObjects.length);
+ *
+ * let dmsObjects: DmsObject[] = searchResult.dmsObjects
+ *
+ * while (searchResult.getNextPage) { // Don't call function here, just check existence
+ *   const nextPage: SearchDmsObjectsResultPage = await searchResult.getNextPage();
+ *   dmsObjects = dmsObjects.concat(nextPage.dmsObjects);
+ * }
  * ```
  * @category DmsObject
  */
