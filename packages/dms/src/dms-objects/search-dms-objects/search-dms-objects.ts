@@ -1,4 +1,4 @@
-import { DvelopContext } from "../../index";
+import { DmsObject, DvelopContext } from "../../index";
 import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
 
 /**
@@ -215,7 +215,7 @@ export function searchDmsObjectsFactory<T>(
  * },{
  *   repositoryId: "qnydFmqHuVo",
  *   sourceId: "/dms/r/qnydFmqHuVo/source",
- *   categories: ["TIfAkOBMf5A"]
+ *   categories: ["TIfAkOBMf5A"],
  *   fulltext: "Ashenvale",
  *   properties: [{
  *     key: "AaGK-fj-BAM",
@@ -224,6 +224,13 @@ export function searchDmsObjectsFactory<T>(
  * });
  *
  * console.log(searchResult.dmsObjects.length);
+ *
+ * let dmsObjects: DmsObject[] = searchResult.dmsObjects
+ *
+ * while (searchResult.getNextPage) { // Don't call function here, just check existence
+ *   const nextPage: SearchDmsObjectsResultPage = await searchResult.getNextPage();
+ *   dmsObjects = dmsObjects.concat(nextPage.dmsObjects);
+ * }
  * ```
  * @category DmsObject
  */
