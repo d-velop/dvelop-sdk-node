@@ -15,7 +15,7 @@
 
   </br>
 
-  <p>This package contains functionality for the <a href="https://developer.d-velop.de/dev/en/basics">App-Router</a> in the d.velop cloud.</p>
+  <p>This package contains functionality for the <a href="https://help.d-velop.de/dev/documentation/cloudcenter-app">App-Router (aka Cloudcenter-App)</a> in the d.velop cloud.</p>
 
   <a href="https://d-velop.github.io/dvelop-sdk-node/modules/app_router.html"><strong>Explore the docs »</strong></a>
 
