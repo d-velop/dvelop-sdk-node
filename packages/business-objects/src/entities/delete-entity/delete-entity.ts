@@ -59,7 +59,7 @@ export function _deleteBoEntityFactory<T>(
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees",
  *   keyPropertyType: "number", //"string", "number" or "guid"
- *   entityKeyValue: 1
+ *   keyPropertyValue: 1
  * });
  * ```
   * ---
@@ -83,7 +83,7 @@ export function _deleteBoEntityFactory<T>(
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees",
  *   keyPropertyType: "number", //"string", "number" or "guid"
- *   entityKeyValue: 3
+ *   keyPropertyValue: 3
  * });
  *
  * console.log(responseMessage); // Entity does not exist.
