@@ -4,7 +4,9 @@
     "plugin:jest/recommended"
   ],
   "globals": {
-    "Console": true
+    "Console": true,
+    "RequestInfo": true,
+    "RequestInit": true
   },
   "env": {
     "node": true,

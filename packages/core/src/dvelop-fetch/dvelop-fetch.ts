@@ -21,8 +21,8 @@ export async function dvelopFetch(context: DvelopContext, input: RequestInfo | U
     defaultInit.headers["traceparent"] = buildTraceparentHeader(context.traceContext);
   }
 
-  const fetchInput: RequestInfo | URL = (context.systemBaseUri || "") + input
-  const fetchInit: RequestInit = deepMergeObjects(defaultInit, init || {})
+  const fetchInput: RequestInfo | URL = (context.systemBaseUri || "") + input;
+  const fetchInit: RequestInit = deepMergeObjects(defaultInit, init || {});
 
-  return fetch(fetchInput, fetchInit)
+  return fetch(fetchInput, fetchInit);
 }
