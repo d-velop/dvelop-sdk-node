@@ -1,3 +1,4 @@
+import { RequestInfo, RequestInit, Response } from "node";
 import { DvelopContext } from "../context/context";
 import { generateRequestId } from "../generate-uuid/generate-uudi-id";
 import { buildTraceparentHeader } from "../trace-context/traceparent-header/traceparent-header";
@@ -21,8 +22,8 @@ export async function dvelopFetch(context: DvelopContext, input: RequestInfo | U
     defaultInit.headers["traceparent"] = buildTraceparentHeader(context.traceContext);
   }
 
-  const fetchInput: RequestInfo | URL = (context.systemBaseUri || "") + input
-  const fetchInit: RequestInit = deepMergeObjects(defaultInit, init || {})
+  const fetchInput: RequestInfo | URL = (context.systemBaseUri || "") + input;
+  const fetchInit: RequestInit = deepMergeObjects(defaultInit, init || {});
 
-  return fetch(fetchInput, fetchInit)
+  return fetch(fetchInput, fetchInit);
 }
