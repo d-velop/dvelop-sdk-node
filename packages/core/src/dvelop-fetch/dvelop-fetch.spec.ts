@@ -209,8 +209,11 @@ describe("dvelopFetch", () => {
 
     await dvelopFetch(context, "/api/endpoint", customInit);
 
-    expect(deepMergeObjects).toHaveBeenCalledWith(expect.objectContaining({
-      headers: expect.any(Object),
-    }), customInit);
+    expect(deepMergeObjects).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headers: expect.any(Object),
+      }),
+      customInit
+    );
   });
 });
