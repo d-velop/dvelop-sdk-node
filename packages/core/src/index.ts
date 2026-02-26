@@ -35,3 +35,6 @@ export { TraceContext } from "./trace-context/trace-context";
 export { TraceContextError } from "./trace-context/trace-context-error";
 export { buildTraceparentHeader, parseTraceparentHeader } from "./trace-context/traceparent-header/traceparent-header";
 export { generateTraceContext, generateTraceId, generateSpanId } from "./trace-context/generate-trace-context/generate-trace-context";
+
+export { dvelopFetch } from "./dvelop-fetch/dvelop-fetch";
+export { DvelopInternals } from "./internals/internals";
