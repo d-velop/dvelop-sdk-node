@@ -21,9 +21,9 @@ export function _completeTaskFactory<T>(
   transformFunction: (response: HttpResponse, context: DvelopContext, params: CompleteTaskParams) => T,
 ): (context: DvelopContext, params: CompleteTaskParams) => Promise<T> {
   return async (context: DvelopContext, params: CompleteTaskParams) => {
-    const matches: RegExpExecArray | null = /^\/task\/tasks\/(?<id>[^?]*)\??.*$/i.exec(params.location);
+    const matches: RegExpExecArray | null = /^\/task\/tasks\/([^?]*)\??.*$/i.exec(params.location);
     if (matches) {
-      const id = matches.groups?.id;
+      const id = matches[1];
 
       const response: HttpResponse = await httpRequestFunction(context, {
         method: "POST",
