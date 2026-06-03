@@ -108,8 +108,7 @@ describe("otel provider", () => {
       { level: "debug", otelSeverity: OtelSeverity.DEBUG1 },
       { level: "info", otelSeverity: OtelSeverity.INFO1 },
       // { level: "warn", otelSeverity: OtelSeverity.WARN1 },
-      { level: "error", otelSeverity: OtelSeverity.ERROR1 },
-      { level: undefined, otelSeverity: 0 }
+      { level: "error", otelSeverity: OtelSeverity.ERROR1 }
     ])("Severity.$otelSeverity", ({ level, otelSeverity }) => {
       return new Promise<void>(done => {
 

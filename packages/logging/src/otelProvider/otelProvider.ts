@@ -191,7 +191,5 @@ function mapSeverity(level: DvelopLogLevel): OtelSeverity {
     return OtelSeverity.INFO1;
   case "error":
     return OtelSeverity.ERROR1;
-  default:
-    return 0;
   }
 }
