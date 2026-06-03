@@ -1,40 +1,21 @@
-import * as uuid from "uuid";
 import { generateRequestId, generateUuid } from "./generate-uudi-id";
-
-jest.mock("uuid");
 
 describe("generateUuid", () => {
 
-  const mockedUuid = uuid as jest.Mocked<typeof uuid>;
+  it("should return UUID from crypto.randomUUID", () => {
+    const expected = "ac25ae73-f4b6-477e-a5fa-877c8dea863d";
+    jest.spyOn(crypto, "randomUUID").mockReturnValueOnce(expected as `${string}-${string}-${string}-${string}-${string}`);
 
-  beforeEach(() => {
-    mockedUuid.v4.mockReset();
-  });
-
-  it("should return UUID from v4", () => {
-    const uuid = "HiItsMeUuid";
-
-    mockedUuid.v4.mockImplementation(() => uuid);
-
-    const result = generateUuid();
-    expect(result).toEqual(uuid);
+    expect(generateUuid()).toEqual(expected);
   });
 });
 
 describe("generateRequestId", () => {
 
-  const mockedUuid = uuid as jest.Mocked<typeof uuid>;
+  it("should return UUID from crypto.randomUUID", () => {
+    const expected = "ac25ae73-f4b6-477e-a5fa-877c8dea863d";
+    jest.spyOn(crypto, "randomUUID").mockReturnValueOnce(expected as `${string}-${string}-${string}-${string}-${string}`);
 
-  beforeEach(() => {
-    mockedUuid.v4.mockReset();
-  });
-
-  it("should return UUID from v4", () => {
-    const uuid = "HiItsMeUuid";
-
-    mockedUuid.v4.mockImplementation(() => uuid);
-
-    const result = generateRequestId();
-    expect(result).toEqual(uuid);
+    expect(generateRequestId()).toEqual(expected);
   });
 });
