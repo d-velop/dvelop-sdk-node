@@ -44,7 +44,7 @@ describe("validateCloudCenterEventSignature", () => {
   ].forEach(testCase => {
 
     it("should calculate validate signature", () => {
-      expect(() => validateCloudCenterEventSignature(testCase.appSecret, testCase.params)).not.toThrowError();
+      expect(() => validateCloudCenterEventSignature(testCase.appSecret, testCase.params)).not.toThrow();
     });
   });
 

@@ -6,7 +6,7 @@ import { DvelopSdkError } from "@dvelop-sdk/core";
  * @category Error
  */
 export class InvalidCloudCenterEventSignatureError extends DvelopSdkError {
-  // eslint-disable-next-line no-unused-vars
+   
   constructor() {
     super("Invalid CloudCenterEvent-signature: A cloud center event was recieved but signature was invalid.");
     Object.setPrototypeOf(this, InvalidCloudCenterEventSignatureError.prototype);
@@ -66,7 +66,7 @@ export function validateCloudCenterEventSignature(appSecret: string, params: Val
     const sha256RequestString: string = createHash("sha256").update(normalizedRequestString).digest("hex");
     const calculatedSignature: string = createHmac("sha256", Buffer.from(appSecret, "base64")).update(sha256RequestString).digest("hex");
     validSignature = timingSafeEqual(Buffer.from(params.cloudCenterEventSignature), Buffer.from(calculatedSignature));
-  } catch (e) {
+  } catch {
     throw new InvalidCloudCenterEventSignatureError();
   }
   if (!validSignature) {

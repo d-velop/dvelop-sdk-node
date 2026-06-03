@@ -6,7 +6,7 @@ import { DvelopContext, DvelopSdkError } from "@dvelop-sdk/core";
  * @category Error
  */
 export class InvalidRequestSignatureError extends DvelopSdkError {
-  // eslint-disable-next-line no-unused-vars
+   
   constructor(message: string) {
     super(message);
     Object.setPrototypeOf(this, InvalidRequestSignatureError.prototype);
@@ -33,7 +33,7 @@ export function validateRequestSignature(appSecret: string, systemBaseUri: strin
     const binarySignatureSecret = Buffer.from(appSecret, "base64");
     const computedHmac = crypto.createHmac("sha256", binarySignatureSecret).update(systemBaseUri + tenantId);
     validSignature = crypto.timingSafeEqual(Buffer.from(requestSignature), Buffer.from(computedHmac.digest("base64")));
-  } catch (e) {
+  } catch {
     throw new InvalidRequestSignatureError("Invalid request-signature.");
   }
   if (!validSignature) {

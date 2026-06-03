@@ -8,7 +8,7 @@ export { DvelopHttpRequestConfig as HttpConfig, DvelopHttpResponse as HttpRespon
 */
 /* istanbul ignore next */
 export class DmsError extends DvelopSdkError {
-  // eslint-disable-next-line no-unused-vars
+   
   constructor(public message: string, public originalError?: Error) {
     super(message);
     Object.setPrototypeOf(this, DmsError.prototype);
