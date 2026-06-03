@@ -6,7 +6,7 @@ import merge = require("lodash.merge");
 * @category Error
 */
 export class DeepMergeError extends DvelopSdkError {
-  // eslint-disable-next-line no-unused-vars
+   
   constructor(message: string) {
     super(message);
     Object.setPrototypeOf(this, DeepMergeError.prototype);

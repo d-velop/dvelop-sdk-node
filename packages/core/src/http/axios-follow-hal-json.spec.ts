@@ -70,7 +70,7 @@ describe("axiosFollowHalJsonFunctionFactory", () => {
 
           expect(resultConfig.url).toEqual(finalUrl);
           expect(resultConfig.follows).toBeUndefined();
-          expect(mockRequest).toBeCalledTimes(4);
+          expect(mockRequest).toHaveBeenCalledTimes(4);
         });
 
         it("should make internal requests with GET and Accept-Header but return original config", async () => {
@@ -93,7 +93,7 @@ describe("axiosFollowHalJsonFunctionFactory", () => {
           expect(resultConfig).toHaveProperty("method", "POST");
           expect(resultConfig).toHaveProperty("url", finalUrl);
 
-          expect(mockRequest).toBeCalledWith(expect.objectContaining({
+          expect(mockRequest).toHaveBeenCalledWith(expect.objectContaining({
             baseURL: "HiItsMeBaseUrl",
             method: "GET",
             headers: expect.objectContaining({ "Accept": "application/hal+json, application/json" })

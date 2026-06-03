@@ -1,4 +1,4 @@
-/* eslint-disable no-dupe-class-members */
+ 
 import { deepMergeObjects, DvelopContext } from "@dvelop-sdk/core";
 import { DvelopLogEvent, DvelopLogLevel } from "./log-event";
 

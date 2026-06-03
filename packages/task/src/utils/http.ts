@@ -9,7 +9,7 @@ export { DvelopHttpRequestConfig as HttpConfig, DvelopHttpResponse as HttpRespon
 */
 /* istanbul ignore next */
 export class TaskError extends DvelopSdkError {
-  // eslint-disable-next-line no-unused-vars
+   
   constructor(public message: string, public originalError?: Error) {
     super(message);
     Object.setPrototypeOf(this, TaskError.prototype);
@@ -46,7 +46,7 @@ export interface TaskValidation {
  * @category Error
  */
 export class InvalidTaskDefinitionError extends BadInputError {
-  // eslint-disable-next-line no-unused-vars
+   
   constructor(public validation: TaskValidation, public originalError?: Error) {
     super("Taskdefinition is invalid. See 'validation'-property for more information.", originalError);
     Object.setPrototypeOf(this, InvalidTaskDefinitionError.prototype);

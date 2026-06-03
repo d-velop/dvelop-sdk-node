@@ -44,7 +44,7 @@ describe("otel provider", () => {
     return new Promise<void>(done => {
       const provider = otelProviderFactory({
         appName: "test", transports: [async (otelMessage) => {
-          expect(() => JSON.parse(otelMessage)).not.toThrowError();
+          expect(() => JSON.parse(otelMessage)).not.toThrow();
           done();
         }]
       });

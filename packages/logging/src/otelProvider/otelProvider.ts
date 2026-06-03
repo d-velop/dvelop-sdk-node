@@ -9,7 +9,7 @@ import { LoggingError } from "../error";
 * @category Error
 */
 export class OtelProviderError extends LoggingError {
-  // eslint-disable-next-line no-unused-vars
+   
   constructor(message: string, originalError?: Error) {
     super(message, originalError);
     Object.setPrototypeOf(this, OtelProviderError.prototype);
