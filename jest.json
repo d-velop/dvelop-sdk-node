@@ -11,6 +11,9 @@
   "transformIgnorePatterns": [
     "/node_modules/(?!(axios)/)"
   ],
+  "moduleNameMapper": {
+    "^(.*)\\.js$": "$1"
+  },
   "testEnvironment": "node",
   "collectCoverage": true,
   "collectCoverageFrom": [
