@@ -1,74 +1,61 @@
-import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../utils/http";
-import { _storeFileTemporarilyDefaultTransformFunction, _storeFileTemporarilyFactory, StoreFileTemporarilyParams } from "./store-file-temporarily";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import {
+  StoreFileTemporarilyParams,
+  onResponse,
+  storeFileTemporarily,
+} from "./store-file-temporarily";
 
-describe("storeFileTemporarilyFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("storeFileTemporarily", () => {
 
   let context: DvelopContext;
   let params: StoreFileTemporarilyParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
-    params = {
-      repositoryId: "HiItsMeRepositoryId",
-      content: new ArrayBuffer(42)
-    };
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
+    params = { repositoryId: "HiItsMeRepositoryId", content: new ArrayBuffer(42) };
   });
 
-  it("should make correct request", async () => {
-
-    const storeFileTemporarily = _storeFileTemporarilyFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method POST, octet-stream Content-Type and content body", async () => {
     await storeFileTemporarily(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    const [calledContext, calledUrl, calledInit, calledOptions] = mockDvelopFetch.mock.calls[0];
+    expect(calledContext).toBe(context);
+    expect(calledUrl).toBe(`/dms/r/${params.repositoryId}/blob/chunk`);
+    expect(calledInit).toMatchObject({
       method: "POST",
-      url: "/dms",
-      follows: ["repo", "chunkedupload"],
-      templates: { "repositoryid": params.repositoryId },
       headers: { "Content-Type": "application/octet-stream" },
-      data: params.content
+      body: params.content
     });
+    expect(calledOptions).toMatchObject({ onResponse: onResponse });
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const storeFileTemporarily = _storeFileTemporarilyFactory(mockHttpRequestFunction, mockTransformFunction);
-    await storeFileTemporarily(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await storeFileTemporarily(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
   });
 
-  describe("storeFileTemporarilyDefaultTransformFunction", () => {
+  describe("onResponse", () => {
 
-    it("should map correctly", async () => {
+    it("should return the location header", async () => {
+      const response = new Response(null, { status: 201, headers: { location: "HiItsMeLocation" } });
+      const result = await onResponse(response);
+      expect(result).toEqual("HiItsMeLocation");
+    });
 
-      const headers: any = {
-        "location": "HiItsmeLocation",
-        "some-header": "HiItsMeSomeHeader"
-      };
-
-      mockHttpRequestFunction.mockResolvedValue({ headers: headers } as HttpResponse);
-
-      const storeFileTemporarily = _storeFileTemporarilyFactory(mockHttpRequestFunction, _storeFileTemporarilyDefaultTransformFunction);
-      const result: string = await storeFileTemporarily(context, params);
-
-      expect(result).toEqual(headers["location"]);
+    it("should return empty string when location is missing", async () => {
+      const response = new Response(null, { status: 201 });
+      const result = await onResponse(response);
+      expect(result).toEqual("");
     });
   });
 });

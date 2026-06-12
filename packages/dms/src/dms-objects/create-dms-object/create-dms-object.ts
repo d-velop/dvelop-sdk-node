@@ -1,7 +1,7 @@
-import { DvelopContext, DmsError } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { DmsError, ensureSuccessResponse } from "../../utils/dms-error";
 import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
-import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
+import { storeFileTemporarily } from "../store-file-temporarily/store-file-temporarily";
 
 /**
  * Parameters for the {@link createDmsObject}-function.
@@ -39,79 +39,27 @@ export interface CreateDmsObjectParams {
 }
 
 /**
- * Default transform-function provided to the {@link createDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Default `onResponse` provided to the {@link createDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
-export function _createDmsObjectDefaultTransformFunction(response: HttpResponse<any>, _: DvelopContext, params: CreateDmsObjectParams): GetDmsObjectParams {
+export function onResponse(
+  params: CreateDmsObjectParams
+): (response: Response) => Promise<GetDmsObjectParams> {
+  return async (response: Response) => {
+    await ensureSuccessResponse(response);
 
-  const location: string = response.headers["location"] || "";
-  const matches: RegExpExecArray | null = /^.*\/(.*?)(\?|$)/.exec(location);
+    const location = response.headers.get("location") ?? "";
+    const matches = /^.*\/(.*?)(\?|$)/.exec(location);
 
-  if (matches) {
-    return {
-      repositoryId: params.repositoryId,
-      sourceId: params.sourceId,
-      dmsObjectId: matches[1]
-    };
-  } else {
-    throw new DmsError(`Failed to parse dmsObjectId from '${location}'`);
-  }
-}
-
-/**
- * Default store-file-function provided to the {@link createDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @internal
- * @category DmsObject
- */
-export async function _createDmsObjectDefaultStoreFileFunction(context: DvelopContext, params: CreateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
-  const uri: string = await storeFileTemporarily(context, params as StoreFileTemporarilyParams);
-  return {
-    setAs: "contentLocationUri",
-    uri: uri
-  };
-}
-
-/**
- * Factory for the {@link createDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link createDmsObject}-function. A corresponding transformFunction has to be supplied.
- * @category DmsObject
- */
-export function createDmsObjectFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: CreateDmsObjectParams) => T,
-  storeFileFunction?: (context: DvelopContext, params: CreateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
-): (context: DvelopContext, params: CreateDmsObjectParams) => Promise<T> {
-
-  return async (context: DvelopContext, params: CreateDmsObjectParams) => {
-
-    if (!params.contentUri && !params.contentLocationUri && params.content) {
-      if (storeFileFunction) {
-        const storedFileInfo: { setAs: "contentUri" | "contentLocationUri", uri: string } = await storeFileFunction(context, params);
-        params[storedFileInfo.setAs] = storedFileInfo.uri;
-      } else {
-        throw new DmsError("DmsObject cannot be created with content. No storeFile-function has been supplied.");
-      }
+    if (matches) {
+      return {
+        repositoryId: params.repositoryId,
+        sourceId: params.sourceId,
+        dmsObjectId: matches[1]
+      };
     }
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "POST",
-      url: "/dms",
-      follows: ["repo", "dmsobjectwithmapping"],
-      templates: { "repositoryid": params.repositoryId },
-      data: {
-        "sourceId": params.sourceId,
-        "sourceCategory": params.categoryId,
-        "sourceProperties": {
-          "properties": params.properties
-        },
-        "fileName": params.fileName,
-        "contentLocationUri": params.contentLocationUri,
-        "contentUri": params.contentUri
-      }
-    });
-
-    return transformFunction(response, context, params);
+    throw new DmsError(`Failed to parse dmsObjectId from '${location}'`);
   };
 }
 
@@ -144,7 +92,32 @@ export function createDmsObjectFactory<T>(
  * ```
  * @category DmsObject
  */
-/* istanbul ignore next */
-export async function createDmsObject(context: DvelopContext, params: CreateDmsObjectParams): Promise<GetDmsObjectParams> {
-  return await createDmsObjectFactory(_defaultHttpRequestFunction, _createDmsObjectDefaultTransformFunction, _createDmsObjectDefaultStoreFileFunction)(context, params);
+export async function createDmsObject(context: DvelopContext, params: CreateDmsObjectParams): Promise<GetDmsObjectParams>;
+export async function createDmsObject<T>(context: DvelopContext, params: CreateDmsObjectParams, options: DvelopOptions<T>): Promise<T>;
+export async function createDmsObject<T>(
+  context: DvelopContext,
+  params: CreateDmsObjectParams,
+  options: DvelopOptions<T | GetDmsObjectParams> = {
+    onResponse: onResponse(params)
+  }
+): Promise<T | GetDmsObjectParams> {
+
+  if (!params.contentUri && !params.contentLocationUri && params.content) {
+    params.contentLocationUri = await storeFileTemporarily(context, {
+      repositoryId: params.repositoryId,
+      content: params.content
+    });
+  }
+
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/o2m`, {
+    method: "POST",
+    body: JSON.stringify({
+      sourceId: params.sourceId,
+      sourceCategory: params.categoryId,
+      sourceProperties: { "properties": params.properties },
+      fileName: params.fileName,
+      contentLocationUri: params.contentLocationUri,
+      contentUri: params.contentUri
+    })
+  }, options);
 }
