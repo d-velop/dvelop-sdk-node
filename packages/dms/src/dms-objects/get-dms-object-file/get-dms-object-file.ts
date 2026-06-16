@@ -1,77 +1,52 @@
-import { DvelopContext, NotFoundError } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
-import { GetDmsObjectParams } from "../../dms-objects/get-dms-object/get-dms-object";
+import { DvelopContext, DvelopOptions, dvelopFetch, NotFoundError } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
+import { GetDmsObjectParams } from "../get-dms-object/get-dms-object";
 
 /**
  * Default transform-function provided to the {@link getDmsObjectMainFile}- and {@link getDmsObjectPdfFile}-function.
  * @internal
  * @category DmsObject
  */
-export async function getDmsObjectFileDefaultTransformFunction(response: HttpResponse<ArrayBuffer>, _: DvelopContext, __: GetDmsObjectParams) {
-  return response.data;
-}
-
-async function getDmsObjectBlobContentRespone(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse<ArrayBuffer>>,
-  follow: string,
-  context: DvelopContext,
-  params: GetDmsObjectParams
-): Promise<HttpResponse<ArrayBuffer>> {
-  try {
-    return await httpRequestFunction(context, {
-      method: "GET",
-      url: "/dms",
-      headers: {
-        "Accept": "application/octet-stream"
-      },
-      responseType: "arraybuffer",
-      follows: ["repo", "dmsobjectwithmapping", follow],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "sourceid": params.sourceId,
-        "dmsobjectid": params.dmsObjectId
-      }
-    });
-  } catch (e: any) {
-    if (e instanceof NotFoundError) {
-      throw new NotFoundError(`No File found for dmsObject '${params.dmsObjectId} in repository ${params.repositoryId}.`);
-    } else {
-      throw e;
-    }
+export async function onResponse(response: Response): Promise<ArrayBuffer> {
+  if (response.status === 404) {
+    throw new NotFoundError("No File found for dmsObject.");
   }
+  await ensureSuccessResponse(response);
+  return await response.arrayBuffer();
 }
 
-/**
- * Factory for {@link getDmsObjectMainFile}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the getRepositories-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category DmsObject
- */
-export function _getDmsObjectMainFileFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse<ArrayBuffer>, context: DvelopContext, params: GetDmsObjectParams) => T
-): (context: DvelopContext, params: GetDmsObjectParams) => Promise<T> {
-  return async (context: DvelopContext, params: GetDmsObjectParams) => {
-    const response: HttpResponse<ArrayBuffer> = await getDmsObjectBlobContentRespone(httpRequestFunction, "mainblobcontent", context, params);
-    return transformFunction(response, context, params);
-  };
+export async function fetchDmsObjectFile<T>(
+  context: DvelopContext,
+  url: string,
+  options?: DvelopOptions<T | ArrayBuffer>,
+): Promise<T | ArrayBuffer> {
+  return dvelopFetch(context, url, {
+    method: "GET",
+    headers: { "Accept": "application/octet-stream" }
+  }, options ?? { onResponse });
 }
 
-/**
- * Factory for {@link getDmsObjectPdfFile}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the getRepositories-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category DmsObject
- */
-export function _getDmsObjectPdfFileFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse<ArrayBuffer>, context: DvelopContext, params: GetDmsObjectParams) => T
-): (context: DvelopContext, params: GetDmsObjectParams) => Promise<T> {
-  return async (context: DvelopContext, params: GetDmsObjectParams) => {
-    const response: HttpResponse<ArrayBuffer> = await getDmsObjectBlobContentRespone(httpRequestFunction, "pdfblobcontent", context, params);
-    return transformFunction(response, context, params);
-  };
+async function getDmsObjectLinkHref(
+  context: DvelopContext,
+  params: GetDmsObjectParams,
+  linkName: string,
+  initOverwrite?: RequestInit,
+): Promise<string | undefined> {
+  return dvelopFetch(
+    context,
+    `/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}?sourceid=${params.sourceId}`,
+    { method: "GET" },
+    {
+      initOverwrite,
+      onResponse: async (response: Response) => {
+        await ensureSuccessResponse(response);
+        const data: any = await response.json();
+        return data._links?.[linkName]?.href as string | undefined;
+      }
+    }
+  );
 }
+
 /**
  * Download a DmsObject-file.
  *
@@ -92,9 +67,33 @@ export function _getDmsObjectPdfFileFactory<T>(
  * ```
  * @category DmsObject
  */
-/* istanbul ignore next */
-export async function getDmsObjectMainFile(context: DvelopContext, params: GetDmsObjectParams): Promise<ArrayBuffer> {
-  return _getDmsObjectMainFileFactory(_defaultHttpRequestFunction, getDmsObjectFileDefaultTransformFunction)(context, params);
+export async function getDmsObjectMainFile(context: DvelopContext, params: GetDmsObjectParams): Promise<ArrayBuffer>;
+export async function getDmsObjectMainFile<T>(context: DvelopContext, params: GetDmsObjectParams, options: DvelopOptions<T>): Promise<T>;
+export async function getDmsObjectMainFile<T>(
+  context: DvelopContext,
+  params: GetDmsObjectParams,
+  options?: DvelopOptions<T | ArrayBuffer>,
+): Promise<T | ArrayBuffer> {
+  let href: string | undefined;
+  try {
+    href = await getDmsObjectLinkHref(context, params, "mainblobcontent", options?.initOverwrite);
+  } catch (e: any) {
+    if (e instanceof NotFoundError) {
+      throw new NotFoundError(`No main file found for dmsObject '${params.dmsObjectId}' in repository '${params.repositoryId}'.`);
+    }
+    throw e;
+  }
+  if (!href) {
+    throw new NotFoundError(`No main file found for dmsObject '${params.dmsObjectId}' in repository '${params.repositoryId}'.`);
+  }
+  try {
+    return await fetchDmsObjectFile<T>(context, href, options);
+  } catch (e: any) {
+    if (e instanceof NotFoundError) {
+      throw new NotFoundError(`No main file found for dmsObject '${params.dmsObjectId}' in repository '${params.repositoryId}'.`);
+    }
+    throw e;
+  }
 }
 
 /**
@@ -117,7 +116,31 @@ export async function getDmsObjectMainFile(context: DvelopContext, params: GetDm
  * ```
  * @category DmsObject
  */
-/* istanbul ignore next */
-export async function getDmsObjectPdfFile(context: DvelopContext, params: GetDmsObjectParams): Promise<ArrayBuffer> {
-  return _getDmsObjectPdfFileFactory(_defaultHttpRequestFunction, getDmsObjectFileDefaultTransformFunction)(context, params);
+export async function getDmsObjectPdfFile(context: DvelopContext, params: GetDmsObjectParams): Promise<ArrayBuffer>;
+export async function getDmsObjectPdfFile<T>(context: DvelopContext, params: GetDmsObjectParams, options: DvelopOptions<T>): Promise<T>;
+export async function getDmsObjectPdfFile<T>(
+  context: DvelopContext,
+  params: GetDmsObjectParams,
+  options?: DvelopOptions<T | ArrayBuffer>,
+): Promise<T | ArrayBuffer> {
+  let href: string | undefined;
+  try {
+    href = await getDmsObjectLinkHref(context, params, "pdfblobcontent", options?.initOverwrite);
+  } catch (e: any) {
+    if (e instanceof NotFoundError) {
+      throw new NotFoundError(`No PDF file found for dmsObject '${params.dmsObjectId}' in repository '${params.repositoryId}'.`);
+    }
+    throw e;
+  }
+  if (!href) {
+    throw new NotFoundError(`No PDF file found for dmsObject '${params.dmsObjectId}' in repository '${params.repositoryId}'.`);
+  }
+  try {
+    return await fetchDmsObjectFile<T>(context, href, options);
+  } catch (e: any) {
+    if (e instanceof NotFoundError) {
+      throw new NotFoundError(`No PDF file found for dmsObject '${params.dmsObjectId}' in repository '${params.repositoryId}'.`);
+    }
+    throw e;
+  }
 }

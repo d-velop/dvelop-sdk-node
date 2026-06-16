@@ -27,7 +27,6 @@
 // Utils
 export { DvelopContext, DvelopOptions, dvelopFetch, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
 export { DmsError } from "./utils/dms-error";
-export * as internals from "./internal";
 
 // Repository
 export { GetRepositoryParams, Repository, getRepository } from "./repositories/get-repository/get-repository";
@@ -44,7 +43,7 @@ export { UpdateDmsObjectParams, updateDmsObject } from "./dms-objects/update-dms
 export { UpdateDmsObjectStatusParams, updateDmsObjectStatus } from "./dms-objects/update-dms-object-status/update-dms-object-status";
 export { DeleteCurrentDmsObjectVersionParams, deleteCurrentDmsObjectVersion } from "./dms-objects/delete-current-dms-object-version/delete-current-dms-object-version";
 export { SearchDmsObjectsParams, SearchDmsObjectsResultPage, ListedDmsObject, searchDmsObjects } from "./dms-objects/search-dms-objects/search-dms-objects";
-export { ReleaseAndUpdateDmsObjectError, releaseAndUpdateDmsObject } from "./dms-objects/release-and-update-dms-objects/release-and-update-dms-objects";
+export { releaseAndUpdateDmsObject } from "./dms-objects/release-and-update-dms-objects/release-and-update-dms-objects";
 export { LinkDmsObjectsParams, linkDmsObjects } from "./dms-objects/link-dms-objects/link-dms-objects";
 export { UnlinkDmsObjectsParams, unlinkDmsObjects } from "./dms-objects/unlink-dms-objects/unlink-dms-objects";
 

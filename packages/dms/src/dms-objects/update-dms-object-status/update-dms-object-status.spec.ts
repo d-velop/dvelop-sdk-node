@@ -1,112 +1,80 @@
-import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../utils/http";
-import { _updateDmsObjectStatusDefaultTransformFunction, _updateDmsObjectStatusFactory, UpdateDmsObjectStatusParams } from "./update-dms-object-status";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import {
+  UpdateDmsObjectStatusParams,
+  onResponse,
+  updateDmsObjectStatus,
+} from "./update-dms-object-status";
 
-describe("updateDmsObject", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("updateDmsObjectStatus", () => {
 
   let context: DvelopContext;
   let params: UpdateDmsObjectStatusParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
     params = {
       repositoryId: "HiItsMeRepositoryId",
       dmsObjectId: "HiItsMeDmsObjectId",
-      status: "Processing",
+      status: "Processing"
     };
   });
 
-  it("should make correct request", async () => {
-    const updateDmsObject = _updateDmsObjectStatusFactory(mockHttpRequestFunction, mockTransformFunction);
-    await updateDmsObject(context, params);
+  it("should call dvelopFetch with method PUT and a body containing property_state", async () => {
+    await updateDmsObjectStatus(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "PUT",
-      url: "/dms",
-      follows: ["repo", "dmsobjectwithmapping", "displayVersion"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "dmsobjectid": params.dmsObjectId
-      },
-      data: {
-        "sourceId": `/dms/r/${params.repositoryId}/source`,
-        "sourceProperties": {
-          "properties": [
-            { key: "property_state", values: [params.status] }
-          ]
-        }
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    const [calledContext, calledUrl, calledInit, calledOptions] = mockDvelopFetch.mock.calls[0];
+    expect(calledContext).toBe(context);
+    expect(calledUrl).toBe(`/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}/v/current`);
+    expect(calledInit).toMatchObject({ method: "PUT" });
+    expect(JSON.parse(calledInit!.body as string)).toEqual({
+      sourceId: `/dms/r/${params.repositoryId}/source`,
+      sourceProperties: {
+        properties: [{ key: "property_state", values: ["Processing"] }]
       }
     });
+    expect(calledOptions).toMatchObject({ onResponse: onResponse });
   });
 
-  it("should include editor if given", async () => {
+  it("should include property_editor when editor is set", async () => {
+    params.editor = "HiItsMeEditor";
+    await updateDmsObjectStatus(context, params);
 
-    params.editor = "HiItsMeEditor"
-
-    const updateDmsObject = _updateDmsObjectStatusFactory(mockHttpRequestFunction, mockTransformFunction);
-    await updateDmsObject(context, params);
-
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, expect.objectContaining({
-      data: expect.objectContaining({
-        "sourceProperties": expect.objectContaining({
-          "properties": expect.arrayContaining([
-            { key: "property_editor", values: [params.editor] }
-          ])
-        })
-      })
-    }));
+    const calledInit = mockDvelopFetch.mock.calls[0][2];
+    const body = JSON.parse(calledInit!.body as string);
+    expect(body.sourceProperties.properties).toEqual([
+      { key: "property_state", values: ["Processing"] },
+      { key: "property_editor", values: ["HiItsMeEditor"] }
+    ]);
   });
 
-  it("should alterationtext if given", async () => {
-
+  it("should include alterationText when set", async () => {
     params.alterationText = "HiItsMeAlterationText";
+    await updateDmsObjectStatus(context, params);
 
-    const updateDmsObject = _updateDmsObjectStatusFactory(mockHttpRequestFunction, mockTransformFunction);
-    await updateDmsObject(context, params);
-
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, expect.objectContaining({
-      data: expect.objectContaining({
-        "alterationText": params.alterationText
-      })
-    }));
+    const calledInit = mockDvelopFetch.mock.calls[0][2];
+    const body = JSON.parse(calledInit!.body as string);
+    expect(body.alterationText).toEqual("HiItsMeAlterationText");
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const updateDmsObject = _updateDmsObjectStatusFactory(mockHttpRequestFunction, mockTransformFunction);
-    await updateDmsObject(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await updateDmsObjectStatus(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
   });
 
-  describe("updateDmsObjectDefaultTransformer", () => {
-
-    it("should return void", async () => {
-      const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-      mockHttpRequestFunction.mockResolvedValue(response);
-
-      const updateDmsObject = _updateDmsObjectStatusFactory(mockHttpRequestFunction, _updateDmsObjectStatusDefaultTransformFunction);
-      const result = await updateDmsObject(context, params);
-
-      expect(result).toBe(undefined);
+  describe("_updateDmsObjectStatusDefaultTransformFunction", () => {
+    it("should resolve to undefined on 2xx", async () => {
+      const response = new Response(null, { status: 204 });
+      await expect(onResponse(response)).resolves.toBeUndefined();
     });
   });
 });

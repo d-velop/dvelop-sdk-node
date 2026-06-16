@@ -1,5 +1,8 @@
-import { DvelopContext, SearchDmsObjectsResultPage, getDmsObjectMainFile, getDmsObjectPdfFile, SearchDmsObjectsParams, searchDmsObjects, DmsObjectNote, getDmsObjectNotes } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
+import { DmsObjectNote, getDmsObjectNotes } from "../get-dms-object-notes/get-dms-object-notes";
+import { fetchDmsObjectFile } from "../get-dms-object-file/get-dms-object-file";
+import { searchDmsObjects, SearchDmsObjectsResultPage } from "../search-dms-objects/search-dms-objects";
 
 /**
  * Parameters for the {@link getDmsObject}-function.
@@ -12,7 +15,6 @@ export interface GetDmsObjectParams {
   sourceId: string;
   /** ID of the DmsObject */
   dmsObjectId: string;
-  /** Short description of changes */
 }
 
 /**
@@ -51,83 +53,49 @@ export interface DmsObject {
 }
 
 /**
- * Factory for the default-transform-function for the {@link getDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Default `onResponse` provided to the {@link getDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
-export function _getDmsObjectDefaultTransformFunctionFactory(
-  getDmsObjectMainFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
-  getDmsObjectPdfFileFunction: (context: DvelopContext, params: GetDmsObjectParams) => Promise<ArrayBuffer>,
-  searchDmsObjects: (context: DvelopContext, params: SearchDmsObjectsParams) => Promise<SearchDmsObjectsResultPage>,
-) {
-  return (response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) => {
+export function onResponse(
+  context: DvelopContext,
+  params: GetDmsObjectParams
+): (response: Response) => Promise<DmsObject> {
+  return async (response: Response) => {
+    await ensureSuccessResponse(response);
+    const data: any = await response.json();
+    console.log("getDmsObject response data", data);
 
     const dmsObject: DmsObject = {
       repositoryId: params.repositoryId,
       sourceId: params.sourceId,
       dmsObjectId: params.dmsObjectId,
-      categories: response.data.sourceCategories,
-      properties: response.data.sourceProperties
+      categories: data.sourceCategories,
+      properties: data.sourceProperties
     };
 
-    if (response.data._links.mainblobcontent) {
-      dmsObject.getMainFile = async () => (await getDmsObjectMainFileFunction(context, params));
+    if (data._links?.mainblobcontent) {
+      dmsObject.getMainFile = () => fetchDmsObjectFile(context, data._links.mainblobcontent.href);
     }
 
-    if (response.data._links.pdfblobcontent) {
-      dmsObject.getPdfFile = async () => (await getDmsObjectPdfFileFunction(context, params));
+    if (data._links?.pdfblobcontent) {
+      dmsObject.getPdfFile = () => fetchDmsObjectFile(context, data._links.pdfblobcontent.href);
     }
 
-    if (response.data._links.children) {
-      dmsObject.searchChildren = async () => (await searchDmsObjects(context, {
+    if (data._links?.children) {
+      dmsObject.searchChildren = () => searchDmsObjects(context, {
         repositoryId: params.repositoryId,
         sourceId: params.sourceId,
         childrenOf: params.dmsObjectId
-      }));
+      });
     }
 
-    if (response.data._links.notes) {
-      dmsObject.getNotes = async () => (await getDmsObjectNotes(context, params));
+    if (data._links?.notes) {
+      dmsObject.getNotes = () => getDmsObjectNotes(context, params);
     }
 
     return dmsObject;
   };
-}
-
-/**
- * Factory for {@link getDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link getDmsObject}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category DmsObject
- */
-export function _getDmsObjectFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetDmsObjectParams) => T
-): (context: DvelopContext, params: GetDmsObjectParams) => Promise<T> {
-  return async (context: DvelopContext, params: GetDmsObjectParams) => {
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "GET",
-      url: "/dms",
-      follows: ["repo", "dmsobjectwithmapping"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "sourceid": params.sourceId,
-        "dmsobjectid": params.dmsObjectId
-      }
-    });
-    return transformFunction(response, context, params);
-  };
-}
-
-/**
- * Factory for the default-transform-function for the {@link getDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @internal
- * @category DmsObject
- */
-/* istanbul ignore next */
-export async function _getDmsObjectDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetDmsObjectParams) {
-  return _getDmsObjectDefaultTransformFunctionFactory(getDmsObjectMainFile, getDmsObjectPdfFile, searchDmsObjects)(response, context, params);
 }
 
 /**
@@ -149,7 +117,14 @@ export async function _getDmsObjectDefaultTransformFunction(response: HttpRespon
  * ```
  * @category DmsObject
  */
-/* istanbul ignore next */
-export async function getDmsObject(context: DvelopContext, params: GetDmsObjectParams) {
-  return _getDmsObjectFactory(_defaultHttpRequestFunction, _getDmsObjectDefaultTransformFunction)(context, params);
+export async function getDmsObject(context: DvelopContext, params: GetDmsObjectParams): Promise<DmsObject>;
+export async function getDmsObject<T>(context: DvelopContext, params: GetDmsObjectParams, options: DvelopOptions<T>): Promise<T>;
+export async function getDmsObject<T>(
+  context: DvelopContext,
+  params: GetDmsObjectParams,
+  options: DvelopOptions<T | DmsObject> = {
+    onResponse: onResponse(context, params)
+  }
+): Promise<T | DmsObject> {
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}?sourceid=${params.sourceId}`, { method: "GET" }, options);
 }
