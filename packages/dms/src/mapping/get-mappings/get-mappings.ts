@@ -1,5 +1,5 @@
-import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
 
 /**
  * Parameters for the {@link getMappings}-function.
@@ -33,52 +33,22 @@ export interface DmsMapping {
 }
 
 /**
- * Factory for the default-transform-function for the {@link getMappings}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @internal
- * @category DmsObject
- */
-export function _getDmsMappingDefaultTransformFunctionFactory() {
-  return (response: HttpResponse<any>, _context: DvelopContext, _params: GetMappingsParams) => {
-
-    const mappings: DmsMapping[] = [...response.data.mappings];
-
-    return mappings;
-  };
-}
-
-/**
- * Factory for {@link getMappings}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link getMappings}-function. A corresponding transformFunction has to be supplied.
+ * Default transform-function provided to the {@link getMappings}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Mappings
  */
-export function _getDmsMappingFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetMappingsParams) => T
-): (context: DvelopContext, params: GetMappingsParams) => Promise<T> {
-  return async (context: DvelopContext, params: GetMappingsParams) => {
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "GET",
-      url: "/dms",
-      follows: ["repo", "mappingconfig"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "sourceid": params.sourceId,
-      }
-    });
-    return transformFunction(response, context, params);
-  };
-}
-
-/**
- * Factory for the default-transform-function for the {@link getMappings}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @internal
- * @category Mappings
- */
-/* istanbul ignore next */
-export async function _getDmsMappingsDefaultTransformFunction(response: HttpResponse<any>, context: DvelopContext, params: GetMappingsParams) {
-  return _getDmsMappingDefaultTransformFunctionFactory()(response, context, params);
+export async function onResponse(response: Response): Promise<DmsMapping[]> {
+  await ensureSuccessResponse(response);
+  const data: any = await response.json();
+  return data.mappings.map((m: any): DmsMapping => ({
+    sourceId: m.sourceId,
+    name: m.name,
+    mappingItems: m.mappingItems.map((item: any) => ({
+      destination: item.destination,
+      source: item.source,
+      type: item.type
+    }))
+  }));
 }
 
 /**
@@ -99,7 +69,14 @@ export async function _getDmsMappingsDefaultTransformFunction(response: HttpResp
  * ```
  * @category Mappings
  */
-/* istanbul ignore next */
-export async function getMappings(context: DvelopContext, params: GetMappingsParams) {
-  return _getDmsMappingFactory(_defaultHttpRequestFunction, _getDmsMappingsDefaultTransformFunction)(context, params);
+export async function getMappings(context: DvelopContext, params: GetMappingsParams): Promise<DmsMapping[]>;
+export async function getMappings<T>(context: DvelopContext, params: GetMappingsParams, options: DvelopOptions<T>): Promise<T>;
+export async function getMappings<T>(
+  context: DvelopContext,
+  params: GetMappingsParams,
+  options: DvelopOptions<T | DmsMapping[]> = {
+    onResponse: onResponse
+  }
+): Promise<T | DmsMapping[]> {
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/m?sourceId=${params.sourceId}`, { method: "GET" }, options);
 }

@@ -1,124 +1,87 @@
-import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../utils/http";
-import { GetMappingsParams, _getDmsMappingFactory, _getDmsMappingsDefaultTransformFunction, DmsMapping } from "./get-mappings";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import {
+  DmsMapping,
+  GetMappingsParams,
+  onResponse,
+  getMappings,
+} from "./get-mappings";
+
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
+
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
 
 describe("getMappings", () => {
-
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
 
   let context: DvelopContext;
   let params: GetMappingsParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
-    params = {
-      repositoryId: "HiItsMeRepositoryId",
-      sourceId: "HiItsMeSourceId"
-    };
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
+    params = { repositoryId: "HiItsMeRepositoryId", sourceId: "HiItsMeSourceId" };
   });
 
-  it("should make correct request", async () => {
-
-    const getDmsObject = _getDmsMappingFactory(mockHttpRequestFunction, mockTransformFunction);
-    await getDmsObject(context, params);
-
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "GET",
-      url: "/dms",
-      follows: ["repo", "mappingconfig"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "sourceid": params.sourceId,
-      }
-    });
-  });
-
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const getMappings = _getDmsMappingFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method GET", async () => {
     await getMappings(context, params);
 
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(
+      context,
+      `/dms/r/${params.repositoryId}/m?sourceId=${params.sourceId}`,
+      { method: "GET" },
+      expect.objectContaining({ onResponse: onResponse })
+    );
   });
 
-  describe("getDmsMappingsDefaultTransformFunction", () => {
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await getMappings(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
+  });
 
-    it("should map correctly", async () => {
+  describe("_getDmsMappingsDefaultTransformFunction", () => {
 
-      const data: any = {
-        "mappings": [
+    function jsonResponse(data: any): Response {
+      return new Response(JSON.stringify(data), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
+
+    it("should map mappings correctly", async () => {
+      const data = {
+        mappings: [
           {
-            "_links": {
-              "self": "Mapping1"
-            },
-            "name": "My Test Mapping",
-            "sourceId": params.sourceId,
-            "mappingItems": [
-              {
-                "destination": "dest1",
-                "source": "source1",
-                "type": 1
-              },
-              {
-                "destination": "dest2",
-                "source": "source2",
-                "type": 0
-              }
+            name: "My Test Mapping",
+            sourceId: params.sourceId,
+            mappingItems: [
+              { destination: "dest1", source: "source1", type: 1 },
+              { destination: "dest2", source: "source2", type: 0 }
             ]
           },
           {
-            "_links": {
-              "self": "Mapping2"
-            },
-            "name": "My Other Mapping",
-            "sourceId": params.sourceId,
-            "mappingItems": [
-              {
-                "destination": "dest1_1",
-                "source": "source1_1",
-                "type": 1
-              },
+            name: "My Other Mapping",
+            sourceId: params.sourceId,
+            mappingItems: [
+              { destination: "dest1_1", source: "source1_1", type: 1 }
             ]
           }
         ]
       };
 
-      const response: HttpResponse = { data: data } as HttpResponse;
-      mockHttpRequestFunction.mockResolvedValue(response);
-
-      const getMappings = _getDmsMappingFactory(mockHttpRequestFunction, _getDmsMappingsDefaultTransformFunction);
-      const result: DmsMapping[] = await getMappings(context, params);
+      const result: DmsMapping[] = await onResponse(jsonResponse(data));
 
       expect(result).toHaveLength(2);
-
-      expect(result[0]).toHaveProperty("sourceId", params.sourceId);
-      expect(result[0]).toHaveProperty("name", "My Test Mapping");
-      expect(result[0]).toHaveProperty("mappingItems[0].destination", "dest1");
-      expect(result[0]).toHaveProperty("mappingItems[0].source", "source1");
-      expect(result[0]).toHaveProperty("mappingItems[0].type", 1);
-      expect(result[0]).toHaveProperty("mappingItems[1].destination", "dest2");
-      expect(result[0]).toHaveProperty("mappingItems[1].source", "source2");
-      expect(result[0]).toHaveProperty("mappingItems[1].type", 0);
-
-      expect(result[1]).toHaveProperty("sourceId", params.sourceId);
-      expect(result[1]).toHaveProperty("name", "My Other Mapping");
-      expect(result[1]).toHaveProperty("mappingItems[0].destination", "dest1_1");
-      expect(result[1]).toHaveProperty("mappingItems[0].source", "source1_1");
-      expect(result[1]).toHaveProperty("mappingItems[0].type", 1);
+      expect(result[0]).toMatchObject({
+        sourceId: params.sourceId,
+        name: "My Test Mapping",
+        mappingItems: data.mappings[0].mappingItems
+      });
+      expect(result[1]).toMatchObject({
+        sourceId: params.sourceId,
+        name: "My Other Mapping",
+        mappingItems: data.mappings[1].mappingItems
+      });
     });
   });
 });
