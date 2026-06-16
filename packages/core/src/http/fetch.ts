@@ -16,6 +16,7 @@ export async function dvelopFetch<T>(
   const defaultInit: Partial<RequestInit> = {
     headers: {
       "Content-Type": "application/json",
+      "Accept": "application/hal+json, application/json",
       "Authorization": `Bearer ${context.authSessionId}`,
       "x-dv-request-id": context.requestId ?? generateRequestId(),
       "traceparent": context.traceContext ? buildTraceparentHeader(context.traceContext) : ""
