@@ -7,3 +7,4 @@ tmp-*
 chicken.*
 .vscode
 .idea
+e2e.*
