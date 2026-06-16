@@ -1,21 +1,25 @@
-import { DvelopContext, DvelopHttpResponse } from "@dvelop-sdk/core";
-import { UnlinkDmsObjectsParams, _unlinkDmsObjectsFactory } from "./unlink-dms-objects";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import {
+  UnlinkDmsObjectsParams,
+  onResponse,
+  unlinkDmsObjects,
+} from "./unlink-dms-objects";
+
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
+
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
 
 describe("unlinkDmsObjects", () => {
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
 
   let context: DvelopContext;
   let params: UnlinkDmsObjectsParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
     params = {
       repositoryId: "HiItsMeRepositoryId",
       sourceId: "HiItsMeSourceId",
@@ -24,32 +28,28 @@ describe("unlinkDmsObjects", () => {
     };
   });
 
-  it("should make correct request", async () => {
-
-    const unlinkDmsObjects = _unlinkDmsObjectsFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method DELETE", async () => {
     await unlinkDmsObjects(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "DELETE",
-      url: `/dms/r/${params.repositoryId}/o2m/${params.parentDmsObjectId}/children/${params.childDmsObjectsId}`,
-      params: {
-        "sourceid": params.sourceId
-      }
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(
+      context,
+      `/dms/r/${params.repositoryId}/o2m/${params.parentDmsObjectId}/children/${params.childDmsObjectsId}`,
+      { method: "DELETE" },
+      expect.objectContaining({ onResponse: onResponse })
+    );
   });
 
-  it("should pass response to transform and return transform-result", async () => {
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await unlinkDmsObjects(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
+  });
 
-    const response: DvelopHttpResponse = {} as DvelopHttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const unlinkDmsObjects = _unlinkDmsObjectsFactory(mockHttpRequestFunction, mockTransformFunction);
-    await unlinkDmsObjects(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+  describe("_unlinkDmsObjectsDefaultTransformFunction", () => {
+    it("should resolve to undefined on 2xx", async () => {
+      const response = new Response(null, { status: 204 });
+      await expect(onResponse(response)).resolves.toBeUndefined();
+    });
   });
 });
