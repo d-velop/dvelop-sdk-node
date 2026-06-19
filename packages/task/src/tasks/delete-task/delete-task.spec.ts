@@ -1,51 +1,47 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpResponse } from "../../utils/http";
-import { DeleteTaskParams, _deleteTaskFactory } from "./delete-task";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import { DeleteTaskParams, onResponse, deleteTask } from "./delete-task";
 
-describe("deleteTaskFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("deleteTask", () => {
 
   let context: DvelopContext;
   let params: DeleteTaskParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
-    params = {
-      location: "HiItsMeLocation"
-    };
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
+    params = { location: "HiItsMeLocation" };
   });
 
-  it("should make correct request", async () => {
-
-    const deleteTask = _deleteTaskFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method DELETE", async () => {
     await deleteTask(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "DELETE",
-      url: params.location
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(
+      context,
+      params.location,
+      { method: "DELETE" },
+      expect.objectContaining({ onResponse: onResponse })
+    );
+  });
+
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await deleteTask(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
+  });
+
+  describe("onResponse", () => {
+
+    it("should resolve on success", async () => {
+      const response = new Response(null, { status: 204 });
+      await expect(onResponse(response)).resolves.toBeUndefined();
     });
-  });
-
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const deleteTask = _deleteTaskFactory(mockHttpRequestFunction, mockTransformFunction);
-    await deleteTask(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
   });
 });

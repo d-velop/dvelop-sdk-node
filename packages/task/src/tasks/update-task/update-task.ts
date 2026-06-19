@@ -1,5 +1,5 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/task-error";
 
 /**
  * Parameters for the {@link updateTask}-function.
@@ -86,43 +86,12 @@ export interface UpdateTaskParams {
 }
 
 /**
- * Factory for the {@link updateTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link updateTask}-function. A corresponding transformFunction has to be supplied.
+ * Default `onResponse` provided to the {@link updateTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Task
  */
-export function _updateTaskFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: UpdateTaskParams) => T,
-): (context: DvelopContext, params: UpdateTaskParams) => Promise<T> {
-
-  return async (context: DvelopContext, params: UpdateTaskParams) => {
-
-    const task: any = { ...params };
-    delete task.location;
-
-    if (params.dueDate) {
-      task.dueDate = params.dueDate.toISOString();
-    }
-
-    if (params.reminderDate) {
-      task.reminderDate = params.reminderDate.toISOString();
-    }
-
-    if (params.dmsObject) {
-      task.dmsReferences = [{
-        repoId: params.dmsObject.repositoryId,
-        objectId: params.dmsObject.dmsObjectId
-      }];
-    }
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "PATCH",
-      url: params.location,
-      data: task
-    });
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
@@ -143,7 +112,36 @@ export function _updateTaskFactory<T>(
  *
  * @category Task
  */
-/* istanbul ignore next */
-export function updateTask(context: DvelopContext, params: UpdateTaskParams): Promise<void> {
-  return _updateTaskFactory(_defaultHttpRequestFunction, () => { })(context, params);
+export async function updateTask(context: DvelopContext, params: UpdateTaskParams): Promise<void>;
+export async function updateTask<T>(context: DvelopContext, params: UpdateTaskParams, options: DvelopOptions<T>): Promise<T>;
+export async function updateTask<T>(
+  context: DvelopContext,
+  params: UpdateTaskParams,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+
+  const task: any = { ...params };
+  delete task.location;
+
+  if (params.dueDate) {
+    task.dueDate = params.dueDate.toISOString();
+  }
+
+  if (params.reminderDate) {
+    task.reminderDate = params.reminderDate.toISOString();
+  }
+
+  if (params.dmsObject) {
+    task.dmsReferences = [{
+      repoId: params.dmsObject.repositoryId,
+      objectId: params.dmsObject.dmsObjectId
+    }];
+  }
+
+  return dvelopFetch(context, params.location, {
+    method: "PATCH",
+    body: JSON.stringify(task)
+  }, options);
 }

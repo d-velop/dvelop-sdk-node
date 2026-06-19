@@ -1,5 +1,5 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/task-error";
 
 /**
  * Parameters for the {@link getTask}-function.
@@ -87,14 +87,14 @@ export interface Task {
 }
 
 /**
- * Default transform-function provided to the {@link getTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Default `onResponse` provided to the {@link getTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Task
  */
-export function _getTaskDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: GetTaskParams): Task {
-  let task : Task;
-  const responseTask = response.data;
-  task = {...responseTask};
+export async function onResponse(response: Response): Promise<Task> {
+  await ensureSuccessResponse(response);
+  const responseTask: any = await response.json();
+  const task: Task = { ...responseTask };
 
   if (responseTask.receiveDate) {
     task.receiveDate = new Date(responseTask.receiveDate);
@@ -113,27 +113,6 @@ export function _getTaskDefaultTransformFunction(response: HttpResponse, _: Dvel
 }
 
 /**
- * Factory for the {@link getTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link getTask}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category Task
- */
-export function _getTaskFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetTaskParams) => T
-): (context: DvelopContext, params: GetTaskParams) => Promise<T> {
-
-  return async (context: DvelopContext, params: GetTaskParams) => {
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "GET",
-      url: `/task/tasks/${params.taskId}`
-    });
-
-    return transformFunction(response, context, params);
-  };
-}
-
-/**
  * Get a task.
  * @returns A task object
  *
@@ -144,13 +123,20 @@ export function _getTaskFactory<T>(
  *   systemBaseUri: "https://umbrella-corp.d-velop.cloud",
  *   authSessionId: "dQw4w9WgXcQ"
  * }, {
- *   id: "SomeTaskId"
+ *   taskId: "SomeTaskId"
  * });
  * ```
  *
  * @category Task
  */
-/* istanbul ignore next */
-export function getTask(context: DvelopContext, params: GetTaskParams): Promise<Task> {
-  return _getTaskFactory(_defaultHttpRequestFunction, _getTaskDefaultTransformFunction)(context, params);
+export async function getTask(context: DvelopContext, params: GetTaskParams): Promise<Task>;
+export async function getTask<T>(context: DvelopContext, params: GetTaskParams, options: DvelopOptions<T>): Promise<T>;
+export async function getTask<T>(
+  context: DvelopContext,
+  params: GetTaskParams,
+  options: DvelopOptions<T | Task> = {
+    onResponse: onResponse
+  }
+): Promise<T | Task> {
+  return dvelopFetch(context, `/task/tasks/${params.taskId}`, { method: "GET" }, options);
 }

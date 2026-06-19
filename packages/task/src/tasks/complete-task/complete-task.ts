@@ -1,5 +1,5 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import {HttpConfig, HttpResponse, _defaultHttpRequestFunction, TaskError} from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse, TaskError } from "../../utils/task-error";
 
 /**
  * Parameters for the {@link completeTask}-function.
@@ -11,32 +11,12 @@ export interface CompleteTaskParams {
 }
 
 /**
- * Factory for the {@link completeTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link completeTask}-function. A corresponding transformFunction has to be supplied.
+ * Default `onResponse` provided to the {@link completeTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Task
  */
-export function _completeTaskFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: CompleteTaskParams) => T,
-): (context: DvelopContext, params: CompleteTaskParams) => Promise<T> {
-  return async (context: DvelopContext, params: CompleteTaskParams) => {
-    const matches: RegExpExecArray | null = /^\/task\/tasks\/([^?]*)\??.*$/i.exec(params.location);
-    if (matches) {
-      const id = matches[1];
-
-      const response: HttpResponse = await httpRequestFunction(context, {
-        method: "POST",
-        url: `/task/tasks/${id}/completionState`,
-        data: {
-          complete: true
-        }
-      });
-      return transformFunction(response, context, params);
-    } else {
-      throw new TaskError(`Failed to parse task id from '${params.location}'`);
-    }
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
@@ -55,7 +35,24 @@ export function _completeTaskFactory<T>(
  *
  * @category Task
  */
-/* istanbul ignore next */
-export function completeTask(context: DvelopContext, params: CompleteTaskParams): Promise<void> {
-  return _completeTaskFactory(_defaultHttpRequestFunction, () => { })(context, params);
+export async function completeTask(context: DvelopContext, params: CompleteTaskParams): Promise<void>;
+export async function completeTask<T>(context: DvelopContext, params: CompleteTaskParams, options: DvelopOptions<T>): Promise<T>;
+export async function completeTask<T>(
+  context: DvelopContext,
+  params: CompleteTaskParams,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+
+  const matches: RegExpExecArray | null = /^\/task\/tasks\/([^?]*)\??.*$/i.exec(params.location);
+  if (!matches) {
+    throw new TaskError(`Failed to parse task id from '${params.location}'`);
+  }
+  const id = matches[1];
+
+  return dvelopFetch(context, `/task/tasks/${id}/completionState`, {
+    method: "POST",
+    body: JSON.stringify({ complete: true })
+  }, options);
 }
