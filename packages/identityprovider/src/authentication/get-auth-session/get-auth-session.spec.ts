@@ -1,66 +1,51 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpResponse } from "../../utils/http";
-import { AuthSession, _getAuthSessionDefaultTransformFunction, _getAuthSessionFactory } from "./get-auth-session";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import { AuthSession, onResponse, getAuthSession } from "./get-auth-session";
 
-describe("getAuthSessionFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("getAuthSession", () => {
 
   let context: DvelopContext;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
   });
 
-  it("should make correct request", async () => {
-
-    const getAuthSession = _getAuthSessionFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method GET", async () => {
     await getAuthSession(context);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "GET",
-      url: "/identityprovider",
-      follows: ["login"]
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(context, "/identityprovider/login", { method: "GET" }, expect.objectContaining({ onResponse: onResponse }));
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const getAuthSession = _getAuthSessionFactory(mockHttpRequestFunction, mockTransformFunction);
-    await getAuthSession(context);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context);
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await getAuthSession(context, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
   });
 
-  describe("getAuthSessionDefaultTransformFunction", () => {
+  describe("onResponse", () => {
 
-    it("should map correctly", async () => {
+    function jsonResponse(data: any): Response {
+      return new Response(JSON.stringify(data), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
 
-      const data: any = {
+    it("should map and transform the auth session", async () => {
+      const data = {
         AuthSessionId: "HiItsMeAuthSessionId",
-        Expire: "1992-02-16T16:11:03.8019256Z"
+        Expire: "1992-02-16T16:11:03.000Z"
       };
 
-      mockHttpRequestFunction.mockResolvedValue({ data: data } as HttpResponse);
+      const result: AuthSession = await onResponse(jsonResponse(data));
 
-      const getAuthSession = _getAuthSessionFactory(mockHttpRequestFunction, _getAuthSessionDefaultTransformFunction);
-      const result: AuthSession = await getAuthSession(context);
-
-      expect(result).toHaveProperty("id", data.AuthSessionId);
-      expect(result).toHaveProperty("expire", new Date(data.Expire));
+      expect(result.id).toBe("HiItsMeAuthSessionId");
+      expect(result.expire).toEqual(new Date("1992-02-16T16:11:03.000Z"));
     });
   });
 });

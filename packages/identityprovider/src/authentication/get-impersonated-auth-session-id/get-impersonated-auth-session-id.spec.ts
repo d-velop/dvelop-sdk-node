@@ -1,71 +1,51 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpResponse } from "../../utils/http";
-import { GetImpersonatedAuthSessionIdParams, _getImpersonatedAuthSessionIdDefaultTransformFunction, _getImpersonatedAuthSessionIdFactory } from "./get-impersonated-auth-session-id";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import { GetImpersonatedAuthSessionIdParams, onResponse, getImpersonatedAuthSessionId } from "./get-impersonated-auth-session-id";
 
-describe("getImpersonatedAuthSessionIdFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("getImpersonatedAuthSessionId", () => {
 
   let context: DvelopContext;
   let params: GetImpersonatedAuthSessionIdParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
-    params = {
-      userId: "HiItsMeUserId"
-    };
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
+    params = { userId: "HiItsMeUserId" };
   });
 
-  it("should make correct request", async () => {
-
-    const getImpersonatedAuthSessionId = _getImpersonatedAuthSessionIdFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method GET and encoded userId", async () => {
     await getImpersonatedAuthSessionId(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "GET",
-      url: "/identityprovider/impersonatesession",
-      params: {
-        userId: params.userId
-      }
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(context, "/identityprovider/impersonatesession?userId=HiItsMeUserId", { method: "GET" }, expect.objectContaining({ onResponse: onResponse }));
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const getImpersonatedAuthSessionId = _getImpersonatedAuthSessionIdFactory(mockHttpRequestFunction, mockTransformFunction);
-    await getImpersonatedAuthSessionId(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+  it("should encode special characters in the userId", async () => {
+    await getImpersonatedAuthSessionId(context, { userId: "user/with spaces" });
+    expect(mockDvelopFetch.mock.calls[0][1]).toBe("/identityprovider/impersonatesession?userId=user%2Fwith%20spaces");
   });
 
-  describe("getImpersonatedAuthSessionIdDefaultTransformFunction", () => {
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await getImpersonatedAuthSessionId(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
+  });
 
-    it("should map correctly", async () => {
+  describe("onResponse", () => {
 
-      const data: any = {
-        authSessionId: "HiItsMeAuthSessionId"
-      };
+    function jsonResponse(data: any): Response {
+      return new Response(JSON.stringify(data), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
 
-      mockHttpRequestFunction.mockResolvedValue({ data: data } as HttpResponse);
-
-      const getImpersonatedAuthSessionId = _getImpersonatedAuthSessionIdFactory(mockHttpRequestFunction, _getImpersonatedAuthSessionIdDefaultTransformFunction);
-      const result: string = await getImpersonatedAuthSessionId(context, params);
-
-      expect(result).toEqual(data.authSessionId);
+    it("should return the authSessionId from the response body", async () => {
+      const result: string = await onResponse(jsonResponse({ authSessionId: "HiItsMeAuthSessionId" }));
+      expect(result).toEqual("HiItsMeAuthSessionId");
     });
   });
 });

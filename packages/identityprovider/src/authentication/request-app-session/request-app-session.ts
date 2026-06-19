@@ -1,5 +1,5 @@
-import { DvelopContext } from "../../../../core/lib";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/identityprovider-error";
 
 /**
  * Parameters for the {@link requestAppSession}-function.
@@ -13,29 +13,12 @@ export interface RequestAppSessionParams {
 }
 
 /**
- * Factory for the {@link requestAppSession}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link requestAppSession}-function. A corresponding transformFunction has to be supplied.
+ * Default `onResponse` provided to the {@link requestAppSession}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * @internal
  * @category Authentication
  */
-export function _requestAppSessionFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: RequestAppSessionParams) => T,
-): (context: DvelopContext, params: RequestAppSessionParams) => Promise<T> {
-
-  return async (context: DvelopContext, params: RequestAppSessionParams) => {
-
-    const response = await httpRequestFunction(context, {
-      method: "POST",
-      url: "/identityprovider/appsession",
-      data: {
-        appname: params.appName,
-        callback: params.callback,
-        requestid: context.requestId
-      }
-    });
-
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
@@ -55,7 +38,21 @@ export function _requestAppSessionFactory<T>(
  * ```
  * @category Authentication
  */
-/* istanbul ignore next */
-export async function requestAppSession(context: DvelopContext, params: RequestAppSessionParams): Promise<void> {
-  return await _requestAppSessionFactory(_defaultHttpRequestFunction, () => { })(context, params);
+export async function requestAppSession(context: DvelopContext, params: RequestAppSessionParams): Promise<void>;
+export async function requestAppSession<T>(context: DvelopContext, params: RequestAppSessionParams, options: DvelopOptions<T>): Promise<T>;
+export async function requestAppSession<T>(
+  context: DvelopContext,
+  params: RequestAppSessionParams,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+  return dvelopFetch(context, "/identityprovider/appsession", {
+    method: "POST",
+    body: JSON.stringify({
+      appname: params.appName,
+      callback: params.callback,
+      requestid: context.requestId
+    })
+  }, options);
 }
