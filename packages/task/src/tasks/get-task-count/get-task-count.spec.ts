@@ -1,63 +1,50 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpResponse } from "../../utils/http";
-import { _getTaskCountDefaultTransformFunction, _getTaskCountFactory } from "./get-task-count";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import { onResponse, getTaskCount } from "./get-task-count";
 
-describe("getTaskCountFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("getTaskCount", () => {
 
   let context: DvelopContext;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
   });
 
-  it("should make correct request", async () => {
-
-    const getTaskCount = _getTaskCountFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method GET", async () => {
     await getTaskCount(context);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "GET",
-      url: "/task/count/all"
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(
+      context,
+      "/task/count/all",
+      { method: "GET" },
+      expect.objectContaining({ onResponse: onResponse })
+    );
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const getTaskCount = _getTaskCountFactory(mockHttpRequestFunction, mockTransformFunction);
-    await getTaskCount(context);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context);
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await getTaskCount(context, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
   });
 
-  describe("getTaskCountDefaultTransformFunction", () => {
+  describe("onResponse", () => {
 
-    it("should map correctly", async () => {
+    it("should map count correctly", async () => {
+      const response = new Response(JSON.stringify({ count: 42 }), {
+        status: 200, headers: { "Content-Type": "application/json" }
+      });
 
-      const data: any = {
-        count: 42
-      };
+      const result: number = await onResponse(response);
 
-      mockHttpRequestFunction.mockResolvedValue({ data: data } as HttpResponse);
-
-      const getTaskCount = _getTaskCountFactory(mockHttpRequestFunction, _getTaskCountDefaultTransformFunction);
-      const result: number = await getTaskCount(context);
-
-      expect(result).toEqual(data.count);
+      expect(result).toEqual(42);
     });
   });
 });

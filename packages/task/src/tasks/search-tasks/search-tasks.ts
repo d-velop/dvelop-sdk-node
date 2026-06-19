@@ -1,5 +1,5 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/task-error";
 import {Task} from "../get-task/get-task";
 
 /**
@@ -177,14 +177,21 @@ export interface SearchTasksPage {
 }
 
 /**
- * Factory for the default transform-function provided to the {@link searchTasks}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Factory for the default `onResponse` provided to the {@link searchTasks}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Task
  */
-export function _searchTasksDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, _: DvelopContext, __: SearchTasksParams) => SearchTasksPage {
-  return (response: HttpResponse, context: DvelopContext, params: SearchTasksParams) => {
-    let page : SearchTasksPage = {
-      tasks: response.data.tasks
+export function onResponseFactory(
+  context: DvelopContext,
+  params: SearchTasksParams
+): (response: Response) => Promise<SearchTasksPage> {
+  return async (response: Response) => {
+
+    await ensureSuccessResponse(response);
+    const data: any = await response.json();
+
+    const page: SearchTasksPage = {
+      tasks: data.tasks
     };
 
     page.tasks.forEach(task => {
@@ -202,40 +209,16 @@ export function _searchTasksDefaultTransformFunctionFactory(httpRequestFunction:
       }
     });
 
-    if (response.data._links?.next) {
-      page.getNextPage = async () => {
-        const nextResponse: HttpResponse = await httpRequestFunction(context, {
-          method: "POST",
-          url: response.data._links.next.href,
-          data: params
-        });
-        return _searchTasksDefaultTransformFunctionFactory(httpRequestFunction)(nextResponse, context, params);
-      };
+    if (data._links?.next) {
+      page.getNextPage = async () => dvelopFetch(context, data._links.next.href, {
+        method: "POST",
+        body: JSON.stringify(params)
+      }, {
+        onResponse: onResponseFactory(context, params)
+      });
     }
 
     return page;
-  };
-}
-
-/**
- * Factory for the {@link searchTasks}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link searchTasks}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category Task
- */
-export function _searchTasksFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: SearchTasksParams) => T
-): (context: DvelopContext, params: SearchTasksParams) => Promise<T> {
-
-  return async (context: DvelopContext, params: SearchTasksParams) => {
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "POST",
-      url: "/task/api/tasks/search",
-      data: params
-    });
-
-    return transformFunction(response, context, params);
   };
 }
 
@@ -259,7 +242,17 @@ export function _searchTasksFactory<T>(
  *
  * @category Task
  */
-/* istanbul ignore next */
-export function searchTasks(context: DvelopContext, params: SearchTasksParams): Promise<SearchTasksPage> {
-  return _searchTasksFactory(_defaultHttpRequestFunction, _searchTasksDefaultTransformFunctionFactory(_defaultHttpRequestFunction))(context, params);
+export async function searchTasks(context: DvelopContext, params: SearchTasksParams): Promise<SearchTasksPage>;
+export async function searchTasks<T>(context: DvelopContext, params: SearchTasksParams, options: DvelopOptions<T>): Promise<T>;
+export async function searchTasks<T>(
+  context: DvelopContext,
+  params: SearchTasksParams,
+  options: DvelopOptions<T | SearchTasksPage> = {
+    onResponse: onResponseFactory(context, params)
+  }
+): Promise<T | SearchTasksPage> {
+  return dvelopFetch(context, "/task/api/tasks/search", {
+    method: "POST",
+    body: JSON.stringify(params)
+  }, options);
 }

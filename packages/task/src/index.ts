@@ -23,10 +23,11 @@
 </div>
  * @module task
  */
-export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
-export { TaskValidation, InvalidTaskDefinitionError, TaskError } from "./utils/http";
-export * as internals from "./internal";
+// Utils
+export { DvelopContext, DvelopOptions, dvelopFetch, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
+export { TaskValidation, InvalidTaskDefinitionError, TaskError } from "./utils/task-error";
 
+// Tasks
 export { CreateTaskParams, createTask } from "./tasks/create-task/create-task";
 export { CompleteTaskParams, completeTask } from "./tasks/complete-task/complete-task";
 export { DeleteTaskParams, deleteTask } from "./tasks/delete-task/delete-task";
