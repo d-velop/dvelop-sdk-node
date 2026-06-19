@@ -56,6 +56,7 @@ export interface EventAttributesException {
   type?: string;
   message?: string;
   stacktrace?: string;
+  cause?: EventAttributesException | string;
 }
 
 export enum OtelSeverity {
