@@ -9,7 +9,7 @@ import { LoggingError } from "../error";
 * @category Error
 */
 export class OtelProviderError extends LoggingError {
-   
+
   constructor(message: string, originalError?: Error) {
     super(message, originalError);
     Object.setPrototypeOf(this, OtelProviderError.prototype);
@@ -170,13 +170,18 @@ function mapDbAttribute(event: DvelopLogEvent): { db?: EventAttributesDb } {
 }
 
 function mapExceptionAttribute(event: DvelopLogEvent): { exception?: EventAttributesException } {
+  const mapErrorToAttributes = (error: Error): EventAttributesException => {
+    return {
+      message: error.message,
+      type: error.name,
+      stacktrace: error.stack,
+      cause: error.cause ? (error.cause instanceof Error ? mapErrorToAttributes(error.cause) : JSON.stringify(error.cause)) : undefined
+    };
+  };
+
   if (event.error) {
     return {
-      exception: {
-        message: event.error.message,
-        type: event.error.name,
-        stacktrace: event.error.stack
-      }
+      exception: mapErrorToAttributes(event.error)
     };
   } else {
     return {};
