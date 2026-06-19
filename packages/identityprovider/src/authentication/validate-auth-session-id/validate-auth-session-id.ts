@@ -1,5 +1,5 @@
-import { DvelopContext } from "../../../../core/lib";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/identityprovider-error";
 
 /**
  * User representation according to the [System for Cross-domain Identity Management (SCIM)]{@link https://tools.ietf.org/html/rfc7644}.
@@ -41,31 +41,13 @@ export interface DvelopUser {
 }
 
 /**
- * Default transform-function provided to the {@link validateAuthSessionId}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Default `onResponse` provided to the {@link validateAuthSessionId}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Authentication
  */
-export function _validateAuthSessionIdDefaultTransformFunction(response: HttpResponse, _: DvelopContext): DvelopUser {
-  return response.data;
-}
-
-/**
- * Factory for the {@link validateAuthSessionId}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link validateAuthSessionId}-function. A corresponding transformFunction has to be supplied.
- * @category Authentication
- */
-export function _validateAuthSessionIdFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext) => T,
-): (context: DvelopContext) => Promise<T> {
-  return async (context: DvelopContext) => {
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "GET",
-      url: "/identityprovider",
-      follows: ["validate"]
-    });
-    return transformFunction(response, context);
-  };
+export async function onResponse(response: Response): Promise<DvelopUser> {
+  await ensureSuccessResponse(response);
+  return await response.json();
 }
 
 /**
@@ -83,7 +65,13 @@ export function _validateAuthSessionIdFactory<T>(
  * ```
  * @category Authentication
  */
-/* istanbul ignore next */
-export async function validateAuthSessionId(context: DvelopContext): Promise<DvelopUser> {
-  return await _validateAuthSessionIdFactory(_defaultHttpRequestFunction, _validateAuthSessionIdDefaultTransformFunction)(context);
+export async function validateAuthSessionId(context: DvelopContext): Promise<DvelopUser>;
+export async function validateAuthSessionId<T>(context: DvelopContext, options: DvelopOptions<T>): Promise<T>;
+export async function validateAuthSessionId<T>(
+  context: DvelopContext,
+  options: DvelopOptions<T | DvelopUser> = {
+    onResponse: onResponse
+  }
+): Promise<T | DvelopUser> {
+  return dvelopFetch(context, "/identityprovider/validate", { method: "GET" }, options);
 }
