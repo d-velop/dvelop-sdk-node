@@ -1,7 +1,7 @@
 {
   "name": "@dvelop-sdk/logging",
   "description": "This package contains functions for logging with OpenTelemetry.",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,6 +20,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@dvelop-sdk/core": "^2.2.4"
+    "@dvelop-sdk/core": "^3.0.0"
   }
 }
