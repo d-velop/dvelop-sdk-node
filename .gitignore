@@ -8,3 +8,4 @@ chicken.*
 .vscode
 .idea
 e2e.*
+.claude
