@@ -21,7 +21,7 @@ export async function dvelopFetch<T>(
       "x-dv-request-id": context.requestId ?? generateRequestId(),
       "traceparent": context.traceContext ? buildTraceparentHeader(context.traceContext) : ""
     }
-  }
+  };
 
   const finalInit = deepMergeObjects<Partial<RequestInit>>(defaultInit, init, options?.initOverwrite ?? {});
   const response = await fetch(`${context.systemBaseUri}${path}`, finalInit);
