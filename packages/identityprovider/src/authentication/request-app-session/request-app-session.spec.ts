@@ -1,58 +1,49 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpResponse } from "../../utils/http";
-import { RequestAppSessionParams, _requestAppSessionFactory } from "./request-app-session";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import { RequestAppSessionParams, onResponse, requestAppSession } from "./request-app-session";
 
-describe("requestAppSessionFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("requestAppSession", () => {
 
   let context: DvelopContext;
   let params: RequestAppSessionParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri",
-      requestId: "HiItsMeRequestId"
-    };
-
-    params = {
-      appName: "HiItsMeAppName",
-      callback: "HiItsMeCallBack"
-    };
+    context = { systemBaseUri: "HiItsMeSystemBaseUri", requestId: "HiItsMeRequestId" };
+    params = { appName: "HiItsMeAppName", callback: "HiItsMeCallBack" };
   });
 
-  it("should make correct request", async () => {
-
-    const requestAppSession = _requestAppSessionFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method POST and the correct body", async () => {
     await requestAppSession(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(context, "/identityprovider/appsession", {
       method: "POST",
-      url: "/identityprovider/appsession",
-      data: {
+      body: JSON.stringify({
         appname: params.appName,
         callback: params.callback,
         requestid: context.requestId
-      }
-    });
+      })
+    }, expect.objectContaining({ onResponse: onResponse }));
   });
 
-  it("should pass response to transform and return transform-result", async () => {
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await requestAppSession(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
+  });
 
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
+  describe("onResponse", () => {
 
-    const requestAppSession = _requestAppSessionFactory(mockHttpRequestFunction, mockTransformFunction);
-    await requestAppSession(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+    it("should resolve without a value on success", async () => {
+      const response = new Response(null, { status: 200 });
+      await expect(onResponse(response)).resolves.toBeUndefined();
+    });
   });
 });

@@ -218,8 +218,133 @@ As mentioned we are using [typedoc](https://typedoc.org/) to document code. A do
        ...
     ```
 
-### Commit clean code
-Ideally your commits should include a single valuable contribution that is tested, linted and documented. On every commit ```npm test``` and ```npm lint``` is run by default and your commit gets aborted if one of these fails. Be aware that these commands run against the *real* current state of the project, not the committed one.
+### Git
+This repository uses Git as VSC tool for code. Github is used as the remote repository.
+
+#### What to commit
+
+A commit should contain a _"logical unit of change"_.
+
+> You should make new commits often, based around logical units of change. Over time, commits should tell a story of the history of your repository and how it came to be the way that it currently is.
+
+<div align="right">
+<a href=https://github.com/git-guides/git-commit>github docs</a>
+</div>
+
+Additionally the code should be *complete* after each commit, meaning that the changes made compile with all guidelines formulated and pass the CI (launchable, tested, linted, formatted, etc.)
+
+A cool practical approach  was formulated in by Jason McCreary:
+> I make a commit when:
+> 1. I complete a unit of work.
+> 2. I have changes I may want to undo.
+<div align="right">
+<a href=https://github.com/git-guides/git-commit>When to make a Git commit</a>
+</div>
+
+
+#### Commit messages
+
+Commit messages should be structured according to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
+
+```text
+<type>[optional scope]: <description>
+<blank line>
+[optional body]
+<blank line>
+[optional footer(s)]
+```
+
+- **types**
+
+    Currently the following types are predominantly used:
+
+    | type     | used for |
+    |----------|----------|
+    | feat     | Feature (or milestone for a feature) |
+    | fix      | Bugfix |
+    | ci       | Changes to CI or project behavior. For now this includes types `build`, `test` and `docs`. |
+    | refactor | Code changes without any changes to behavior (except performance). For not this includes type `perf` and `style` |
+    | revert   | Revert a commit |
+
+- **scope**
+
+    Scopes are optional and may be used where they appear appropriate. Remember that this might be redundant with the branch-name as branches get merged and deleted.
+
+- **description**
+
+    A short summary of the code changes.
+    - use the imperative, present tense: "change" not "changed" nor "changes"
+    - don't capitalize the first letter
+    - don't append dot `.`
+
+- **body**
+
+    A longer commit body may be provided after the short description, providing additional contextual information about the code changes (e.g. enumeration of changes or contrast with previous behavior).
+    - use the imperative, present tense: "change" not "changed" nor "changes"
+    - capitalize the first letter
+    - may append dot `.`
+
+- **footer(s)**
+
+    Footers may be added in the form of key-value-pairs. They may be used for
+
+    - [Github Keyword](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/using-keywords-in-issues-and-pull-request)
+
+        `Closes #42`
+
+    - References to commit SHAs
+
+        `Ref: a215868`
+
+    - Breaking Changes
+
+        `BREAKING CHANGE: <description of change>`
+
+
+- **examples**
+
+    ```
+    feat: add salt to noodle water
+    ```
+
+    ```
+    fix: exhaust hood turns of randomly
+
+    Change exhaust hood behavior to not depend on water temperature
+    ```
+
+    ```
+    feat(carbonara): add pancetta as final ingredient
+
+    Add pancetta (italian bacon) to recipe:
+    - is cut into cubes
+    - is cooked (although is commonly eaten raw)
+    - expected to be seasoned with rosemary and sage
+
+    BREAKING CHANGE: the dish is no longer vegetarian
+    ```
+
+    ```
+    revert: commit introduces bug where pasta is not al dente anymore
+
+    Ref: a215868
+    ```
+
+
+#### Where to commit
+
+This repo uses part of the [Git flow branching strategy](https://www.gitkraken.com/learn/git/git-flow).
+
+| branch-name   | details                            | commit directly | merge into
+|---------------|------------------------------------|-----|--------------------|
+| `main`        | most recent release                | no  | -                  |
+| `development` | next release                       | yes | `main`             |
+| `feature/*`   | a feature currently in development | yes | `development`       |
+| `hotfix/*`    | a bug currently fixed              | yes | `main` & `development` |
+
+We consciously omit
+- `release/*`
+- `support/*`
 
 
 ## Pull Request

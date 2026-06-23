@@ -1,5 +1,5 @@
-import { DvelopContext, generateRequestId } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch, generateRequestId } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/task-error";
 
 /**
  * Parameters for the {@link createTask}-function.
@@ -85,57 +85,13 @@ export interface CreateTaskParams {
 }
 
 /**
- * Default transform-function provided to the {@link createTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Default `onResponse` provided to the {@link createTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Task
  */
-export function _createTaskDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: CreateTaskParams): string {
-  return response.headers["location"] || "";
-}
-
-/**
- * Factory for the {@link createTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link createTask}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category Task
- */
-export function _createTaskFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: CreateTaskParams) => T,
-  uuidGeneratorFunction?: () => string
-): (context: DvelopContext, params: CreateTaskParams) => Promise<T> {
-
-  return async (context: DvelopContext, params: CreateTaskParams) => {
-
-    const task: any = { ...params };
-
-    if (uuidGeneratorFunction && !params.correlationKey) {
-      task.correlationKey = uuidGeneratorFunction();
-    }
-
-    if (params.dueDate) {
-      task.dueDate = params.dueDate.toISOString();
-    }
-
-    if (params.reminderDate) {
-      task.reminderDate = params.reminderDate.toISOString();
-    }
-
-    if (params.dmsObject) {
-      task.dmsReferences = [{
-        repoId: params.dmsObject.repositoryId,
-        objectId: params.dmsObject.dmsObjectId
-      }];
-    }
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "POST",
-      url: "/task/tasks",
-      data: task
-    });
-
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<string> {
+  await ensureSuccessResponse(response);
+  return response.headers.get("location") ?? "";
 }
 
 /**
@@ -158,7 +114,39 @@ export function _createTaskFactory<T>(
  *
  * @category Task
  */
-/* istanbul ignore next */
-export function createTask(context: DvelopContext, params: CreateTaskParams): Promise<string> {
-  return _createTaskFactory(_defaultHttpRequestFunction, _createTaskDefaultTransformFunction, generateRequestId)(context, params);
+export async function createTask(context: DvelopContext, params: CreateTaskParams): Promise<string>;
+export async function createTask<T>(context: DvelopContext, params: CreateTaskParams, options: DvelopOptions<T>): Promise<T>;
+export async function createTask<T>(
+  context: DvelopContext,
+  params: CreateTaskParams,
+  options: DvelopOptions<T | string> = {
+    onResponse: onResponse
+  }
+): Promise<T | string> {
+
+  const task: any = { ...params };
+
+  if (!params.correlationKey) {
+    task.correlationKey = generateRequestId();
+  }
+
+  if (params.dueDate) {
+    task.dueDate = params.dueDate.toISOString();
+  }
+
+  if (params.reminderDate) {
+    task.reminderDate = params.reminderDate.toISOString();
+  }
+
+  if (params.dmsObject) {
+    task.dmsReferences = [{
+      repoId: params.dmsObject.repositoryId,
+      objectId: params.dmsObject.dmsObjectId
+    }];
+  }
+
+  return dvelopFetch(context, "/task/tasks", {
+    method: "POST",
+    body: JSON.stringify(task)
+  }, options);
 }

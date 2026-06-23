@@ -1,88 +1,67 @@
-import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../utils/http";
-import { GetRepositoryParams, Repository, _getRepositoryDefaultTransformFunction, _getRepositoryFactory } from "./get-repository";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import {
+  GetRepositoryParams,
+  Repository,
+  onResponse,
+  getRepository,
+} from "./get-repository";
 
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-describe("getRepositoryFactory", () => {
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+describe("getRepository", () => {
 
   let context: DvelopContext;
   let params: GetRepositoryParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
-    params = {
-      repositoryId: "HiItsMeRepositoryId"
-    };
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
+    params = { repositoryId: "HiItsMeRepositoryId" };
   });
 
-  it("should make correct request", async () => {
-
-    const getRepository = _getRepositoryFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method GET", async () => {
     await getRepository(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "GET",
-      url: "/dms",
-      follows: ["repo"],
-      templates: { "repositoryid": params.repositoryId }
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(
+      context,
+      `/dms/r/${params.repositoryId}`,
+      { method: "GET" },
+      expect.objectContaining({ onResponse: onResponse })
+    );
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const getRepository = _getRepositoryFactory(mockHttpRequestFunction, mockTransformFunction);
-    await getRepository(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await getRepository(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
   });
 
-  describe("getRepositoryDefaultTransformFunction", () => {
+  describe("_getRepositoryDefaultTransformFunction", () => {
 
-    it("should map correctly", async () => {
+    function jsonResponse(data: any): Response {
+      return new Response(JSON.stringify(data), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
 
-      const data: any = {
-        "_links": {
-          "HiItsMeLink": {
-            "href": "HiItsMeHref",
-            "templated": true
-          },
-          "source": {
-            "href": "HiItsMeSource",
-          }
-        },
-        "id": "HiItsMeRepoId",
-        "name": "HiItsMeName",
-        "supportsFulltextSearch": true,
-        "serverId": "HiItsMeServerId",
-        "available": true,
-        "isDefault": false,
-        "version": "HiItsMeVersion"
+    it("should map repository correctly", async () => {
+      const data = {
+        _links: { source: { href: "HiItsMeSource" } },
+        id: "HiItsMeRepoId",
+        name: "HiItsMeName"
       };
 
-      mockHttpRequestFunction.mockResolvedValue({ data: data } as HttpResponse);
+      const result: Repository = await onResponse(jsonResponse(data));
 
-      const getRepository = _getRepositoryFactory(mockHttpRequestFunction, _getRepositoryDefaultTransformFunction);
-      const result: Repository = await getRepository(context, params);
-
-      expect(result).toHaveProperty("repositoryId", data.id);
-      expect(result).toHaveProperty("name", data.name);
-      expect(result).toHaveProperty("sourceId", data._links.source.href);
+      expect(result).toEqual({
+        repositoryId: "HiItsMeRepoId",
+        name: "HiItsMeName",
+        sourceId: "HiItsMeSource"
+      });
     });
   });
 });

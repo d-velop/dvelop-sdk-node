@@ -1,6 +1,6 @@
-import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
-import { storeFileTemporarily, StoreFileTemporarilyParams } from "../store-file-temporarily/store-file-temporarily";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
+import { storeFileTemporarily } from "../store-file-temporarily/store-file-temporarily";
 
 /**
  * Parameters for the {@link updateDmsObject}-function.
@@ -39,66 +39,12 @@ export interface UpdateDmsObjectParams {
 }
 
 /**
- * Default transform-function provided to the {@link updateDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Default `onResponse` provided to the {@link updateDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
-export function _updateDmsObjectDefaultTransformFunction(_: HttpResponse, __: DvelopContext, ___: UpdateDmsObjectParams): void { } // no error indicates success. Returning void
-
-/**
- * Default storeFile-function provided to the {@link updateDmsObject}-function. This will get called when content is provided. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @internal
- * @category DmsObject
- */
-export async function updateDmsObjectDefaultStoreFileFunction(context: DvelopContext, params: UpdateDmsObjectParams): Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }> {
-  const uri: string = await storeFileTemporarily(context, params as StoreFileTemporarilyParams);
-  return {
-    setAs: "contentLocationUri",
-    uri: uri
-  };
-}
-
-/**
- * Factory for the {@link updateDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link updateDmsObject}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category DmsObject
- */
-export function _updateDmsObjectFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: UpdateDmsObjectParams) => T,
-  storeFileFunction: (context: DvelopContext, params: UpdateDmsObjectParams) => Promise<{ setAs: "contentUri" | "contentLocationUri", uri: string }>
-): (context: DvelopContext, params: UpdateDmsObjectParams) => Promise<T> {
-  return async (context: DvelopContext, params: UpdateDmsObjectParams) => {
-
-    if (!params.contentUri && !params.contentLocationUri && params.content) {
-      const storedFileInfo: { setAs: "contentUri" | "contentLocationUri", uri: string } = await storeFileFunction(context, params);
-      params[storedFileInfo.setAs] = storedFileInfo.uri;
-    }
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "PUT",
-      url: "/dms",
-      follows: ["repo", "dmsobjectwithmapping", "update"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "sourceid": params.sourceId,
-        "dmsobjectid": params.dmsObjectId
-      },
-      data: {
-        "sourceId": params.sourceId,
-        "alterationText": params.alterationText,
-        "sourceCategory": params.categoryId,
-        "sourceProperties": {
-          "properties": params.properties
-        },
-        "fileName": params.fileName,
-        "contentLocationUri": params.contentLocationUri,
-        "contentUri": params.contentUri
-      }
-    });
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
@@ -132,7 +78,32 @@ export function _updateDmsObjectFactory<T>(
  *
  * @category DmsObject
  */
-/* istanbul ignore next */
-export function updateDmsObject(context: DvelopContext, params: UpdateDmsObjectParams): Promise<void> {
-  return _updateDmsObjectFactory<void>(_defaultHttpRequestFunction, _updateDmsObjectDefaultTransformFunction, updateDmsObjectDefaultStoreFileFunction)(context, params);
+export async function updateDmsObject(context: DvelopContext, params: UpdateDmsObjectParams): Promise<void>;
+export async function updateDmsObject<T>(context: DvelopContext, params: UpdateDmsObjectParams, options: DvelopOptions<T>): Promise<T>;
+export async function updateDmsObject<T>(
+  context: DvelopContext,
+  params: UpdateDmsObjectParams,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+  if (!params.contentUri && !params.contentLocationUri && params.content) {
+    params.contentLocationUri = await storeFileTemporarily(context, {
+      repositoryId: params.repositoryId,
+      content: params.content
+    });
+  }
+
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      sourceId: params.sourceId,
+      alterationText: params.alterationText,
+      sourceCategory: params.categoryId,
+      sourceProperties: { "properties": params.properties },
+      fileName: params.fileName,
+      contentLocationUri: params.contentLocationUri,
+      contentUri: params.contentUri
+    })
+  }, options);
 }

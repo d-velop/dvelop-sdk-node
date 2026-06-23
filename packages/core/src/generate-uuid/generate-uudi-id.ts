@@ -1,5 +1,3 @@
-import { v4 } from "uuid";
-
 /**
  * Generate a unique Version 4 UUID.
  *
@@ -12,7 +10,7 @@ import { v4 } from "uuid";
  * @category Core
  */
 export function generateUuid(): string {
-  return v4();
+  return crypto.randomUUID();
 }
 
 /**

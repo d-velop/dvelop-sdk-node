@@ -1,5 +1,5 @@
-import { _defaultHttpRequestFunction, HttpConfig, HttpResponse } from "../../utils/http";
-import { DvelopContext } from "../../index";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
 
 /**
  * Parameters for the {@link createDmsObjectNote}-function.
@@ -21,33 +21,8 @@ export interface CreateDmsObjectNoteParams {
  * @internal
  * @category DmsObject
  */
-export function _createDmsObjectNoteDefaultTransformFunction(_: HttpResponse<any>, __: DvelopContext, ___: CreateDmsObjectNoteParams): void { } // no error indicates sucess
-
-/**
- * Factory for the {@link createDmsObjectNote}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link createDmsObjectNote}-function. A corresponding transformFunction has to be supplied.
- * @category DmsObject
- */
-export function _createDmsObjectNoteFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: CreateDmsObjectNoteParams) => T
-): (context: DvelopContext, params: CreateDmsObjectNoteParams) => Promise<T> {
-  return async (context: DvelopContext, params: CreateDmsObjectNoteParams) => {
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "POST",
-      url: "/dms",
-      follows: ["repo", "dmsobjectwithmapping", "notes"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "dmsobjectid": params.dmsObjectId
-      },
-      data: {
-        "text": params.noteText
-      }
-    });
-
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
@@ -68,7 +43,17 @@ export function _createDmsObjectNoteFactory<T>(
  *
  * @category DmsObject
  */
-/* istanbul ignore next */
-export async function createDmsObjectNote(context: DvelopContext, params: CreateDmsObjectNoteParams): Promise<void> {
-  return await _createDmsObjectNoteFactory(_defaultHttpRequestFunction, _createDmsObjectNoteDefaultTransformFunction)(context, params);
+export async function createDmsObjectNote(context: DvelopContext, params: CreateDmsObjectNoteParams): Promise<void>;
+export async function createDmsObjectNote<T>(context: DvelopContext, params: CreateDmsObjectNoteParams, options: DvelopOptions<T>): Promise<T>;
+export async function createDmsObjectNote<T>(
+  context: DvelopContext,
+  params: CreateDmsObjectNoteParams,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}/n`, {
+    method: "POST",
+    body: JSON.stringify({ text: params.noteText })
+  }, options);
 }

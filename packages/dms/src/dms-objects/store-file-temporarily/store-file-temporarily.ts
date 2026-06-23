@@ -1,5 +1,5 @@
-import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
 
 /**
  * Parameters for the {@link storeFileTemporarily}-function.
@@ -17,31 +17,9 @@ export interface StoreFileTemporarilyParams {
  * @internal
  * @category DmsObject
  */
-export function _storeFileTemporarilyDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: StoreFileTemporarilyParams): string {
-  return response.headers["location"] || "";
-}
-
-/**
- * Factory for the {@link storeFileFunction}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link storeFileFunction}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category DmsObject
- */
-export function _storeFileTemporarilyFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: StoreFileTemporarilyParams) => T
-): (context: DvelopContext, params: StoreFileTemporarilyParams) => Promise<T> {
-  return async (context: DvelopContext, params: StoreFileTemporarilyParams) => {
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "POST",
-      url: "/dms",
-      follows: ["repo", "chunkedupload"],
-      templates: { "repositoryid": params.repositoryId },
-      headers: { "Content-Type": "application/octet-stream" },
-      data: params.content
-    });
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<string> {
+  await ensureSuccessResponse(response);
+  return response.headers.get("location") ?? "";
 }
 
 /**
@@ -67,7 +45,18 @@ export function _storeFileTemporarilyFactory<T>(
  *
  * @category DmsObject
  */
-/* istanbul ignore next */
-export async function storeFileTemporarily(context: DvelopContext, params: StoreFileTemporarilyParams): Promise<string> {
-  return _storeFileTemporarilyFactory(_defaultHttpRequestFunction, _storeFileTemporarilyDefaultTransformFunction)(context, params);
+export async function storeFileTemporarily(context: DvelopContext, params: StoreFileTemporarilyParams): Promise<string>;
+export async function storeFileTemporarily<T>(context: DvelopContext, params: StoreFileTemporarilyParams, options: DvelopOptions<T>): Promise<T>;
+export async function storeFileTemporarily<T>(
+  context: DvelopContext,
+  params: StoreFileTemporarilyParams,
+  options: DvelopOptions<T | string> = {
+    onResponse: onResponse
+  }
+): Promise<T | string> {
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/blob/chunk`, {
+    method: "POST",
+    headers: { "Content-Type": "application/octet-stream" },
+    body: params.content
+  }, options);
 }

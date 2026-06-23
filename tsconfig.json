@@ -1,32 +1,16 @@
 {
-  /*  References to all modules so that the whole repo can be compiled with tsc -b
+  /*  References to all build configs so that the whole repo can be compiled with tsc -b
     cf. https://www.typescriptlang.org/docs/handbook/project-references.html#overall-structure */
   "files": [],
   "include": [],
   "references": [
-    {
-      "path": "./packages/core",
-    },
-    {
-      "path": "./packages/app-router",
-    },
-    {
-      "path": "./packages/identityprovider"
-    },
-    {
-      "path": "./packages/task"
-    },
-    {
-      "path": "./packages/dms"
-    },
-    {
-      "path": "./packages/business-objects"
-    },
-    {
-      "path": "./packages/express-utils"
-    },
-    {
-      "path": "./packages/logging"
-    }
+    { "path": "./packages/core/tsconfig.build.json" },
+    { "path": "./packages/app-router/tsconfig.build.json" },
+    { "path": "./packages/identityprovider/tsconfig.build.json" },
+    { "path": "./packages/task/tsconfig.build.json" },
+    { "path": "./packages/dms/tsconfig.build.json" },
+    { "path": "./packages/business-objects/tsconfig.build.json" },
+    { "path": "./packages/express-utils/tsconfig.build.json" },
+    { "path": "./packages/logging/tsconfig.build.json" }
   ]
 }

@@ -1,5 +1,5 @@
-import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
 
 /**
  * Parameters for the {@link getRepository}-function.
@@ -28,33 +28,13 @@ export interface Repository {
  * @internal
  * @category Repository
  */
-export function _getRepositoryDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: GetRepositoryParams): Repository {
-  const data: any = response.data;
+export async function onResponse(response: Response): Promise<Repository> {
+  await ensureSuccessResponse(response);
+  const data: any = await response.json();
   return {
     repositoryId: data.id,
     name: data.name,
     sourceId: data._links["source"].href
-  };
-}
-
-/**
- * Factory for the {@link getRepository}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link getRepository}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category Repository
- */
-export function _getRepositoryFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetRepositoryParams) => T,
-): (context: DvelopContext, params: GetRepositoryParams) => Promise<T> {
-  return async (context: DvelopContext, params: GetRepositoryParams) => {
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "GET",
-      url: "/dms",
-      follows: ["repo"],
-      templates: { "repositoryid": params.repositoryId }
-    });
-    return transformFunction(response, context, params);
   };
 }
 
@@ -71,12 +51,19 @@ export function _getRepositoryFactory<T>(
  *   repositoryId: "qnydFmqHuVo",
  * });
  *
- * console.log(repo.name); // Booty Bay Documents
+ * console.log(repo.name);
  * ```
  *
  * @category Repository
  */
-/* istanbul ignore next */
-export async function getRepository(context: DvelopContext, params: GetRepositoryParams): Promise<Repository> {
-  return _getRepositoryFactory(_defaultHttpRequestFunction, _getRepositoryDefaultTransformFunction)(context, params);
+export async function getRepository(context: DvelopContext, params: GetRepositoryParams): Promise<Repository>;
+export async function getRepository<T>(context: DvelopContext, params: GetRepositoryParams, options: DvelopOptions<T>): Promise<T>;
+export async function getRepository<T>(
+  context: DvelopContext,
+  params: GetRepositoryParams,
+  options: DvelopOptions<T | Repository> = {
+    onResponse: onResponse
+  }
+): Promise<T | Repository> {
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}`, { method: "GET" }, options);
 }

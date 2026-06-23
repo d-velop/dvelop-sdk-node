@@ -1,5 +1,5 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/business-objects-error";
 
 /**
  * Parameters for the {@link getBoEntities}-function.
@@ -17,58 +17,48 @@ export interface GetBoEntitiesParams {
  * @category Entity
  */
 export interface GetBoEntitiesResultPage<E = any> {
-  /** Array of entitiess found */
-  value: E[]
+  /** Array of entities found */
+  value: E[];
   /** Function that returns the next page. Undefined if there is none. */
   getNextPage?: () => Promise<GetBoEntitiesResultPage<E>>;
 }
 
 /**
- * Default transform-function provided to the {@link getBoEntities}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @template E Return type
+ * Builds a {@link GetBoEntitiesResultPage} from a response and wires up paging via the
+ * OData `@odata.nextLink`. The `context` is captured so that `getNextPage` can issue a
+ * follow-up request.
  * @internal
  * @category Entity
  */
-export function _getBoEntitiesDefaultTransformFunctionFactory<E>(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetBoEntitiesResultPage<E> {
-  return <E>(response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => {
+export async function buildResultPage<E = any>(response: Response, context: DvelopContext): Promise<GetBoEntitiesResultPage<E>> {
 
-    let result: GetBoEntitiesResultPage<E> = {
-      value: response.data.value
-    };
+  await ensureSuccessResponse(response);
+  const data: any = await response.json();
 
-    if (response.data["@odata.nextLink"]) {
-      result.getNextPage = async () => {
-        const nextResponse: HttpResponse = await httpRequestFunction(context, {
-          method: "GET",
-          url: response.data["@odata.nextLink"]
-        });
-        return _getBoEntitiesDefaultTransformFunctionFactory<E>(httpRequestFunction)(nextResponse, context, params);
-      };
-    }
-
-    return result;
+  const result: GetBoEntitiesResultPage<E> = {
+    value: data.value
   };
+
+  const nextLink: string | undefined = data["@odata.nextLink"];
+  if (nextLink) {
+    const systemBaseUri: string = context.systemBaseUri ?? "";
+    const nextPath: string = systemBaseUri && nextLink.startsWith(systemBaseUri) ? nextLink.slice(systemBaseUri.length) : nextLink;
+    result.getNextPage = () => dvelopFetch(context, nextPath, { method: "GET" }, {
+      onResponse: (nextResponse: Response) => buildResultPage<E>(nextResponse, context)
+    });
+  }
+
+  return result;
 }
 
 /**
- * Factory for {@link getBoEntities}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @template E Return type of the {@link getBoEntities}-function. A corresponding transformFunction has to be supplied.
+ * Default `onResponse` provided to the {@link getBoEntities}-function. Captures the `context`
+ * so that paging is possible. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Entity
  */
-export function _getBoEntitiesFactory<E>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetBoEntitiesParams) => GetBoEntitiesResultPage<E>
-): (context: DvelopContext, params: GetBoEntitiesParams) => Promise<GetBoEntitiesResultPage<E>> {
-  return async (context: DvelopContext, params: GetBoEntitiesParams) => {
-
-    const response = await httpRequestFunction(context, {
-      method: "GET",
-      url: `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}`
-    });
-
-    return transformFunction(response, context, params);
-  };
+export function defaultOnResponseFactory<E = any>(context: DvelopContext): (response: Response) => Promise<GetBoEntitiesResultPage<E>> {
+  return (response: Response) => buildResultPage<E>(response, context);
 }
 
 /**
@@ -79,57 +69,59 @@ export function _getBoEntitiesFactory<E>(
  * ```typescript
  * import { getBoEntities } from "@dvelop-sdk/business-objects";
  *
- * const resultPage: GetEntitiesResultPage = await getBoEntities({
+ * const resultPage: GetBoEntitiesResultPage = await getBoEntities({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees"
  * });
- * 
- * let employees = await resultPage.value;
+ *
+ * let employees = resultPage.value;
  *
  * // Use this for paging
- * while (resultPage.getNextPage) {
- *   const nextPage: GetBoEntitiesResultPage = await resultPage.getNextPage();
- *   employees = employees.concat(nextPage.value);
+ * let page = resultPage;
+ * while (page.getNextPage) {
+ *   page = await page.getNextPage();
+ *   employees = employees.concat(page.value);
  * }
  * ```
  * ---
  * You can also use generics:
- *  * @example
+ * @example
  * ```typescript
  * import { getBoEntities } from "@dvelop-sdk/business-objects";
  *
- *  interface Employee {
+ * interface Employee {
  *   employeeId: string;
  *   firstName: string;
  *   lastName: string;
  *   jobTitel: string;
  * }
- * 
- * const resultPage: GetBoEntitiesResultPage<Employee> = await getBoEntities({
+ *
+ * const resultPage: GetBoEntitiesResultPage<Employee> = await getBoEntities<Employee>({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * }, {
  *   modelName: "HOSPITALBASEDATA",
  *   pluralEntityName: "employees"
  * });
- * 
- * let employees: Employee[] = await resultPage.value;
- * 
- * // Use this for paging
- * while (resultPage.getNextPage) {
- *   const nextPage: GetBoEntitiesResultPage<Employee> = await resultPage.getNextPage();
- *   employees = employees.concat(nextPage.value);
- * }
- * 
- * employees.forEach(e => console.log(e.lastName));
+ *
+ * resultPage.value.forEach(e => console.log(e.lastName));
  * // Dorian
  * // Turk
  * ```
+ *
+ * @category Entity
  */
-/* istanbul ignore next */
-export async function getBoEntities<E = any>(context: DvelopContext, params: GetBoEntitiesParams): Promise<GetBoEntitiesResultPage<E>> {
-  return await _getBoEntitiesFactory<E>(_defaultHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(_defaultHttpRequestFunction))(context, params);
+export async function getBoEntities<E = any>(context: DvelopContext, params: GetBoEntitiesParams): Promise<GetBoEntitiesResultPage<E>>;
+export async function getBoEntities<T>(context: DvelopContext, params: GetBoEntitiesParams, options: DvelopOptions<T>): Promise<T>;
+export async function getBoEntities<E = any>(
+  context: DvelopContext,
+  params: GetBoEntitiesParams,
+  options: DvelopOptions<GetBoEntitiesResultPage<E>> = {
+    onResponse: defaultOnResponseFactory<E>(context)
+  }
+): Promise<GetBoEntitiesResultPage<E>> {
+  return dvelopFetch(context, `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}`, { method: "GET" }, options);
 }
