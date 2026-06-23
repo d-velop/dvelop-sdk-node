@@ -1,28 +1,40 @@
-import { DvelopContext, DvelopHttpResponse as HttpResponse } from "@dvelop-sdk/core";
-import { DeleteBoEntityParams, _deleteBoEntityFactory } from "./delete-entity";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import { DeleteBoEntityParams, deleteBoEntity, onResponse } from "./delete-entity";
+import { BusinessObjectsError } from "../../utils/business-objects-error";
 
-describe("deleteBoEntityFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("deleteBoEntity", () => {
 
   let context: DvelopContext;
   let params: DeleteBoEntityParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
+    context = { systemBaseUri: "someBaseUri" };
     params = {
       modelName: "HOSPITALBASEDATA",
       pluralEntityName: "employees",
       keyPropertyType: "string",
-      keyPropertyValue: "`1"
+      keyPropertyValue: "1"
     };
+  });
+
+  it("should call dvelopFetch with method DELETE", async () => {
+    await deleteBoEntity(context, params);
+
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(
+      context,
+      "/businessobjects/custom/HOSPITALBASEDATA/employees('1')",
+      { method: "DELETE" },
+      expect.objectContaining({ onResponse: onResponse })
+    );
   });
 
   [
@@ -30,33 +42,30 @@ describe("deleteBoEntityFactory", () => {
     { keyPropertyValue: 2, keyPropertyType: "number", expectedUrl: "/businessobjects/custom/HOSPITALBASEDATA/employees(2)" },
     { keyPropertyValue: "HiItsMeGuid", keyPropertyType: "guid", expectedUrl: "/businessobjects/custom/HOSPITALBASEDATA/employees(HiItsMeGuid)" }
   ].forEach(testCase => {
-    it("should make correct request", async () => {
-
-      params.keyPropertyValue = testCase.keyPropertyValue;
-      params.keyPropertyType = testCase.keyPropertyType as "string" | "number" | "guid";
-
-      const deleteBoEntity = _deleteBoEntityFactory(mockHttpRequestFunction, mockTransformFunction);
-      await deleteBoEntity(context, params);
-
-      expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-      expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-        method: "DELETE",
-        url: testCase.expectedUrl
+    it(`should build url for keyPropertyType ${testCase.keyPropertyType}`, async () => {
+      await deleteBoEntity(context, {
+        ...params,
+        keyPropertyType: testCase.keyPropertyType as "string" | "number" | "guid",
+        keyPropertyValue: testCase.keyPropertyValue
       });
+      expect(mockDvelopFetch.mock.calls[0][1]).toEqual(testCase.expectedUrl);
     });
   });
 
-  it("should pass response to transform and return transform-result", async () => {
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await deleteBoEntity(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
+  });
 
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
+  describe("onResponse", () => {
 
-    const deleteBoEntity = _deleteBoEntityFactory(mockHttpRequestFunction, mockTransformFunction);
-    await deleteBoEntity(context, params);
+    it("should resolve on a successful response", async () => {
+      await expect(onResponse(new Response(null, { status: 204 }))).resolves.toBeUndefined();
+    });
 
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+    it("should throw on a failed response", async () => {
+      await expect(onResponse(new Response(null, { status: 500 }))).rejects.toBeInstanceOf(BusinessObjectsError);
+    });
   });
 });

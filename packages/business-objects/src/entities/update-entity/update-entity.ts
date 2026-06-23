@@ -1,5 +1,5 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/business-objects-error";
 
 /**
  * Parameters for the {@link updateBoEntity}-function.
@@ -20,32 +20,12 @@ export interface UpdateBoEntityParams<E = any> {
 }
 
 /**
- * Factory for {@link updateBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @template E Return type of the {@link updateBoEntity}-function. A corresponding transformFunction has to be supplied.
+ * Default `onResponse` provided to the {@link updateBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Entity
  */
-export function _updateBoEntityFactory<E, R>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: UpdateBoEntityParams<E>) => R
-): (context: DvelopContext, params: UpdateBoEntityParams) => Promise<R> {
-  return async (context: DvelopContext, params: UpdateBoEntityParams<E>) => {
-
-    let urlEntityKeyValue;
-    if (params.keyPropertyType === "number" || params.keyPropertyType === "guid") {
-      urlEntityKeyValue = params.keyPropertyValue;
-    } else {
-      urlEntityKeyValue = `'${params.keyPropertyValue}'`;
-    }
-
-    const response = await httpRequestFunction(context, {
-      method: "PATCH",
-      url: `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}(${urlEntityKeyValue})`,
-      data: params.entityChange
-    });
-
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
@@ -95,8 +75,28 @@ export function _updateBoEntityFactory<E, R>(
  *   }
  * });
  * ```
+ *
+ * @category Entity
  */
-/* istanbul ignore next */
-export async function updateBoEntity<E = any>(context: DvelopContext, params: UpdateBoEntityParams<E>): Promise<void> {
-  return await _updateBoEntityFactory<E, void>(_defaultHttpRequestFunction, () => { })(context, params);
+export async function updateBoEntity<E = any>(context: DvelopContext, params: UpdateBoEntityParams<E>): Promise<void>;
+export async function updateBoEntity<T, E = any>(context: DvelopContext, params: UpdateBoEntityParams<E>, options: DvelopOptions<T>): Promise<T>;
+export async function updateBoEntity<T, E = any>(
+  context: DvelopContext,
+  params: UpdateBoEntityParams<E>,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+
+  let urlEntityKeyValue: string | number;
+  if (params.keyPropertyType === "number" || params.keyPropertyType === "guid") {
+    urlEntityKeyValue = params.keyPropertyValue;
+  } else {
+    urlEntityKeyValue = `'${params.keyPropertyValue}'`;
+  }
+
+  return dvelopFetch(context, `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}(${urlEntityKeyValue})`, {
+    method: "PATCH",
+    body: JSON.stringify(params.entityChange)
+  }, options);
 }

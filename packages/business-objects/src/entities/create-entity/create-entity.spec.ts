@@ -1,58 +1,59 @@
-import { DvelopContext, DvelopHttpResponse as HttpResponse } from "@dvelop-sdk/core";
-import { CreateBoEntityParams, _createBoEntityFactory } from "./create-entity";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import { CreateBoEntityParams, createBoEntity, onResponse } from "./create-entity";
+import { BusinessObjectsError } from "../../utils/business-objects-error";
 
-describe("createBoEntityFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("createBoEntity", () => {
 
   let context: DvelopContext;
   let params: CreateBoEntityParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
-    params = { 
-      modelName: "HOSPITALBASEDATA", 
-      pluralEntityName: "employees", 
+    context = { systemBaseUri: "someBaseUri" };
+    params = {
+      modelName: "HOSPITALBASEDATA",
+      pluralEntityName: "employees",
       entity: {
-        "employeeid": "1",
-        "firstName": "John",
-        "lastName": "Dorian",
-        "jobTitel": "senior physician"
+        employeeId: "1",
+        firstName: "John Micheal",
+        lastName: "Dorian"
       }
     };
   });
 
-  it("should make correct request", async () => {
-
-    const createBoEntity = _createBoEntityFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method POST and serialized entity", async () => {
     await createBoEntity(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "POST",
-      url: `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}`,
-      data: params.entity
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    const [calledContext, calledUrl, calledInit, calledOptions] = mockDvelopFetch.mock.calls[0];
+    expect(calledContext).toBe(context);
+    expect(calledUrl).toEqual("/businessobjects/custom/HOSPITALBASEDATA/employees");
+    expect(calledInit).toMatchObject({ method: "POST" });
+    expect(JSON.parse(calledInit!.body as string)).toEqual(params.entity);
+    expect(calledOptions).toMatchObject({ onResponse: onResponse });
   });
 
-  it("should pass response to transform and return transform-result", async () => {
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await createBoEntity(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
+  });
 
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
+  describe("onResponse", () => {
 
-    const createBoEntity = _createBoEntityFactory(mockHttpRequestFunction, mockTransformFunction);
-    await createBoEntity(context, params);
+    it("should resolve on a successful response", async () => {
+      await expect(onResponse(new Response(null, { status: 201 }))).resolves.toBeUndefined();
+    });
 
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+    it("should throw on a failed response", async () => {
+      await expect(onResponse(new Response(null, { status: 500 }))).rejects.toBeInstanceOf(BusinessObjectsError);
+    });
   });
 });

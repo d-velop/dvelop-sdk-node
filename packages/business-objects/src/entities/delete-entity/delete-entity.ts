@@ -1,5 +1,5 @@
-import { DvelopContext, DvelopHttpResponse as HttpResponse } from "@dvelop-sdk/core";
-import { HttpConfig, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/business-objects-error";
 
 /**
  * Parameters for the {@link deleteBoEntity}-function.
@@ -17,32 +17,12 @@ export interface DeleteBoEntityParams {
 }
 
 /**
- * Factory for {@link deleteBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @template E Return type of the {@link deleteBoEntity}-function. A corresponding transformFunction has to be supplied.
+ * Default `onResponse` provided to the {@link deleteBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Entity
  */
-export function _deleteBoEntityFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: DeleteBoEntityParams) => T
-): (context: DvelopContext, params: DeleteBoEntityParams) => Promise<T> {
-  return async (context: DvelopContext, params: DeleteBoEntityParams) => {
-
-    let urlEntityKeyValue;
-    if (params.keyPropertyType === "number" || params.keyPropertyType === "guid") {
-      urlEntityKeyValue = params.keyPropertyValue;
-    } else {
-      urlEntityKeyValue = `'${params.keyPropertyValue}'`;
-    }
-
-
-    const response = await httpRequestFunction(context, {
-      method: "DELETE",
-      url: `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}(${urlEntityKeyValue})`
-    });
-
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
@@ -62,21 +42,14 @@ export function _deleteBoEntityFactory<T>(
  *   keyPropertyValue: 1
  * });
  * ```
-  * ---
- * You can also write your own function, for example to get a notification, if the entity requested for deletion doesn't exist.
+ * ---
+ * You can supply your own `onResponse` to react to the raw response, for example to get a
+ * notification if the entity requested for deletion didn't exist.
  * @example
  * ```typescript
  * import { deleteBoEntity } from "@dvelop-sdk/business-objects";
  *
- * const myDeleteFunction = _deleteBoEntityFactory(_defaultHttpRequestFunction, (response: HttpResponse) => {
- *   if(response.status === 204) {
- *     return "Entity does not exist.";
- *   } else {
- *     return "Entity was deleted.";
- *   }
- * });
- *
- * const responseMessage: string = await myDeleteFunction({
+ * const responseMessage: string = await deleteBoEntity({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
@@ -84,12 +57,31 @@ export function _deleteBoEntityFactory<T>(
  *   pluralEntityName: "employees",
  *   keyPropertyType: "number", //"string", "number" or "guid"
  *   keyPropertyValue: 3
+ * }, {
+ *   onResponse: (response) => response.status === 204 ? "Entity does not exist." : "Entity was deleted."
  * });
  *
  * console.log(responseMessage); // Entity does not exist.
  * ```
+ *
+ * @category Entity
  */
-/* istanbul ignore next */
-export async function deleteBoEntity(context: DvelopContext, params: DeleteBoEntityParams): Promise<void> {
-  return await _deleteBoEntityFactory(_defaultHttpRequestFunction, () => { })(context, params);
+export async function deleteBoEntity(context: DvelopContext, params: DeleteBoEntityParams): Promise<void>;
+export async function deleteBoEntity<T>(context: DvelopContext, params: DeleteBoEntityParams, options: DvelopOptions<T>): Promise<T>;
+export async function deleteBoEntity<T>(
+  context: DvelopContext,
+  params: DeleteBoEntityParams,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+
+  let urlEntityKeyValue: string | number;
+  if (params.keyPropertyType === "number" || params.keyPropertyType === "guid") {
+    urlEntityKeyValue = params.keyPropertyValue;
+  } else {
+    urlEntityKeyValue = `'${params.keyPropertyValue}'`;
+  }
+
+  return dvelopFetch(context, `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}(${urlEntityKeyValue})`, { method: "DELETE" }, options);
 }
