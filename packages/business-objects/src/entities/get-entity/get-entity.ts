@@ -1,5 +1,5 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/business-objects-error";
 
 /**
  * Parameters for the {@link getBoEntity}-function.
@@ -17,45 +17,17 @@ export interface GetBoEntityParams {
 }
 
 /**
- * Default transform-function provided to the {@link getBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @template E Return type
+ * Default `onResponse` provided to the {@link getBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Entity
  */
-export function _getBoEntityDefaultTransformFunction<E = any>(response: HttpResponse, _: DvelopContext, __: GetBoEntityParams): E {
-  const entity: any = response.data;
-  if (typeof entity === "object" && entity["@odata.context"]) {
+export async function onResponse(response: Response): Promise<any> {
+  await ensureSuccessResponse(response);
+  const entity: any = await response.json();
+  if (entity && typeof entity === "object" && entity["@odata.context"]) {
     delete entity["@odata.context"];
   }
-  return response.data as E;
-}
-
-/**
- * Factory for {@link getBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @template E Return type of the {@link getBoEntity}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category Entity
- */
-export function _getBoEntityFactory<E>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetBoEntityParams) => E
-): (context: DvelopContext, params: GetBoEntityParams) => Promise<E> {
-  return async (context: DvelopContext, params: GetBoEntityParams) => {
-
-    let urlEntityKeyValue;
-    if (params.keyPropertyType === "number" || params.keyPropertyType === "guid") {
-      urlEntityKeyValue = params.keyPropertyValue;
-    } else {
-      urlEntityKeyValue = `'${params.keyPropertyValue}'`;
-    }
-
-    const response = await httpRequestFunction(context, {
-      method: "GET",
-      url: `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}(${urlEntityKeyValue})`
-    });
-
-    return transformFunction(response, context, params);
-  };
+  return entity;
 }
 
 /**
@@ -102,8 +74,25 @@ export function _getBoEntityFactory<E>(
  *
  * console.log(jd.lastName); // Dorian
  * ```
+ *
+ * @category Entity
  */
-/* istanbul ignore next */
-export async function getBoEntity<E = any>(context: DvelopContext, params: GetBoEntityParams): Promise<E> {
-  return await _getBoEntityFactory<E>(_defaultHttpRequestFunction, _getBoEntityDefaultTransformFunction)(context, params);
+export async function getBoEntity<E = any>(context: DvelopContext, params: GetBoEntityParams): Promise<E>;
+export async function getBoEntity<T>(context: DvelopContext, params: GetBoEntityParams, options: DvelopOptions<T>): Promise<T>;
+export async function getBoEntity<E = any>(
+  context: DvelopContext,
+  params: GetBoEntityParams,
+  options: DvelopOptions<E> = {
+    onResponse: onResponse
+  }
+): Promise<E> {
+
+  let urlEntityKeyValue: string | number;
+  if (params.keyPropertyType === "number" || params.keyPropertyType === "guid") {
+    urlEntityKeyValue = params.keyPropertyValue;
+  } else {
+    urlEntityKeyValue = `'${params.keyPropertyValue}'`;
+  }
+
+  return dvelopFetch(context, `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}(${urlEntityKeyValue})`, { method: "GET" }, options);
 }

@@ -1,5 +1,5 @@
-import { DvelopContext, DvelopHttpResponse as HttpResponse } from "@dvelop-sdk/core";
-import { HttpConfig, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/business-objects-error";
 
 /**
  * Parameters for the {@link createBoEntity}-function.
@@ -16,26 +16,12 @@ export interface CreateBoEntityParams<E = any> {
 }
 
 /**
- * Factory for {@link createBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @template E Type for Entity to be created.
- * @template R Return type of the {@link createBoEntity}-function. A corresponding transformFunction has to be supplied.
+ * Default `onResponse` provided to the {@link createBoEntity}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Entity
  */
-export function _createBoEntityFactory<E, R>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: CreateBoEntityParams<E>) => R
-): (context: DvelopContext, params: CreateBoEntityParams<E>) => Promise<R> {
-  return async (context: DvelopContext, params: CreateBoEntityParams<E>) => {
-
-    const response = await httpRequestFunction(context, {
-      method: "POST",
-      url: `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}`,
-      data: params.entity
-    });
-
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
@@ -73,7 +59,7 @@ export function _createBoEntityFactory<E, R>(
  *   jobTitel: string;
  * }
  *
- * await create<Employee>({
+ * await createBoEntity<Employee>({
  *   systemBaseUri: "https://sacred-heart-hospital.d-velop.cloud",
  *   authSessionId: "3f3c428d452"
  * },{
@@ -87,8 +73,20 @@ export function _createBoEntityFactory<E, R>(
  *   }
  * });
  * ```
+ *
+ * @category Entity
  */
-/* istanbul ignore next */
-export async function createBoEntity<E = any>(context: DvelopContext, params: CreateBoEntityParams<E>): Promise<void> {
-  return await _createBoEntityFactory<E, void>(_defaultHttpRequestFunction, () => { })(context, params);
+export async function createBoEntity<E = any>(context: DvelopContext, params: CreateBoEntityParams<E>): Promise<void>;
+export async function createBoEntity<T, E = any>(context: DvelopContext, params: CreateBoEntityParams<E>, options: DvelopOptions<T>): Promise<T>;
+export async function createBoEntity<T, E = any>(
+  context: DvelopContext,
+  params: CreateBoEntityParams<E>,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+  return dvelopFetch(context, `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}`, {
+    method: "POST",
+    body: JSON.stringify(params.entity)
+  }, options);
 }
