@@ -20,7 +20,6 @@
     "access": "public"
   },
   "dependencies": {
-    "axios": "^0.31.1",
     "lodash.merge": "^4.6.2"
   },
   "devDependencies": {
