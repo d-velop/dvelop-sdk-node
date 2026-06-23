@@ -32,6 +32,7 @@ export default [
       "no-var": "error",
       "no-redeclare": "off",
       "@typescript-eslint/no-redeclare": ["error"],
+      "no-undef": "off",
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "@typescript-eslint/adjacent-overload-signatures": ["error"],

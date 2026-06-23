@@ -21,24 +21,16 @@ describe("ensureSuccessResponse", () => {
         headers: { "Content-Type": "application/json" }
       });
 
-      await expect(ensureSuccessResponse(response)).rejects.toBeInstanceOf(BadInputError);
-      const cloned = response.clone();
-      try {
-        await ensureSuccessResponse(cloned);
-      } catch (e: any) {
-        expect(e.message).toEqual("HiItsMeErrorReason");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(BadInputError);
+      expect(err.message).toEqual("HiItsMeErrorReason");
     });
 
     it("should throw generic BadInputError on missing body", async () => {
       const response = new Response(null, { status: 400 });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(BadInputError);
-        expect(e.message).toEqual("DMS-App responded with Status 400 indicating bad Request-Parameters.");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(BadInputError);
+      expect(err.message).toEqual("DMS-App responded with Status 400 indicating bad Request-Parameters.");
     });
   });
 
@@ -50,35 +42,23 @@ describe("ensureSuccessResponse", () => {
         headers: { "Content-Type": "application/json" }
       });
 
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(UnauthorizedError);
-        expect(e.message).toEqual("HiItsMeErrorReason");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(UnauthorizedError);
+      expect(err.message).toEqual("HiItsMeErrorReason");
     });
 
     it("should throw UnauthorizedError with string body", async () => {
       const response = new Response("HiItsMeErrorReason", { status: 401 });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(UnauthorizedError);
-        expect(e.message).toEqual("HiItsMeErrorReason");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(UnauthorizedError);
+      expect(err.message).toEqual("HiItsMeErrorReason");
     });
 
     it("should throw generic UnauthorizedError on missing body", async () => {
       const response = new Response(null, { status: 401 });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(UnauthorizedError);
-        expect(e.message).toEqual("DMS-App responded with Status 401 indicating bad authSessionId.");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(UnauthorizedError);
+      expect(err.message).toEqual("DMS-App responded with Status 401 indicating bad authSessionId.");
     });
   });
 
@@ -89,24 +69,16 @@ describe("ensureSuccessResponse", () => {
         status: 403,
         headers: { "Content-Type": "application/json" }
       });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(ForbiddenError);
-        expect(e.message).toEqual("HiItsMeErrorReason");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(ForbiddenError);
+      expect(err.message).toEqual("HiItsMeErrorReason");
     });
 
     it("should throw generic ForbiddenError on missing body", async () => {
       const response = new Response(null, { status: 403 });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(ForbiddenError);
-        expect(e.message).toEqual("DMS-App responded with Status 403 indicating a forbidden action.");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(ForbiddenError);
+      expect(err.message).toEqual("DMS-App responded with Status 403 indicating a forbidden action.");
     });
   });
 
@@ -117,13 +89,9 @@ describe("ensureSuccessResponse", () => {
         status: 404,
         headers: { "Content-Type": "application/json" }
       });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(NotFoundError);
-        expect(e.message).toEqual("HiItsMeErrorReason");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(NotFoundError);
+      expect(err.message).toEqual("HiItsMeErrorReason");
     });
 
     it("should throw NotFoundError with LocalizedMessage from body", async () => {
@@ -131,24 +99,16 @@ describe("ensureSuccessResponse", () => {
         status: 404,
         headers: { "Content-Type": "application/json" }
       });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(NotFoundError);
-        expect(e.message).toEqual("HiItsMeErrorReason");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(NotFoundError);
+      expect(err.message).toEqual("HiItsMeErrorReason");
     });
 
     it("should throw generic NotFoundError on missing body", async () => {
       const response = new Response(null, { status: 404 });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(NotFoundError);
-        expect(e.message).toEqual("DMS-App responded with Status 404 indicating a requested resource does not exist.");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(NotFoundError);
+      expect(err.message).toEqual("DMS-App responded with Status 404 indicating a requested resource does not exist.");
     });
   });
 
@@ -159,24 +119,16 @@ describe("ensureSuccessResponse", () => {
         status: 500,
         headers: { "Content-Type": "application/json" }
       });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(DmsError);
-        expect(e.message).toEqual("HiItsMeErrorReason");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(DmsError);
+      expect(err.message).toEqual("HiItsMeErrorReason");
     });
 
     it("should throw generic DmsError on missing body", async () => {
       const response = new Response(null, { status: 500 });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(DmsError);
-        expect(e.message).toEqual("DMS-App responded with status 500.");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(DmsError);
+      expect(err.message).toEqual("DMS-App responded with status 500.");
     });
   });
 });
