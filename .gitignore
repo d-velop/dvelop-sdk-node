@@ -8,4 +8,6 @@ chicken.*
 .vscode
 .idea
 e2e.*
+.env
+.env.local
 .claude

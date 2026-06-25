@@ -10,7 +10,7 @@ export default [
   },
   js.configs.recommended,
   {
-    files: ["packages/**/*.ts"],
+    files: ["packages/**/*.ts", "e2e/**/*.ts"],
     plugins: {
       "@typescript-eslint": tsPlugin,
     },
@@ -40,6 +40,6 @@ export default [
   },
   {
     ...jestPlugin.configs["flat/recommended"],
-    files: ["packages/**/*.spec.ts"],
+    files: ["packages/**/*.spec.ts", "e2e/**/*.spec.ts"],
   },
 ];

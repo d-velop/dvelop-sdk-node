@@ -1,0 +1,17 @@
+{
+  /* Compiler options for the live e2e suites. Test-only: never built by `tsc -b`
+     (not a project reference), compiled on demand by ts-jest. Mirrors the SDK's
+     NodeNext/ES2022 settings so the suites see the same module semantics as
+     published consumers. */
+  "extends": "../tsconfig-base.json",
+  "compilerOptions": {
+    "composite": false,
+    "isolatedModules": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "noEmit": true,
+    "types": ["node", "jest"]
+  },
+  "include": ["**/*.ts"]
+}
