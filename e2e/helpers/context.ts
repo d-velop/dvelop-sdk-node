@@ -46,6 +46,52 @@ export interface E2eBootstrap {
 }
 
 /**
+ * DMS-specific env vars (Phase 2). All four must be set; the suite self-skips otherwise.
+ */
+export interface DmsEnv {
+  /** ID of the fixed test repository. */
+  repositoryId: string;
+  /** Source ID within that repository. */
+  sourceId: string;
+  /** Category ID used when creating DMS objects. */
+  categoryId: string;
+  /** Key of a writable string property on the category (used to stamp the run marker). */
+  propertyKey: string;
+}
+
+/**
+ * Reads the DMS e2e environment. Returns `undefined` when any variable is missing.
+ */
+export function readDmsEnv(): DmsEnv | undefined {
+  const repositoryId = process.env.DVELOP_E2E_DMS_REPOSITORY_ID;
+  const sourceId = process.env.DVELOP_E2E_DMS_SOURCE_ID;
+  const categoryId = process.env.DVELOP_E2E_DMS_CATEGORY_ID;
+  const propertyKey = process.env.DVELOP_E2E_DMS_PROPERTY_KEY;
+  if (!repositoryId || !sourceId || !categoryId || !propertyKey) return undefined;
+  return { repositoryId, sourceId, categoryId, propertyKey };
+}
+
+/**
+ * Business-objects-specific env vars (Phase 2). Both must be set; the suite self-skips otherwise.
+ */
+export interface BoEnv {
+  /** Name of the business-objects model (e.g. `sdktest`). */
+  modelName: string;
+  /** Plural entity name in the model (e.g. `SdkTests`). */
+  pluralEntityName: string;
+}
+
+/**
+ * Reads the business-objects e2e environment. Returns `undefined` when any variable is missing.
+ */
+export function readBoEnv(): BoEnv | undefined {
+  const modelName = process.env.DVELOP_E2E_BO_MODEL_NAME;
+  const pluralEntityName = process.env.DVELOP_E2E_BO_PLURAL_ENTITY_NAME;
+  if (!modelName || !pluralEntityName) return undefined;
+  return { modelName, pluralEntityName };
+}
+
+/**
  * Exchanges the API-Key for a live authSessionId via `getAuthSession`, then
  * resolves the authenticated user via `validateAuthSessionId`. This exercises
  * the identityprovider auth flow for real on every e2e run.

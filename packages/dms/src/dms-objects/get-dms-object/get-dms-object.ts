@@ -64,7 +64,6 @@ export function onResponse(
   return async (response: Response) => {
     await ensureSuccessResponse(response);
     const data: any = await response.json();
-    console.log("getDmsObject response data", data);
 
     const dmsObject: DmsObject = {
       repositoryId: params.repositoryId,
