@@ -387,6 +387,8 @@ e2e/
   specs/
     task.e2e.spec.ts
     identityprovider.e2e.spec.ts
+    dms.e2e.spec.ts
+    business-objects.e2e.spec.ts
 ```
 
 The folder is dev-only: it is **not** a `tsc -b` project reference and is never
@@ -417,6 +419,12 @@ root when npm runs the script).
 |---|---|---|
 | `DVELOP_E2E_SYSTEM_BASE_URI` | yes | Tenant base URI, e.g. `https://tenant.d-velop.cloud` |
 | `DVELOP_E2E_API_KEY` | yes | Admin API-Key, exchanged for a live authSessionId at run start |
+| `DVELOP_E2E_DMS_REPOSITORY_ID` | Phase 2 | DMS repository to run tests against |
+| `DVELOP_E2E_DMS_SOURCE_ID` | Phase 2 | Source category ID for `storeFileTemporarily` |
+| `DVELOP_E2E_DMS_CATEGORY_ID` | Phase 2 | Category ID for created DMS objects |
+| `DVELOP_E2E_DMS_PROPERTY_KEY` | Phase 2 | Writable string property key on the category |
+| `DVELOP_E2E_BO_MODEL_NAME` | Phase 2 | BusinessObjects model name (e.g. `sdktest`) |
+| `DVELOP_E2E_BO_PLURAL_ENTITY_NAME` | Phase 2 | Plural entity name (e.g. `SdkTests`) |
 
 ### Design contract
 
@@ -440,8 +448,8 @@ root when npm runs the script).
 |---|---|---|
 | `task` | ✅ Phase 1 | Full CRUD lifecycle (create → read → update → search → complete), delete in cleanup |
 | `identityprovider` | ✅ Phase 1 | `getAuthSession`, `validateAuthSessionId` |
-| `dms` | ⏳ Phase 2 | Needs extra config (repository / source / category / property IDs) |
-| `business-objects` | ⏳ Phase 2 | Needs a deployed bo-set/model |
+| `dms` | ✅ Phase 2 | Repository smoke + full lifecycle (store, create, read, update, notes, link, search, delete) |
+| `business-objects` | ✅ Phase 2 | Full lifecycle (create, get, getEntities, update, delete) |
 
 Not covered by design:
 
