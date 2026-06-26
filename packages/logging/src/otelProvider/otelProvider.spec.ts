@@ -1,6 +1,6 @@
 import { OtelProviderError, otelProviderFactory } from "./otelProvider";
 import { DvelopLogEvent, DbRequest, HttpResponse, IncomingHttpRequest, OutgoingHttpRequest, DvelopLogLevel } from "../logger/log-event";
-import { OtelEvent, OtelSeverity } from "./internal-types";
+import { EventAttributesException, OtelEvent, OtelSeverity } from "./internal-types";
 import { DvelopContext, TraceContext } from "@dvelop-sdk/core";
 
 describe("otel provider", () => {
@@ -587,16 +587,81 @@ describe("otel provider", () => {
           appName: "test", transports: [async otelMessage => {
             const json: OtelEvent = JSON.parse(otelMessage);
             expect(json.attr).toBeDefined();
-            expect(json.attr.exception).toBeDefined();
-            expect(json.attr.exception.type).toEqual("Error");
-            expect(json.attr.exception.message).toEqual("some error");
-            expect(json.attr.exception.stacktrace).toBeDefined();
+            expect(json.attr?.exception).toBeDefined();
+            expect(json.attr?.exception?.type).toEqual("Error");
+            expect(json.attr?.exception?.message).toEqual("some error");
+            expect(json.attr?.exception?.stacktrace).toBeDefined();
+            expect(json.attr?.exception?.cause).toBeUndefined();
             done();
           }]
         });
 
         const event: DvelopLogEvent = {
           error: new Error("some error")
+        };
+
+        provider({}, event, "debug");
+      });
+    });
+
+    test("should set exception cause when cause is an Error", () => {
+      return new Promise<void>(done => {
+        const provider = otelProviderFactory({
+          appName: "test", transports: [async otelMessage => {
+            const json: OtelEvent = JSON.parse(otelMessage);
+            expect(json.attr?.exception?.cause).toBeDefined();
+            expect((json.attr?.exception?.cause as EventAttributesException).type).toEqual("TypeError");
+            expect((json.attr?.exception?.cause as EventAttributesException).message).toEqual("root cause");
+            expect((json.attr?.exception?.cause as EventAttributesException).stacktrace).toBeDefined();
+            done();
+          }]
+        });
+
+        const cause = new TypeError("root cause");
+        const event: DvelopLogEvent = {
+          error: Object.assign(new Error("wrapper error"), { cause })
+        };
+
+        provider({}, event, "debug");
+      });
+    });
+
+    test("should set exception cause recursively for nested Error causes", () => {
+      return new Promise<void>(done => {
+        const provider = otelProviderFactory({
+          appName: "test", transports: [async otelMessage => {
+            const json: OtelEvent = JSON.parse(otelMessage);
+            const outerCause = json.attr?.exception?.cause as EventAttributesException;
+            expect(outerCause.message).toEqual("middle error");
+            expect(outerCause.cause).toBeDefined();
+            expect((outerCause.cause as EventAttributesException).message).toEqual("root cause");
+            done();
+          }]
+        });
+
+        const root = new Error("root cause");
+        const middle = Object.assign(new Error("middle error"), { cause: root });
+        const event: DvelopLogEvent = {
+          error: Object.assign(new Error("outer error"), { cause: middle })
+        };
+
+        provider({}, event, "debug");
+      });
+    });
+
+    test("should JSON-stringify exception cause when cause is not an Error", () => {
+      return new Promise<void>(done => {
+        const provider = otelProviderFactory({
+          appName: "test", transports: [async otelMessage => {
+            const json: OtelEvent = JSON.parse(otelMessage);
+            expect(typeof json.attr?.exception?.cause).toEqual("string");
+            expect(json.attr?.exception?.cause).toEqual(JSON.stringify({ code: 42 }));
+            done();
+          }]
+        });
+
+        const event: DvelopLogEvent = {
+          error: Object.assign(new Error("some error"), { cause: { code: 42 } })
         };
 
         provider({}, event, "debug");

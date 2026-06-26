@@ -6,7 +6,7 @@
     "**/*.spec.ts"
   ],
   "transform": {
-    "^.+\\.ts$": "ts-jest"
+    "^.+\\.ts$": ["ts-jest", { "tsconfig": "tsconfig-base.json", "isolatedModules": true }]
   },
   "transformIgnorePatterns": [
     "/node_modules/(?!(axios)/)"
