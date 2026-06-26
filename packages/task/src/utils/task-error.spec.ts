@@ -22,25 +22,17 @@ describe("ensureSuccessResponse", () => {
         headers: { "Content-Type": "application/json" }
       });
 
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(InvalidTaskDefinitionError);
-        expect(e.message).toEqual("Taskdefinition is invalid. See 'validation'-property for more information.");
-        expect(e.validation).toEqual(validation);
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(InvalidTaskDefinitionError);
+      expect(err.message).toEqual("Taskdefinition is invalid. See 'validation'-property for more information.");
+      expect(err.validation).toEqual(validation);
     });
 
     it("should throw generic BadInputError on missing body", async () => {
       const response = new Response(null, { status: 400 });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(BadInputError);
-        expect(e.message).toEqual("Task-App responded with Status 400 indicating bad Request-Parameters.");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(BadInputError);
+      expect(err.message).toEqual("Task-App responded with Status 400 indicating bad Request-Parameters.");
     });
   });
 
@@ -48,68 +40,44 @@ describe("ensureSuccessResponse", () => {
 
     it("should throw UnauthorizedError with string body", async () => {
       const response = new Response("HiItsMeErrorReason", { status: 401 });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(UnauthorizedError);
-        expect(e.message).toEqual("HiItsMeErrorReason");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(UnauthorizedError);
+      expect(err.message).toEqual("HiItsMeErrorReason");
     });
 
     it("should throw generic UnauthorizedError on missing body", async () => {
       const response = new Response(null, { status: 401 });
-      try {
-        await ensureSuccessResponse(response);
-        fail("expected throw");
-      } catch (e: any) {
-        expect(e).toBeInstanceOf(UnauthorizedError);
-        expect(e.message).toEqual("Task-App responded with Status 401 indicating bad authSessionId.");
-      }
+      const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+      expect(err).toBeInstanceOf(UnauthorizedError);
+      expect(err.message).toEqual("Task-App responded with Status 401 indicating bad authSessionId.");
     });
   });
 
   it("should throw generic ForbiddenError on statusCode 403", async () => {
     const response = new Response(null, { status: 403 });
-    try {
-      await ensureSuccessResponse(response);
-      fail("expected throw");
-    } catch (e: any) {
-      expect(e).toBeInstanceOf(ForbiddenError);
-      expect(e.message).toEqual("Task-App responded with Status 403 indicating a forbidden action.");
-    }
+    const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+    expect(err).toBeInstanceOf(ForbiddenError);
+    expect(err.message).toEqual("Task-App responded with Status 403 indicating a forbidden action.");
   });
 
   it("should throw generic NotFoundError on statusCode 404", async () => {
     const response = new Response(null, { status: 404 });
-    try {
-      await ensureSuccessResponse(response);
-      fail("expected throw");
-    } catch (e: any) {
-      expect(e).toBeInstanceOf(NotFoundError);
-      expect(e.message).toEqual("Task-App responded with Status 404 indicating a requested resource does not exist.");
-    }
+    const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+    expect(err).toBeInstanceOf(NotFoundError);
+    expect(err.message).toEqual("Task-App responded with Status 404 indicating a requested resource does not exist.");
   });
 
   it("should throw TaskError on statusCode 429", async () => {
     const response = new Response(null, { status: 429 });
-    try {
-      await ensureSuccessResponse(response);
-      fail("expected throw");
-    } catch (e: any) {
-      expect(e).toBeInstanceOf(TaskError);
-      expect(e.message).toEqual("Task-App responded with status 429 indicating that you sent too many requests in a short time. Consider throttling your requests.");
-    }
+    const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+    expect(err).toBeInstanceOf(TaskError);
+    expect(err.message).toEqual("Task-App responded with status 429 indicating that you sent too many requests in a short time. Consider throttling your requests.");
   });
 
   it("should throw generic TaskError on unknown status code", async () => {
     const response = new Response(null, { status: 500 });
-    try {
-      await ensureSuccessResponse(response);
-      fail("expected throw");
-    } catch (e: any) {
-      expect(e).toBeInstanceOf(TaskError);
-      expect(e.message).toEqual("Task-App responded with status 500.");
-    }
+    const err: any = await ensureSuccessResponse(response).catch((e: any) => e);
+    expect(err).toBeInstanceOf(TaskError);
+    expect(err.message).toEqual("Task-App responded with status 500.");
   });
 });

@@ -1,0 +1,23 @@
+{
+  "roots": [
+    "."
+  ],
+  "testMatch": [
+    "**/*.e2e.spec.ts"
+  ],
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^(.*)\\.js$": "$1"
+  },
+  "testPathIgnorePatterns": [
+    "/node_modules/"
+  ],
+  "setupFiles": [
+    "dotenv/config"
+  ],
+  "testEnvironment": "node",
+  "testTimeout": 30000,
+  "collectCoverage": false
+}

@@ -1,9 +1,4 @@
 import {
-  DVELOP_REQUEST_ID_HEADER,
-  DVELOP_REQUEST_SIGNATURE_HEADER,
-  DVELOP_SYSTEM_BASE_URI_HEADER,
-  DVELOP_TENANT_ID_HEADER,
-  TRACEPARENT_HEADER,
   TraceContext,
   parseTraceparentHeader,
   generateTraceContext
@@ -28,19 +23,19 @@ export function contextMiddlewareFactory(
     if (systemBaseUri) {
       req.dvelopContext = {
         systemBaseUri: systemBaseUri,
-        tenantId: tenantId || req.header(DVELOP_TENANT_ID_HEADER),
-        requestId: req.header(DVELOP_REQUEST_ID_HEADER)
+        tenantId: tenantId || req.header("x-dv-tenant-id"),
+        requestId: req.header("x-dv-request-id")
       }
     } else {
       req.dvelopContext = {
-        systemBaseUri: req.header(DVELOP_SYSTEM_BASE_URI_HEADER),
-        tenantId: req.header(DVELOP_TENANT_ID_HEADER),
-        requestId: req.header(DVELOP_REQUEST_ID_HEADER),
-        requestSignature: req.header(DVELOP_REQUEST_SIGNATURE_HEADER),
+        systemBaseUri: req.header("x-dv-baseuri"),
+        tenantId: req.header("x-dv-tenant-id"),
+        requestId: req.header("x-dv-request-id"),
+        requestSignature: req.header("x-dv-sig-1"),
       };
     }
 
-    const traceparentHeader = req.header(TRACEPARENT_HEADER);
+    const traceparentHeader = req.header("traceparent");
 
     if (traceparentHeader) {
       try {

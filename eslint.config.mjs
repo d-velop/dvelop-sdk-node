@@ -10,7 +10,7 @@ export default [
   },
   js.configs.recommended,
   {
-    files: ["packages/**/*.ts"],
+    files: ["packages/**/*.ts", "e2e/**/*.ts"],
     plugins: {
       "@typescript-eslint": tsPlugin,
     },
@@ -32,6 +32,7 @@ export default [
       "no-var": "error",
       "no-redeclare": "off",
       "@typescript-eslint/no-redeclare": ["error"],
+      "no-undef": "off",
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "@typescript-eslint/adjacent-overload-signatures": ["error"],
@@ -39,6 +40,6 @@ export default [
   },
   {
     ...jestPlugin.configs["flat/recommended"],
-    files: ["packages/**/*.spec.ts"],
+    files: ["packages/**/*.spec.ts", "e2e/**/*.spec.ts"],
   },
 ];

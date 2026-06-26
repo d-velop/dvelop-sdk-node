@@ -1,12 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import {
-  DVELOP_REQUEST_ID_HEADER,
-  DVELOP_REQUEST_SIGNATURE_HEADER,
-  DVELOP_SYSTEM_BASE_URI_HEADER,
-  DVELOP_TENANT_ID_HEADER,
   TraceContext,
   TraceContextError,
-  TRACEPARENT_HEADER,
 } from "@dvelop-sdk/core";
 import { contextMiddlewareFactory } from "./dvelop-context-middleware";
 import "../../index";
@@ -40,19 +35,19 @@ describe("contextMiddlewareFactory", () => {
 
       (mockReq.header as jest.Mock).mockImplementation((header: string) => {
         switch (header) {
-          case DVELOP_SYSTEM_BASE_URI_HEADER:
+          case "x-dv-baseuri":
             return systemBaseUri;
 
-          case DVELOP_TENANT_ID_HEADER:
+          case "x-dv-tenant-id":
             return tenantId;
 
-          case DVELOP_REQUEST_ID_HEADER:
+          case "x-dv-request-id":
             return requestId;
 
-          case DVELOP_REQUEST_SIGNATURE_HEADER:
+          case "x-dv-sig-1":
             return requestSignature;
 
-          case TRACEPARENT_HEADER:
+          case "traceparent":
             return undefined;
 
           default:
@@ -80,10 +75,10 @@ describe("contextMiddlewareFactory", () => {
       (mockReq.header as jest.Mock).mockImplementation((header: string) => {
         switch (header) {
 
-          case DVELOP_REQUEST_ID_HEADER:
+          case "x-dv-request-id":
             return requestId;
 
-          case TRACEPARENT_HEADER:
+          case "traceparent":
             return undefined;
 
           default:
@@ -111,13 +106,13 @@ describe("contextMiddlewareFactory", () => {
       (mockReq.header as jest.Mock).mockImplementation((header: string) => {
         switch (header) {
 
-          case DVELOP_TENANT_ID_HEADER:
+          case "x-dv-tenant-id":
             return tenantId;
 
-          case DVELOP_REQUEST_ID_HEADER:
+          case "x-dv-request-id":
             return requestId;
 
-          case TRACEPARENT_HEADER:
+          case "traceparent":
             return undefined;
 
           default:
@@ -145,7 +140,7 @@ describe("contextMiddlewareFactory", () => {
 
       (mockReq.header as jest.Mock).mockImplementation((header: string) => {
         switch (header) {
-          case TRACEPARENT_HEADER:
+          case "traceparent":
             return traceparentHeader;
           default:
             return "HiItsMeHeader";
@@ -166,7 +161,7 @@ describe("contextMiddlewareFactory", () => {
 
       (mockReq.header as jest.Mock).mockImplementation((header: string) => {
         switch (header) {
-          case TRACEPARENT_HEADER:
+          case "traceparent":
             return undefined;
           default:
             return "HiItsMeHeader";
@@ -190,7 +185,7 @@ describe("contextMiddlewareFactory", () => {
 
       (mockReq.header as jest.Mock).mockImplementation((header: string) => {
         switch (header) {
-          case TRACEPARENT_HEADER:
+          case "traceparent":
             return traceparentHeader;
           default:
             return "HiItsMeHeader";

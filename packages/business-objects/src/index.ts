@@ -24,11 +24,11 @@
  * @module business-objects
  */
 
-//Utils
-export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
-export { BusinessObjectsError } from "./utils/http";
-export * as internals from "./internal";
+// Utils
+export { DvelopContext, DvelopOptions, dvelopFetch, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
+export { BusinessObjectsError, NotImplementedError, BusinessObjectsErrorDto } from "./utils/business-objects-error";
 
+// Entities
 export { GetBoEntitiesParams, getBoEntities, GetBoEntitiesResultPage } from "./entities/get-entities/get-entities";
 export { GetBoEntityParams, getBoEntity } from "./entities/get-entity/get-entity";
 export { CreateBoEntityParams, createBoEntity } from "./entities/create-entity/create-entity";
