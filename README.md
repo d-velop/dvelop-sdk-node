@@ -207,78 +207,63 @@ The ```req.dvelopContext```-property can now be used for other SDK-functions.
 
 ## Advanced Topics
 
-Under the hood this SDK uses a functional programming approach. Generally all top-level SDK methods are created by factory-methods. This allows to inject default implementations and at the same time give consumers next-to-full control over steps taken.
+Every SDK method accepts an optional third parameter `options` of type `DvelopOptions`. This lets you customize the HTTP request or intercept the raw response — without needing to understand factory functions or internal abstractions.
 
-SDK-functions usually have at two seperate steps:
-- A HTTP-Call to the corresponding app
-- A transform-function which handles the JSON-response
-
-Let's look at the getRepository-factoryFunction:
 ```typescript
-export function getRepositoryFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: GetRepositoryParams) => T,
-): (context: DvelopContext, params: GetRepositoryParams) => Promise<T> {
-  return async (context: DvelopContext, params: GetRepositoryParams) => {
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "GET",
-      url: "/dms",
-      follows: ["repo"],
-      templates: { "repositoryid": params.repositoryId }
-    });
-    return transformFunction(response, context, params);
-  };
-}
-
-export async function getRepository(context: DvelopContext, params: GetRepositoryParams): Promise<Repository> {
-  return getRepositoryFactory(defaultHttpRequestFunction, getRepositoryDefaultTransformFunction)(context, params);
-}
+import { DvelopOptions } from "@dvelop-sdk/core";
 ```
 
-The getRepository-function itself is a function in the form of
-```typescript
-(context: DvelopContext, params: GetRepositoryParams) => Promise<Repository>
+### Timeout
+
+```javascript
+import { getRepository } from "@dvelop-sdk/dms";
+
+const repo = await getRepository(context, { repositoryId: "qnydFmqHuVo" }, {
+  initOverwrite: { signal: AbortSignal.timeout(5000) }
+});
 ```
 
-The getRepository-factoryFunction is a function that returns this function. As input it requires two functions itself that are used:
-- A HTTP-Function which accepts a DvelopContext and a DvelopHttpConfig to make the Http-Request
-  ```typescript
-  (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>
-  ```
+### Disable TLS verification (Node.js 18+, plain JavaScript only)
 
-- A transform-function which accepts a DvelopHttpResponse, the initial context and the initial paramters. It returns a generic type.
-  ```typescript
-  (response: HttpResponse, context: DvelopContext, params: GetRepositoryParams) => T
-  ```
+Pass an undici `dispatcher` via `initOverwrite`. TypeScript will flag the unknown property — use plain JavaScript or a type cast:
 
-The exported getRepository-function itself is created by this factory with default implementations. This gives you control over the individual tasks done by the method.
+```javascript
+import { Agent } from "undici";
+import { getRepository } from "@dvelop-sdk/dms";
 
-- You can access the original response and transform it in any way you want:
-  ```typescript
-    const myGetRepositoryFunction = getRepositoryFactory(
-      // inject the default httpRequestFunction
-      defaultHttpRequestFunction,
+const repo = await getRepository(context, { repositoryId: "qnydFmqHuVo" }, {
+  initOverwrite: { dispatcher: new Agent({ connect: { rejectUnauthorized: false } }) }
+});
+```
 
-      // inject a custom transform-function
-      (response: HttpResponse, context: DvelopContext, params: GetRepositoryParams) => {
-        return `The name of a repository in '${context.systemBaseUri}' is '${response.data.name}.'`;
-      }
-    );
+### Add extra headers
 
-    const info: string = myGetRepositoryFunction({
-      systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
-      authSessionId: "dQw4w9WgXcQ"
-    }, {
-      repositoryId: "qnydFmqHuVo"
-    });
+```javascript
+const repo = await getRepository(context, { repositoryId: "qnydFmqHuVo" }, {
+  initOverwrite: { headers: { "x-my-header": "value" } }
+});
+```
 
-    console.log(info); // The name of a repository in 'https://steamwheedle-cartel.d-velop.cloud' is 'Booty Bay Documents'.
-  ```
+### Access the raw response
 
-- You can supply a different httpRequestFunction
-- Some methods have additional steps (eg. the createDmsObject-function needs a storeFile-function which uploads a file and provides a download-url).
+Use `onResponse` to intercept or replace the default JSON transform. Return a value to use it as the method's result; return `undefined` (or nothing) to let the default transform run.
 
-All DvelopHttp-stuff is provided by the ```@dvelop-sdk/core``` package. At the moment it mostly wraps ```axios``` as its main http-framework.
+```javascript
+// Replace the result with raw JSON
+const raw = await getRepository(context, { repositoryId: "qnydFmqHuVo" }, {
+  onResponse: async (response) => response.json()
+});
+
+// Log a header without replacing the result
+const repo = await getRepository(context, { repositoryId: "qnydFmqHuVo" }, {
+  onResponse: (response) => {
+    console.log("ETag:", response.headers.get("etag"));
+    // returns undefined → default transform still runs
+  }
+});
+```
+
+All HTTP is handled by `dvelopFetch` from the `@dvelop-sdk/core` package, which sets the standard d.velop headers (`Authorization`, `x-dv-request-id`, `traceparent`) and calls the built-in Node.js `fetch`.
 
 ## Contributing
 This project is maintained by d-velop but is looking for contributers. If you consider contributing to this project please read [CONTRIBUTING](CONTRIBUTING.md) for details on how to get started.
