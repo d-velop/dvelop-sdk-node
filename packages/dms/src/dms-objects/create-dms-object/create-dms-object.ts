@@ -115,7 +115,7 @@ export async function createDmsObject<T>(
       sourceId: params.sourceId,
       sourceCategory: params.categoryId,
       sourceProperties: { "properties": params.properties },
-      fileName: params.fileName,
+      filename: params.fileName,
       contentLocationUri: params.contentLocationUri,
       contentUri: params.contentUri
     })

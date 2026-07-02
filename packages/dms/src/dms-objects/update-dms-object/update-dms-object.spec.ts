@@ -50,7 +50,7 @@ describe("updateDmsObject", () => {
       alterationText: params.alterationText,
       sourceCategory: params.categoryId,
       sourceProperties: { properties: params.properties },
-      fileName: params.fileName,
+      filename: params.fileName,
       contentLocationUri: params.contentLocationUri,
       contentUri: params.contentUri
     });
