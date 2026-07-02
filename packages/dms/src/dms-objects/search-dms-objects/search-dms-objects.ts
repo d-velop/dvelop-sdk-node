@@ -7,8 +7,11 @@ import { getDmsObjectMainFile } from "../get-dms-object-file/get-dms-object-file
  * @category DmsObject
  */
 export interface SearchDmsObjectsParams {
+  /** ID of the repository */
   repositoryId: string,
+  /** ID of the source */
   sourceId: string;
+  /** Categories to filter by */
   categories?: string[];
   /** Properties */
   properties?: {
@@ -17,11 +20,17 @@ export interface SearchDmsObjectsParams {
     /** Value(s) - Single values must be given as an array of length 1 */
     values: string[];
   }[]
+  /** Property to sort the result by */
   sortProperty?: string;
+  /** Whether to sort ascending or descending */
   ascending?: boolean;
+  /** Fulltext-search */
   fulltext?: string;
+  /** Page to return */
   page?: number;
+  /** Number of results per page */
   pageSize?: number;
+  /** ID of the parent DmsObject to search children of */
   childrenOf?: string;
 }
 
@@ -155,5 +164,39 @@ export async function searchDmsObjects<T>(
     onResponse: onResponseFactory(context, params)
   }
 ): Promise<T | SearchDmsObjectsResultPage> {
-  return dvelopFetch(context, `/dms/r/${params.repositoryId}/srm`, { method: "GET" }, options);
+
+  const searchParams = new URLSearchParams();
+  searchParams.append("sourceid", params.sourceId);
+
+  if (params.categories) {
+    searchParams.append("sourcecategories", JSON.stringify(params.categories));
+  }
+  if (params.properties) {
+    const sourceProperties: { [key: string]: string[] } = {};
+    params.properties.forEach(p => {
+      sourceProperties[p.key] = sourceProperties[p.key] ? sourceProperties[p.key].concat(p.values) : p.values;
+    });
+    searchParams.append("sourceproperties", JSON.stringify(sourceProperties));
+  }
+  if (params.sortProperty !== undefined) {
+    searchParams.append("sourcepropertysort", params.sortProperty);
+  }
+  if (params.ascending !== undefined) {
+    searchParams.append("ascending", String(params.ascending));
+  }
+  if (params.fulltext !== undefined) {
+    searchParams.append("fulltext", params.fulltext);
+  }
+  if (params.page !== undefined) {
+    searchParams.append("page", String(params.page));
+  }
+  if (params.pageSize !== undefined) {
+    searchParams.append("pageSize", String(params.pageSize));
+  }
+  if (params.childrenOf !== undefined) {
+    searchParams.append("children_of", params.childrenOf);
+  }
+
+  const query = searchParams.toString();
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/srm${query ? `?${query}` : ""}`, { method: "GET" }, options);
 }
