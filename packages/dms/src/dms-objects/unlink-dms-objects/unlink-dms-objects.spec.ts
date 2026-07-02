@@ -22,7 +22,6 @@ describe("unlinkDmsObjects", () => {
     context = { systemBaseUri: "HiItsMeSystemBaseUri" };
     params = {
       repositoryId: "HiItsMeRepositoryId",
-      sourceId: "HiItsMeSourceId",
       parentDmsObjectId: "HiItsMeParentDmsObjectId",
       childDmsObjectsId: "HiItsMeChildDmsObjectId"
     };

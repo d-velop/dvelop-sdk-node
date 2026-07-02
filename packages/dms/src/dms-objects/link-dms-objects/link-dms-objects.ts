@@ -8,8 +8,6 @@ import { ensureSuccessResponse } from "../../utils/dms-error";
 export interface LinkDmsObjectsParams {
   /** ID of the repository */
   repositoryId: string;
-  /** ID of the source */
-  sourceId: string;
   /** ID of the DmsObject that will be linked as parent */
   parentDmsObjectId: string;
   /** ID of the DmsObjects that will be linked as children */
@@ -36,7 +34,6 @@ export async function onResponse(response: Response): Promise<void> {
  *   authSessionId: "dQw4w9WgXcQ"
  * }, {
  *   repositoryId: "qnydFmqHuVo",
- *   sourceId: "/dms/r/qnydFmqHuVo/source",
  *   parentDmsObjectId: "GDYQ3PJKrT8",
  *   childDmsObjectsIds: ["N3bEh-PEk1g", "AC86VI0j85M"]
  * });
