@@ -22,7 +22,6 @@ describe("linkDmsObjects", () => {
     context = { systemBaseUri: "HiItsMeSystemBaseUri" };
     params = {
       repositoryId: "HiItsMeRepositoryId",
-      sourceId: "HiItsMeSourceId",
       parentDmsObjectId: "HiItsMeDmsObjectId",
       childDmsObjectsIds: ["HiItsMeChildDmsObjectId1", "HiItsMeChildDmsObjectId2"]
     };
