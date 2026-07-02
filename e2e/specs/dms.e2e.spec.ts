@@ -172,5 +172,25 @@ describeE2e("dms e2e", () => {
       properties: [{ key: dmsEnv!.propertyKey, values: [`${marker} updated`] }]
     });
     expect(searchResult.dmsObjects.some(o => o.dmsObjectId === obj1.dmsObjectId)).toBe(true);
+
+    // Search — find object 1 via fulltext search on its file content
+    const fulltextResult = await searchDmsObjects(context, {
+      repositoryId: dmsEnv!.repositoryId,
+      sourceId: dmsEnv!.sourceId,
+      fulltext: marker
+    });
+    expect(fulltextResult.dmsObjects.some(o => o.dmsObjectId === obj1.dmsObjectId)).toBe(true);
+
+    // Search — filter by category, sort by property, and page
+    const categoryResult = await searchDmsObjects(context, {
+      repositoryId: dmsEnv!.repositoryId,
+      sourceId: dmsEnv!.sourceId,
+      categories: [dmsEnv!.categoryId],
+      sortProperty: dmsEnv!.propertyKey,
+      ascending: true,
+      page: 1,
+      pageSize: 50
+    });
+    expect(categoryResult.dmsObjects.some(o => o.dmsObjectId === obj1.dmsObjectId)).toBe(true);
   });
 });
