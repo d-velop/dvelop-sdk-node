@@ -1,143 +1,93 @@
-import { DvelopContext, DvelopHttpResponse as HttpResponse } from "@dvelop-sdk/core";
-import { GetBoEntitiesParams, _getBoEntitiesDefaultTransformFunctionFactory, _getBoEntitiesFactory, GetBoEntitiesResultPage } from "./get-entities";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import { GetBoEntitiesParams, GetBoEntitiesResultPage, buildResultPage, defaultOnResponseFactory, getBoEntities } from "./get-entities";
 
-describe("getBoEntitiesFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("getBoEntities", () => {
 
   let context: DvelopContext;
   let params: GetBoEntitiesParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
+    context = { systemBaseUri: "https://someBaseUri" };
     params = {
       modelName: "HOSPITALBASEDATA",
       pluralEntityName: "employees"
     };
   });
 
-  it("should make correct request", async () => {
+  function jsonResponse(data: any): Response {
+    return new Response(JSON.stringify(data), { status: 200, headers: { "Content-Type": "application/json" } });
+  }
 
-    const getBoEntities = _getBoEntitiesFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method GET", async () => {
     await getBoEntities(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "GET",
-      url: `/businessobjects/custom/${params.modelName}/${params.pluralEntityName}`,
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(
+      context,
+      "/businessobjects/custom/HOSPITALBASEDATA/employees",
+      { method: "GET" },
+      expect.objectContaining({ onResponse: expect.any(Function) })
+    );
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const getBoEntities = _getBoEntitiesFactory(mockHttpRequestFunction, mockTransformFunction);
-    const result = await getBoEntities(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
-    expect(result).toEqual(transformResult);
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await getBoEntities(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
   });
 
-  describe("getBoEntitiesDefaultTransformFunction", () => {
+  describe("onResponse / buildResultPage", () => {
 
-    it("should set entities", async () => {
+    it("should set value and no getNextPage when there is no nextLink", async () => {
+      const data = { value: [{ employeeId: "1" }, { employeeId: "2" }] };
+      const result: GetBoEntitiesResultPage = await defaultOnResponseFactory(context)(jsonResponse(data));
 
-      const response: any = {
-        value: [
-          {
-            "employeeid": "1",
-            "firstName": "John",
-            "lastName": "Dorian",
-            "jobTitel": "senior physician"
-          },
-          {
-            "employeeid": "2",
-            "firstName": "Christopher",
-            "lastName": "Turk",
-            "jobTitel": "chief surgeon"
-          }
-        ]
-      };
-
-      mockHttpRequestFunction.mockResolvedValue({ data: response } as HttpResponse);
-
-      const getBoEntities = _getBoEntitiesFactory(mockHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(mockHttpRequestFunction));
-      const result: GetBoEntitiesResultPage = await getBoEntities(context, params);
-
-      response.value.forEach((entity: any, i: number) => {
-        expect(result.value[i]).toHaveProperty("employeeid", entity.employeeid);
-      });
-      expect(result).not.toHaveProperty("getNextPage");
+      expect(result.value).toEqual(data.value);
+      expect(result.getNextPage).toBeUndefined();
     });
 
-    it("should set getNextPage function on @odata.nextLink-property", async () => {
-
-      const response: any = {
-        value: [
-          {
-            "employeeid": "1",
-            "firstName": "John",
-            "lastName": "Dorian",
-            "jobTitel": "senior physician"
-          }
-        ],
-        "@odata.nextLink": "HiItsMeNextLink"
-      };
-
-      mockHttpRequestFunction.mockResolvedValue({ data: response } as HttpResponse);
-
-      const getBoEntities = _getBoEntitiesFactory(mockHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(mockHttpRequestFunction));
-      const result: GetBoEntitiesResultPage = await getBoEntities(context, params);
-
-      expect(result).toHaveProperty("getNextPage");
-
-      const response2: any = {
-        value: [
-          {
-            "employeeid": "2",
-            "firstName": "Christopher",
-            "lastName": "Turk",
-            "jobTitel": "chief surgeon"
-          }
-        ]
-      };
-      mockHttpRequestFunction.mockResolvedValue({ data: response2 } as HttpResponse);
-
-      let page2 = await result.getNextPage();
-
-      expect(page2.value).toContain(response2.value[0]);
-      expect(mockHttpRequestFunction).toBeCalledTimes(2);
-      expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-        method: "GET",
-        url: "HiItsMeNextLink"
-      });
-    });
-
-    it("should return empty array on no value", async () => {
-
-      const response: any = {
-        value: []
-      };
-
-      mockHttpRequestFunction.mockResolvedValue({ data: response } as HttpResponse);
-
-      const getBoEntities = _getBoEntitiesFactory(mockHttpRequestFunction, _getBoEntitiesDefaultTransformFunctionFactory(mockHttpRequestFunction));
-      const result: GetBoEntitiesResultPage = await getBoEntities(context, params);
-
-      expect(result).toHaveProperty("value");
+    it("should return an empty value array", async () => {
+      const result = await buildResultPage(jsonResponse({ value: [] }), context);
       expect(result.value).toHaveLength(0);
+    });
+
+    it("should set getNextPage when a nextLink is present and follow it", async () => {
+      const page1 = { value: [{ employeeId: "1" }], "@odata.nextLink": "/businessobjects/custom/HOSPITALBASEDATA/employees?skip=1" };
+      const result = await buildResultPage(jsonResponse(page1), context);
+
+      expect(result.getNextPage).toBeDefined();
+
+      const page2 = { value: [{ employeeId: "2" }] };
+      mockDvelopFetch.mockResolvedValue({ value: page2.value } as any);
+
+      const next = await result.getNextPage!();
+
+      expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+      expect(mockDvelopFetch).toHaveBeenCalledWith(
+        context,
+        "/businessobjects/custom/HOSPITALBASEDATA/employees?skip=1",
+        { method: "GET" },
+        expect.objectContaining({ onResponse: expect.any(Function) })
+      );
+      expect(next.value).toEqual(page2.value);
+    });
+
+    it("should strip the systemBaseUri from an absolute nextLink", async () => {
+      const page1 = { value: [{ employeeId: "1" }], "@odata.nextLink": `${context.systemBaseUri}/businessobjects/custom/HOSPITALBASEDATA/employees?skip=1` };
+      const result = await buildResultPage(jsonResponse(page1), context);
+
+      mockDvelopFetch.mockResolvedValue({ value: [] } as any);
+      await result.getNextPage!();
+
+      expect(mockDvelopFetch.mock.calls[0][1]).toEqual("/businessobjects/custom/HOSPITALBASEDATA/employees?skip=1");
     });
   });
 });

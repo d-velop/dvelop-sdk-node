@@ -1,5 +1,5 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/task-error";
 
 /**
  * Parameters for the {@link deleteTask}-function.
@@ -11,27 +11,16 @@ export interface DeleteTaskParams {
 }
 
 /**
- * Factory for the {@link deleteTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link deleteTask}-function. A corresponding transformFunction has to be supplied.
+ * Default `onResponse` provided to the {@link deleteTask}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Task
  */
-export function _deleteTaskFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: DeleteTaskParams) => T,
-): (context: DvelopContext, params: DeleteTaskParams) => Promise<T> {
-  return async (context: DvelopContext, params: DeleteTaskParams) => {
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "DELETE",
-      url: params.location
-    });
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
- * Mark task as completed.
+ * Delete a task.
  *
  * ```typescript
  * import { deleteTask } from "@dvelop-sdk/task";
@@ -46,7 +35,14 @@ export function _deleteTaskFactory<T>(
  *
  * @category Task
  */
-/* istanbul ignore next */
-export function deleteTask(context: DvelopContext, params: DeleteTaskParams): Promise<void> {
-  return _deleteTaskFactory(_defaultHttpRequestFunction, () => { })(context, params);
+export async function deleteTask(context: DvelopContext, params: DeleteTaskParams): Promise<void>;
+export async function deleteTask<T>(context: DvelopContext, params: DeleteTaskParams, options: DvelopOptions<T>): Promise<T>;
+export async function deleteTask<T>(
+  context: DvelopContext,
+  params: DeleteTaskParams,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+  return dvelopFetch(context, params.location, { method: "DELETE" }, options);
 }

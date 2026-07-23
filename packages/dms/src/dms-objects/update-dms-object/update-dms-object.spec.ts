@@ -1,28 +1,29 @@
-import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../utils/http";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
+import {
+  UpdateDmsObjectParams,
+  onResponse,
+  updateDmsObject,
+} from "./update-dms-object";
 import { storeFileTemporarily } from "../store-file-temporarily/store-file-temporarily";
-import { updateDmsObjectDefaultStoreFileFunction, _updateDmsObjectDefaultTransformFunction, _updateDmsObjectFactory, UpdateDmsObjectParams } from "./update-dms-object";
+
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
 jest.mock("../store-file-temporarily/store-file-temporarily");
-const mockStoryFileTemporarily = storeFileTemporarily as jest.MockedFunction<typeof storeFileTemporarily>;
+
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+const mockStoreFileTemporarily = storeFileTemporarily as jest.MockedFunction<typeof storeFileTemporarily>;
 
 describe("updateDmsObject", () => {
-
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
-  let mockStoreFileFunction = jest.fn();
 
   let context: DvelopContext;
   let params: UpdateDmsObjectParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
     params = {
       repositoryId: "HiItsMeRepositoryId",
       sourceId: "HiItsMeSourceId",
@@ -30,127 +31,70 @@ describe("updateDmsObject", () => {
       alterationText: "HiItsMeAlterationText",
       categoryId: "HiItsMeCategoryId",
       properties: [
-        {
-          key: "HiItsMeProperty1Key",
-          values: ["HiItsMeProperty1Value"]
-        },
-        {
-          key: "HiItsMeProperty2Key",
-          values: ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"]
-        }
+        { key: "HiItsMeProperty1Key", values: ["HiItsMeProperty1Value"] },
+        { key: "HiItsMeProperty2Key", values: ["HiItsMeProperty2Value1", "HiItsMeProperty2Value2"] }
       ]
     };
   });
 
-  it("should not call storeFileFunction if contentUri is given", async () => {
+  it("should call dvelopFetch with method PUT and a JSON body", async () => {
+    await updateDmsObject(context, params);
 
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    const [calledContext, calledUrl, calledInit, calledOptions] = mockDvelopFetch.mock.calls[0];
+    expect(calledContext).toBe(context);
+    expect(calledUrl).toBe(`/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}`);
+    expect(calledInit).toMatchObject({ method: "PUT" });
+    expect(JSON.parse(calledInit!.body as string)).toEqual({
+      sourceId: params.sourceId,
+      alterationText: params.alterationText,
+      sourceCategory: params.categoryId,
+      sourceProperties: { properties: params.properties },
+      filename: params.fileName,
+      contentLocationUri: params.contentLocationUri,
+      contentUri: params.contentUri
+    });
+    expect(calledOptions).toMatchObject({ onResponse: onResponse });
+  });
+
+  it("should not call storeFileTemporarily when contentUri is set", async () => {
     params.contentUri = "HiItsMeContentUri";
     params.content = new ArrayBuffer(42);
 
-    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
     await updateDmsObject(context, params);
-
-    expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
+    expect(mockStoreFileTemporarily).not.toHaveBeenCalled();
   });
 
-  it("should not call storeFileFunction if contentLocationUri is given", async () => {
-
-    params.contentLocationUri = "HiItsMeContentUri";
+  it("should not call storeFileTemporarily when contentLocationUri is set", async () => {
+    params.contentLocationUri = "HiItsMeContentLocationUri";
     params.content = new ArrayBuffer(42);
 
-    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
     await updateDmsObject(context, params);
-
-    expect(mockStoreFileFunction).toHaveBeenCalledTimes(0);
+    expect(mockStoreFileTemporarily).not.toHaveBeenCalled();
   });
 
-  it("should call storeFileFunction if content is given", async () => {
-
+  it("should call storeFileTemporarily and set contentLocationUri when content is given", async () => {
     params.content = new ArrayBuffer(42);
-    mockStoreFileFunction.mockReturnValue({ setAs: "contentUri", uri: "HiItsMeUri" });
+    mockStoreFileTemporarily.mockResolvedValue("HiItsMeTemporaryUri");
 
-    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
     await updateDmsObject(context, params);
 
-    expect(mockStoreFileFunction).toHaveBeenCalledTimes(1);
-    expect(mockStoreFileFunction).toHaveBeenCalledWith(context, params);
+    expect(mockStoreFileTemporarily).toHaveBeenCalledWith(context, { repositoryId: params.repositoryId, content: params.content });
+    const calledInit = mockDvelopFetch.mock.calls[0][2];
+    expect(JSON.parse(calledInit!.body as string).contentLocationUri).toEqual("HiItsMeTemporaryUri");
   });
 
-  it("should make correct request", async () => {
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await updateDmsObject(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
+  });
 
-    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
-    await updateDmsObject(context, params);
-
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "PUT",
-      url: "/dms",
-      follows: ["repo", "dmsobjectwithmapping", "update"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "sourceid": params.sourceId,
-        "dmsobjectid": params.dmsObjectId
-      },
-      data: {
-        "sourceId": params.sourceId,
-        "alterationText": params.alterationText,
-        "sourceCategory": params.categoryId,
-        "sourceProperties": {
-          "properties": params.properties
-        },
-        "fileName": params.fileName,
-        "contentLocationUri": params.contentLocationUri,
-        "contentUri": params.contentUri
-      }
+  describe("_updateDmsObjectDefaultTransformFunction", () => {
+    it("should resolve to undefined on 2xx", async () => {
+      const response = new Response(null, { status: 204 });
+      await expect(onResponse(response)).resolves.toBeUndefined();
     });
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, mockStoreFileFunction);
-    await updateDmsObject(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
-  });
-
-  describe("updateDmsObjectDefaultTransformer", () => {
-
-    it("should return void", async () => {
-      const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-      mockHttpRequestFunction.mockResolvedValue(response);
-
-      const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, _updateDmsObjectDefaultTransformFunction, mockStoreFileFunction);
-      const result = await updateDmsObject(context, params);
-
-      expect(result).toBe(undefined);
-    });
-  });
-
-  describe("updateDmsObjectDefaultStoreFileFunction", () => {
-
-    it("should call storeFileTemporarily correctly", async () => {
-
-      const temporaryFileUrl = "HiItsMeTemporaryFileUrl";
-      mockStoryFileTemporarily.mockResolvedValue(temporaryFileUrl);
-      params.content = new ArrayBuffer(42);
-
-      const updateDmsObject = _updateDmsObjectFactory(mockHttpRequestFunction, mockTransformFunction, updateDmsObjectDefaultStoreFileFunction);
-      await updateDmsObject(context, params);
-
-      expect(mockStoryFileTemporarily).toHaveBeenCalledTimes(1);
-      expect(mockStoryFileTemporarily).toHaveBeenCalledWith(context, params);
-
-      expect(mockHttpRequestFunction).toHaveBeenCalledWith(expect.any(Object), expect.objectContaining({
-        data: expect.objectContaining({
-          contentLocationUri: temporaryFileUrl
-        })
-      }));
-    });
-  });
 });

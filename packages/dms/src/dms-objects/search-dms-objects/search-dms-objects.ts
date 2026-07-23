@@ -1,13 +1,17 @@
-import { DmsObject, DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
+import { getDmsObjectMainFile } from "../get-dms-object-file/get-dms-object-file";
 
 /**
  * Parameters for the {@link searchDmsObjects}-function.
  * @category DmsObject
  */
 export interface SearchDmsObjectsParams {
+  /** ID of the repository */
   repositoryId: string,
+  /** ID of the source */
   sourceId: string;
+  /** Categories to filter by */
   categories?: string[];
   /** Properties */
   properties?: {
@@ -16,11 +20,17 @@ export interface SearchDmsObjectsParams {
     /** Value(s) - Single values must be given as an array of length 1 */
     values: string[];
   }[]
+  /** Property to sort the result by */
   sortProperty?: string;
+  /** Whether to sort ascending or descending */
   ascending?: boolean;
+  /** Fulltext-search */
   fulltext?: string;
+  /** Page to return */
   page?: number;
+  /** Number of results per page */
   pageSize?: number;
+  /** ID of the parent DmsObject to search children of */
   childrenOf?: string;
 }
 
@@ -29,7 +39,6 @@ export interface SearchDmsObjectsParams {
  * @category DmsObject
  */
 export interface ListedDmsObject {
-
   /** ID of the repository */
   repositoryId: string;
   /** ID of the source */
@@ -73,132 +82,53 @@ export interface SearchDmsObjectsResultPage {
  * @internal
  * @category DmsObject
  */
-function _listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (dto: any, context: DvelopContext, params: SearchDmsObjectsParams) => ListedDmsObject {
-  return (dto: any, context: DvelopContext, params: SearchDmsObjectsParams) => {
+export function onResponseFactory(
+  context: DvelopContext,
+  params: SearchDmsObjectsParams
+): (response: Response) => Promise<SearchDmsObjectsResultPage> {
+  return async (response: Response) => {
 
-    const result: ListedDmsObject = {
-      repositoryId: params.repositoryId,
-      sourceId: params.sourceId,
-      dmsObjectId: dto.id,
-      categories: dto.sourceCategories,
-      properties: dto.sourceProperties
-    };
-
-    if (dto._links?.mainblobcontent) {
-      result.getMainFile = async () => {
-        const mainBlobContentResponse = await httpRequestFunction(context, {
-          method: "GET",
-          url: dto._links.mainblobcontent.href,
-          headers: { "Accept": "application/octet-stream" },
-          responseType: "arraybuffer"
-        });
-        return mainBlobContentResponse.data;
-      };
-    }
-
-    return result;
-  };
-}
-
-/**
- * Factory for the default-transform-function for the {@link searchDmsObjects}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @internal
- * @category DmsObject
- */
-export function _searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>): (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => SearchDmsObjectsResultPage {
-  return (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => {
+    await ensureSuccessResponse(response);
+    const data: any = await response.json();
 
     const result: SearchDmsObjectsResultPage = {
-      page: response.data.page,
-      dmsObjects: response.data.items.map((item: any) => _listedDmsObjectDefaultTransformFunctionFactory(httpRequestFunction)(item, context, params))
-    };
+      page: data.page,
+      dmsObjects: data.items.map((item: any) => {
+        const result: ListedDmsObject = {
+          repositoryId: params.repositoryId,
+          sourceId: params.sourceId,
+          dmsObjectId: item.id,
+          categories: item.sourceCategories,
+          properties: item.sourceProperties
+        };
 
-    if (response.data._links?.prev) {
-      result.getPreviousPage = async () => {
-        const prevResponse: HttpResponse = await httpRequestFunction(context, {
-          method: "GET",
-          url: response.data._links.prev.href
-        });
-        return _searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction)(prevResponse, context, params);
-      };
+        if (item._links?.mainblobcontent) {
+          result.getMainFile = async () => {
+            return getDmsObjectMainFile(context, {
+              repositoryId: params.repositoryId,
+              sourceId: params.sourceId,
+              dmsObjectId: item.id
+            })
+          }
+        }
+
+        return result;
+      })
     }
 
-    if (response.data._links?.next) {
-      result.getNextPage = async () => {
-        const nextResponse: HttpResponse = await httpRequestFunction(context, {
-          method: "GET",
-          url: response.data._links.next.href
-        });
-        return _searchDmsObjectsDefaultTransformFunctionFactory(httpRequestFunction)(nextResponse, context, params);
-      };
+    if (data._links?.prev) {
+      result.getPreviousPage = async () => dvelopFetch(context, data._links.prev, { method: "GET" }, {
+        onResponse: onResponseFactory(context, params)
+      });
+    }
+
+    if (data._links?.next) {
+      result.getNextPage = async () => dvelopFetch(context, data._links.next, { method: "GET" }, {
+        onResponse: onResponseFactory(context, params)
+      });
     }
 
     return result;
-  };
-}
-
-function formatProperties(properties: { key: string, values: string[] }[]): { [key: string]: string[] } {
-
-  const sourceProperties: { [key: string]: string[] } = {};
-  properties.forEach(p => {
-    if (sourceProperties[p.key]) {
-      sourceProperties[p.key] = sourceProperties[p.key].concat(p.values);
-    } else {
-      sourceProperties[p.key] = p.values;
-    }
-  });
-  return sourceProperties;
-}
-
-/**
- * Factory for the {@link searchDmsObjects}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link storeFileFunction}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category DmsObject
- */
-export function searchDmsObjectsFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: SearchDmsObjectsParams) => T
-): (context: DvelopContext, params: SearchDmsObjectsParams) => Promise<T> {
-  return async (context: DvelopContext, params: SearchDmsObjectsParams) => {
-
-    const templates: { [key: string]: any } = {
-      "repositoryid": params.repositoryId,
-      "sourceid": params.sourceId,
-    };
-    if (params.categories) {
-      templates["sourcecategories"] = params.categories;
-    }
-    if (params.properties) {
-      templates["sourceproperties"] = formatProperties(params.properties);
-    }
-    if (params.sortProperty) {
-      templates["sourcepropertysort"] = params.sortProperty;
-    }
-    if (params.ascending) {
-      templates["ascending"] = params.ascending;
-    }
-    if (params.fulltext) {
-      templates["fulltext"] = params.fulltext;
-    }
-    if (params.page) {
-      templates["page"] = params.page;
-    }
-    if (params.pageSize) {
-      templates["pagesize"] = params.pageSize;
-    }
-    if (params.childrenOf) {
-      templates["children_of"] = params.childrenOf;
-    }
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "GET",
-      url: "/dms",
-      follows: ["repo", "searchresultwithmapping"],
-      templates: templates
-    });
-
-    return transformFunction(response, context, params);
   };
 }
 
@@ -222,19 +152,51 @@ export function searchDmsObjectsFactory<T>(
  *     values: ["unpaid"]
  *   }]
  * });
- *
- * console.log(searchResult.dmsObjects.length);
- *
- * let dmsObjects: DmsObject[] = searchResult.dmsObjects
- *
- * while (searchResult.getNextPage) { // Don't call function here, just check existence
- *   const nextPage: SearchDmsObjectsResultPage = await searchResult.getNextPage();
- *   dmsObjects = dmsObjects.concat(nextPage.dmsObjects);
- * }
  * ```
  * @category DmsObject
  */
-/* istanbul ignore next */
-export function searchDmsObjects(context: DvelopContext, params: SearchDmsObjectsParams): Promise<SearchDmsObjectsResultPage> {
-  return searchDmsObjectsFactory(_defaultHttpRequestFunction, _searchDmsObjectsDefaultTransformFunctionFactory(_defaultHttpRequestFunction))(context, params);
+export async function searchDmsObjects(context: DvelopContext, params: SearchDmsObjectsParams): Promise<SearchDmsObjectsResultPage>;
+export async function searchDmsObjects<T>(context: DvelopContext, params: SearchDmsObjectsParams, options: DvelopOptions<T>): Promise<T>;
+export async function searchDmsObjects<T>(
+  context: DvelopContext,
+  params: SearchDmsObjectsParams,
+  options: DvelopOptions<T | SearchDmsObjectsResultPage> = {
+    onResponse: onResponseFactory(context, params)
+  }
+): Promise<T | SearchDmsObjectsResultPage> {
+
+  const searchParams = new URLSearchParams();
+  searchParams.append("sourceid", params.sourceId);
+
+  if (params.categories) {
+    searchParams.append("sourcecategories", JSON.stringify(params.categories));
+  }
+  if (params.properties) {
+    const sourceProperties: { [key: string]: string[] } = {};
+    params.properties.forEach(p => {
+      sourceProperties[p.key] = sourceProperties[p.key] ? sourceProperties[p.key].concat(p.values) : p.values;
+    });
+    searchParams.append("sourceproperties", JSON.stringify(sourceProperties));
+  }
+  if (params.sortProperty !== undefined) {
+    searchParams.append("sourcepropertysort", params.sortProperty);
+  }
+  if (params.ascending !== undefined) {
+    searchParams.append("ascending", String(params.ascending));
+  }
+  if (params.fulltext !== undefined) {
+    searchParams.append("fulltext", params.fulltext);
+  }
+  if (params.page !== undefined) {
+    searchParams.append("page", String(params.page));
+  }
+  if (params.pageSize !== undefined) {
+    searchParams.append("pageSize", String(params.pageSize));
+  }
+  if (params.childrenOf !== undefined) {
+    searchParams.append("children_of", params.childrenOf);
+  }
+
+  const query = searchParams.toString();
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/srm${query ? `?${query}` : ""}`, { method: "GET" }, options);
 }

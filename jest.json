@@ -6,11 +6,15 @@
     "**/*.spec.ts"
   ],
   "transform": {
-    "^.+\\.ts$": "ts-jest"
+    "^.+\\.ts$": ["ts-jest", { "tsconfig": "tsconfig-base.json", "isolatedModules": true }]
   },
   "transformIgnorePatterns": [
     "/node_modules/(?!(axios)/)"
   ],
+  "moduleNameMapper": {
+    "^(.*)\\.js$": "$1"
+  },
+  "testPathIgnorePatterns": ["/node_modules/", "e2e\\."],
   "testEnvironment": "node",
   "collectCoverage": true,
   "collectCoverageFrom": [

@@ -1,6 +1,5 @@
-import { DvelopContext, ForbiddenError } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
-import { _getDmsObjectFactory } from "../get-dms-object/get-dms-object";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
 
 /**
  * Parameters for the {@link deleteCurrentDmsObjectVersion}-function.
@@ -19,50 +18,23 @@ export interface DeleteCurrentDmsObjectVersionParams {
 
 /**
  * Default transform-function provided to the {@link deleteCurrentDmsObjectVersion}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ *
+ * Resolves to `true` when no further version exists (the DmsObject is fully deleted)
+ * and to `false` when the response indicates that another version can still be deleted.
  * @internal
  * @category DmsObject
  */
-export function _deleteCurrentDmsObjectVersionDefaultTransformFunction(response: HttpResponse, _: DvelopContext, __: DeleteCurrentDmsObjectVersionParams): boolean {
-  if (response.data?._links?.deleteWithReason || response.data?._links?.delete) {
-    return false;
-  } else {
-    return true;
+export async function onResponse(response: Response): Promise<boolean> {
+  await ensureSuccessResponse(response);
+
+  let data: any;
+  try {
+    data = await response.clone().json();
+  } catch {
+    data = undefined;
   }
-}
 
-/**
- * Factory for the {@link deleteCurrentDmsObjectVersion}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link deleteCurrentDmsObjectVersion}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category DmsObject
- */
-export function _deleteCurrentDmsObjectVersionFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams) => T,
-): (context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams) => Promise<T> {
-  return async (context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams) => {
-
-    const getDmsObjectResponse: HttpResponse = await _getDmsObjectFactory(httpRequestFunction, (response: HttpResponse) => response)(context, params);
-
-    let url: string;
-    if (getDmsObjectResponse.data._links.deleteWithReason) {
-      url = getDmsObjectResponse.data._links.deleteWithReason.href;
-    } else if (getDmsObjectResponse.data._links.delete) {
-      url = getDmsObjectResponse.data._links.delete.href;
-    } else {
-      throw new ForbiddenError("Deletion denied for user.");
-    }
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "DELETE",
-      url: url,
-      data: {
-        reason: params.reason
-      }
-    });
-
-    return transformFunction(response, context, params);
-  };
+  return !(data?._links?.deleteWithReason || data?._links?.delete);
 }
 
 /**
@@ -81,26 +53,21 @@ export function _deleteCurrentDmsObjectVersionFactory<T>(
  *     dmsObjectId: "GDYQ3PJKrT8",
  *     reason: "This shall be gone! Tout de suite!"
  *   });
- *
- * // Delete the whole DmsObject
- * // * Attention: This method wraps a HTTP-Call in a loop and can significantly slow down your code *
- * let deletedAllVersions: boolean = false;
- * while (!deletedAllVersions) {
- *   deletedAllVersions = await deleteCurrentDmsObjectVersion({
- *     systemBaseUri: "https://steamwheedle-cartel.d-velop.cloud",
- *     authSessionId: "dQw4w9WgXcQ"
- *   }, {
- *     repositoryId: "qnydFmqHuVo",
- *     sourceId: "/dms/r/qnydFmqHuVo/source",
- *     dmsObjectId: "GDYQ3PJKrT8",
- *     reason: "This shall be gone! Tout de suite!"
- *   });
- * }
  * ```
  *
  * @category DmsObject
  */
-/* istanbul ignore next */
-export async function deleteCurrentDmsObjectVersion(context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams): Promise<boolean> {
-  return _deleteCurrentDmsObjectVersionFactory(_defaultHttpRequestFunction, _deleteCurrentDmsObjectVersionDefaultTransformFunction)(context, params);
+export async function deleteCurrentDmsObjectVersion(context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams): Promise<boolean>;
+export async function deleteCurrentDmsObjectVersion<T>(context: DvelopContext, params: DeleteCurrentDmsObjectVersionParams, options: DvelopOptions<T>): Promise<T>;
+export async function deleteCurrentDmsObjectVersion<T>(
+  context: DvelopContext,
+  params: DeleteCurrentDmsObjectVersionParams,
+  options: DvelopOptions<T | boolean> = {
+    onResponse: onResponse
+  }
+): Promise<T | boolean> {
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}`, {
+    method: "DELETE",
+    body: JSON.stringify({ reason: params.reason })
+  }, options);
 }

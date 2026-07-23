@@ -5,7 +5,7 @@ import { DvelopSdkError } from "../errors/errors";
 * @category Error
 */
 export class TraceContextError extends DvelopSdkError {
-  // eslint-disable-next-line no-unused-vars
+   
   constructor(message: string) {
     super(message);
     Object.setPrototypeOf(this, TraceContextError.prototype);

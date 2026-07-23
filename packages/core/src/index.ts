@@ -24,12 +24,12 @@
  * @module core
  */
 export { DvelopContext } from "./context/context";
+export { DvelopOptions } from "./options/options";
 export * from "./errors/errors";
-export * from "./http/http-headers";
 export * as internals from "./internal";
 export { DeepMergeError, deepMergeObjects } from "./util/deep-merge-objects";
-export { DvelopHttpRequestConfig, DvelopHttpResponse, DvelopHttpError, DvelopHttpClient, defaultDvelopHttpClientFactory } from "./http/http-client";
 export { generateUuid, generateRequestId } from "./generate-uuid/generate-uudi-id";
+export { dvelopFetch } from "./http/fetch";
 
 export { TraceContext } from "./trace-context/trace-context";
 export { TraceContextError } from "./trace-context/trace-context-error";

@@ -1,5 +1,5 @@
-import { DvelopContext, DvelopHttpRequestConfig, DvelopHttpResponse } from "@dvelop-sdk/core";
-import { _defaultHttpRequestFunction } from "../../internal";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
 
 /**
  * Parameters for the {@link unlinkDmsObjects}-function.
@@ -8,8 +8,6 @@ import { _defaultHttpRequestFunction } from "../../internal";
 export interface UnlinkDmsObjectsParams {
   /** ID of the repository */
   repositoryId: string;
-  /** ID of the source */
-  sourceId: string;
   /** ID of the DmsObject that will be linked as parent */
   parentDmsObjectId: string;
   /** ID of the DmsObjects that will be linked as children */
@@ -17,27 +15,12 @@ export interface UnlinkDmsObjectsParams {
 }
 
 /**
- * Factory for {@link unlinkDmsObjects}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link unlinkDmsObjects}-function. A corresponding transformFunction has to be supplied.
+ * Default transform-function provided to the {@link unlinkDmsObjects}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category DmsObject
  */
-export function _unlinkDmsObjectsFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: DvelopHttpRequestConfig) => Promise<DvelopHttpResponse>,
-  transformFunction: (response: DvelopHttpResponse, context: DvelopContext, params: UnlinkDmsObjectsParams) => T
-): (context: DvelopContext, params: UnlinkDmsObjectsParams) => Promise<T> {
-  return async (context: DvelopContext, params: UnlinkDmsObjectsParams) => {
-
-    const response: DvelopHttpResponse = await httpRequestFunction(context, {
-      method: "DELETE",
-      url: `/dms/r/${params.repositoryId}/o2m/${params.parentDmsObjectId}/children/${params.childDmsObjectsId}`,
-      params: {
-        "sourceid": params.sourceId
-      }
-    })
-
-    return transformFunction(response, context, params);
-  }
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
 /**
@@ -51,15 +34,20 @@ export function _unlinkDmsObjectsFactory<T>(
  *   authSessionId: "dQw4w9WgXcQ"
  * }, {
  *   repositoryId: "qnydFmqHuVo",
- *   sourceId: "/dms/r/qnydFmqHuVo/source",
  *   parentDmsObjectId: "GDYQ3PJKrT8",
  *   childDmsObjectsId: "N3bEh-PEk1g"
  * });
- *
  * ```
  * @category DmsObject
  */
-/* istanbul ignore next */
-export async function unlinkDmsObjects(context: DvelopContext, params: UnlinkDmsObjectsParams): Promise<void> {
-  return _unlinkDmsObjectsFactory(_defaultHttpRequestFunction, () => { })(context, params);
+export async function unlinkDmsObjects(context: DvelopContext, params: UnlinkDmsObjectsParams): Promise<void>;
+export async function unlinkDmsObjects<T>(context: DvelopContext, params: UnlinkDmsObjectsParams, options: DvelopOptions<T>): Promise<T>;
+export async function unlinkDmsObjects<T>(
+  context: DvelopContext,
+  params: UnlinkDmsObjectsParams,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/o2m/${params.parentDmsObjectId}/children/${params.childDmsObjectsId}`, { method: "DELETE" }, options);
 }

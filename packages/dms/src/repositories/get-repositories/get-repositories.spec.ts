@@ -1,113 +1,61 @@
-import { DvelopContext } from "../../index";
-import { HttpResponse } from "../../utils/http";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
 import { Repository } from "../get-repository/get-repository";
-import { _getRepositoriesDefaultTransformFunction, _getRepositoriesFactory } from "./get-repositories";
+import { onResponse, getRepositories } from "./get-repositories";
 
-describe("getRepositoriesFactory", () => {
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("getRepositories", () => {
 
   let context: DvelopContext;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
   });
 
-  it("should make correct request", async () => {
-
-    const getRepositories = _getRepositoriesFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method GET", async () => {
     await getRepositories(context);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "GET",
-      url: "/dms",
-      follows: ["allrepos"],
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(
+      context,
+      "/dms/r",
+      { method: "GET" },
+      expect.objectContaining({ onResponse: onResponse })
+    );
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const getRepositories = _getRepositoriesFactory(mockHttpRequestFunction, mockTransformFunction);
-    const result = await getRepositories(context);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context);
-    expect(result).toEqual(transformResult);
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await getRepositories(context, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
   });
 
-  describe("getRepositoriesDefaultTransformFunction", () => {
+  describe("_getRepositoriesDefaultTransformFunction", () => {
 
-    it("should map correctly", async () => {
+    function jsonResponse(data: any): Response {
+      return new Response(JSON.stringify(data), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
 
-      const data: any = {
-        "_links": {
-          "self": {
-            "href": "/dms/r/"
-          }
-        },
-        "repositories": [
-          {
-            "_links": {
-              "HiItsMeLink1": {
-                "href": "HiItsMeHref1",
-                "templated": true
-              },
-              "source": {
-                "href": "HiItsMeSource1",
-              }
-            },
-            "id": "HiItsMeRepoId1",
-            "name": "HiItsMeName1",
-            "supportsFulltextSearch": true,
-            "serverId": "HiItsMeServerId1",
-            "available": true,
-            "isDefault": false,
-            "version": "HiItsMeVersion1"
-          }, {
-            "_links": {
-              "HiItsMeLink2": {
-                "href": "HiItsMeHref2",
-                "templated": true
-              },
-              "source": {
-                "href": "HiItsMeSource2",
-              }
-            },
-            "id": "HiItsMeRepoId2",
-            "name": "HiItsMeName2",
-            "supportsFulltextSearch": true,
-            "serverId": "HiItsMeServerId2",
-            "available": true,
-            "isDefault": false,
-            "version": "HiItsMeVersion2"
-          }
-        ],
-        "count": 1,
-        "hasAdminRight": false
+    it("should map repositories correctly", async () => {
+      const data = {
+        repositories: [
+          { _links: { source: { href: "HiItsMeSource1" } }, id: "HiItsMeRepoId1", name: "HiItsMeName1" },
+          { _links: { source: { href: "HiItsMeSource2" } }, id: "HiItsMeRepoId2", name: "HiItsMeName2" }
+        ]
       };
 
-      mockHttpRequestFunction.mockResolvedValue({ data: data } as HttpResponse);
+      const result: Repository[] = await onResponse(jsonResponse(data));
 
-      const getRepositories = _getRepositoriesFactory(mockHttpRequestFunction, _getRepositoriesDefaultTransformFunction);
-      const result: Repository[] = await getRepositories(context);
-
-      data.repositories.forEach((repoDto: any, i: number) => {
-        expect(result[i]).toHaveProperty("repositoryId", repoDto.id);
-        expect(result[i]).toHaveProperty("name", repoDto.name);
-        expect(result[i]).toHaveProperty("sourceId", repoDto._links.source.href);
-      });
+      expect(result).toEqual([
+        { repositoryId: "HiItsMeRepoId1", name: "HiItsMeName1", sourceId: "/dms/r/HiItsMeRepoId1/source" },
+        { repositoryId: "HiItsMeRepoId2", name: "HiItsMeName2", sourceId: "/dms/r/HiItsMeRepoId2/source" }
+      ]);
     });
   });
 });

@@ -17,11 +17,11 @@ describe("validateRequestSignature", () => {
     }
   ].forEach(testCase => {
     it(`should pass on: ${JSON.stringify(testCase)})`, () => {
-      expect(() => validateRequestSignature(testCase.appSecret, testCase.systemBaseUri, testCase.tenantId, testCase.signature)).not.toThrowError();
+      expect(() => validateRequestSignature(testCase.appSecret, testCase.systemBaseUri, testCase.tenantId, testCase.signature)).not.toThrow();
     });
 
     it(`should pass on: ${JSON.stringify(testCase)})`, () => {
-      expect(() => validateDvelopContext(testCase.appSecret, { systemBaseUri: testCase.systemBaseUri, tenantId: testCase.tenantId, requestSignature: testCase.signature })).not.toThrowError();
+      expect(() => validateDvelopContext(testCase.appSecret, { systemBaseUri: testCase.systemBaseUri, tenantId: testCase.tenantId, requestSignature: testCase.signature })).not.toThrow();
     });
   });
 

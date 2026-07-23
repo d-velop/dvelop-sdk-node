@@ -1,25 +1,25 @@
-import { DvelopContext } from "@dvelop-sdk/core";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
 import {
-  _createDmsObjectNoteDefaultTransformFunction,
-  _createDmsObjectNoteFactory,
-  CreateDmsObjectNoteParams
+  CreateDmsObjectNoteParams,
+  onResponse,
+  createDmsObjectNote,
 } from "./create-dms-object-note";
-import { HttpResponse } from "../../utils/http";
 
-describe("createDmsObjectNotes", () => {
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
+
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+
+describe("createDmsObjectNote", () => {
 
   let context: DvelopContext;
   let params: CreateDmsObjectNoteParams;
 
   beforeEach(() => {
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
     params = {
       repositoryId: "HiItsMeRepositoryId",
       dmsObjectId: "HiItsMeDmsObjectId",
@@ -27,48 +27,29 @@ describe("createDmsObjectNotes", () => {
     };
   });
 
-  it("should make correct request", async () => {
-    const createDmsObjectNotes = _createDmsObjectNoteFactory(mockHttpRequestFunction, mockTransformFunction);
-    await createDmsObjectNotes(context, params);
+  it("should call dvelopFetch with POST and JSON body", async () => {
+    await createDmsObjectNote(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "POST",
-      url: "/dms",
-      follows: ["repo", "dmsobjectwithmapping", "notes"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "dmsobjectid": params.dmsObjectId
-      },
-      data: {
-        "text": params.noteText
-      }
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    const [calledContext, calledUrl, calledInit, calledOptions] = mockDvelopFetch.mock.calls[0];
+    expect(calledContext).toBe(context);
+    expect(calledUrl).toBe(`/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}/n`);
+    expect(calledInit).toMatchObject({ method: "POST" });
+    expect(JSON.parse(calledInit!.body as string)).toEqual({ text: params.noteText });
+    expect(calledOptions).toMatchObject({ onResponse: onResponse });
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const createDmsObjectNotes = _createDmsObjectNoteFactory(mockHttpRequestFunction, mockTransformFunction);
-    await createDmsObjectNotes(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await createDmsObjectNote(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
   });
 
+  describe("_createDmsObjectNoteDefaultTransformFunction", () => {
 
-  describe("createDmsObjectNotesDefaultTransformFunction", () => {
-    it("should return void", async () => {
-      const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-      mockHttpRequestFunction.mockResolvedValue(response);
-
-      const createDmsObjectNotes = _createDmsObjectNoteFactory(mockHttpRequestFunction, _createDmsObjectNoteDefaultTransformFunction);
-      const result = await createDmsObjectNotes(context, params);
-
-      expect(result).toBe(undefined);
+    it("should resolve to undefined on 2xx", async () => {
+      const response = new Response(null, { status: 204 });
+      await expect(onResponse(response)).resolves.toBeUndefined();
     });
   });
 });

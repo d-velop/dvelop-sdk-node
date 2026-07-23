@@ -10,7 +10,7 @@ describe("DvelopLogger", () => {
   });
 
   test("should throw error on new DvelopLogger if no provider specified", () => {
-    expect(() => new DvelopLogger({ providers: [] })).toThrowError();
+    expect(() => new DvelopLogger({ providers: [] })).toThrow();
   });
 
   describe("severity function", () => {

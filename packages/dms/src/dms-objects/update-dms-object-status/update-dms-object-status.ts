@@ -1,5 +1,5 @@
-import { DvelopContext } from "../../index";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/dms-error";
 
 export type DmsObjectStatus = "Processing" | "Verification" | "Release";
 
@@ -25,54 +25,13 @@ export interface UpdateDmsObjectStatusParams {
  * @internal
  * @category DmsObject
  */
-export function _updateDmsObjectStatusDefaultTransformFunction(_: HttpResponse, __: DvelopContext, ___: UpdateDmsObjectStatusParams): void { } // no error indicates success. Returning void
-
-/**
- * Factory for the {@link updateDmsObject}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link updateDmsObjectStatus}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category DmsObject
- */
-export function _updateDmsObjectStatusFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext, params: UpdateDmsObjectStatusParams) => T,
-): (context: DvelopContext, params: UpdateDmsObjectStatusParams) => Promise<T> {
-  return async (context: DvelopContext, params: UpdateDmsObjectStatusParams) => {
-
-    const properties: { key: string, values: string[] }[] = [{
-      key: "property_state",
-      values: [params.status]
-    }]
-
-    if (params.editor) {
-      properties.push({
-        key: "property_editor",
-        values: [params.editor]
-      })
-    }
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "PUT",
-      url: "/dms",
-      follows: ["repo", "dmsobjectwithmapping", "displayVersion"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "dmsobjectid": params.dmsObjectId
-      },
-      data: {
-        "sourceId": `/dms/r/${params.repositoryId}/source`,
-        "alterationText": params.alterationText || undefined,
-        "sourceProperties": {
-          "properties": properties
-        }
-      }
-    });
-    return transformFunction(response, context, params);
-  };
+export async function onResponse(response: Response): Promise<void> {
+  await ensureSuccessResponse(response);
 }
 
+
 /**
- * Update a DmsObject.
+ * Update a DmsObject's status.
  *
  * ```typescript
  * import { updateDmsObjectStatus } from "@dvelop-sdk/dms";
@@ -91,7 +50,26 @@ export function _updateDmsObjectStatusFactory<T>(
  *
  * @category DmsObject
  */
-/* istanbul ignore next */
-export function updateDmsObjectStatus(context: DvelopContext, params: UpdateDmsObjectStatusParams): Promise<void> {
-  return _updateDmsObjectStatusFactory<void>(_defaultHttpRequestFunction, _updateDmsObjectStatusDefaultTransformFunction)(context, params);
+export async function updateDmsObjectStatus(context: DvelopContext, params: UpdateDmsObjectStatusParams): Promise<void>;
+export async function updateDmsObjectStatus<T>(context: DvelopContext, params: UpdateDmsObjectStatusParams, options: DvelopOptions<T>): Promise<T>;
+export async function updateDmsObjectStatus<T>(
+  context: DvelopContext,
+  params: UpdateDmsObjectStatusParams,
+  options: DvelopOptions<T | void> = {
+    onResponse: onResponse
+  }
+): Promise<T | void> {
+  return dvelopFetch(context, `/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}/v/current`, {
+    method: "PUT",
+    body: JSON.stringify({
+      sourceId: `/dms/r/${params.repositoryId}/source`,
+      alterationText: params.alterationText,
+      sourceProperties: {
+        properties: [
+          { key: "property_state", values: [params.status] },
+          ...(params.editor ? [{ key: "property_editor", values: [params.editor] }] : [])
+        ]
+      }
+    })
+  }, options);
 }

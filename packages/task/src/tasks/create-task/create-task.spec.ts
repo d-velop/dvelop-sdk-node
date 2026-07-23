@@ -1,198 +1,107 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpResponse } from "../../utils/http";
-import { CreateTaskParams, _createTaskDefaultTransformFunction, _createTaskFactory } from "./create-task";
+import { DvelopContext, dvelopFetch, generateRequestId } from "@dvelop-sdk/core";
+import { CreateTaskParams, onResponse, createTask } from "./create-task";
 
-interface TestCase {
-  params: CreateTaskParams;
-  mockedUuidGenerator?: () => string;
-  expectedData: any;
-}
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn(), generateRequestId: jest.fn() };
+});
 
-describe("createTaskFactory", () => {
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
+const mockGenerateRequestId = generateRequestId as jest.MockedFunction<typeof generateRequestId>;
 
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
+describe("createTask", () => {
 
   let context: DvelopContext;
   let params: CreateTaskParams;
 
   beforeEach(() => {
-
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
+    mockGenerateRequestId.mockReturnValue("HiItsMeGeneratedCorrelationKey");
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
     params = {
       subject: "HiItsMeSubject",
       assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"]
     };
   });
 
-  const testCases: TestCase[] = [
-    {
-      params: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"]
-      },
-      expectedData: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
-      }
-    },
-    {
-      params: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
-        correlationKey: "HiItsMeCorrelationKey"
-      },
-      expectedData: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
-        correlationKey: "HiItsMeCorrelationKey"
-      }
-    },
-    {
-      params: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
-        correlationKey: "HiItsMeCorrelationKey"
-      },
-      mockedUuidGenerator: () => "HiItsMeGeneratedCorrelationKey",
-      expectedData: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
-        correlationKey: "HiItsMeCorrelationKey"
-      }
-    },
-    {
-      params: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
-      },
-      mockedUuidGenerator: () => "HiItsMeGeneratedCorrelationKey",
-      expectedData: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
-        correlationKey: "HiItsMeGeneratedCorrelationKey"
-      }
-    },
-    {
-      params: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
-        actionScopes: {
-          complete: ["details"],
-          claim: ["list"],
-          forward: ["details", "list"]
-        }
-      },
-      mockedUuidGenerator: () => "HiItsMeGeneratedCorrelationKey",
-      expectedData: {
-        subject: "HiItsMeSubject",
-        assignees: ["HiItsMeAssignee1", "HiItsMeAssignee2"],
-        correlationKey: "HiItsMeGeneratedCorrelationKey",
-        actionScopes: {
-          complete: ["details"],
-          claim: ["list"],
-          forward: ["details", "list"]
-        }
-      }
-    },
-  ]
+  function calledBody(): any {
+    return JSON.parse(mockDvelopFetch.mock.calls[0][2]!.body as string);
+  }
 
-  testCases.forEach(testCase => {
-    it("should make correct request", async () => {
+  it("should call dvelopFetch with method POST to /task/tasks", async () => {
+    await createTask(context, params);
 
-      const createTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction, testCase.mockedUuidGenerator);
-      await createTask(context, testCase.params);
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    const [calledContext, calledUrl, calledInit, calledOptions] = mockDvelopFetch.mock.calls[0];
+    expect(calledContext).toBe(context);
+    expect(calledUrl).toBe("/task/tasks");
+    expect(calledInit).toMatchObject({ method: "POST" });
+    expect(calledOptions).toMatchObject({ onResponse: onResponse });
+  });
 
-      expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-      expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-        method: "POST",
-        url: "/task/tasks",
-        data: testCase.expectedData
-      });
-    });
+  it("should generate a correlationKey when none is given", async () => {
+    await createTask(context, params);
+    expect(calledBody().correlationKey).toEqual("HiItsMeGeneratedCorrelationKey");
+  });
+
+  it("should keep a caller-supplied correlationKey", async () => {
+    await createTask(context, { ...params, correlationKey: "HiItsMeCorrelationKey" });
+    expect(mockGenerateRequestId).not.toHaveBeenCalled();
+    expect(calledBody().correlationKey).toEqual("HiItsMeCorrelationKey");
+  });
+
+  it("should send subject and assignees", async () => {
+    await createTask(context, params);
+    const body = calledBody();
+    expect(body.subject).toEqual("HiItsMeSubject");
+    expect(body.assignees).toEqual(["HiItsMeAssignee1", "HiItsMeAssignee2"]);
+  });
+
+  it("should send actionScopes", async () => {
+    const actionScopes: CreateTaskParams["actionScopes"] = { complete: ["details"], claim: ["list"], forward: ["details", "list"] };
+    await createTask(context, { ...params, actionScopes });
+    expect(calledBody().actionScopes).toEqual(actionScopes);
   });
 
   it("should parse dueDate", async () => {
-
     const date: Date = new Date();
-
-    const updateTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction);
-    await updateTask(context, { ...params, ...{ dueDate: date } });
-
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, expect.objectContaining({
-      data: expect.objectContaining({
-        dueDate: date.toISOString()
-      })
-    }));
+    await createTask(context, { ...params, dueDate: date });
+    expect(calledBody().dueDate).toEqual(date.toISOString());
   });
 
   it("should parse reminderDate", async () => {
-
     const date: Date = new Date();
-
-    const updateTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction);
-    await updateTask(context, { ...params, ...{ reminderDate: date } });
-
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, expect.objectContaining({
-      data: expect.objectContaining({
-        reminderDate: date.toISOString()
-      })
-    }));
+    await createTask(context, { ...params, reminderDate: date });
+    expect(calledBody().reminderDate).toEqual(date.toISOString());
   });
 
   it("should parse dmsObject", async () => {
-
-    const dmsObject: any = {
-      repositoryId: "HiItsMeRepoId",
-      dmsObjectId: "HiItsMeDmsObjectId"
-    };
-
-    const createTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction);
-    await createTask(context, { ...params, ...{ dmsObject: dmsObject } });
-
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, expect.objectContaining({
-      data: expect.objectContaining({
-        dmsReferences: [{
-          repoId: dmsObject.repositoryId,
-          objectId: dmsObject.dmsObjectId
-        }]
-      })
-    }));
+    const dmsObject = { repositoryId: "HiItsMeRepoId", dmsObjectId: "HiItsMeDmsObjectId" };
+    await createTask(context, { ...params, dmsObject });
+    expect(calledBody().dmsReferences).toEqual([{
+      repoId: dmsObject.repositoryId,
+      objectId: dmsObject.dmsObjectId
+    }]);
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-
-    const response: HttpResponse = { data: { test: "HiItsMeTest" } } as HttpResponse;
-    const transformResult: any = { result: "HiItsMeResult" };
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const createTask = _createTaskFactory(mockHttpRequestFunction, mockTransformFunction);
-    await createTask(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await createTask(context, params, options);
+    expect(mockDvelopFetch.mock.calls[0][3]).toBe(options);
   });
 
-  describe("createTaskDefaultTransformFunction", () => {
+  describe("onResponse", () => {
 
-    it("should map correctly", async () => {
+    it("should return the location header", async () => {
+      const response = new Response(null, { status: 201, headers: { location: "HiItsMeLocation" } });
+      const result: string = await onResponse(response);
+      expect(result).toEqual("HiItsMeLocation");
+    });
 
-      const location: string = "HiItsMeLocation";
-      mockHttpRequestFunction.mockResolvedValue({ headers: { "location": location } } as unknown as HttpResponse);
-
-      const createTask = _createTaskFactory(mockHttpRequestFunction, _createTaskDefaultTransformFunction);
-      const result: string = await createTask(context, params);
-
-      expect(result).toEqual(location);
+    it("should return an empty string when no location header is present", async () => {
+      const response = new Response(null, { status: 201 });
+      const result: string = await onResponse(response);
+      expect(result).toEqual("");
     });
   });
 });

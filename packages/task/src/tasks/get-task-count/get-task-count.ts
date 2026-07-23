@@ -1,37 +1,19 @@
-import { DvelopContext } from "@dvelop-sdk/core";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/task-error";
 
 /**
- * Default transform-function provided to the {@link getTaskCount}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Default `onResponse` provided to the {@link getTaskCount}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Task
  */
-export function _getTaskCountDefaultTransformFunction(response: HttpResponse, _: DvelopContext): number {
-  return response.data.count;
+export async function onResponse(response: Response): Promise<number> {
+  await ensureSuccessResponse(response);
+  const data: any = await response.json();
+  return data.count;
 }
 
 /**
- * Factory for the {@link getTaskCount}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link getTaskCount}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category Task
- */
-export function _getTaskCountFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext) => T,
-): (context: DvelopContext) => Promise<T> {
-  return async (context: DvelopContext) => {
-
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "GET",
-      url: "/task/count/all",
-    });
-    return transformFunction(response, context);
-  };
-}
-
-/**
- * Create a task.
+ * Get the number of tasks for the current user.
  *
  * ```typescript
  * import { getTaskCount } from "@dvelop-sdk/task";
@@ -44,7 +26,13 @@ export function _getTaskCountFactory<T>(
  *
  * @category Task
  */
-/* istanbul ignore next */
-export function getTaskCount(context: DvelopContext): Promise<number> {
-  return _getTaskCountFactory(_defaultHttpRequestFunction, _getTaskCountDefaultTransformFunction)(context);
+export async function getTaskCount(context: DvelopContext): Promise<number>;
+export async function getTaskCount<T>(context: DvelopContext, options: DvelopOptions<T>): Promise<T>;
+export async function getTaskCount<T>(
+  context: DvelopContext,
+  options: DvelopOptions<T | number> = {
+    onResponse: onResponse
+  }
+): Promise<T | number> {
+  return dvelopFetch(context, "/task/count/all", { method: "GET" }, options);
 }

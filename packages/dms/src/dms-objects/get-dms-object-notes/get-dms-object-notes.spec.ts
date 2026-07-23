@@ -1,126 +1,78 @@
-import { DvelopContext } from "@dvelop-sdk/core";
+import { DvelopContext, dvelopFetch } from "@dvelop-sdk/core";
 import {
-  _getDmsObjectNotesDefaultTransformFunction,
-  _getDmsObjectNotesFactory,
+  DmsObjectNote,
   GetDmsObjectNotesParams,
-  DmsObjectNote
+  onResponse,
+  getDmsObjectNotes,
 } from "./get-dms-object-notes";
-import { HttpResponse } from "../../utils/http";
+
+jest.mock("@dvelop-sdk/core", () => {
+  const actual = jest.requireActual("@dvelop-sdk/core");
+  return { ...actual, dvelopFetch: jest.fn() };
+});
+
+const mockDvelopFetch = dvelopFetch as jest.MockedFunction<typeof dvelopFetch>;
 
 describe("getDmsObjectNotes", () => {
-  let mockHttpRequestFunction = jest.fn();
-  let mockTransformFunction = jest.fn();
 
   let context: DvelopContext;
   let params: GetDmsObjectNotesParams;
 
   beforeEach(() => {
     jest.resetAllMocks();
-
-    context = {
-      systemBaseUri: "HiItsMeSystemBaseUri"
-    };
-
+    context = { systemBaseUri: "HiItsMeSystemBaseUri" };
     params = {
       repositoryId: "HiItsMeRepositoryId",
       dmsObjectId: "HiItsMeDmsObjectId"
     };
   });
 
-  it("should make correct request", async () => {
-    const getDmsObjectNotes = _getDmsObjectNotesFactory(mockHttpRequestFunction, mockTransformFunction);
+  it("should call dvelopFetch with method GET", async () => {
     await getDmsObjectNotes(context, params);
 
-    expect(mockHttpRequestFunction).toHaveBeenCalledTimes(1);
-    expect(mockHttpRequestFunction).toHaveBeenCalledWith(context, {
-      method: "GET",
-      url: "/dms",
-      follows: ["repo", "dmsobjectwithmapping", "notes"],
-      templates: {
-        "repositoryid": params.repositoryId,
-        "dmsobjectid": params.dmsObjectId
-      }
-    });
+    expect(mockDvelopFetch).toHaveBeenCalledTimes(1);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(
+      context,
+      `/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}/n`,
+      { method: "GET" },
+      expect.objectContaining({ onResponse: onResponse })
+    );
   });
 
-  it("should pass response to transform and return transform-result", async () => {
-    const response: HttpResponse = {
-      data: {
+  it("should forward caller-supplied options", async () => {
+    const options = { onResponse: jest.fn() };
+    await getDmsObjectNotes(context, params, options);
+    expect(mockDvelopFetch).toHaveBeenCalledWith(context, `/dms/r/${params.repositoryId}/o2m/${params.dmsObjectId}/n`, { method: "GET" }, options);
+  });
+
+  describe("_getDmsObjectNotesDefaultTransformFunction", () => {
+
+    function jsonResponse(data: any): Response {
+      return new Response(JSON.stringify(data), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
+
+    it("should map a single note", async () => {
+      const data = {
         notes: [{
-          creator: {
-            id: "HiItsMeCreatorId",
-            displayName: "HiItsMeCreatorDisplayName"
-          },
+          creator: { id: "HiItsMeCreatorId", displayName: "HiItsMeCreatorDisplayName" },
           text: "HiItsMeText",
           created: "2023-10-11T09:09:09.453+02:00"
         }]
-      }
-    } as HttpResponse;
+      };
 
-    const transformResult: DmsObjectNote[] = [{
-      creator: {
-        id: "HiItsMeCreatorId",
-        displayName: "HiItsMeCreatorDisplayName"
-      },
-      text: "HiItsMeText",
-      created: new Date("2023-10-11T09:09:09.453+02:00")
-    }];
-
-    mockHttpRequestFunction.mockResolvedValue(response);
-    mockTransformFunction.mockReturnValue(transformResult);
-
-    const getDmsObjectNotes = _getDmsObjectNotesFactory(mockHttpRequestFunction, mockTransformFunction);
-    await getDmsObjectNotes(context, params);
-
-    expect(mockTransformFunction).toHaveBeenCalledTimes(1);
-    expect(mockTransformFunction).toHaveBeenCalledWith(response, context, params);
-  });
-
-  describe("getDmsObjectNotesDefaultTransformFunction", () => {
-    it("should return response DmsObjectNotes with single note", async () => {
-      const response: HttpResponse = {
-        data: {
-          notes: [{
-            creator: {
-              id: "HiItsMeCreatorId",
-              displayName: "HiItsMeCreatorDisplayName"
-            },
-            text: "HiItsMeText",
-            created: "2023-10-11T09:09:09.453+02:00"
-          }]
-        }
-      } as HttpResponse;
-
-      const expectedResult: DmsObjectNote[] = [{
-        creator: {
-          id: "HiItsMeCreatorId",
-          displayName: "HiItsMeCreatorDisplayName"
-        },
+      const expected: DmsObjectNote[] = [{
+        creator: { id: "HiItsMeCreatorId", displayName: "HiItsMeCreatorDisplayName" },
         text: "HiItsMeText",
         created: new Date("2023-10-11T09:09:09.453+02:00")
       }];
 
-      mockHttpRequestFunction.mockResolvedValue(response);
-      const getDmsObjectNotes = _getDmsObjectNotesFactory(mockHttpRequestFunction, _getDmsObjectNotesDefaultTransformFunction);
-      const result = await getDmsObjectNotes(context, params);
-
-      expect(result).toEqual(expectedResult);
+      const result = await onResponse(jsonResponse(data));
+      expect(result).toEqual(expected);
     });
 
-    it("should return response DmsObjectNotes without notes when dmsObject has no notes", async () => {
-      const response: HttpResponse = {
-        data: {
-          notes: []
-        }
-      } as HttpResponse;
-
-      const expectedResult: any = [];
-
-      mockHttpRequestFunction.mockResolvedValue(response);
-      const getDmsObjectNotes = _getDmsObjectNotesFactory(mockHttpRequestFunction, _getDmsObjectNotesDefaultTransformFunction);
-      const result = await getDmsObjectNotes(context, params);
-
-      expect(result).toEqual(expectedResult);
+    it("should map empty notes list", async () => {
+      const result = await onResponse(jsonResponse({ notes: [] }));
+      expect(result).toEqual([]);
     });
   });
 });

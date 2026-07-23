@@ -1,5 +1,5 @@
-import { DvelopContext } from "../../../../core/lib";
-import { HttpConfig, HttpResponse, _defaultHttpRequestFunction } from "../../utils/http";
+import { DvelopContext, DvelopOptions, dvelopFetch } from "@dvelop-sdk/core";
+import { ensureSuccessResponse } from "../../utils/identityprovider-error";
 
 /**
  * Used for authentication in the d.velop cloud. Refer to the [documentation](https://developer.d-velop.de/documentation/idpapi/en/identityprovider-app-201523580.html#validating-the-login) for further information.
@@ -13,34 +13,16 @@ export interface AuthSession {
 }
 
 /**
- * Default transform-function provided to the {@link getAuthSession}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
+ * Default `onResponse` provided to the {@link getAuthSession}-function. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
  * @internal
  * @category Authentication
  */
-export function _getAuthSessionDefaultTransformFunction(response: HttpResponse, _: DvelopContext): AuthSession {
+export async function onResponse(response: Response): Promise<AuthSession> {
+  await ensureSuccessResponse(response);
+  const data: any = await response.json();
   return {
-    id: response.data.AuthSessionId,
-    expire: new Date(response.data.Expire)
-  };
-}
-
-/**
- * Factory for the {@link getAuthSession}-function. See internals for more information. See [Advanced Topics](https://github.com/d-velop/dvelop-sdk-node#advanced-topics) for more information.
- * @typeparam T Return type of the {@link getAuthSession}-function. A corresponding transformFunction has to be supplied.
- * @internal
- * @category Authentication
- */
-export function _getAuthSessionFactory<T>(
-  httpRequestFunction: (context: DvelopContext, config: HttpConfig) => Promise<HttpResponse>,
-  transformFunction: (response: HttpResponse, context: DvelopContext) => T,
-): (context: DvelopContext) => Promise<T> {
-  return async (context: DvelopContext) => {
-    const response: HttpResponse = await httpRequestFunction(context, {
-      method: "GET",
-      url: "/identityprovider",
-      follows: ["login"],
-    });
-    return transformFunction(response, context);
+    id: data.AuthSessionId,
+    expire: new Date(data.Expire)
   };
 }
 
@@ -57,12 +39,18 @@ export function _getAuthSessionFactory<T>(
  *   authSessionId: "dQw4w9WgXcQ"
  * });
  *
-  console.log(authSession);
+ * console.log(authSession);
  * ```
  *
  * @category Authentication
  */
-/* istanbul ignore next */
-export async function getAuthSession(context: DvelopContext): Promise<AuthSession> {
-  return _getAuthSessionFactory(_defaultHttpRequestFunction, _getAuthSessionDefaultTransformFunction)(context);
+export async function getAuthSession(context: DvelopContext): Promise<AuthSession>;
+export async function getAuthSession<T>(context: DvelopContext, options: DvelopOptions<T>): Promise<T>;
+export async function getAuthSession<T>(
+  context: DvelopContext,
+  options: DvelopOptions<T | AuthSession> = {
+    onResponse: onResponse
+  }
+): Promise<T | AuthSession> {
+  return dvelopFetch(context, "/identityprovider/login", { method: "GET" }, options);
 }

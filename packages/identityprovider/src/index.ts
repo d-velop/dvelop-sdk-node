@@ -32,9 +32,8 @@ declare module "@dvelop-sdk/core" {
 }
 
 // Utils
-export { DvelopContext, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
-export { IdentityproviderError } from "./utils/http";
-export * as internals from "./internal";
+export { DvelopContext, DvelopOptions, dvelopFetch, BadInputError, UnauthorizedError, ForbiddenError, NotFoundError } from "@dvelop-sdk/core";
+export { IdentityproviderError } from "./utils/identityprovider-error";
 
 // Authentication
 export { getAuthSession } from "./authentication/get-auth-session/get-auth-session";
