@@ -117,13 +117,13 @@ export function onResponseFactory(
     }
 
     if (data._links?.prev) {
-      result.getPreviousPage = async () => dvelopFetch(context, data._links.prev, { method: "GET" }, {
+      result.getPreviousPage = async () => dvelopFetch(context, data._links.prev.href, { method: "GET" }, {
         onResponse: onResponseFactory(context, params)
       });
     }
 
     if (data._links?.next) {
-      result.getNextPage = async () => dvelopFetch(context, data._links.next, { method: "GET" }, {
+      result.getNextPage = async () => dvelopFetch(context, data._links.next.href, { method: "GET" }, {
         onResponse: onResponseFactory(context, params)
       });
     }

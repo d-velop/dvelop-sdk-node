@@ -246,7 +246,7 @@ describe("searchDmsObjects", () => {
       mockDvelopFetch.mockResolvedValueOnce(prevResultData as unknown as SearchDmsObjectsResultPage);
       await result.getPreviousPage!();
 
-      expect(mockDvelopFetch).toHaveBeenLastCalledWith(context, { href: "HiItsMePreviousHref" }, { method: "GET" }, expect.objectContaining({ onResponse: expect.any(Function) }));
+      expect(mockDvelopFetch).toHaveBeenLastCalledWith(context, "HiItsMePreviousHref", { method: "GET" }, expect.objectContaining({ onResponse: expect.any(Function) }));
     });
 
     it("should set getNextPage when next link present", async () => {
@@ -261,7 +261,7 @@ describe("searchDmsObjects", () => {
       mockDvelopFetch.mockResolvedValueOnce(nextResultData as unknown as SearchDmsObjectsResultPage);
       await result.getNextPage!();
 
-      expect(mockDvelopFetch).toHaveBeenLastCalledWith(context, { href: "HiItsMeNextHref" }, { method: "GET" }, expect.objectContaining({ onResponse: expect.any(Function) }));
+      expect(mockDvelopFetch).toHaveBeenLastCalledWith(context, "HiItsMeNextHref", { method: "GET" }, expect.objectContaining({ onResponse: expect.any(Function) }));
     });
   });
 });
